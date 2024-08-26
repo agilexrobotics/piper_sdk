@@ -1,0 +1,7 @@
+.VSCodeCounter
+.vscode
+*.log
+__pycache__
+*.7z
+*.zip
+*.tar
