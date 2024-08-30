@@ -702,7 +702,7 @@ class C_PiperInterface():
         motion_ctrl_1 = ArmMsgMotionCtrl_1(emergency_stop, track_ctrl, grag_teach_ctrl)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_1, arm_motion_ctrl_1=motion_ctrl_1)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl):
@@ -726,7 +726,7 @@ class C_PiperInterface():
         # print(motion_ctrl_1)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_1)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
     def EndPoseCtrl(self,X,Y,Z,RX,RY,RZ):
@@ -739,7 +739,7 @@ class C_PiperInterface():
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_1, arm_motion_ctrl_cartesian=cartesian_1)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
     def __CartesianCtrl_ZRX(self, Z, RX):
@@ -748,7 +748,7 @@ class C_PiperInterface():
         # print(cartesian_2)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_2, arm_motion_ctrl_cartesian=cartesian_2)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
     def __CartesianCtrl_RYRZ(self, RY, RZ):
@@ -756,7 +756,7 @@ class C_PiperInterface():
         cartesian_3 = ArmMsgMotionCtrlCartesian(RY_axis=RY, RZ_axis=RZ)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_3, arm_motion_ctrl_cartesian=cartesian_3)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def JointCtrl(self, 
@@ -793,7 +793,7 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_1=joint_1, joint_2=joint_2)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_12, arm_joint_ctrl=joint_ctrl)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
     def __JointCtrl_34(self, joint_3, joint_4):
@@ -809,7 +809,7 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_3=joint_3, joint_4=joint_4)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_34, arm_joint_ctrl=joint_ctrl)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
     def __JointCtrl_56(self, joint_5, joint_6):
@@ -825,7 +825,7 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_5=joint_5, joint_6=joint_6)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_56, arm_joint_ctrl=joint_ctrl)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def GripperCtrl(self, gripper_angle:int, gripper_effort:int, gripper_code:int, set_zero:int):
