@@ -259,14 +259,15 @@ class C_PiperParserV1(C_PiperParserBase):
         """
         ret:bool = True
         msg_type_ = msg.type_
+        tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
         if(msg_type_ == ArmMsgType.PiperMsgMotionCtrl_1):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motion_ctrl_1.emergency_stop,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_1.track_ctrl,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_1.grag_teach_ctrl,False) + \
                                 [0x00, 0x00, 0x00, 0x00, 0x00]
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrl_2):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motion_ctrl_2.ctrl_mode,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.move_mode,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.move_spd_rate_ctrl,False) + \
@@ -274,66 +275,66 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.residence_time,False) + \
                                 [0x00, 0x00, 0x00]
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_1):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.X_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.Y_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_2):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.Z_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RX_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_3):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RY_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RZ_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_12):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_1) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_2)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_34):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_3) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_4)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_56):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_5) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_6)
         elif(msg_type_ == ArmMsgType.PiperMsgCircularPatternCoordNumUpdateCtrl):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_circular_ctrl.instruction_num,False) + \
                                 [0, 0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgGripperCtrl):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             # print(msg.arm_gripper_ctrl.grippers_angle)
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_gripper_ctrl.grippers_angle) + \
                                 self.ConvertToList_16bit(msg.arm_gripper_ctrl.grippers_effort,False) + \
                                 self.ConvertToList_8bit(msg.arm_gripper_ctrl.status_code,False) + \
                                 self.ConvertToList_8bit(msg.arm_gripper_ctrl.set_zero,False)
         elif(msg_type_ == ArmMsgType.PiperMsgMasterSlaveModeConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_ms_config.linkage_config,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.feedback_offset,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.ctrl_offset,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.linkage_offset,False) + \
                                 [0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgMotorEnableDisableConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_enable.motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_motor_enable.enable_flag,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgSearchMotorMaxAngleSpdAccLimit):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_search_motor_max_angle_spd_acc_limit.motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_search_motor_max_angle_spd_acc_limit.search_content,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_angle_limit_max_spd_config.motor_num,False) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.max_angle_limit) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.min_angle_limit) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.max_jonit_spd,False) + \
                                 [0]
         elif(msg_type_ == ArmMsgType.PiperMsgJointConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_joint_config.joint_motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_config.set_motor_current_pos_as_zero,False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_config.acc_param_config_is_effective_or_not,False) + \
@@ -341,12 +342,12 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_joint_config.clear_joint_err,False) + \
                                 [0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgInstructionResponseConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_set_instruction_response.instruction_index,False) + \
                                 self.ConvertToList_8bit(msg.arm_set_instruction_response.zero_config_success_flag,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgParamEnquiryAndConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_enquiry,False) + \
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_setting,False) + \
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.data_feedback_0x48x,False) + \
@@ -354,13 +355,13 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.set_end_load,False) + \
                                 [0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgEndVelAccParamConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_vel,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_vel,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_acc,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_acc,False)
         elif(msg_type_ == ArmMsgType.PiperMsgCrashProtectionRatingConfig):
-            tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
+             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_1_protection_level,False) + \
                                 self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_2_protection_level,False) + \
                                 self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_3_protection_level,False) + \

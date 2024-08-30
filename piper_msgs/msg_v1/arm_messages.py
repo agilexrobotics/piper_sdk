@@ -39,8 +39,6 @@ from .transmit.arm_end_vel_acc_param_config import ArmMsgEndVelAccParamConfig
 from .transmit.arm_crash_protection_rating_config import ArmMsgCrashProtectionRatingConfig
 from .feedback.arm_crash_protection_rating_feedback import ArmMsgCrashProtectionRatingFeedback
 
-
-
 class PiperMessage:
     '''
     Piper机械臂全部消息,为所有消息的汇总

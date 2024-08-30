@@ -92,14 +92,14 @@
 #-------------------------------------------------------------------------------------------------#
 
 # 预定义的 CAN 模块数量
-EXPECTED_CAN_COUNT=1
+EXPECTED_CAN_COUNT=2
 
 if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
     # 默认的 CAN 名称，用户可以通过命令行参数设定
     DEFAULT_CAN_NAME="${1:-can0}"
 
     # 单个 CAN 模块时的默认比特率，用户可以通过命令行参数设定
-    DEFAULT_BITRATE="${2:-500000}"
+    DEFAULT_BITRATE="${2:-1000000}"
 
     # USB 硬件地址（可选参数）
     USB_ADDRESS="${3}"

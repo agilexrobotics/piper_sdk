@@ -13,7 +13,7 @@ class ArmMsgSearchMotorMaxAngleSpdAccLimit:
     :Byte 0 motor_num: uint8, 关节电机序号。
                         值域 1-6:
                             1-6 代表关节驱动器序号
-    :Byte 1 enable_flag: uint8, 查询内容。
+    :Byte 1 search_content: uint8, 查询内容。
                         0x01 : 查询电机角度/最大速度
                         0x02 : 查询电机最大加速度限制
     '''
@@ -30,7 +30,7 @@ class ArmMsgSearchMotorMaxAngleSpdAccLimit:
         :Byte 0 motor_num: uint8, 关节电机序号。
                             值域 1-6:
                                 1-6 代表关节驱动器序号
-        :Byte 1 enable_flag: uint8, 查询内容。
+        :Byte 1 search_content: uint8, 查询内容。
                             0x01 : 查询电机角度/最大速度
                             0x02 : 查询电机最大加速度限制
         """

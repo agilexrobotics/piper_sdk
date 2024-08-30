@@ -132,7 +132,7 @@ class C_STD_CAN():
                 # print(message)
                 # print(f"Message sent on {self.bus.channel_info}")
             except can.CanError:
-                print("Message NOT sent")
+                print(can.CanError,"Message NOT sent")
         else:
             print("CAN bus is not OK, cannot send message")
 

@@ -841,12 +841,14 @@ class C_PiperInterface():
         gripper_ctrl = ArmMsgGripperCtrl(gripper_angle, gripper_effort, gripper_code, set_zero)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgGripperCtrl, arm_gripper_ctrl=gripper_ctrl)
         self.parser.EncodeMessage(msg, tx_can)
-        print(hex(tx_can.arbitration_id), tx_can.data)
+        # print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def MasterSlaveConfig(self, linkage_config, feedback_offset, ctrl_offset, linkage_offset):
+    def MasterSlaveConfig(self, linkage_config:int, feedback_offset:int, ctrl_offset:int, linkage_offset:int):
         """随动主从模式设置指令
 
+        0x470
+        
         Args:
             linkage_config ([0, 250, 252]): 联动设置指令
             feedback_offset ([0, 16, 32]): 反馈指令偏移值
@@ -862,6 +864,7 @@ class C_PiperInterface():
 
     def DisableArm(self, motor_num=0xFF, enable_flag=1):
         """失能电机
+        0x471
         """
         tx_can=Message()
         enable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
@@ -872,6 +875,7 @@ class C_PiperInterface():
     
     def EnableArm(self, motor_num=0xFF, enable_flag=2):
         """使能电机
+        0x471
         """
         tx_can=Message()
         disable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
@@ -897,6 +901,7 @@ class C_PiperInterface():
     def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_jonit_spd):
         '''
         电机角度限制/最大速度设置指令
+        0x474
         '''
         tx_can=Message()
         motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_jonit_spd)

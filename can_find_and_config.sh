@@ -4,9 +4,11 @@
 
 # 默认参数
 CAN_NAME="${1:-can0}"
-BITRATE="${2:-500000}"
+BITRATE="${2:-1000000}"
 USB_ADDRESS="${3}"
 TIMEOUT="${4:-120}"  # 超时时间，默认 120 秒
+
+sudo -v
 
 ROOT="$(dirname "$(readlink -f "$0")")"
 
@@ -47,7 +49,7 @@ while true; do
 
     if [ "$DEVICE_FOUND" == "true" ]; then
         echo "找到 CAN 设备，调用配置脚本..."
-        sudo bash $ROOT/can_config.sh "$CAN_NAME" "$BITRATE" "$USB_ADDRESS"
+        sudo bash $ROOT/can_activate.sh "$CAN_NAME" "$BITRATE" "$USB_ADDRESS"
         if [ $? -eq 0 ]; then
             echo "CAN 设备配置成功。"
             exit 0

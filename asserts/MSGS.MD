@@ -1,36 +1,8 @@
-# PIPER SDK 开发文档
-
-本SDK用于接收can数据帧，然后处理为自定义数据类型
-
-## 程序结构
-
-```shell
-piper_sdk
-├── piper_msgs
-├── base
-├── config
-├── demo
-├── hardware_port
-├── __init__.py
-├── interface
-├── protocol
-└── README.MD
-```
-
-底层交互：
-
-```shell
-hardware_port
-├── can_encapsulation.py
-└── __init__.py
-```
-
-机械臂数据变量：
-
-预留v2版本，为日后修改数据格式留出余量
+# PIPER SDK msgs 说明文档
 
 ```shell
 piper_msgs
+├── __init__.py
 ├── msg_v1
 │   ├── arm_id_type_map.py
 │   ├── arm_messages.py
@@ -47,7 +19,8 @@ piper_msgs
 │   │   ├── arm_joint_feedback.py
 │   │   ├── arm_low_spd_feedback.py
 │   │   ├── arm_status.py
-│   │   └── gripper_feedback.py
+│   │   ├── gripper_feedback.py
+│   │   └── __init__.py
 │   ├── __init__.py
 │   └── transmit
 │       ├── arm_circular_pattern.py
@@ -65,27 +38,23 @@ piper_msgs
 │       ├── arm_motor_enable_disable.py
 │       ├── arm_param_enquiry_and_config.py
 │       ├── arm_search_motor_max_angle_spd_acc_limit.py
-│       └── arm_set_instruction_response.py
+│       ├── arm_set_instruction_response.py
+│       └── __init__.py
 └── msg_v2
 ```
 
-机械臂协议解析：
+`can_id.py` 文件为所有canid的枚举类
 
-暂为v1版本，为日后修改协议留出余量
+`arm_msg_type.py` 文件为所有消息类型的枚举类
 
-```shell
-protocol
-├── piper_protocol_base.py
-└── protocol_v1
-    ├── piper_protocol_v1.py
-    └── __init__.py
-```
+`arm_id_type_map.py` 文件为canid和消息类型的映射map
 
-机械臂实际接口：
+`arm_messages.py` 文件为所有自定义消息类型的汇总，其中的`PiperMessage`是can消息和抽象类型的桥梁
 
-具体使用部分接口，抽象为具体功能函数，部分功能可能需要二次封装
+读取数据时，根据canid筛选出对应的消息类型并赋给`PiperMessage`，将can帧从bytes类型解析为指定的整形，然后赋值到对应的消息类型的变量中
 
-```shell
-interface
-└── piper_interface.py
-```
+发送数据时，先创建一个`PiperMessage`类型的变量，传入消息类型和对应的消息类，然后执行协议解析为can帧并发送出去
+
+目录 `feedback` 为所有有关反馈的消息
+
+目录 `transmit` 为所有发送有关的消息
