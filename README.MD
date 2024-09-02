@@ -36,6 +36,10 @@ sudo apt update && sudo apt install can-utils ethtool
 
 这两个工具用来配置can模块
 
+如果执行bash脚本出现`ip: command not found`
+
+请安装ip指令，一般是`sudo apt-get install iproute2`
+
 ## 快速使用
 
 ### 使能can模块
