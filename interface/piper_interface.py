@@ -41,16 +41,24 @@ class C_PiperInterface():
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.end_pose}\n")
     
-    class ArmJointAndGripper():
+    class ArmJoint():
         '''
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         '''
         time_stamp: float=0
         joint_state=ArmMsgJointFeedBack()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.joint_state}\n")
+    
+    class ArmGripper():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        '''
+        time_stamp: float=0
         gripper_state=ArmMsgGripperFeedBack()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
-                    f"{self.joint_state}\n"
                     f"{self.gripper_state}\n")
     
     class ArmMotorDriverInfoHighSpd():
@@ -133,17 +141,26 @@ class C_PiperInterface():
             return (f"time stamp:{self.time_stamp}\n"
                     f"current_motor_max_acc_limit:{self.current_motor_max_acc_limit}\n")
 
-    class ArmJointAndGripperCtrl():
+    class ArmJointCtrl():
         '''
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         这个是主臂发送的消息，用来读取发送给从臂的目标值
         '''
         time_stamp: float=0
         joint_ctrl=ArmMsgJointCtrl()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.joint_ctrl}\n")
+    
+    class ArmGripperCtrl():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        这个是主臂发送的消息，用来读取发送给从臂的目标值
+        '''
+        time_stamp: float=0
         gripper_ctrl=ArmMsgGripperCtrl()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
-                    f"{self.joint_ctrl}\n"
                     f"{self.gripper_ctrl}\n")
     
     class ArmCtrlCode_151():
@@ -167,7 +184,6 @@ class C_PiperInterface():
         time_stamp_joint_12:float=0
         time_stamp_joint_34:float=0
         time_stamp_joint_56:float=0
-        time_stamp_gripper:float=0
         time_stamp_motor_high_spd_1:float=0
         time_stamp_motor_high_spd_2:float=0
         time_stamp_motor_high_spd_3:float=0
@@ -183,7 +199,6 @@ class C_PiperInterface():
         time_stamp_joint_ctrl_12:float=0
         time_stamp_joint_ctrl_34:float=0
         time_stamp_joint_ctrl_56:float=0
-        time_stamp_gripper_ctrl:float=0
     
     def __init__(self, can_name:str="can0") -> None:
         self.can_channel_name:str
@@ -204,8 +219,11 @@ class C_PiperInterface():
         self.__arm_end_pose_mtx = threading.Lock()
         self.__arm_end_pose = self.ArmEndPose()
 
-        self.__arm_joint_gripper_msgs_mtx = threading.Lock()
-        self.__arm_joint_gripper_msgs = self.ArmJointAndGripper()
+        self.__arm_joint_msgs_mtx = threading.Lock()
+        self.__arm_joint_msgs = self.ArmJoint()
+
+        self.__arm_gripper_msgs_mtx = threading.Lock()
+        self.__arm_gripper_msgs = self.ArmGripper()
 
         self.__arm_motor_info_high_spd_mtx = threading.Lock()
         self.__arm_motor_info_high_spd = self.ArmMotorDriverInfoHighSpd()
@@ -225,8 +243,11 @@ class C_PiperInterface():
         self.__feedback_current_motor_max_acc_limit_mtx = threading.Lock()
         self.__feedback_current_motor_max_acc_limit = self.CurrentMotorMaxAccLimit()
 
-        self.__arm_joint_gripper_ctrl_msgs_mtx = threading.Lock()
-        self.__arm_joint_gripper_ctrl_msgs = self.ArmJointAndGripperCtrl()
+        self.__arm_joint_ctrl_msgs_mtx = threading.Lock()
+        self.__arm_joint_ctrl_msgs = self.ArmJointCtrl()
+        
+        self.__arm_gripper_ctrl_msgs_mtx = threading.Lock()
+        self.__arm_gripper_ctrl_msgs = self.ArmGripperCtrl()
 
         self.__arm_ctrl_code_151_mtx = threading.Lock()
         self.__arm_ctrl_code_151 = self.ArmCtrlCode_151()
@@ -256,7 +277,8 @@ class C_PiperInterface():
         if(receive_flag):
             self.UpdateArmStatus(msg)
             self.UpdateArmEndPoseState(msg)
-            self.UpdateArmJointGripperState(msg)
+            self.UpdateArmJointState(msg)
+            self.UpdateArmGripperState(msg)
             self.UpdateDriverInfoHighSpdFeedback(msg)
             self.UpdateDriverInfoLowSpdFeedback(msg)
 
@@ -265,7 +287,8 @@ class C_PiperInterface():
             self.UpdateCrashProtectionLevelFeedback(msg)
             self.UpdateCurrentMotorMaxAccLimit(msg)
             # 更新主臂发送消息
-            self.UpdateArmJointGripperStateCtrl(msg)
+            self.UpdateArmJointCtrl(msg)
+            self.UpdateArmGripperCtrl(msg)
             self.UpdateArmCtrlCode151(msg)
     
     def JudgeExsitedArm(self, can_id:int):
@@ -284,9 +307,13 @@ class C_PiperInterface():
         with self.__arm_end_pose_mtx:
             return self.__arm_end_pose
 
-    def GetArmJointGripperMsgs(self):
-        with self.__arm_joint_gripper_msgs_mtx:
-            return self.__arm_joint_gripper_msgs
+    def GetArmJointMsgs(self):
+        with self.__arm_joint_msgs_mtx:
+            return self.__arm_joint_msgs
+    
+    def GetArmGripperMsgs(self):
+        with self.__arm_gripper_msgs_mtx:
+            return self.__arm_gripper_msgs
     
     def GetArmHighSpdInfoMsgs(self):
         with self.__arm_motor_info_high_spd_mtx:
@@ -312,9 +339,13 @@ class C_PiperInterface():
         with self.__feedback_current_motor_max_acc_limit_mtx:
             return self.__feedback_current_motor_max_acc_limit
     
-    def GetArmJointGripperCtrlMsgs(self):
-        with self.__arm_joint_gripper_ctrl_msgs_mtx:
-            return self.__arm_joint_gripper_ctrl_msgs
+    def GetArmJointCtrl(self):
+        with self.__arm_joint_ctrl_msgs_mtx:
+            return self.__arm_joint_ctrl_msgs
+    
+    def GetArmGripperCtrl(self):
+        with self.__arm_gripper_ctrl_msgs_mtx:
+            return self.__arm_gripper_ctrl_msgs
     
     def GetArmCtrlCode151(self):
         with self.__arm_ctrl_code_151_mtx:
@@ -366,40 +397,51 @@ class C_PiperInterface():
             # print(self.__arm_end_pose)
             return self.__arm_end_pose
 
-    def UpdateArmJointGripperState(self, msg:PiperMessage):
-        """更新关节和夹爪状态
+    def UpdateArmJointState(self, msg:PiperMessage):
+        """更新关节状态
 
         Args:
             msg (PiperMessage): 输入为机械臂消息汇总
         """
-        with self.__arm_joint_gripper_msgs_mtx:
+        with self.__arm_joint_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
                 self.__arm_time_stamp.time_stamp_joint_12 = time.time_ns()
-                self.__arm_joint_gripper_msgs.joint_state.joint_1 = msg.arm_joint_feedback.joint_1
-                self.__arm_joint_gripper_msgs.joint_state.joint_2 = msg.arm_joint_feedback.joint_2
+                self.__arm_joint_msgs.joint_state.joint_1 = msg.arm_joint_feedback.joint_1
+                self.__arm_joint_msgs.joint_state.joint_2 = msg.arm_joint_feedback.joint_2
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_34):
                 self.__arm_time_stamp.time_stamp_joint_34 = time.time_ns()
-                self.__arm_joint_gripper_msgs.joint_state.joint_3 = msg.arm_joint_feedback.joint_3
-                self.__arm_joint_gripper_msgs.joint_state.joint_4 = msg.arm_joint_feedback.joint_4
+                self.__arm_joint_msgs.joint_state.joint_3 = msg.arm_joint_feedback.joint_3
+                self.__arm_joint_msgs.joint_state.joint_4 = msg.arm_joint_feedback.joint_4
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_56):
                 self.__arm_time_stamp.time_stamp_joint_56 = time.time_ns()
-                self.__arm_joint_gripper_msgs.joint_state.joint_5 = msg.arm_joint_feedback.joint_5
-                self.__arm_joint_gripper_msgs.joint_state.joint_6 = msg.arm_joint_feedback.joint_6
-            elif(msg.type_ == ArmMsgType.PiperMsgGripperFeedBack):
-                self.__arm_time_stamp.time_stamp_gripper = time.time_ns()
-                self.__arm_joint_gripper_msgs.gripper_state.grippers_angle = msg.gripper_feedback.grippers_angle
-                self.__arm_joint_gripper_msgs.gripper_state.grippers_effort = msg.gripper_feedback.grippers_effort
-                self.__arm_joint_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
+                self.__arm_joint_msgs.joint_state.joint_5 = msg.arm_joint_feedback.joint_5
+                self.__arm_joint_msgs.joint_state.joint_6 = msg.arm_joint_feedback.joint_6
             else:
                 pass
             # 更新时间戳，取筛选ID的最新一个
-            self.__arm_joint_gripper_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_12, 
+            self.__arm_joint_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_34, 
-                                                        self.__arm_time_stamp.time_stamp_joint_56, 
-                                                        self.__arm_time_stamp.time_stamp_gripper)/ 1_000_000_000
-            # print(self.__arm_joint_gripper_msgs)
-            return self.__arm_joint_gripper_msgs
+                                                        self.__arm_time_stamp.time_stamp_joint_56)/ 1_000_000_000
+            # print(self.__arm_joint_msgs)
+            return self.__arm_joint_msgs
 
+    def UpdateArmGripperState(self, msg:PiperMessage):
+        """更新夹爪状态
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        """
+        with self.__arm_gripper_msgs_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgGripperFeedBack):
+                self.__arm_gripper_msgs.time_stamp = time.time_ns()
+                self.__arm_gripper_msgs.gripper_state.grippers_angle = msg.gripper_feedback.grippers_angle
+                self.__arm_gripper_msgs.gripper_state.grippers_effort = msg.gripper_feedback.grippers_effort
+                self.__arm_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
+            else:
+                pass
+            # print(self.__arm_gripper_msgs)
+            return self.__arm_gripper_msgs
+    
     def UpdateDriverInfoHighSpdFeedback(self, msg:PiperMessage):
         """更新驱动器信息反馈, 高速
 
@@ -612,41 +654,52 @@ class C_PiperInterface():
             # print(self.__feedback_crash_protection_level)
             return self.__feedback_crash_protection_level
     
-    def UpdateArmJointGripperStateCtrl(self, msg:PiperMessage):
+    def UpdateArmJointCtrl(self, msg:PiperMessage):
         """更新关节和夹爪状态,为主臂发送的消息
 
         Args:
             msg (PiperMessage): 输入为机械臂消息汇总
         """
-        with self.__arm_joint_gripper_ctrl_msgs_mtx:
+        with self.__arm_joint_ctrl_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgJointCtrl_12):
                 self.__arm_time_stamp.time_stamp_joint_ctrl_12 = time.time_ns()
                 # print(msg.arm_joint_ctrl)
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_1 = msg.arm_joint_ctrl.joint_1
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_2 = msg.arm_joint_ctrl.joint_2
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_1 = msg.arm_joint_ctrl.joint_1
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_2 = msg.arm_joint_ctrl.joint_2
             elif(msg.type_ == ArmMsgType.PiperMsgJointCtrl_34):
                 self.__arm_time_stamp.time_stamp_joint_ctrl_34 = time.time_ns()
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_3 = msg.arm_joint_ctrl.joint_3
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_4 = msg.arm_joint_ctrl.joint_4
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_3 = msg.arm_joint_ctrl.joint_3
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_4 = msg.arm_joint_ctrl.joint_4
             elif(msg.type_ == ArmMsgType.PiperMsgJointCtrl_56):
                 self.__arm_time_stamp.time_stamp_joint_ctrl_56 = time.time_ns()
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_5 = msg.arm_joint_ctrl.joint_5
-                self.__arm_joint_gripper_ctrl_msgs.joint_ctrl.joint_6 = msg.arm_joint_ctrl.joint_6
-            elif(msg.type_ == ArmMsgType.PiperMsgGripperCtrl):
-                self.__arm_time_stamp.time_stamp_gripper_ctrl = time.time_ns()
-                self.__arm_joint_gripper_ctrl_msgs.gripper_ctrl.grippers_angle = msg.arm_gripper_ctrl.grippers_angle
-                self.__arm_joint_gripper_ctrl_msgs.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
-                self.__arm_joint_gripper_ctrl_msgs.gripper_ctrl.status_code = msg.arm_gripper_ctrl.status_code
-                self.__arm_joint_gripper_ctrl_msgs.gripper_ctrl.set_zero = msg.arm_gripper_ctrl.set_zero
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_5 = msg.arm_joint_ctrl.joint_5
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 = msg.arm_joint_ctrl.joint_6
             else:
                 pass
             # 更新时间戳，取筛选ID的最新一个
-            self.__arm_joint_gripper_ctrl_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_ctrl_12, 
+            self.__arm_joint_ctrl_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_ctrl_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_ctrl_34, 
-                                                        self.__arm_time_stamp.time_stamp_joint_ctrl_56, 
-                                                        self.__arm_time_stamp.time_stamp_gripper_ctrl)/ 1_000_000_000
-            # print(self.__arm_joint_gripper_ctrl_msgs)
-            return self.__arm_joint_gripper_ctrl_msgs
+                                                        self.__arm_time_stamp.time_stamp_joint_ctrl_56)/ 1_000_000_000
+            # print(self.__arm_joint_ctrl_msgs)
+            return self.__arm_joint_ctrl_msgs
+    
+    def UpdateArmGripperCtrl(self, msg:PiperMessage):
+        """更新夹爪状态,为主臂发送的消息
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        """
+        with self.__arm_gripper_ctrl_msgs_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgGripperCtrl):
+                self.__arm_gripper_ctrl_msgs.time_stamp = time.time_ns()
+                self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_angle = msg.arm_gripper_ctrl.grippers_angle
+                self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
+                self.__arm_gripper_ctrl_msgs.gripper_ctrl.status_code = msg.arm_gripper_ctrl.status_code
+                self.__arm_gripper_ctrl_msgs.gripper_ctrl.set_zero = msg.arm_gripper_ctrl.set_zero
+            else:
+                pass
+            # print(self.__arm_gripper_ctrl_msgs)
+            return self.__arm_gripper_ctrl_msgs
     
     def UpdateArmCtrlCode151(self, msg:PiperMessage):
         '''

@@ -16,6 +16,7 @@ if __name__ == "__main__":
         # a.SearchMotorMaxAngleSpdAccLimit(1, 1)
         # a.ArmParamEnquiryAndConfig(1,0,2,0,3)
         # a.GripperCtrl(50000,1500,0x01)
-        print(piper.GetArmJointGripperMsgs())
+        print(piper.GetArmJointMsgs())
+        print(piper.GetArmGripperMsgs())
         time.sleep(0.005)
         pass
