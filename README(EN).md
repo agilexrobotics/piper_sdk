@@ -194,4 +194,4 @@ if __name__ == "__main__":
 - You need to activate the CAN device and set the correct baud rate before you can read messages from or control the robotic arm.
 - The `C_PiperInterface` class can be instantiated with the active CAN route name, which can be obtained using `ifconfig`.
 
-- 有时执行can发送，终端反馈`Message NOT sent`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
+- Sometimes, when executing a CAN send operation, the terminal may display `Message NOT sent`. This indicates that the CAN module has not successfully connected to the device. First, check the connection between the module and the robotic arm. Then, power off and up the robotic arm, and try sending the message once more.
