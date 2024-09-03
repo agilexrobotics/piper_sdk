@@ -87,7 +87,7 @@ Then, run `ifconfig` to check if `can_piper` is listed. If it appears, the CAN m
 
 For four robotic arms, which means two pairs of master-slave robotic arms:
 
-- **Use the `can_config.sh` **
+- ** Use the `can_config.sh` **
 
 In the `can_config.sh` , the `EXPECTED_CAN_COUNT` parameter is usually set to `2`, as four robotic arms use two CAN modules.
 
