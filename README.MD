@@ -91,7 +91,7 @@ ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，�
 
 - **此处使用`can_config.sh`脚本**
 
-在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量
+在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量,现在假设为2
 
 然后can模块中的其中一个单独插入PC，执行
 
