@@ -86,15 +86,13 @@ ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，�
 
 然后执行`ifconfig`查看是否有`can_piper`，如果有则can模块设置成功
 
-#### 两对机械臂(四条)
-
-如果是四条机械臂，也就是两对主从机械臂
+#### 想要同时激活多个can模块
 
 - **此处使用`can_config.sh`脚本**
 
-在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数一般设置为`2`，因为四条机械臂使用两个can模块
+在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量
 
-然后将两个can模块中的其中一个(一般第一个插入左臂所在的模块)单独插入PC，执行
+然后can模块中的其中一个单独插入PC，执行
 
 ```shell
 sudo ethtool -i can0 | grep bus
