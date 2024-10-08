@@ -148,7 +148,6 @@ if __name__ == "__main__":
         print(piper.GetArmGripperMsgs())
         time.sleep(0.005)
         pass
-
 ```
 
 ## 控制机械臂运动
@@ -166,7 +165,7 @@ if __name__ == "__main__":
     piper = C_PiperInterface("can0")
     piper.ConnectPort()
     piper.EnableArm(7)
-    piper.DisableArm(7)
+    # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 57324.840764 #1000*180/3.14
     position = [0,0,0,0,0,0,0]
