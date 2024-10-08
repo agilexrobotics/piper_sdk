@@ -91,7 +91,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`UpdateArmCtrlCode151`|Getter Method|更新主臂发送的151控制指令|类内使用|msg:PiperMessage|self.__arm_ctrl_code_151|
 |`MotionCtrl_1`|Ctrl Method|0x150,可以控制急停、轨迹传输及拖动示教模式。|类外调用|`emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|None|
 |`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|None|
-|`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3*1000=300|类外调用|`X (float)`, `Y (float)`, `Z (float)`, `RX (float)`, `RY (float)`, `RZ (float)`|None|
+|`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (float)`, `Y (float)`, `Z (float)`, `RX (float)`, `RY (float)`, `RZ (float)`|None|
 |`__CartesianCtrl_XY`|Ctrl Method|控制机械臂笛卡尔坐标的XY轴运动。|类内调用(私有)|`X (float)`, `Y (float)`|None|
 |`__CartesianCtrl_ZRX`|Ctrl Method|控制机械臂笛卡尔坐标的Z轴和RX轴运动。|类内调用(私有)|`Z (float)`, `RX (float)`|None|
 |`__CartesianCtrl_RYRZ`|Ctrl Method|控制机械臂笛卡尔坐标的RY轴和RZ轴运动。|类内调用(私有)|`RY (float)`, `RZ (float)`|None|
