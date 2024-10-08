@@ -128,23 +128,27 @@ ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，�
 ```python
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
+# 注意demo无法直接运行，需要pip安装sdk后才能运行
 # 读取机械臂消息并打印,需要先安装piper_sdk
 from typing import (
     Optional,
 )
 from piper_sdk import *
 
+# 测试代码
 if __name__ == "__main__":
-    # 实例化piper接口类
-    piper = C_PiperInterface("can0")
-    # 开启can设备连接
+    piper = C_PiperInterface()
     piper.ConnectPort()
     while True:
         import time
-        # 打印机械臂关节角度和夹爪消息
-        print(piper.GetArmJointGripperMsgs())
+        # a.SearchMotorMaxAngleSpdAccLimit(1, 1)
+        # a.ArmParamEnquiryAndConfig(1,0,2,0,3)
+        # a.GripperCtrl(50000,1500,0x01)
+        print(piper.GetArmJointMsgs())
+        print(piper.GetArmGripperMsgs())
         time.sleep(0.005)
         pass
+
 ```
 
 ## 控制机械臂运动
@@ -152,19 +156,17 @@ if __name__ == "__main__":
 ```python
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
+# 注意demo无法直接运行，需要pip安装sdk后才能运行
 from typing import (
     Optional,
 )
 from piper_sdk import *
 
 if __name__ == "__main__":
-    # 实例化piper接口类
     piper = C_PiperInterface("can0")
-    # 开启can设备连接
     piper.ConnectPort()
-    # 使能机械臂所有电机
     piper.EnableArm(7)
-    # 夹爪控制，发送位置0，扭矩1N，控制码为0x01，不设置当前为零点
+    piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 57324.840764 #1000*180/3.14
     position = [0,0,0,0,0,0,0]
@@ -172,12 +174,17 @@ if __name__ == "__main__":
     while True:
         import time
         count  = count + 1
+        print(count)
         if(count == 0):
+            print("1-----------")
             position = [0,0,0,0,0,0,0]
         elif(count == 500):
-            position = [0,0,0,0,0,0,0.005]
+            print("2-----------")
+            position = [0,0,0,0,0,0,0.08]
         elif(count == 1000):
+            position = [0,0,0,0,0,0,0]
             count = 0
+        
         joint_0 = round(position[0]*factor)
         joint_1 = round(position[1]*factor)
         joint_2 = round(position[2]*factor)

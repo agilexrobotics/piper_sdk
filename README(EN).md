@@ -125,21 +125,24 @@ Afterward, run `ifconfig` to verify if `can_left` and `can_right` are listed. If
 ```python
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
-# Read and Print Robotic Arm Messages. You need to install `piper_sdk` first.
+# 注意demo无法直接运行，需要pip安装sdk后才能运行
+# 读取机械臂消息并打印,需要先安装piper_sdk
 from typing import (
     Optional,
 )
 from piper_sdk import *
 
+# 测试代码
 if __name__ == "__main__":
-    # Instantiate the Piper interface class
-    piper = C_PiperInterface("can0")
-    # Activate the CAN device connection
+    piper = C_PiperInterface()
     piper.ConnectPort()
     while True:
         import time
-        # Print the robotic arm joint angles and gripper messages
-        print(piper.GetArmJointGripperMsgs())
+        # a.SearchMotorMaxAngleSpdAccLimit(1, 1)
+        # a.ArmParamEnquiryAndConfig(1,0,2,0,3)
+        # a.GripperCtrl(50000,1500,0x01)
+        print(piper.GetArmJointMsgs())
+        print(piper.GetArmGripperMsgs())
         time.sleep(0.005)
         pass
 ```
@@ -149,19 +152,17 @@ if __name__ == "__main__":
 ```python
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
+# 注意demo无法直接运行，需要pip安装sdk后才能运行
 from typing import (
     Optional,
 )
 from piper_sdk import *
 
 if __name__ == "__main__":
-    # Instantiate the Piper interface class
     piper = C_PiperInterface("can0")
-    # Activate the CAN connection
     piper.ConnectPort()
-    # Enable all motors of the robotic arm
     piper.EnableArm(7)
-    # Gripper control: Send position 0, torque 1N, control code 0x01, and do not set the current as the zero point
+    piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 57324.840764 #1000*180/3.14
     position = [0,0,0,0,0,0,0]
@@ -169,12 +170,17 @@ if __name__ == "__main__":
     while True:
         import time
         count  = count + 1
+        print(count)
         if(count == 0):
+            print("1-----------")
             position = [0,0,0,0,0,0,0]
         elif(count == 500):
-            position = [0,0,0,0,0,0,0.005]
+            print("2-----------")
+            position = [0,0,0,0,0,0,0.08]
         elif(count == 1000):
+            position = [0,0,0,0,0,0,0]
             count = 0
+        
         joint_0 = round(position[0]*factor)
         joint_1 = round(position[1]*factor)
         joint_2 = round(position[2]*factor)
