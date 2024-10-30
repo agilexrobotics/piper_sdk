@@ -875,7 +875,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode):
+    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode=0x00):
         '''
         机械臂运动控制指令2
 
