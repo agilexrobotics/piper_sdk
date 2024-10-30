@@ -172,7 +172,21 @@ class C_PiperInterface():
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.ctrl_151}\n")
-
+    
+    class AllCurrentMotorMaxAccLimit():
+        time_stamp: float=0
+        all_motor_max_acc_limit=ArmMsgFeedbackAllCurrentMotorMaxAccLimit()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.all_motor_max_acc_limit}\n")
+    
+    class AllCurrentMotorAngleLimitMaxSpd():
+        time_stamp: float=0
+        all_motor_angle_limit_max_spd=ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.all_motor_angle_limit_max_spd}\n")
+    
     class ArmTimeStamp():
         '''
         机械臂时间戳
@@ -199,6 +213,18 @@ class C_PiperInterface():
         time_stamp_joint_ctrl_12:float=0
         time_stamp_joint_ctrl_34:float=0
         time_stamp_joint_ctrl_56:float=0
+        time_stamp_motor_max_acc_limit_1=0
+        time_stamp_motor_max_acc_limit_2=0
+        time_stamp_motor_max_acc_limit_3=0
+        time_stamp_motor_max_acc_limit_4=0
+        time_stamp_motor_max_acc_limit_5=0
+        time_stamp_motor_max_acc_limit_6=0
+        time_stamp_motor_angle_limit_max_spd_1=0
+        time_stamp_motor_angle_limit_max_spd_2=0
+        time_stamp_motor_angle_limit_max_spd_3=0
+        time_stamp_motor_angle_limit_max_spd_4=0
+        time_stamp_motor_angle_limit_max_spd_5=0
+        time_stamp_motor_angle_limit_max_spd_6=0
     
     def __init__(self, can_name:str="can0") -> None:
         self.can_channel_name:str
@@ -251,19 +277,23 @@ class C_PiperInterface():
 
         self.__arm_ctrl_code_151_mtx = threading.Lock()
         self.__arm_ctrl_code_151 = self.ArmCtrlCode_151()
+        
+        self.__arm_all_motor_max_acc_limit_mtx = threading.Lock()
+        self.__arm_all_motor_max_acc_limit = self.AllCurrentMotorMaxAccLimit()
+        
+        self.__arm_all_motor_angle_limit_max_spd_mtx = threading.Lock()
+        self.__arm_all_motor_angle_limit_max_spd = self.AllCurrentMotorAngleLimitMaxSpd()
     
     def ConnectPort(self):
-        # print("-----")
-        # if(self.arm_can is None):
-        # print("-==--")
         # self.arm_can = C_STD_CAN(can_name, "socketcan", 500000, True, True, self.ParseCANFrame)
         def ReadCan():
             while True:
                 self.arm_can.ReadCanMessage()
-                # print("=====")
         can_deal_th = threading.Thread(target=ReadCan)
         can_deal_th.daemon = True
         can_deal_th.start()
+        self.SearchAllMotorMaxAngleSpd()
+        self.SearchAllMotorMaxAccLimit()
     
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
         """can协议解析函数
@@ -282,10 +312,12 @@ class C_PiperInterface():
             self.UpdateDriverInfoHighSpdFeedback(msg)
             self.UpdateDriverInfoLowSpdFeedback(msg)
 
-            self.UpdateCurrentMotorAngleLimitMaxVel(msg)
             self.UpdateCurrentEndVelAndAccParam(msg)
             self.UpdateCrashProtectionLevelFeedback(msg)
+            self.UpdateCurrentMotorAngleLimitMaxVel(msg)
             self.UpdateCurrentMotorMaxAccLimit(msg)
+            self.UpdateAllCurrentMotorAngleLimitMaxVel(msg)
+            self.UpdateAllCurrentMotorMaxAccLimit(msg)
             # 更新主臂发送消息
             self.UpdateArmJointCtrl(msg)
             self.UpdateArmGripperCtrl(msg)
@@ -350,6 +382,14 @@ class C_PiperInterface():
     def GetArmCtrlCode151(self):
         with self.__arm_ctrl_code_151_mtx:
             return self.__arm_ctrl_code_151
+    
+    def GetAllMotorMaxAccLimit(self):
+        with self.__arm_all_motor_max_acc_limit_mtx:
+            return self.__arm_all_motor_max_acc_limit
+    
+    def GetAllMotorAngleLimitMaxSpd(self):
+        with self.__arm_all_motor_angle_limit_max_spd_mtx:
+            return self.__arm_all_motor_angle_limit_max_spd
     # 发送控制值-------------------------------------------------------------------------------------------------------
 
     # 接收反馈函数------------------------------------------------------------------------------------------------------
@@ -605,6 +645,83 @@ class C_PiperInterface():
             # print(self.__feedback_current_motor_max_acc_limit)
             return self.__feedback_current_motor_max_acc_limit
     
+    def UpdateAllCurrentMotorAngleLimitMaxVel(self, msg:PiperMessage):
+        '''
+        更新
+        反馈全部电机限制角度/最大速度
+        为主动发送指令后反馈消息
+        对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x01
+        
+        0x473
+        '''
+        with self.__arm_all_motor_angle_limit_max_spd_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgFeedbackCurrentMotorAngleLimitMaxSpd):
+                if(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 1):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_1 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[1]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                elif(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 2):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_2 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[2]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                elif(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 3):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_3 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[3]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                elif(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 4):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_4 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[4]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                elif(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 5):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_5 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[5]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                elif(msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num == 6):
+                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_6 = time.time_ns()
+                    self.__arm_all_motor_angle_limit_max_spd.all_motor_angle_limit_max_spd.motor[6]=msg.arm_feedback_current_motor_angle_limit_max_spd
+                # 更新时间戳，取筛选ID的最新一个
+                self.__arm_all_motor_angle_limit_max_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_1, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_2, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_3, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_4, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_5, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_angle_limit_max_spd_6) / 1_000_000_000
+            # print(self.__arm_all_motor_angle_limit_max_spd)
+            return self.__arm_all_motor_angle_limit_max_spd
+    
+    def UpdateAllCurrentMotorMaxAccLimit(self, msg:PiperMessage):
+        '''
+        反馈全部电机最大加速度限制
+        为主动发送指令后反馈消息
+        对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x02
+
+        0x47C
+        '''
+        with self.__arm_all_motor_max_acc_limit_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgFeedbackCurrentMotorMaxAccLimit):
+                if(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 1):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_1 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[1]=msg.arm_feedback_current_motor_max_acc_limit
+                elif(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 2):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_2 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[2]=msg.arm_feedback_current_motor_max_acc_limit
+                elif(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 3):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_3 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[3]=msg.arm_feedback_current_motor_max_acc_limit
+                elif(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 4):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_4 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[4]=msg.arm_feedback_current_motor_max_acc_limit
+                elif(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 5):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_5 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[5]=msg.arm_feedback_current_motor_max_acc_limit
+                elif(msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num == 6):
+                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_6 = time.time_ns()
+                    self.__arm_all_motor_max_acc_limit.all_motor_max_acc_limit.motor[6]=msg.arm_feedback_current_motor_max_acc_limit
+                # 更新时间戳，取筛选ID的最新一个
+                self.__arm_all_motor_max_acc_limit.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_max_acc_limit_1, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_2, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_3, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_4, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_5, 
+                                                                    self.__arm_time_stamp.time_stamp_motor_max_acc_limit_6) / 1_000_000_000
+            # print(self.__arm_all_motor_max_acc_limit)
+            return self.__arm_all_motor_max_acc_limit
+    
     def UpdateCurrentEndVelAndAccParam(self, msg:PiperMessage):
         '''
         反馈当前末端速度/加速度参数
@@ -758,7 +875,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl):
+    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode):
         '''
         机械臂运动控制指令2
 
@@ -775,9 +892,9 @@ class C_PiperInterface():
         Byte 4 离线轨迹点停留时间 uint8 0~255 单位 s
         '''
         tx_can=Message()
-        motion_ctrl_1 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl)
+        motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode)
         # print(motion_ctrl_1)
-        msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_1)
+        msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_2)
         self.parser.EncodeMessage(msg, tx_can)
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
@@ -944,6 +1061,13 @@ class C_PiperInterface():
         对应反馈当前电机限制角度/最大速度
         
         0x472
+        
+        :Byte 0 motor_num: uint8, 关节电机序号。
+                            值域 1-6:
+                                1-6 代表关节驱动器序号
+        :Byte 1 search_content: uint8, 查询内容。
+                            0x01 : 查询电机角度/最大速度
+                            0x02 : 查询电机最大加速度限制
         '''
         tx_can=Message()
         search_motor = ArmMsgSearchMotorMaxAngleSpdAccLimit(motor_num, search_content)
@@ -951,6 +1075,22 @@ class C_PiperInterface():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
+    def SearchAllMotorMaxAngleSpd(self):
+        self.SearchMotorMaxAngleSpdAccLimit(1, 0x01)
+        self.SearchMotorMaxAngleSpdAccLimit(2, 0x01)
+        self.SearchMotorMaxAngleSpdAccLimit(3, 0x01)
+        self.SearchMotorMaxAngleSpdAccLimit(4, 0x01)
+        self.SearchMotorMaxAngleSpdAccLimit(5, 0x01)
+        self.SearchMotorMaxAngleSpdAccLimit(6, 0x01)
+    
+    def SearchAllMotorMaxAccLimit(self):
+        self.SearchMotorMaxAngleSpdAccLimit(1, 0x02)
+        self.SearchMotorMaxAngleSpdAccLimit(2, 0x02)
+        self.SearchMotorMaxAngleSpdAccLimit(3, 0x02)
+        self.SearchMotorMaxAngleSpdAccLimit(4, 0x02)
+        self.SearchMotorMaxAngleSpdAccLimit(5, 0x02)
+        self.SearchMotorMaxAngleSpdAccLimit(6, 0x02)
+    
     def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_jonit_spd):
         '''
         电机角度限制/最大速度设置指令

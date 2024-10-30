@@ -12,11 +12,12 @@ from .feedback.arm_end_pose import ArmMsgEndPoseFeedBack
 from .feedback.arm_joint_feedback import ArmMsgJointFeedBack
 from .feedback.arm_status import ArmMsgStatus
 from .feedback.gripper_feedback import ArmMsgGripperFeedBack
-from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
+from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd, ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
 from .feedback.arm_feedback_current_end_vel_acc_param import ArmMsgFeedbackCurrentEndVelAccParam
-from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit
+from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit, ArmMsgFeedbackAllCurrentMotorMaxAccLimit
+from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc, ArmMsgFeedbackAllJointVelAcc
+
 from .feedback.arm_crash_protection_rating_feedback import ArmMsgCrashProtectionRatingFeedback
-from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc
 from .feedback.arm_high_spd_feedback import ArmHighSpdFeedback
 from .feedback.arm_low_spd_feedback import ArmLowSpdFeedback
 
@@ -50,6 +51,10 @@ __all__ = [
     'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd',
     'ArmMsgFeedbackCurrentEndVelAccParam',
     'ArmMsgFeedbackCurrentMotorMaxAccLimit',
+    'ArmMsgFeedbackJointVelAcc',
+    'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd',
+    'ArmMsgFeedbackAllCurrentMotorMaxAccLimit',
+    'ArmMsgFeedbackAllJointVelAcc',
     'ArmMsgCrashProtectionRatingFeedback',
     'ArmHighSpdFeedback',
     'ArmLowSpdFeedback',

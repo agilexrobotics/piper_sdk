@@ -328,10 +328,10 @@ class C_PiperParserV1(C_PiperParserBase):
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet):
              
-            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_angle_limit_max_spd_config.motor_num,False) + \
-                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.max_angle_limit) + \
-                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.min_angle_limit) + \
-                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_config.max_jonit_spd,False) + \
+            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_angle_limit_max_spd_set.motor_num,False) + \
+                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_angle_limit) + \
+                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.min_angle_limit) + \
+                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_jonit_spd,False) + \
                                 [0]
         elif(msg_type_ == ArmMsgType.PiperMsgJointConfig):
              

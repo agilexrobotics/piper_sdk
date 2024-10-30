@@ -15,10 +15,10 @@ from .feedback.arm_end_pose import ArmMsgEndPoseFeedBack
 from .feedback.arm_joint_feedback import ArmMsgJointFeedBack
 from .feedback.arm_status import ArmMsgStatus
 from .feedback.gripper_feedback import ArmMsgGripperFeedBack
-from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
 from .feedback.arm_feedback_current_end_vel_acc_param import ArmMsgFeedbackCurrentEndVelAccParam
-from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit
-from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc
+from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd, ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
+from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit, ArmMsgFeedbackAllCurrentMotorMaxAccLimit
+from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc, ArmMsgFeedbackAllJointVelAcc
 from .feedback.arm_high_spd_feedback import ArmHighSpdFeedback
 from .feedback.arm_low_spd_feedback import ArmLowSpdFeedback
 
@@ -56,6 +56,8 @@ class PiperMessage:
                  arm_feedback_current_motor_max_acc_limit:'ArmMsgFeedbackCurrentMotorMaxAccLimit'=None,
                  arm_crash_protection_rating_feedback:'ArmMsgCrashProtectionRatingFeedback'=None,
                  #  arm_feedback_joint_vel_acc:'ArmMsgFeedbackJointVelAcc'=None
+                #  arm_feedback_all_current_motor_angle_limit_max_spd:'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd'=None,
+                #  arm_feedback_all_motor_max_acc_limit:'ArmMsgFeedbackAllCurrentMotorMaxAccLimit'=None,
                  arm_high_spd_feedback:'ArmHighSpdFeedback'=None,
                  arm_low_spd_feedback:'ArmLowSpdFeedback'=None,
                 #  发送
@@ -147,7 +149,12 @@ class PiperMessage:
         # 反馈各个关节当前末端速度/加速度
         # self.arm_feedback_joint_vel_acc = arm_feedback_joint_vel_acc \
         #     if arm_feedback_joint_vel_acc else ArmMsgFeedbackJointVelAcc()
-        
+        # 全部的电机当前限制角度/最大速度
+        # self.arm_feedback_all_current_motor_angle_limit_max_spd = arm_feedback_all_current_motor_angle_limit_max_spd \
+        #     if arm_feedback_all_current_motor_angle_limit_max_spd else ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd()
+        # # 全部的电机最大加速度限制
+        # self.arm_feedback_all_motor_max_acc_limit = arm_feedback_all_motor_max_acc_limit \
+        #     if arm_feedback_all_motor_max_acc_limit else ArmMsgFeedbackAllCurrentMotorMaxAccLimit()
 
     def __str__(self):
         if(self.type_ == ArmMsgType.PiperMsgStatusFeedback):

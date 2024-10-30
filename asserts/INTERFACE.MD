@@ -30,6 +30,8 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`ArmJointCtrl`|机械臂关节角度控制消息类，增加时间戳。|
 |`ArmGripperCtrl`|机械臂夹爪控制消息类，增加时间戳。|
 |`ArmCtrlCode_151`|机械臂发送控制指令0x151的消息接收类，由主臂发送，增加时间戳。|
+|`AllCurrentMotorMaxAccLimit`|机械臂关节所有关节电机的最大加速度限制。|
+|`AllCurrentMotorAngleLimitMaxSpd`|机械臂关节所有关节电机的角度限制和最大速度|
 |`ArmTimeStamp`|机械臂的时间戳类，包含各种反馈的时间戳。|
 
 具体解释可以查看代码内注释
@@ -56,12 +58,14 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__arm_joint_ctrl_msgs`|`ArmJointCtrl`|变量为读取主动臂给从动臂发送的关节角消息|
 |`__arm_gripper_ctrl_msgs`|`ArmGripperCtrl`|变量为读取主动臂给从动臂发送的夹爪消息|
 |`__arm_ctrl_code_151`|`ArmCtrlCode_151`|变量为读取主动臂发送给从动臂的0x151指令消息|
+|`__arm_all_motor_max_acc_limit`|`AllCurrentMotorMaxAccLimit`|变量为机械臂关节所有关节电机的最大加速度限制消息|
+|`__arm_all_motor_angle_limit_max_spd`|`AllCurrentMotorAngleLimitMaxSpd`|机械臂关节所有关节电机的角度限制和最大速度|
 
 ### 3.函数解析
 
 | 函数   | 类型 |说明                                                         |使用                | 参数                        |反馈       |
 | ----- | ---- |------------------------------------------------------------ |-------------------|--------------------------- |--------|
-|`ConnectPort`|Getter Method|该函数为打开can消息读取函数，该函数调用读取can消息函数，并创建读取线程，打开线程|用来在外部实例化类后，打开数据处理线程|None|None|
+|`ConnectPort`|Getter Method|该函数为打开can消息读取函数，该函数调用读取can消息函数，并创建读取线程，打开线程|用来在外部实例化类后，打开数据处理线程，并且发送读取机械臂电机的最大加速度、关节限位和最大速度|None|None|
 |`ParseCANFrame`|Getter Method|can协议解析函数，用来处理接收到的can数据帧，为can接收消息的回调函数|先创建局部变量，然后调用解析协议类中的解码函数如果解码成功，则更新对应的消息，更新到上述的私有变量中，每个更新数据函数都有筛选当前数据类型，对应的数据类型才会被更新|`rx_message: Optional[can.Message]`|None|
 |`GetArmStatus`|Getter Method|获取机械臂状态信息。使用互斥锁`__arm_status_mtx`保证线程安全。|obj.GetArmStatus()|None|self.__arm_status|
 |`GetArmEndPoseMsgs`|Getter Method|获取机械臂末端位置的消息。使用互斥锁`__arm_end_pose_mtx`保证线程安全。|obj.GetArmEndPoseMsgs()|None|self.__arm_end_pose|
@@ -76,16 +80,20 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`GetArmJointCtrl`|Getter Method|获取机械臂主动臂发给从臂的关节角控制消息。使用互斥锁`__arm_joint_ctrl_msgs_mtx`保证线程安全。|obj.GetArmJointCtrl()|None|self.__arm_joint_ctrl_msgs|
 |`GetArmGripperCtrl`|Getter Method|获取机械臂主动臂发给从臂的夹爪控制消息。使用互斥锁`__arm_gripper_ctrl_msgs_mtx`保证线程安全。|obj.GetArmJointCtrl()|None|self.__arm_gripper_ctrl_msgs|
 |`GetArmCtrlCode151`|Getter Method|获取机械臂控制码151的状态。使用互斥锁`__arm_ctrl_code_151_mtx`保证线程安全。|obj.GetArmCtrlCode151()|None|self.__arm_ctrl_code_151|
+|`GetAllMotorMaxAccLimit`|Getter Method|获取机械臂控关节所有关节电机的最大加速度限制消息，使用互斥锁`__arm_all_motor_max_acc_limit_mtx`保证线程安全。|obj.GetAllMotorMaxAccLimit()|None|self.__arm_all_motor_max_acc_limit|
+|`GetAllMotorMaxAccLimit`|Getter Method|获取机械臂控关节所有关节电机的角度限制和最大速度，使用互斥锁`__arm_all_motor_angle_limit_max_spd_mtx`保证线程安全。|obj.GetAllMotorMaxAccLimit()|None|self.__arm_all_motor_angle_limit_max_spd|
 |`UpdateArmStatus`|Getter Method|更新机械臂状态|类内使用|msg:PiperMessage|self.__arm_status|
 |`UpdateArmEndPoseState`|Getter Method|更新末端位姿状态，单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_end_pose|
 |`UpdateArmJointState`|Getter Method|更新关节状态，关节角单位为0.001度|类内使用|msg:PiperMessage|self.__arm_joint_msgs|
 |`UpdateArmGripperState`|Getter Method|更新夹爪状态，夹爪反馈的行程单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_gripper_msgs|
 |`UpdateDriverInfoHighSpdFeedback`|Getter Method|更新驱动器信息反馈（高速）|类内使用|msg:PiperMessage|self.__arm_motor_info_high_spd|
 |`UpdateDriverInfoLowSpdFeedback`|Getter Method|更新驱动器信息反馈（低速）|类内使用|msg:PiperMessage|self.__arm_motor_info_low_spd|
-|`UpdateCurrentMotorAngleLimitMaxVel`|Getter Method|反馈当前电机限制角度/最大速度|类内使用|msg:PiperMessage|self.__feedback_current_motor_angle_limit_max_vel|
-|`UpdateCurrentMotorMaxAccLimit`|Getter Method|反馈当前电机最大加速度限制|类内使用|msg:PiperMessage|self.__feedback_current_motor_max_acc_limit|
-|`UpdateCurrentEndVelAndAccParam`|Getter Method|反馈当前末端速度/加速度参数|类内使用|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
-|`UpdateCrashProtectionLevelFeedback`|Getter Method|碰撞防护等级设置反馈指令|类内使用|msg:PiperMessage|self.__feedback_crash_protection_level|
+|`UpdateCurrentMotorAngleLimitMaxVel`|Getter Method|更新当前电机限制角度/最大速度|类内使用|msg:PiperMessage|self.__feedback_current_motor_angle_limit_max_vel|
+|`UpdateCurrentMotorMaxAccLimit`|Getter Method|更新当前电机最大加速度限制|类内使用|msg:PiperMessage|self.__feedback_current_motor_max_acc_limit|
+|`UpdateAllCurrentMotorAngleLimitMaxVel`|Getter Method|更新所有电机最大加速度限制|类内使用|msg:PiperMessage|self.__arm_all_motor_angle_limit_max_spd|
+|`UpdateAllCurrentMotorMaxAccLimit`|Getter Method|更新所有电机角度限制和最大速度|类内使用|msg:PiperMessage|self.__arm_all_motor_max_acc_limit|
+|`UpdateCurrentEndVelAndAccParam`|Getter Method|更新当前末端速度/加速度参数|类内使用|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
+|`UpdateCrashProtectionLevelFeedback`|Getter Method|更新碰撞防护等级设置反馈指令|类内使用|msg:PiperMessage|self.__feedback_crash_protection_level|
 |`UpdateArmJointCtrl`|Getter Method|更新关节状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_joint_ctrl_msgs|
 |`UpdateArmGripperCtrl`|Getter Method|更新夹爪状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_gripper_ctrl_msgs|
 |`UpdateArmCtrlCode151`|Getter Method|更新主臂发送的151控制指令|类内使用|msg:PiperMessage|self.__arm_ctrl_code_151|
