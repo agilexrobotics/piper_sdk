@@ -12,7 +12,7 @@ Test:
 
 This SDK is used to receive CAN data frames and process them into custom data types. It does not include data offset frames.
 
-For detailed explanations of the specific interface functions, please refer to the [Interface README](./asserts/INTERFACE.MD).
+For detailed explanations of the specific interface functions, please refer to the [Interface README](./asserts/INTERFACE(EN).MD).
 
 For the protocol parsing section, refer to the [Protocol README](./asserts/PROTOCOL_V1.MD).
 
