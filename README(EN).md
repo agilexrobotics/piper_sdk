@@ -16,7 +16,7 @@ For detailed explanations of the specific interface functions, please refer to t
 
 For the protocol parsing section, refer to the [Protocol README](./asserts/PROTOCOL_V1(EN).MD).
 
-For the message section, refer to the [Msgs README](./asserts/MSGS.MD).
+For the message section, refer to the [Msgs README](./asserts/MSGS(EN).MD).
 
 ## Installation Instructions
 
