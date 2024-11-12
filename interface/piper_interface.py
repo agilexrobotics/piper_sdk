@@ -25,8 +25,10 @@ class C_PiperInterface():
         '''
         机械臂状态二次封装类,增加时间戳
         '''
-        time_stamp: float=0
-        arm_status=ArmMsgStatus()
+        def __init__(self):
+            # 将time_stamp和arm_status定义为实例变量
+            self.time_stamp: float = 0
+            self.arm_status = ArmMsgStatus()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.arm_status}\n")
@@ -35,8 +37,9 @@ class C_PiperInterface():
         '''
         机械臂末端姿态二次封装类,增加时间戳
         '''
-        time_stamp: float=0
-        end_pose=ArmMsgEndPoseFeedBack()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.end_pose=ArmMsgEndPoseFeedBack()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.end_pose}\n")
@@ -45,8 +48,9 @@ class C_PiperInterface():
         '''
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         '''
-        time_stamp: float=0
-        joint_state=ArmMsgJointFeedBack()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.joint_state=ArmMsgJointFeedBack()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.joint_state}\n")
@@ -55,8 +59,9 @@ class C_PiperInterface():
         '''
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         '''
-        time_stamp: float=0
-        gripper_state=ArmMsgGripperFeedBack()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.gripper_state=ArmMsgGripperFeedBack()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.gripper_state}\n")
@@ -65,13 +70,14 @@ class C_PiperInterface():
         '''
         机械臂电机驱动高速反馈信息
         '''
-        time_stamp: float=0
-        motor_1=ArmHighSpdFeedback()
-        motor_2=ArmHighSpdFeedback()
-        motor_3=ArmHighSpdFeedback()
-        motor_4=ArmHighSpdFeedback()
-        motor_5=ArmHighSpdFeedback()
-        motor_6=ArmHighSpdFeedback()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.motor_1=ArmHighSpdFeedback()
+            self.motor_2=ArmHighSpdFeedback()
+            self.motor_3=ArmHighSpdFeedback()
+            self.motor_4=ArmHighSpdFeedback()
+            self.motor_5=ArmHighSpdFeedback()
+            self.motor_6=ArmHighSpdFeedback()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"motor_1:{self.motor_1}\n"
@@ -85,13 +91,14 @@ class C_PiperInterface():
         '''
         机械臂电机驱动低速反馈信息
         '''
-        time_stamp: float=0
-        motor_1=ArmLowSpdFeedback()
-        motor_2=ArmLowSpdFeedback()
-        motor_3=ArmLowSpdFeedback()
-        motor_4=ArmLowSpdFeedback()
-        motor_5=ArmLowSpdFeedback()
-        motor_6=ArmLowSpdFeedback()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.motor_1=ArmLowSpdFeedback()
+            self.motor_2=ArmLowSpdFeedback()
+            self.motor_3=ArmLowSpdFeedback()
+            self.motor_4=ArmLowSpdFeedback()
+            self.motor_5=ArmLowSpdFeedback()
+            self.motor_6=ArmLowSpdFeedback()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"motor_1:{self.motor_1}\n"
@@ -105,8 +112,9 @@ class C_PiperInterface():
         '''
         当前电机限制角度/最大速度
         '''
-        time_stamp: float=0
-        current_motor_angle_limit_max_vel=ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.current_motor_angle_limit_max_vel=ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"current_motor_angle_limit_max_vel:{self.current_motor_angle_limit_max_vel}\n")
@@ -115,8 +123,9 @@ class C_PiperInterface():
         '''
         当前末端速度/加速度参数
         '''
-        time_stamp: float=0
-        current_end_vel_acc_param=ArmMsgFeedbackCurrentEndVelAccParam()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.current_end_vel_acc_param=ArmMsgFeedbackCurrentEndVelAccParam()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"current_end_vel_acc_param:{self.current_end_vel_acc_param}\n")
@@ -125,8 +134,9 @@ class C_PiperInterface():
         '''
         碰撞防护等级设置反馈指令
         '''
-        time_stamp: float=0
-        crash_protection_level_feedback=ArmMsgCrashProtectionRatingFeedback()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.crash_protection_level_feedback=ArmMsgCrashProtectionRatingFeedback()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"crash_protection_level_feedback:{self.crash_protection_level_feedback}\n")
@@ -135,8 +145,9 @@ class C_PiperInterface():
         '''
         反馈当前电机最大加速度限制
         '''
-        time_stamp: float=0
-        current_motor_max_acc_limit=ArmMsgFeedbackCurrentMotorMaxAccLimit()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.current_motor_max_acc_limit=ArmMsgFeedbackCurrentMotorMaxAccLimit()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"current_motor_max_acc_limit:{self.current_motor_max_acc_limit}\n")
@@ -146,8 +157,9 @@ class C_PiperInterface():
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         这个是主臂发送的消息，用来读取发送给从臂的目标值
         '''
-        time_stamp: float=0
-        joint_ctrl=ArmMsgJointCtrl()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.joint_ctrl=ArmMsgJointCtrl()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.joint_ctrl}\n")
@@ -157,8 +169,9 @@ class C_PiperInterface():
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
         这个是主臂发送的消息，用来读取发送给从臂的目标值
         '''
-        time_stamp: float=0
-        gripper_ctrl=ArmMsgGripperCtrl()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.gripper_ctrl=ArmMsgGripperCtrl()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.gripper_ctrl}\n")
@@ -167,22 +180,25 @@ class C_PiperInterface():
         '''
         机械臂发送控制指令0x151的消息接收,由主臂发送
         '''
-        time_stamp: float=0
-        ctrl_151=ArmMsgMotionCtrl_2()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.ctrl_151=ArmMsgMotionCtrl_2()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.ctrl_151}\n")
     
     class AllCurrentMotorMaxAccLimit():
-        time_stamp: float=0
-        all_motor_max_acc_limit=ArmMsgFeedbackAllCurrentMotorMaxAccLimit()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.all_motor_max_acc_limit=ArmMsgFeedbackAllCurrentMotorMaxAccLimit()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.all_motor_max_acc_limit}\n")
     
     class AllCurrentMotorAngleLimitMaxSpd():
-        time_stamp: float=0
-        all_motor_angle_limit_max_spd=ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd()
+        def __init__(self):
+            self.time_stamp: float=0
+            self.all_motor_angle_limit_max_spd=ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.all_motor_angle_limit_max_spd}\n")
@@ -191,40 +207,41 @@ class C_PiperInterface():
         '''
         机械臂时间戳
         '''
-        time_stamp_arm_status:float=0
-        time_stamp_end_pose_1:float=0
-        time_stamp_end_pose_2:float=0
-        time_stamp_end_pose_3:float=0
-        time_stamp_joint_12:float=0
-        time_stamp_joint_34:float=0
-        time_stamp_joint_56:float=0
-        time_stamp_motor_high_spd_1:float=0
-        time_stamp_motor_high_spd_2:float=0
-        time_stamp_motor_high_spd_3:float=0
-        time_stamp_motor_high_spd_4:float=0
-        time_stamp_motor_high_spd_5:float=0
-        time_stamp_motor_high_spd_6:float=0
-        time_stamp_motor_low_spd_1:float=0
-        time_stamp_motor_low_spd_2:float=0
-        time_stamp_motor_low_spd_3:float=0
-        time_stamp_motor_low_spd_4:float=0
-        time_stamp_motor_low_spd_5:float=0
-        time_stamp_motor_low_spd_6:float=0
-        time_stamp_joint_ctrl_12:float=0
-        time_stamp_joint_ctrl_34:float=0
-        time_stamp_joint_ctrl_56:float=0
-        time_stamp_motor_max_acc_limit_1=0
-        time_stamp_motor_max_acc_limit_2=0
-        time_stamp_motor_max_acc_limit_3=0
-        time_stamp_motor_max_acc_limit_4=0
-        time_stamp_motor_max_acc_limit_5=0
-        time_stamp_motor_max_acc_limit_6=0
-        time_stamp_motor_angle_limit_max_spd_1=0
-        time_stamp_motor_angle_limit_max_spd_2=0
-        time_stamp_motor_angle_limit_max_spd_3=0
-        time_stamp_motor_angle_limit_max_spd_4=0
-        time_stamp_motor_angle_limit_max_spd_5=0
-        time_stamp_motor_angle_limit_max_spd_6=0
+        def __init__(self):
+            self.time_stamp_arm_status:float=0
+            self.time_stamp_end_pose_1:float=0
+            self.time_stamp_end_pose_2:float=0
+            self.time_stamp_end_pose_3:float=0
+            self.time_stamp_joint_12:float=0
+            self.time_stamp_joint_34:float=0
+            self.time_stamp_joint_56:float=0
+            self.time_stamp_motor_high_spd_1:float=0
+            self.time_stamp_motor_high_spd_2:float=0
+            self.time_stamp_motor_high_spd_3:float=0
+            self.time_stamp_motor_high_spd_4:float=0
+            self.time_stamp_motor_high_spd_5:float=0
+            self.time_stamp_motor_high_spd_6:float=0
+            self.time_stamp_motor_low_spd_1:float=0
+            self.time_stamp_motor_low_spd_2:float=0
+            self.time_stamp_motor_low_spd_3:float=0
+            self.time_stamp_motor_low_spd_4:float=0
+            self.time_stamp_motor_low_spd_5:float=0
+            self.time_stamp_motor_low_spd_6:float=0
+            self.time_stamp_joint_ctrl_12:float=0
+            self.time_stamp_joint_ctrl_34:float=0
+            self.time_stamp_joint_ctrl_56:float=0
+            self.time_stamp_motor_max_acc_limit_1=0
+            self.time_stamp_motor_max_acc_limit_2=0
+            self.time_stamp_motor_max_acc_limit_3=0
+            self.time_stamp_motor_max_acc_limit_4=0
+            self.time_stamp_motor_max_acc_limit_5=0
+            self.time_stamp_motor_max_acc_limit_6=0
+            self.time_stamp_motor_angle_limit_max_spd_1=0
+            self.time_stamp_motor_angle_limit_max_spd_2=0
+            self.time_stamp_motor_angle_limit_max_spd_3=0
+            self.time_stamp_motor_angle_limit_max_spd_4=0
+            self.time_stamp_motor_angle_limit_max_spd_5=0
+            self.time_stamp_motor_angle_limit_max_spd_6=0
     
     def __init__(self, can_name:str="can0") -> None:
         self.can_channel_name:str
