@@ -165,8 +165,8 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface()
     piper.ConnectPort()
-    piper.MotionCtrl_1(0x02,0,0)#恢复
-    piper.MotionCtrl_2(0, 0, 0, 0x00)#位置速度模式
+    piper.MotionCtrl_1(0x02,0,0)#恢复 recover
+    piper.MotionCtrl_2(0, 0, 0, 0x00)#位置速度模式 postion&velocity mode
 ```
 
 ## Control the robotic arm movement
@@ -208,14 +208,14 @@ def enable_fun(piper:C_PiperInterface):
         print("--------------------")
         # 检查是否超过超时时间
         if elapsed_time > timeout:
-            print("超时....")
+            print("Timeout....")
             elapsed_time_flag = True
             enable_flag = True
             break
         time.sleep(1)
         pass
     if(elapsed_time_flag):
-        print("程序自动使能超时,退出程序")
+        print("The program automatically enables timeout, exit the program")
         exit(0)
 
 if __name__ == "__main__":
