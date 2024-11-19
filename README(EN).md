@@ -152,8 +152,8 @@ if __name__ == "__main__":
 ```python
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
-# 注意demo无法直接运行，需要pip安装sdk后才能运行
-# 设置机械臂重置，需要在mit或者示教模式切换为位置速度控制模式时执行
+# 注意demo无法直接运行，需要pip安装sdk后才能运行 you need to pip3 install piper_sdk and then you can run demo
+# 设置机械臂重置，需要在mit或者示教模式切换为位置速度控制模式时执行 Arm reset. Need to be executed when MIT or teaching mode is switched to position speed control mode
 
 from typing import (
     Optional,
