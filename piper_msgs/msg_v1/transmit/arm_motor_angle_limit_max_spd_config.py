@@ -21,7 +21,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
                  motor_num:Literal[1, 2, 3, 4, 5, 6]=1, 
                  max_angle_limit: int=0, 
                  min_angle_limit: int=0,
-                 max_jonit_spd: int=0):
+                 max_joint_spd: int=0):
         """
         电机角度限制/最大速度设置指令
 
@@ -40,7 +40,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         self.motor_num = motor_num
         self.max_angle_limit = max_angle_limit
         self.min_angle_limit = min_angle_limit
-        self.max_jonit_spd = max_jonit_spd
+        self.max_joint_spd = max_joint_spd
 
     def __str__(self):
         """
@@ -50,7 +50,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
                 f"  motor_num: {self.motor_num},\n"
                 f"  max_angle_limit: {self.max_angle_limit}, {self.max_angle_limit * 0.1:.1f},\n"
                 f"  min_angle_limit: {self.min_angle_limit}, {self.min_angle_limit * 0.1:.1f},\n"
-                f"  max_jonit_spd: {self.max_jonit_spd}, {self.max_jonit_spd * 0.3:.3f}\n"
+                f"  max_joint_spd: {self.max_joint_spd}, {self.max_joint_spd * 0.3:.3f}\n"
                 f")")
 
     def __repr__(self):

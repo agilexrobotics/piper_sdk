@@ -193,7 +193,7 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
             msg.arm_feedback_current_motor_angle_limit_max_spd.max_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,1,3))
             msg.arm_feedback_current_motor_angle_limit_max_spd.min_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,3,5))
-            msg.arm_feedback_current_motor_angle_limit_max_spd.max_jonit_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
+            msg.arm_feedback_current_motor_angle_limit_max_spd.max_joint_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_feedback_current_end_vel_acc_param.end_max_linear_vel = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
@@ -202,12 +202,12 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_feedback_current_end_vel_acc_param.end_max_angular_acc = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
         elif(can_id == CanIDPiper.ARM_CRASH_PROTECTION_RATING_FEEDBACK.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
-            msg.arm_crash_protection_rating_feedback.jonit_1_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
-            msg.arm_crash_protection_rating_feedback.jonit_2_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
-            msg.arm_crash_protection_rating_feedback.jonit_3_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
-            msg.arm_crash_protection_rating_feedback.jonit_4_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
-            msg.arm_crash_protection_rating_feedback.jonit_5_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
-            msg.arm_crash_protection_rating_feedback.jonit_6_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_crash_protection_rating_feedback.joint_1_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_crash_protection_rating_feedback.joint_2_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_crash_protection_rating_feedback.joint_3_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+            msg.arm_crash_protection_rating_feedback.joint_4_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
+            msg.arm_crash_protection_rating_feedback.joint_5_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+            msg.arm_crash_protection_rating_feedback.joint_6_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_MAX_ACC_LIMIT.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
@@ -331,7 +331,7 @@ class C_PiperParserV1(C_PiperParserBase):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_angle_limit_max_spd_set.motor_num,False) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_angle_limit) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.min_angle_limit) + \
-                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_jonit_spd,False) + \
+                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_joint_spd,False) + \
                                 [0]
         elif(msg_type_ == ArmMsgType.PiperMsgJointConfig):
              
@@ -362,12 +362,12 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_acc,False)
         elif(msg_type_ == ArmMsgType.PiperMsgCrashProtectionRatingConfig):
              
-            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_1_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_2_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_3_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_4_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_5_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_6_protection_level,False) + \
+            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_1_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_2_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_3_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_4_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_5_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_6_protection_level,False) + \
                                 [0, 0]
         else:
             ret = False
