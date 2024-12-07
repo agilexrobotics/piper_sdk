@@ -4,17 +4,13 @@
 import can
 from can.message import Message
 import time
-from threading import Timer
 import subprocess
 from typing import (
     Callable,
-    Iterator,
     Optional,
-    Sequence,
-    Tuple,
-    Type,
-    Union,
-    cast,
+)
+from typing_extensions import (
+    Literal,
 )
 
 
@@ -238,8 +234,8 @@ count = 0
 
 def check_and_convert_to_negative(value):
     # 定义 32 位整数的范围
-    INT32_MAX = 2**31 - 1
-    INT32_MIN = -(2**31)
+    # INT32_MAX = 2**31 - 1
+    # INT32_MIN = -(2**31)
 
     # 判断是否超出范围
     # if value > INT32_MAX or value < INT32_MIN:
@@ -252,12 +248,6 @@ def check_and_convert_to_negative(value):
         value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^32
 
     return value
-
-
-from typing_extensions import (
-    Literal,
-    LiteralString,
-)
 
 
 def ConvertBytesToInt(
