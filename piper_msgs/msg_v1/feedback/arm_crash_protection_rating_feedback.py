@@ -21,34 +21,34 @@ class ArmMsgCrashProtectionRatingFeedback:
     :Byte 7: 保留
     '''
     def __init__(self, 
-                 jonit_1_protection_level:int=0, 
-                 jonit_2_protection_level:int=0, 
-                 jonit_3_protection_level: int=0,
-                 jonit_4_protection_level: int=0,
-                 jonit_5_protection_level: int=0,
-                 jonit_6_protection_level: int=0
+                 joint_1_protection_level:int=0, 
+                 joint_2_protection_level:int=0, 
+                 joint_3_protection_level: int=0,
+                 joint_4_protection_level: int=0,
+                 joint_5_protection_level: int=0,
+                 joint_6_protection_level: int=0
                  ):
         """
         初始化 ArmMsgCrashProtectionRatingFeedback 实例。
         """
-        self.jonit_1_protection_level = jonit_1_protection_level
-        self.jonit_2_protection_level = jonit_2_protection_level
-        self.jonit_3_protection_level = jonit_3_protection_level
-        self.jonit_4_protection_level = jonit_4_protection_level
-        self.jonit_5_protection_level = jonit_5_protection_level
-        self.jonit_6_protection_level = jonit_6_protection_level
+        self.joint_1_protection_level = joint_1_protection_level
+        self.joint_2_protection_level = joint_2_protection_level
+        self.joint_3_protection_level = joint_3_protection_level
+        self.joint_4_protection_level = joint_4_protection_level
+        self.joint_5_protection_level = joint_5_protection_level
+        self.joint_6_protection_level = joint_6_protection_level
 
     def __str__(self):
         """
         返回对象的字符串表示，用于打印。
         """
         return (f"ArmMsgCrashProtectionRatingFeedback(\n"
-                f"  jonit_1_protection_level: {self.jonit_1_protection_level},\n"
-                f"  jonit_2_protection_level: {self.jonit_2_protection_level},\n"
-                f"  jonit_3_protection_level: {self.jonit_3_protection_level},\n"
-                f"  jonit_4_protection_level: {self.jonit_4_protection_level},\n"
-                f"  jonit_5_protection_level: {self.jonit_5_protection_level},\n"
-                f"  jonit_6_protection_level: {self.jonit_6_protection_level}\n"
+                f"  joint_1_protection_level: {self.joint_1_protection_level},\n"
+                f"  joint_2_protection_level: {self.joint_2_protection_level},\n"
+                f"  joint_3_protection_level: {self.joint_3_protection_level},\n"
+                f"  joint_4_protection_level: {self.joint_4_protection_level},\n"
+                f"  joint_5_protection_level: {self.joint_5_protection_level},\n"
+                f"  joint_6_protection_level: {self.joint_6_protection_level}\n"
                 f")")
 
     def __repr__(self):
