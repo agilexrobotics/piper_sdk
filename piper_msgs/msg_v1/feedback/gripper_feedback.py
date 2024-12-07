@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 
+
 class ArmMsgGripperFeedBack:
-    '''
+    """
     夹爪反馈消息
-    '''
-    def __init__(self, grippers_angle: int=0, grippers_effort: int=0, status_code: int=0):
+    """
+
+    def __init__(
+        self, grippers_angle: int = 0, grippers_effort: int = 0, status_code: int = 0
+    ):
         """
         初始化 ArmMsgGripperFeedBack 实例。
 
@@ -17,27 +21,30 @@ class ArmMsgGripperFeedBack:
         self.grippers_effort = grippers_effort
         self._status_code = status_code
         self.foc_status = self.FOC_Status()
-    
+
     class FOC_Status:
         def __init__(self):
-            self.voltage_too_low  = False
+            self.voltage_too_low = False
             self.motor_overheating = False
             self.driver_overcurrent = False
             self.driver_overheating = False
             self.sensor_status = False
             self.driver_error_status = False
             self.driver_enable_status = False
-            self.homing_status  = False
-        def __str__(self): 
-            return (f"    voltage_too_low : {self.voltage_too_low}\n"
-                    f"    motor_overheating: {self.motor_overheating}\n"
-                    f"    driver_overcurrent: {self.driver_overcurrent}\n"
-                    f"    driver_overheating: {self.driver_overheating}\n"
-                    f"    sensor_status: {self.sensor_status}\n"
-                    f"    driver_error_status: {self.driver_error_status}\n"
-                    f"    driver_enable_status: {self.driver_enable_status}\n"
-                    f"    homing_status: {self.homing_status}\n"
-                    )
+            self.homing_status = False
+
+        def __str__(self):
+            return (
+                f"    voltage_too_low : {self.voltage_too_low}\n"
+                f"    motor_overheating: {self.motor_overheating}\n"
+                f"    driver_overcurrent: {self.driver_overcurrent}\n"
+                f"    driver_overheating: {self.driver_overheating}\n"
+                f"    sensor_status: {self.sensor_status}\n"
+                f"    driver_error_status: {self.driver_error_status}\n"
+                f"    driver_enable_status: {self.driver_enable_status}\n"
+                f"    homing_status: {self.homing_status}\n"
+            )
+
     @property
     def status_code(self):
         return self._status_code
@@ -56,18 +63,20 @@ class ArmMsgGripperFeedBack:
         self.foc_status.driver_error_status = bool(value & (1 << 5))
         self.foc_status.driver_enable_status = bool(value & (1 << 6))
         self.foc_status.homing_status = bool(value & (1 << 7))
-    
+
     def __str__(self):
         """
         返回对象的字符串表示，用于打印。
 
         :return: 格式化的字符串表示夹爪的角度、速度和状态码。
         """
-        return (f"ArmMsgGripperFeedBack(\n"
-                f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
-                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.2f},\n"
-                f"  status_code: \n{self.foc_status}\n"
-                f")")
+        return (
+            f"ArmMsgGripperFeedBack(\n"
+            f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
+            f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.2f},\n"
+            f"  status_code: \n{self.foc_status}\n"
+            f")"
+        )
 
     def __repr__(self):
         """

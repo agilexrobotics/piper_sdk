@@ -4,8 +4,9 @@ from typing_extensions import (
     Literal,
 )
 
+
 class ArmMsgInstructionResponseConfig:
-    '''
+    """
     设置指令应答
 
     0x476
@@ -17,10 +18,13 @@ class ArmMsgInstructionResponseConfig:
                         零点成功设置 : 0x01
                         设置失败/未设置: 0x00
                         仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答 0x01
-    '''
-    def __init__(self,
-                 instruction_index:int=0,
-                 zero_config_success_flag:Literal[0x00, 0x01]=0):
+    """
+
+    def __init__(
+        self,
+        instruction_index: int = 0,
+        zero_config_success_flag: Literal[0x00, 0x01] = 0,
+    ):
         """
         初始化 ArmMsgSearchMotorMaxAngleSpdAccConfig 实例。
 
@@ -37,7 +41,9 @@ class ArmMsgInstructionResponseConfig:
                             仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答 0x01
         """
         if zero_config_success_flag not in [0x00, 0x01]:
-            raise ValueError(f"zero_config_success_flag 值 {zero_config_success_flag} 超出范围 [0x01, 0x02]")
+            raise ValueError(
+                f"zero_config_success_flag 值 {zero_config_success_flag} 超出范围 [0x01, 0x02]"
+            )
         self.instruction_index = instruction_index
         self.zero_config_success_flag = zero_config_success_flag
 
@@ -47,10 +53,12 @@ class ArmMsgInstructionResponseConfig:
 
         :return: 格式化的字符串
         """
-        return (f"ArmMsgInstructionResponseConfig(\n"
-                f"  instruction_index: {self.instruction_index },\n"
-                f"  zero_config_success_flag: {self.zero_config_success_flag },\n"
-                f")")
+        return (
+            f"ArmMsgInstructionResponseConfig(\n"
+            f"  instruction_index: {self.instruction_index },\n"
+            f"  zero_config_success_flag: {self.zero_config_success_flag },\n"
+            f")"
+        )
 
     def __repr__(self):
         """

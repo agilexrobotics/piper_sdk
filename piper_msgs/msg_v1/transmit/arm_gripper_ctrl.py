@@ -3,15 +3,20 @@
 from typing_extensions import (
     Literal,
 )
+
+
 class ArmMsgGripperCtrl:
-    '''
+    """
     夹爪发送消息
-    '''
-    def __init__(self, 
-                 grippers_angle: int=0, 
-                 grippers_effort: int=0, 
-                 status_code: Literal[0x00,0x01,0x02,0x03]=0,
-                 set_zero: Literal[0x00,0xAE]=0):
+    """
+
+    def __init__(
+        self,
+        grippers_angle: int = 0,
+        grippers_effort: int = 0,
+        status_code: Literal[0x00, 0x01, 0x02, 0x03] = 0,
+        set_zero: Literal[0x00, 0xAE] = 0,
+    ):
         """
         初始化 ArmMsgGripperCtrl 实例。
 
@@ -27,7 +32,9 @@ class ArmMsgGripperCtrl:
         :Byte 6 set_zero: uint8, 设定当前位置为0点
         """
         if status_code not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"status_code 值 {status_code} 超出范围 [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(
+                f"status_code 值 {status_code} 超出范围 [0x00, 0x01, 0x02, 0x03]"
+            )
         self.grippers_angle = grippers_angle
         self.grippers_effort = grippers_effort
         self.status_code = status_code
@@ -38,12 +45,14 @@ class ArmMsgGripperCtrl:
         返回对象的字符串表示，用于打印。
         :return: 格式化的字符串表示夹爪的角度、速度和状态码。
         """
-        return (f"ArmMsgGripperCtrl(\n"
-                f"  grippers_angle: {self.grippers_angle * 0.001:.3f},\n"
-                f"  grippers_effort: {self.grippers_effort * 0.01:.2f},\n"
-                f"  status_code: {self.status_code},\n"
-                f"  set_zero: {self.set_zero}\n"
-                f")")
+        return (
+            f"ArmMsgGripperCtrl(\n"
+            f"  grippers_angle: {self.grippers_angle * 0.001:.3f},\n"
+            f"  grippers_effort: {self.grippers_effort * 0.01:.2f},\n"
+            f"  status_code: {self.status_code},\n"
+            f"  set_zero: {self.set_zero}\n"
+            f")"
+        )
 
     def __repr__(self):
         """

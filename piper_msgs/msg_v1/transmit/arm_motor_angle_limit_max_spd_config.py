@@ -3,8 +3,10 @@
 from typing_extensions import (
     Literal,
 )
+
+
 class ArmMsgMotorAngleLimitMaxSpdSet:
-    '''
+    """
     电机角度限制/最大速度设置指令
 
     0x474
@@ -16,12 +18,15 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
     :Byte 4 最小角度限制 L
     :Byte 5 最大关节速度 H: uint16, 单位 0.001rad/s
     :Byte 6 最大关节速度 L
-    '''
-    def __init__(self, 
-                 motor_num:Literal[1, 2, 3, 4, 5, 6]=1, 
-                 max_angle_limit: int=0, 
-                 min_angle_limit: int=0,
-                 max_jonit_spd: int=0):
+    """
+
+    def __init__(
+        self,
+        motor_num: Literal[1, 2, 3, 4, 5, 6] = 1,
+        max_angle_limit: int = 0,
+        min_angle_limit: int = 0,
+        max_jonit_spd: int = 0,
+    ):
         """
         电机角度限制/最大速度设置指令
 
@@ -46,12 +51,14 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         """
         返回对象的字符串表示，用于打印。
         """
-        return (f"ArmMsgMotorAngleSpdLimitConfig(\n"
-                f"  motor_num: {self.motor_num},\n"
-                f"  max_angle_limit: {self.max_angle_limit}, {self.max_angle_limit * 0.1:.1f},\n"
-                f"  min_angle_limit: {self.min_angle_limit}, {self.min_angle_limit * 0.1:.1f},\n"
-                f"  max_jonit_spd: {self.max_jonit_spd}, {self.max_jonit_spd * 0.3:.3f}\n"
-                f")")
+        return (
+            f"ArmMsgMotorAngleSpdLimitConfig(\n"
+            f"  motor_num: {self.motor_num},\n"
+            f"  max_angle_limit: {self.max_angle_limit}, {self.max_angle_limit * 0.1:.1f},\n"
+            f"  min_angle_limit: {self.min_angle_limit}, {self.min_angle_limit * 0.1:.1f},\n"
+            f"  max_jonit_spd: {self.max_jonit_spd}, {self.max_jonit_spd * 0.3:.3f}\n"
+            f")"
+        )
 
     def __repr__(self):
         """
