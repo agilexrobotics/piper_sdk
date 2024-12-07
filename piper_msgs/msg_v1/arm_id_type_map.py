@@ -7,10 +7,11 @@ from typing import (
 from .arm_msg_type import ArmMsgType
 from .can_id import CanIDPiper
 
+
 class ArmMessageMapping:
-    '''
+    """
     机械臂消息类型和CAN ID的映射
-    '''
+    """
 
     # 初始化映射字典
     id_to_type_mapping = {
@@ -85,13 +86,15 @@ class ArmMessageMapping:
     type_to_id_mapping = {v: k for k, v in id_to_type_mapping.items()}
 
     @staticmethod
-    def get_mapping(can_id: Optional[int] = None, msg_type: Optional[ArmMsgType] = None):
-        '''
+    def get_mapping(
+        can_id: Optional[int] = None, msg_type: Optional[ArmMsgType] = None
+    ):
+        """
         根据输入的参数返回对应的映射值，输入 id 返回类型，输入类型返回 id
         :param can_id: CAN ID
         :param msg_type: 机械臂消息类型
         :return: 对应的类型或 id
-        '''
+        """
         if can_id is not None and msg_type is not None:
             raise ValueError("只能输入 CAN ID 或消息类型中的一个")
 
@@ -108,6 +111,7 @@ class ArmMessageMapping:
                 raise ValueError(f"消息类型 {msg_type} 不在映射中")
 
         raise ValueError("必须输入 CAN ID 或消息类型中的一个")
+
 
 # 测试代码
 # if __name__ == "__main__":

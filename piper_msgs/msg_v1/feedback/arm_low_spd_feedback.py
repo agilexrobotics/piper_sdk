@@ -4,8 +4,10 @@ import math
 from typing_extensions import (
     Literal,
 )
+
+
 class ArmLowSpdFeedback:
-    '''
+    """
     驱动器信息高速反馈 0x6
 
     节点 ID: 0x1~0x06
@@ -27,20 +29,24 @@ class ArmLowSpdFeedback:
         bit[7] 堵转保护状态(0: 没有回零 1:已经回零,或已经回过零)-7.25修改，之前为回零状态
     :Byte 6: 母线电流高八位, uint16, 当前驱动器电流单位: 0.001A
     :Byte 7: 母线电流低八位
-    '''
-    def __init__(self, 
-                 can_id:Literal[0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]=0,
-                 vol:int=0, 
-                 foc_temp:int=0, 
-                 motor_temp: int=0,
-                 foc_status: int=0,
-                 bus_current: int=0,
-                 ):
+    """
+
+    def __init__(
+        self,
+        can_id: Literal[0x000, 0x261, 0x262, 0x263, 0x264, 0x264, 0x265, 0x266] = 0,
+        vol: int = 0,
+        foc_temp: int = 0,
+        motor_temp: int = 0,
+        foc_status: int = 0,
+        bus_current: int = 0,
+    ):
         """
         初始化 ArmLowSpdFeedback 实例。
         """
-        if can_id not in [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]:
-            raise ValueError(f"can_id 值 {can_id} 不在范围 [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]")
+        if can_id not in [0x000, 0x261, 0x262, 0x263, 0x264, 0x264, 0x265, 0x266]:
+            raise ValueError(
+                f"can_id 值 {can_id} 不在范围 [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]"
+            )
         self.can_id = can_id
         self.vol = vol
         self.foc_temp = foc_temp
@@ -51,24 +57,26 @@ class ArmLowSpdFeedback:
 
     class FOC_Status:
         def __init__(self):
-            self.voltage_too_low  = False
+            self.voltage_too_low = False
             self.motor_overheating = False
             self.driver_overcurrent = False
             self.driver_overheating = False
             self.sensor_status = False
             self.driver_error_status = False
             self.driver_enable_status = False
-            self.homing_status  = False
-        def __str__(self): 
-            return (f"    voltage_too_low : {self.voltage_too_low}\n"
-                    f"    motor_overheating: {self.motor_overheating}\n"
-                    f"    driver_overcurrent: {self.driver_overcurrent}\n"
-                    f"    driver_overheating: {self.driver_overheating}\n"
-                    f"    sensor_status: {self.sensor_status}\n"
-                    f"    driver_error_status: {self.driver_error_status}\n"
-                    f"    driver_enable_status: {self.driver_enable_status}\n"
-                    f"    homing_status: {self.homing_status}\n"
-                    )
+            self.homing_status = False
+
+        def __str__(self):
+            return (
+                f"    voltage_too_low : {self.voltage_too_low}\n"
+                f"    motor_overheating: {self.motor_overheating}\n"
+                f"    driver_overcurrent: {self.driver_overcurrent}\n"
+                f"    driver_overheating: {self.driver_overheating}\n"
+                f"    sensor_status: {self.sensor_status}\n"
+                f"    driver_error_status: {self.driver_error_status}\n"
+                f"    driver_enable_status: {self.driver_enable_status}\n"
+                f"    homing_status: {self.homing_status}\n"
+            )
 
     @property
     def foc_status_code(self):
@@ -77,7 +85,9 @@ class ArmLowSpdFeedback:
     @foc_status_code.setter
     def foc_status_code(self, value: int):
         if not (0 <= value < 2**8):
-            raise ValueError("foc_status_code must be an 8-bit integer between 0 and 255.")
+            raise ValueError(
+                "foc_status_code must be an 8-bit integer between 0 and 255."
+            )
         self._foc_status_code = value
         # Update foc_status based on the foc_status_code bits
         self.foc_status.voltage_too_low = bool(value & (1 << 0))
@@ -93,14 +103,16 @@ class ArmLowSpdFeedback:
         """
         返回对象的字符串表示，用于打印。
         """
-        return (f"ArmLowSpdFeedback(\n"
-                f"  can_id: {hex(self.can_id)},\n"
-                f"  vol: {self.vol}, {self.vol*0.1:.1f}V,\n"
-                f"  foc_temp: {self.foc_temp }C,\n"
-                f"  motor_temp: {self.motor_temp }C,\n"
-                f"  foc_status: \n{self.foc_status },\n"
-                f"  bus_current: {self.bus_current}, {self.bus_current*0.001:.1f}A\n"
-                f")")
+        return (
+            f"ArmLowSpdFeedback(\n"
+            f"  can_id: {hex(self.can_id)},\n"
+            f"  vol: {self.vol}, {self.vol*0.1:.1f}V,\n"
+            f"  foc_temp: {self.foc_temp }C,\n"
+            f"  motor_temp: {self.motor_temp }C,\n"
+            f"  foc_status: \n{self.foc_status },\n"
+            f"  bus_current: {self.bus_current}, {self.bus_current*0.001:.1f}A\n"
+            f")"
+        )
 
     def __repr__(self):
         """

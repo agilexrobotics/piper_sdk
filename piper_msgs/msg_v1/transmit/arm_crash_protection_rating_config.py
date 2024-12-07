@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 
+
 class ArmMsgCrashProtectionRatingConfig:
-    '''
+    """
     末端速度/加速度参数设置指令
-    
+
     0x47A
 
     有效值 : 0~8
@@ -19,15 +20,17 @@ class ArmMsgCrashProtectionRatingConfig:
     :Byte 5: 6 号关节碰撞防护等级, uint8
     :Byte 6: 保留
     :Byte 7: 保留
-    '''
-    def __init__(self, 
-                 jonit_1_protection_level:int=0xFF, 
-                 jonit_2_protection_level:int=0xFF, 
-                 jonit_3_protection_level: int=0xFF,
-                 jonit_4_protection_level: int=0xFF,
-                 jonit_5_protection_level: int=0xFF,
-                 jonit_6_protection_level: int=0xFF
-                 ):
+    """
+
+    def __init__(
+        self,
+        jonit_1_protection_level: int = 0xFF,
+        jonit_2_protection_level: int = 0xFF,
+        jonit_3_protection_level: int = 0xFF,
+        jonit_4_protection_level: int = 0xFF,
+        jonit_5_protection_level: int = 0xFF,
+        jonit_6_protection_level: int = 0xFF,
+    ):
         """
         初始化 ArmMsgCrashProtectionRatingConfig 实例。
         """
@@ -42,14 +45,16 @@ class ArmMsgCrashProtectionRatingConfig:
         """
         返回对象的字符串表示，用于打印。
         """
-        return (f"ArmMsgCrashProtectionRatingConfig(\n"
-                f"  jonit_1_protection_level: {self.jonit_1_protection_level},\n"
-                f"  jonit_2_protection_level: {self.jonit_2_protection_level},\n"
-                f"  jonit_3_protection_level: {self.jonit_3_protection_level},\n"
-                f"  jonit_4_protection_level: {self.jonit_4_protection_level},\n"
-                f"  jonit_5_protection_level: {self.jonit_5_protection_level},\n"
-                f"  jonit_6_protection_level: {self.jonit_6_protection_level}\n"
-                f")")
+        return (
+            f"ArmMsgCrashProtectionRatingConfig(\n"
+            f"  jonit_1_protection_level: {self.jonit_1_protection_level},\n"
+            f"  jonit_2_protection_level: {self.jonit_2_protection_level},\n"
+            f"  jonit_3_protection_level: {self.jonit_3_protection_level},\n"
+            f"  jonit_4_protection_level: {self.jonit_4_protection_level},\n"
+            f"  jonit_5_protection_level: {self.jonit_5_protection_level},\n"
+            f"  jonit_6_protection_level: {self.jonit_6_protection_level}\n"
+            f")"
+        )
 
     def __repr__(self):
         """

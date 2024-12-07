@@ -3,8 +3,10 @@
 from typing_extensions import (
     Literal,
 )
+
+
 class ArmMsgParamEnquiryAndConfig:
-    '''
+    """
     机械臂参数查询与设置指令
 
     0x477
@@ -19,14 +21,16 @@ class ArmMsgParamEnquiryAndConfig:
     :Byte 4: 设置末端负载, uint8, 0x00 : 空载
                                 0x01 : 半载
                                 0x02 : 满载
-    '''
-    def __init__(self, 
-                 param_enquiry:Literal[0x00, 0x01, 0x02]=0x00, 
-                 param_setting: Literal[0x00, 0x01]=0, 
-                 data_feedback_0x48x: Literal[0x00, 0x01, 0x02]=0x02,
-                 end_load_param_setting_effective: Literal[0x00, 0xAE]=0,
-                 set_end_load: Literal[0x00, 0x01, 0x02, 0x03]=0x03
-                 ):
+    """
+
+    def __init__(
+        self,
+        param_enquiry: Literal[0x00, 0x01, 0x02] = 0x00,
+        param_setting: Literal[0x00, 0x01] = 0,
+        data_feedback_0x48x: Literal[0x00, 0x01, 0x02] = 0x02,
+        end_load_param_setting_effective: Literal[0x00, 0xAE] = 0,
+        set_end_load: Literal[0x00, 0x01, 0x02, 0x03] = 0x03,
+    ):
         """
         初始化 ArmMsgMotorAngleSpdLimitConfig 实例。
 
@@ -46,15 +50,23 @@ class ArmMsgParamEnquiryAndConfig:
                                     0x02 : 满载
         """
         if param_enquiry not in [0x00, 0x01, 0x02]:
-            raise ValueError(f"param_enquiry 值 {param_enquiry} 超出范围 [0x00, 0x01, 0x02]")
+            raise ValueError(
+                f"param_enquiry 值 {param_enquiry} 超出范围 [0x00, 0x01, 0x02]"
+            )
         if param_setting not in [0x00, 0x01]:
             raise ValueError(f"param_setting 值 {param_setting} 超出范围 [0x00, 0x01]")
         if data_feedback_0x48x not in [0x00, 0x01, 0x02]:
-            raise ValueError(f"data_feedback_0x48x 值 {data_feedback_0x48x} 超出范围 [0x00, 0x01, 0x02]")
+            raise ValueError(
+                f"data_feedback_0x48x 值 {data_feedback_0x48x} 超出范围 [0x00, 0x01, 0x02]"
+            )
         if end_load_param_setting_effective not in [0x00, 0xAE]:
-            raise ValueError(f"end_load_param_setting_effective 值 {end_load_param_setting_effective} 超出范围 [0x00, 0xAE]")
+            raise ValueError(
+                f"end_load_param_setting_effective 值 {end_load_param_setting_effective} 超出范围 [0x00, 0xAE]"
+            )
         if set_end_load not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"set_end_load 值 {set_end_load} 超出范围 [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(
+                f"set_end_load 值 {set_end_load} 超出范围 [0x00, 0x01, 0x02, 0x03]"
+            )
         self.param_enquiry = param_enquiry
         self.param_setting = param_setting
         self.data_feedback_0x48x = data_feedback_0x48x
@@ -65,13 +77,15 @@ class ArmMsgParamEnquiryAndConfig:
         """
         返回对象的字符串表示，用于打印。
         """
-        return (f"ArmMsgParamEnquiryAndConfig(\n"
-                f"  param_enquiry: {self.param_enquiry},\n"
-                f"  param_setting: {self.param_setting},\n"
-                f"  data_feedback_0x48x: {self.data_feedback_0x48x},\n"
-                f"  end_load_param_setting_effective: {self.end_load_param_setting_effective},\n"
-                f"  set_end_load: {self.set_end_load}\n"
-                f")")
+        return (
+            f"ArmMsgParamEnquiryAndConfig(\n"
+            f"  param_enquiry: {self.param_enquiry},\n"
+            f"  param_setting: {self.param_setting},\n"
+            f"  data_feedback_0x48x: {self.data_feedback_0x48x},\n"
+            f"  end_load_param_setting_effective: {self.end_load_param_setting_effective},\n"
+            f"  set_end_load: {self.set_end_load}\n"
+            f")"
+        )
 
     def __repr__(self):
         """

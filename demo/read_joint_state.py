@@ -13,6 +13,7 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while True:
         import time
+
         # a.SearchMotorMaxAngleSpdAccLimit(1, 1)
         # a.ArmParamEnquiryAndConfig(1,0,2,0,3)
         # a.GripperCtrl(50000,1500,0x01)

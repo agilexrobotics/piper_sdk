@@ -17,28 +17,32 @@ from typing import (
     cast,
 )
 
-class C_STD_CAN():
-    '''
+
+class C_STD_CAN:
+    """
     基础CAN数据帧的收发,内无线程创建,需要在类外调用的时候创建线程来循环read
-    '''
-    def __init__(self, 
-                 channel_name:str="can0", 
-                 bustype="socketcan", 
-                 expected_bitrate:int=1000000,
-                 judge_flag:bool=True, 
-                 auto_init:bool=True,
-                 callback_function: Callable = None) -> None:
+    """
+
+    def __init__(
+        self,
+        channel_name: str = "can0",
+        bustype="socketcan",
+        expected_bitrate: int = 1000000,
+        judge_flag: bool = True,
+        auto_init: bool = True,
+        callback_function: Callable = None,
+    ) -> None:
         self.channel_name = channel_name
         self.bustype = bustype
         self.expected_bitrate = expected_bitrate
-        self.rx_message:Optional[Message]   #创建消息接收类
-        self.callback_function = callback_function  #接收回调函数
+        self.rx_message: Optional[Message]  # 创建消息接收类
+        self.callback_function = callback_function  # 接收回调函数
         self.bus = None
-        if(judge_flag):
+        if judge_flag:
             self.JudgeCanInfo()
-        if(auto_init):
-            self.Init()#创建can总线交互
-        
+        if auto_init:
+            self.Init()  # 创建can总线交互
+
     def __del__(self):
         try:
             self.bus.shutdown()  # 关闭 CAN 总线
@@ -47,23 +51,23 @@ class C_STD_CAN():
             print("CAN bus connection was not properly initialized.")
         except Exception as e:
             print(f"Error occurred while shutting down CAN bus: {e}")
-    
+
     def Init(self):
-        """初始化can总线
-        """
+        """初始化can总线"""
         if self.bus is not None:
             print("CAN bus is already open.")
             return
         try:
-            self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)
-            print(self.channel_name,"bus opened successfully.")
+            self.bus = can.interface.Bus(
+                channel=self.channel_name, bustype=self.bustype
+            )
+            print(self.channel_name, "bus opened successfully.")
         except can.CanError as e:
             print(f"Failed to open CAN bus: {e}")
             self.bus = None
 
     def Close(self):
-        """关闭can总线
-        """
+        """关闭can总线"""
         if self.bus is not None:
             try:
                 self.bus.shutdown()  # 关闭 CAN 总线
@@ -80,11 +84,11 @@ class C_STD_CAN():
         else:
             print("CAN bus was not open.")
             return 0
-    
+
     def JudgeCanInfo(self):
-        '''
+        """
         类初始化时是否检测基础信息
-        '''
+        """
         # 检查 CAN 端口是否存在
         if not self.is_can_socket_available(self.channel_name):
             raise ValueError(f"CAN socket {self.channel_name} does not exist.")
@@ -95,10 +99,14 @@ class C_STD_CAN():
         print(self.channel_name, " is UP")
         # 检查 CAN 端口的比特率
         actual_bitrate = self.get_can_bitrate(self.channel_name)
-        if self.expected_bitrate is not None and not (actual_bitrate == self.expected_bitrate):
-            raise ValueError(f"CAN port {self.channel_name} bitrate is {actual_bitrate} bps, expected {self.expected_bitrate} bps.")
+        if self.expected_bitrate is not None and not (
+            actual_bitrate == self.expected_bitrate
+        ):
+            raise ValueError(
+                f"CAN port {self.channel_name} bitrate is {actual_bitrate} bps, expected {self.expected_bitrate} bps."
+            )
         print(self.channel_name, " bitrate is ", self.expected_bitrate)
-    
+
     def GetBirtrate(self):
         return self.expected_bitrate
 
@@ -109,7 +117,7 @@ class C_STD_CAN():
         if self.is_can_bus_ok():
             self.rx_message = self.bus.recv()
             if self.rx_message and self.callback_function:
-                self.callback_function(self.rx_message) #回调函数处理接收的原始数据
+                self.callback_function(self.rx_message)  # 回调函数处理接收的原始数据
         else:
             print("CAN bus is not OK, skipping message read")
 
@@ -121,18 +129,20 @@ class C_STD_CAN():
             data (_type_): _description_
             is_extended_id_ (bool, optional): _description_. Defaults to False.
         """
-        message = can.Message(channel=self.channel_name,
-                              arbitration_id=arbitration_id, 
-                              data=data, 
-                              dlc=8,
-                              is_extended_id=False)
+        message = can.Message(
+            channel=self.channel_name,
+            arbitration_id=arbitration_id,
+            data=data,
+            dlc=8,
+            is_extended_id=False,
+        )
         if self.is_can_bus_ok():
             try:
                 self.bus.send(message)
                 # print(message)
                 # print(f"Message sent on {self.bus.channel_info}")
             except can.CanError:
-                print(can.CanError,"Message NOT sent")
+                print(can.CanError, "Message NOT sent")
         else:
             print("CAN bus is not OK, cannot send message")
 
@@ -153,7 +163,7 @@ class C_STD_CAN():
         else:
             print(f"Unknown CAN bus state: {bus_state}")
             return False
-    
+
     def is_can_socket_available(self, channel_name: str) -> bool:
         """
         检查给定的 CAN 端口是否存在。
@@ -170,9 +180,10 @@ class C_STD_CAN():
         获取系统中所有可用的 CAN 端口。
         """
         import os
+
         can_ports = []
-        for item in os.listdir('/sys/class/net/'):
-            if 'can' in item:
+        for item in os.listdir("/sys/class/net/"):
+            if "can" in item:
                 can_ports.append(item)
         return can_ports
 
@@ -206,29 +217,34 @@ class C_STD_CAN():
         获取指定 CAN 端口的比特率。
         """
         try:
-            result = subprocess.run(['ip', '-details', 'link', 'show', channel_name],
-                                    capture_output=True, text=True)
+            result = subprocess.run(
+                ["ip", "-details", "link", "show", channel_name],
+                capture_output=True,
+                text=True,
+            )
             output = result.stdout
-            for line in output.split('\n'):
-                if 'bitrate' in line:
-                    return int(line.split('bitrate ')[1].split(' ')[0])
+            for line in output.split("\n"):
+                if "bitrate" in line:
+                    return int(line.split("bitrate ")[1].split(" ")[0])
             return "Unknown"
         except Exception as e:
             print(f"Error while getting bitrate: {e}")
             return "Unknown"
 
+
 tim_stamp = time.time()
 count = 0
+
 
 def check_and_convert_to_negative(value):
     # 定义 32 位整数的范围
     INT32_MAX = 2**31 - 1
-    INT32_MIN = -2**31
+    INT32_MIN = -(2**31)
 
     # 判断是否超出范围
     # if value > INT32_MAX or value < INT32_MIN:
     #     print("Warning: Value is out of 32-bit range, which means it would overflow in C-like languages.")
-    
+
     # 转换成 32 位有符号整数
     value &= 0xFFFFFFFF  # 将 value 转换成 32 位无符号整数
 
@@ -236,18 +252,27 @@ def check_and_convert_to_negative(value):
         value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^32
 
     return value
+
+
 from typing_extensions import (
     Literal,
     LiteralString,
 )
 
-def ConvertBytesToInt(bytes:bytearray, first_index:int, second_index:int, byteorder:Literal["little", "big"]):
-        return int.from_bytes(bytes[first_index:second_index], byteorder=byteorder)
 
-def callback(rx:Optional[Message]):
+def ConvertBytesToInt(
+    bytes: bytearray,
+    first_index: int,
+    second_index: int,
+    byteorder: Literal["little", "big"],
+):
+    return int.from_bytes(bytes[first_index:second_index], byteorder=byteorder)
+
+
+def callback(rx: Optional[Message]):
     global tim_stamp
     global count
-    if(rx.arbitration_id == 0x2A5):
+    if rx.arbitration_id == 0x2A5:
         # if(abs(rx.timestamp - tim_stamp) > 1):
         #     tim_stamp = rx.timestamp
         #     print(count)
@@ -259,12 +284,17 @@ def callback(rx:Optional[Message]):
 
         # 提取 byte0 到 byte3 (第一个数)
         # print(rx.data)
-        number1 = check_and_convert_to_negative(ConvertBytesToInt(rx.data,0,4,'big'))  # 使用大端字节序
+        number1 = check_and_convert_to_negative(
+            ConvertBytesToInt(rx.data, 0, 4, "big")
+        )  # 使用大端字节序
         # 提取 byte4 到 byte7 (第二个数)
-        number2 = check_and_convert_to_negative(int.from_bytes(rx.data[4:8], byteorder='big'))  # 使用大端字节序
-        print(number1,number2)
+        number2 = check_and_convert_to_negative(
+            int.from_bytes(rx.data[4:8], byteorder="big")
+        )  # 使用大端字节序
+        print(number1, number2)
         # print(f"{rx.data.hex()}")
         pass
+
 
 # a = C_STD_CAN(callback_function = callback)
 # while True:

@@ -4,8 +4,10 @@ import math
 from typing_extensions import (
     Literal,
 )
+
+
 class ArmHighSpdFeedback:
-    '''
+    """
     驱动器信息高速反馈 0x5
 
     节点 ID: 0x1~0x06
@@ -19,18 +21,22 @@ class ArmHighSpdFeedback:
     :Byte 5: 位置次高位
     :Byte 6: 位置次低位
     :Byte 7: 位置最低位
-    '''
-    def __init__(self, 
-                 can_id:Literal[0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]=0,
-                 motor_speed:int=0, 
-                 current:int=0, 
-                 pos: int=0,
-                 ):
+    """
+
+    def __init__(
+        self,
+        can_id: Literal[0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256] = 0,
+        motor_speed: int = 0,
+        current: int = 0,
+        pos: int = 0,
+    ):
         """
         初始化 ArmHighSpdFeedback 实例。
         """
-        if can_id not in [0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]:
-            raise ValueError(f"can_id 值 {can_id} 不在范围 [0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]")
+        if can_id not in [0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256]:
+            raise ValueError(
+                f"can_id 值 {can_id} 不在范围 [0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]"
+            )
         self.can_id = can_id
         self.motor_speed = motor_speed
         self.current = current
@@ -40,12 +46,14 @@ class ArmHighSpdFeedback:
         """
         返回对象的字符串表示，用于打印。
         """
-        return (f"ArmHighSpdFeedback(\n"
-                f"  can_id: {hex(self.can_id)},\n"
-                f"  motor_speed: {self.motor_speed} RPM,\n"
-                f"  current: {self.current}, {self.current*0.1}A\n"
-                f"  pos: {self.pos} rad\n"
-                f")")
+        return (
+            f"ArmHighSpdFeedback(\n"
+            f"  can_id: {hex(self.can_id)},\n"
+            f"  motor_speed: {self.motor_speed} RPM,\n"
+            f"  current: {self.current}, {self.current*0.1}A\n"
+            f"  pos: {self.pos} rad\n"
+            f")"
+        )
 
     def __repr__(self):
         """
