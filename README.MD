@@ -38,6 +38,12 @@ pip3 install piper_sdk
 pip3 show piper_sdk
 ```
 
+若要卸载
+
+```shell
+pip3 uninstall piper_sdk
+```
+
 ### 安装can工具
 
 ```shell

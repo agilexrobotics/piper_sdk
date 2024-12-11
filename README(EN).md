@@ -35,6 +35,12 @@ View piper_sdk Details, Such as Installation Path, Version, etc.
 pip3 show piper_sdk
 ```
 
+To uninstall
+
+```shell
+pip3 uninstall piper_sdk
+```
+
 ### Install can tools
 
 ```shell
