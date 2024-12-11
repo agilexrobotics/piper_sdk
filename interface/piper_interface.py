@@ -639,8 +639,8 @@ class C_PiperInterface():
                     msg.arm_feedback_current_motor_angle_limit_max_spd.max_angle_limit
                 self.__feedback_current_motor_angle_limit_max_vel.current_motor_angle_limit_max_vel.min_angle_limit = \
                     msg.arm_feedback_current_motor_angle_limit_max_spd.min_angle_limit
-                self.__feedback_current_motor_angle_limit_max_vel.current_motor_angle_limit_max_vel.max_jonit_spd = \
-                    msg.arm_feedback_current_motor_angle_limit_max_spd.max_jonit_spd
+                self.__feedback_current_motor_angle_limit_max_vel.current_motor_angle_limit_max_vel.max_joint_spd = \
+                    msg.arm_feedback_current_motor_angle_limit_max_spd.max_joint_spd
             # print(self.__feedback_current_motor_angle_limit_max_vel)
             return self.__feedback_current_motor_angle_limit_max_vel
     
@@ -773,18 +773,18 @@ class C_PiperInterface():
         with self.__feedback_crash_protection_level_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgCrashProtectionRatingFeedback):
                 self.__feedback_crash_protection_level.time_stamp = time.time_ns()/ 1_000_000_000
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_1_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_1_protection_level
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_2_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_2_protection_level
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_3_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_3_protection_level
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_4_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_4_protection_level
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_5_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_5_protection_level
-                self.__feedback_crash_protection_level.crash_protection_level_feedback.jonit_6_protection_level=\
-                    msg.arm_crash_protection_rating_feedback.jonit_6_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_1_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_1_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_2_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_2_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_3_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_3_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_4_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_4_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_5_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_5_protection_level
+                self.__feedback_crash_protection_level.crash_protection_level_feedback.joint_6_protection_level=\
+                    msg.arm_crash_protection_rating_feedback.joint_6_protection_level
             # print(self.__feedback_crash_protection_level)
             return self.__feedback_crash_protection_level
     
@@ -1108,13 +1108,13 @@ class C_PiperInterface():
         self.SearchMotorMaxAngleSpdAccLimit(5, 0x02)
         self.SearchMotorMaxAngleSpdAccLimit(6, 0x02)
     
-    def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_jonit_spd):
+    def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_joint_spd):
         '''
         电机角度限制/最大速度设置指令
         0x474
         '''
         tx_can=Message()
-        motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_jonit_spd)
+        motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_joint_spd)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet, arm_motor_angle_limit_max_spd_set=motor_set)
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
@@ -1181,23 +1181,23 @@ class C_PiperInterface():
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def CrashProtectionConfig(self, 
-                              jonit_1_protection_level, 
-                              jonit_2_protection_level, 
-                              jonit_3_protection_level, 
-                              jonit_4_protection_level,
-                              jonit_5_protection_level,
-                              jonit_6_protection_level):
+                              joint_1_protection_level, 
+                              joint_2_protection_level, 
+                              joint_3_protection_level, 
+                              joint_4_protection_level,
+                              joint_5_protection_level,
+                              joint_6_protection_level):
         '''
         碰撞防护等级
         设置指令
         '''
         tx_can=Message()
-        crash_config = ArmMsgCrashProtectionRatingConfig(jonit_1_protection_level, 
-                                                        jonit_2_protection_level, 
-                                                        jonit_3_protection_level, 
-                                                        jonit_4_protection_level,
-                                                        jonit_5_protection_level,
-                                                        jonit_6_protection_level)
+        crash_config = ArmMsgCrashProtectionRatingConfig(joint_1_protection_level, 
+                                                        joint_2_protection_level, 
+                                                        joint_3_protection_level, 
+                                                        joint_4_protection_level,
+                                                        joint_5_protection_level,
+                                                        joint_6_protection_level)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgCrashProtectionRatingConfig, arm_crash_protection_rating_config=crash_config)
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
