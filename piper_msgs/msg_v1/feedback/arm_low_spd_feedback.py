@@ -8,25 +8,73 @@ class ArmLowSpdFeedback:
     '''
     驱动器信息高速反馈 0x6
 
-    节点 ID: 0x1~0x06
-    帧 ID :  0X261~0x266
+    节点 ID:
+        0x1~0x06
+    CAN ID:
+        0X261~0x266
 
-    :Byte 0: 电压高八位, uint16, 当前驱动器电压单位: 0.1V
-    :Byte 1: 电压低八位
-    :Byte 2: 驱动器温度高八位, int16, 单位: 1℃
-    :Byte 3: 驱动器温度低八位
-    :Byte 4: 电机温度, int8, 单位: 1℃
-    :Byte 5: 驱动器状态, uint8
-        bit[0] 电源电压是否过低(0: 正常 1: 过低)
-        bit[1] 电机是否过温(0: 正常 1: 过温)
-        bit[2] 驱动器是否过流(0: 正常 1: 过流)
-        bit[3] 驱动器是否过温(0: 正常 1: 过温)
-        bit[4] 碰撞保护状态(0: 正常 1: 异常)-7.25修改,之前为传感器状态
-        bit[5] 驱动器错误状态(0: 正常 1: 错误)
-        bit[6] 驱动器使能状态(1: 使能 0: 失能)
-        bit[7] 堵转保护状态(0: 没有回零 1:已经回零,或已经回过零)-7.25修改，之前为回零状态
-    :Byte 6: 母线电流高八位, uint16, 当前驱动器电流单位: 0.001A
-    :Byte 7: 母线电流低八位
+    Args:
+        can_id: canid,表示当前电机序号
+        vol: 驱动器电压
+        foc_temp: 驱动器温度
+        motor_temp: 电机温度
+        foc_status: 驱动器状态
+        bus_current: 母线电流
+    
+    位描述:
+    
+        Byte 0:电压高八位, uint16, 当前驱动器电压单位: 0.1V
+        Byte 1:电压低八位
+        Byte 2:驱动器温度高八位, int16, 单位: 1℃
+        Byte 3:驱动器温度低八位
+        Byte 4:电机温度,int8,单位: 1℃
+        Byte 5:驱动器状态,uint8
+            - bit[0] 电源电压是否过低(0--正常; 1--过低)
+            - bit[1] 电机是否过温(0--正常; 1--过温)
+            - bit[2] 驱动器是否过流(0--正常; 1--过流)
+            - bit[3] 驱动器是否过温(0--正常; 1--过温)
+            - bit[4] 碰撞保护状态(0--正常; 1--异常)-7.25修改,之前为传感器状态
+            - bit[5] 驱动器错误状态(0: 正常; 1--错误)
+            - bit[6] 驱动器使能状态(1--使能; 0--失能)
+            - bit[7] 堵转保护状态(0--没有回零; 1--已经回零,或已经回过零)-2024-7-25修改,之前为回零状态
+        Byte 6:母线电流高八位, uint16, 当前驱动器电流单位: 0.001A
+        Byte 7:母线电流低八位
+    '''
+    '''
+    High-Speed Feedback of Drive Information 0x6
+
+    Node ID:
+        0x1~0x06
+
+    CAN IDs:
+        0x261~0x266
+
+    Args:
+        can_id: CAN ID, representing the current motor number.
+        vol: Driver voltage.
+        foc_temp: Driver temperature.
+        motor_temp: Motor temperature.
+        foc_status: Driver status.
+        bus_current: Bus current.
+    
+    Bit Definitions:
+    
+        Byte 0: Bus Voltage (High Byte), uint16, unit: 0.1 V
+        Byte 1: Bus Voltage (Low Byte)
+        Byte 2: Drive Temperature (High Byte), int16, unit: 1°C
+        Byte 3: Drive Temperature (Low Byte)
+        Byte 4: Motor Temperature, int8, unit: 1°C
+        Byte 5: Drive Status, uint8:
+            - bit[0]: Power voltage low (0: Normal, 1: Low)
+            - bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
+            - bit[2]: Drive over-current (0: Normal, 1: Over-current)
+            - bit[3]: Drive over-temperature (0: Normal, 1: Over-temperature)
+            - bit[4]: Collision protection status (0: Normal, 1: Abnormal) (Updated 7.25, previously sensor status)
+            - bit[5]: Drive error status (0: Normal, 1: Error)
+            - bit[6]: Drive enable status (1: Enabled, 0: Disabled)
+            - bit[7]: Stalling protection status (0: Not returned to zero, 1: Returned or previously returned to zero) (Updated 7.25, previously zeroing status)
+        Byte 6: Bus Current (High Byte), uint16, unit: 0.001 A
+        Byte 7: Bus Current (Low Byte)
     '''
     def __init__(self, 
                  can_id:Literal[0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]=0,
@@ -36,9 +84,6 @@ class ArmLowSpdFeedback:
                  foc_status: int=0,
                  bus_current: int=0,
                  ):
-        """
-        初始化 ArmLowSpdFeedback 实例。
-        """
         if can_id not in [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]:
             raise ValueError(f"can_id 值 {can_id} 不在范围 [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]")
         self.can_id = can_id
@@ -90,9 +135,6 @@ class ArmLowSpdFeedback:
         self.foc_status.homing_status = bool(value & (1 << 7))
 
     def __str__(self):
-        """
-        返回对象的字符串表示，用于打印。
-        """
         return (f"ArmLowSpdFeedback(\n"
                 f"  can_id: {hex(self.can_id)},\n"
                 f"  vol: {self.vol}, {self.vol*0.1:.1f}V,\n"
@@ -103,9 +145,4 @@ class ArmLowSpdFeedback:
                 f")")
 
     def __repr__(self):
-        """
-        返回对象的正式字符串表示，通常用于调试。
-
-        :return: 对象的字符串表示，与 __str__ 相同。
-        """
         return self.__str__()

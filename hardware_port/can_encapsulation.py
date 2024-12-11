@@ -20,6 +20,27 @@ from typing import (
 class C_STD_CAN():
     '''
     基础CAN数据帧的收发,内无线程创建,需要在类外调用的时候创建线程来循环read
+    
+    Args:
+        channel_name: can的端口名称
+        bustype: can总线类型,默认为socket can
+        expected_bitrate: 预期can总线的波特率
+        judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
+        auto_init: 是否自动初始化can,也就是实例化can.interface.Bus
+        callback_function: ReadCanMessage中的回调函数,应传入函数
+    '''
+    '''
+    Basic CAN Frame Send/Receive with Thread Creation
+
+    When calling outside the class, a thread needs to be created to continuously read the CAN data.
+
+    Args:
+        channel_name: The name of the CAN port.
+        bustype: The type of CAN bus, default is socket CAN.
+        expected_bitrate: The expected bitrate for the CAN bus.
+        judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
+        auto_init: Whether to automatically initialize the CAN bus (i.e., instantiate can.interface.Bus).
+        callback_function: The callback function in ReadCanMessage, which should be passed as a function.
     '''
     def __init__(self, 
                  channel_name:str="can0", 
@@ -49,8 +70,10 @@ class C_STD_CAN():
             print(f"Error occurred while shutting down CAN bus: {e}")
     
     def Init(self):
-        """初始化can总线
-        """
+        '''初始化can总线
+        '''
+        '''Initialize the CAN bus.
+        '''
         if self.bus is not None:
             print("CAN bus is already open.")
             return
@@ -62,8 +85,10 @@ class C_STD_CAN():
             self.bus = None
 
     def Close(self):
-        """关闭can总线
-        """
+        '''关闭can总线
+        '''
+        '''Close the CAN bus.
+        '''
         if self.bus is not None:
             try:
                 self.bus.shutdown()  # 关闭 CAN 总线
@@ -84,6 +109,9 @@ class C_STD_CAN():
     def JudgeCanInfo(self):
         '''
         类初始化时是否检测基础信息
+        '''
+        '''
+        Whether to check basic information during class initialization.
         '''
         # 检查 CAN 端口是否存在
         if not self.is_can_socket_available(self.channel_name):
@@ -114,13 +142,13 @@ class C_STD_CAN():
             print("CAN bus is not OK, skipping message read")
 
     def SendCanMessage(self, arbitration_id, data):
-        """can 发送
+        '''can transmit
 
         Args:
             arbitration_id (_type_): _description_
             data (_type_): _description_
             is_extended_id_ (bool, optional): _description_. Defaults to False.
-        """
+        '''
         message = can.Message(channel=self.channel_name,
                               arbitration_id=arbitration_id, 
                               data=data, 
@@ -137,9 +165,12 @@ class C_STD_CAN():
             print("CAN bus is not OK, cannot send message")
 
     def is_can_bus_ok(self) -> bool:
-        """
+        '''
         检查CAN总线状态是否正常。
-        """
+        '''
+        '''
+        Check whether the CAN bus status is normal.
+        '''
         bus_state = self.bus.state
         if bus_state == can.BusState.ACTIVE:
             # print("CAN bus state: ACTIVE - Bus is functioning normally")
@@ -155,9 +186,12 @@ class C_STD_CAN():
             return False
     
     def is_can_socket_available(self, channel_name: str) -> bool:
-        """
+        '''
         检查给定的 CAN 端口是否存在。
-        """
+        '''
+        '''
+        Check if the given CAN port exists.
+        '''
         try:
             with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
                 state = file.read().strip()
@@ -166,9 +200,12 @@ class C_STD_CAN():
             return False
 
     def get_can_ports(self) -> list:
-        """
+        '''
         获取系统中所有可用的 CAN 端口。
-        """
+        '''
+        '''
+        Get all available CAN ports in the system.
+        '''
         import os
         can_ports = []
         for item in os.listdir('/sys/class/net/'):
@@ -177,9 +214,12 @@ class C_STD_CAN():
         return can_ports
 
     def can_port_info(self, channel_name: str) -> str:
-        """
+        '''
         获取指定 CAN 端口的详细信息，包括状态、类型和比特率。
-        """
+        '''
+        '''
+        Get detailed information about the specified CAN port, including status, type, and bit rate.
+        '''
         try:
             with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
                 state = file.read().strip()
@@ -191,9 +231,12 @@ class C_STD_CAN():
             return f"CAN port {channel_name} not found."
 
     def is_can_port_up(self, channel_name: str) -> bool:
-        """
+        '''
         检查 CAN 端口是否为 UP 状态。
-        """
+        '''
+        '''
+        Check if the CAN port is in the UP state.
+        '''
         try:
             with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
                 state = file.read().strip()
@@ -202,9 +245,12 @@ class C_STD_CAN():
             return False
 
     def get_can_bitrate(self, channel_name: str) -> str:
-        """
+        '''
         获取指定 CAN 端口的比特率。
-        """
+        '''
+        '''
+        Get the bit rate of the specified CAN port.
+        '''
         try:
             result = subprocess.run(['ip', '-details', 'link', 'show', channel_name],
                                     capture_output=True, text=True)
@@ -216,60 +262,6 @@ class C_STD_CAN():
         except Exception as e:
             print(f"Error while getting bitrate: {e}")
             return "Unknown"
-
-tim_stamp = time.time()
-count = 0
-
-def check_and_convert_to_negative(value):
-    # 定义 32 位整数的范围
-    INT32_MAX = 2**31 - 1
-    INT32_MIN = -2**31
-
-    # 判断是否超出范围
-    # if value > INT32_MAX or value < INT32_MIN:
-    #     print("Warning: Value is out of 32-bit range, which means it would overflow in C-like languages.")
-    
-    # 转换成 32 位有符号整数
-    value &= 0xFFFFFFFF  # 将 value 转换成 32 位无符号整数
-
-    if value & 0x80000000:  # 检查符号位
-        value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^32
-
-    return value
-from typing_extensions import (
-    Literal,
-    LiteralString,
-)
-
-def ConvertBytesToInt(bytes:bytearray, first_index:int, second_index:int, byteorder:Literal["little", "big"]):
-        return int.from_bytes(bytes[first_index:second_index], byteorder=byteorder)
-
-def callback(rx:Optional[Message]):
-    global tim_stamp
-    global count
-    if(rx.arbitration_id == 0x2A5):
-        # if(abs(rx.timestamp - tim_stamp) > 1):
-        #     tim_stamp = rx.timestamp
-        #     print(count)
-        #     count = 0
-        # else:
-        #     count = count + 1
-        if len(rx.data) != 8:
-            raise ValueError("CAN 数据帧长度必须为 8 字节")
-
-        # 提取 byte0 到 byte3 (第一个数)
-        # print(rx.data)
-        number1 = check_and_convert_to_negative(ConvertBytesToInt(rx.data,0,4,'big'))  # 使用大端字节序
-        # 提取 byte4 到 byte7 (第二个数)
-        number2 = check_and_convert_to_negative(int.from_bytes(rx.data[4:8], byteorder='big'))  # 使用大端字节序
-        print(number1,number2)
-        # print(f"{rx.data.hex()}")
-        pass
-
-# a = C_STD_CAN(callback_function = callback)
-# while True:
-#     a.ReadCanMessage()
-
 
 # 示例代码
 # if __name__ == "__main__":

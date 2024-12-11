@@ -11,10 +11,12 @@ class ArmMessageMapping:
     '''
     机械臂消息类型和CAN ID的映射
     '''
-
+    '''
+    Mapping of Robotic Arm Message Types and CAN IDs
+    '''
     # 初始化映射字典
     id_to_type_mapping = {
-        # 反馈
+        # feedback
         CanIDPiper.ARM_STATUS_FEEDBACK.value: ArmMsgType.PiperMsgStatusFeedback,
         CanIDPiper.ARM_END_POSE_FEEDBACK_1.value: ArmMsgType.PiperMsgEndPoseFeedback_1,
         CanIDPiper.ARM_END_POSE_FEEDBACK_2.value: ArmMsgType.PiperMsgEndPoseFeedback_2,
@@ -35,7 +37,7 @@ class ArmMessageMapping:
         CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_4.value: ArmMsgType.PiperMsgLowSpdFeed_4,
         CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_5.value: ArmMsgType.PiperMsgLowSpdFeed_5,
         CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_6.value: ArmMsgType.PiperMsgLowSpdFeed_6,
-        # 发送
+        # transmit
         CanIDPiper.ARM_MOTION_CTRL_1.value: ArmMsgType.PiperMsgMotionCtrl_1,
         # CanIDPiper.ARM_STOP_CTRL.value: ArmMsgType.PiperMsgStopCtrl,
         # CanIDPiper.ARM_TRACK_CTRL.value: ArmMsgType.PiperMsgTrackCtrl,
@@ -80,6 +82,7 @@ class ArmMessageMapping:
         CanIDPiper.ARM_FEEDBACK_JOINT_VEL_ACC_6.value: ArmMsgType.PiperMsgFeedbackJointVelAcc_6,
         CanIDPiper.ARM_LIGHT_CTRL.value: ArmMsgType.PiperMsgLightCtrl,
         CanIDPiper.ARM_CAN_UPDATE_SILENT_MODE_CONFIG.value: ArmMsgType.PiperMsgCanUpdateSilentModeConfig,
+        CanIDPiper.ARM_FIRMWARE_READ.value: ArmMsgType.PiperMsgFirmwareRead,
     }
 
     type_to_id_mapping = {v: k for k, v in id_to_type_mapping.items()}
@@ -88,9 +91,12 @@ class ArmMessageMapping:
     def get_mapping(can_id: Optional[int] = None, msg_type: Optional[ArmMsgType] = None):
         '''
         根据输入的参数返回对应的映射值，输入 id 返回类型，输入类型返回 id
-        :param can_id: CAN ID
-        :param msg_type: 机械臂消息类型
-        :return: 对应的类型或 id
+        
+        Args:
+            can_id: CAN ID
+            msg_type: 机械臂消息类型
+        
+        return: 对应的类型或 id
         '''
         if can_id is not None and msg_type is not None:
             raise ValueError("只能输入 CAN ID 或消息类型中的一个")

@@ -12,10 +12,10 @@ Test:
 
 |Description |doc|
 |---|---|
-|Detailed description of the interface function.|[Interface README](./asserts/INTERFACE.MD)|
-|Description of the protocol parsing section.|[Protocol README](./asserts/PROTOCOL_V1.MD)|
-|Description of the message section.|[Msgs README](./asserts/MSGS.MD)|
-|Piper DEMO|[DMEO](./asserts/SDK_DEMO.MD)|
+|Detailed description of the interface function.|[Interface README](./asserts/INTERFACE(EN).MD)|
+|Description of the protocol parsing section.|[Protocol README](./asserts/PROTOCOL_V1(EN).MD)|
+|Description of the message section.|[Msgs README](./asserts/MSGS(EN).MD)|
+|Piper DEMO|[DMEO](./asserts/SDK_DEMO(EN).MD)|
 
 ## Installation Instructions
 
@@ -27,6 +27,12 @@ pip3 install python-can
 
 ```shell
 pip3 install piper_sdk
+```
+
+View piper_sdk Details, Such as Installation Path, Version, etc.
+
+```shell
+pip3 show piper_sdk
 ```
 
 ### Install can tools

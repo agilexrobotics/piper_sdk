@@ -6,49 +6,79 @@ from typing_extensions import (
 class ArmMsgParamEnquiryAndConfig:
     '''
     机械臂参数查询与设置指令
+    
+    CAN ID:
+        0x477
+    
+    Args:
+        param_enquiry: 参数查询
+        param_setting: 参数设置
+        data_feedback_0x48x: 0x48X报文反馈设置
+        end_load_param_setting_effective: 末端负载参数设置是否生效
+        set_end_load: 设置末端负载
+    
+    位描述:
 
-    0x477
+        Byte 0: uint8,参数查询,查询末端 V/acc
+                - 0x01,查询末端 V/acc
+                - 0x02,查询碰撞防护等级: 
+        Byte 1: uint8,参数设置,
+                - 设置末端 V/acc 参数为初始值: 0x01
+                - 设置全部关节限位、关节最大速度、关节加速度为默认值: 0x02
+        Byte 2: uint8,0x48X 报文反馈设置,
+                - 无效:0x00
+                - 关闭周期反馈: 0x01;
+                - 开启周期反馈: 0x02;
+                - 开启后周期上报 1~6 号关节当前末端速度/加速度
+        Byte 3: uint8,末端负载参数设置是否生效,有效值 : 0xAE
+        Byte 4: uint8,设置末端负载,
+                - 0x00 : 空载;
+                - 0x01 : 半载;
+                - 0x02 : 满载
+    '''
+    '''
+    Robot Arm Parameter Query and Setting Command
 
-    :Byte 0: 参数查询, uint8, 查询末端 V/acc 参数:0x01
-                            查询碰撞防护等级： 0x02
-    :Byte 1: 参数设置, uint8, 设置末端 V/acc 参数为初始值: 0x01
-    :Byte 2: 0x48X 报文反馈设置, uint8,   关闭周期反馈: 0x00
-                                        开启周期反馈： 0x01
-                                        开启后周期上报 1~6 号关节当前末端速度/加速度
-    :Byte 3: 末端负载参数设置是否生效, uint8, 有效值 : 0xAE
-    :Byte 4: 设置末端负载, uint8, 0x00 : 空载
-                                0x01 : 半载
-                                0x02 : 满载
+    CAN ID:
+        0x477
+
+    Args:
+        param_enquiry: Parameter query.
+        param_setting: Parameter setting.
+        data_feedback_0x48x: 0x48X message feedback setting.
+        end_load_param_setting_effective: Whether the end-load parameter setting is effective.
+        set_end_load: Set the end load.
+
+    Bit Description:
+
+        Byte 0: uint8, parameter query, used to query end velocity/acceleration or collision protection level:
+            0x01: Query end velocity/acceleration.
+            0x02: Query collision protection level.
+        Byte 1: uint8, parameter setting, 
+            set end velocity/acceleration parameters to initial values(0x01)
+            Sets all joint limits, joint maximum speed, and joint acceleration to default values (0x02).
+        Byte 2: uint8, 0x48X message feedback setting:
+            0x00: Invalid.
+            0x01: Disable periodic feedback.
+            0x02: Enable periodic feedback (reports current end velocity/acceleration of joints 1~6).
+        Byte 3: uint8, whether the end-load parameter setting is effective:
+            Valid value: 0xAE.
+        Byte 4: uint8, set the end load:
+            0x00: No load.
+            0x01: Half load.
+            0x02: Full load.
     '''
     def __init__(self, 
                  param_enquiry:Literal[0x00, 0x01, 0x02]=0x00, 
-                 param_setting: Literal[0x00, 0x01]=0, 
+                 param_setting: Literal[0x00, 0x01, 0x02]=0, 
                  data_feedback_0x48x: Literal[0x00, 0x01, 0x02]=0x02,
                  end_load_param_setting_effective: Literal[0x00, 0xAE]=0,
                  set_end_load: Literal[0x00, 0x01, 0x02, 0x03]=0x03
                  ):
-        """
-        初始化 ArmMsgMotorAngleSpdLimitConfig 实例。
-
-        机械臂参数查询与设置指令
-
-        0x477
-
-        :Byte 0: 参数查询, uint8, 查询末端 V/acc 参数:0x01
-                                查询碰撞防护等级： 0x02
-        :Byte 1: 参数设置, uint8, 设置末端 V/acc 参数为初始值: 0x01
-        :Byte 2: 0x48X 报文反馈设置, uint8,   关闭周期反馈: 0x00
-                                            开启周期反馈： 0x01
-                                            开启后周期上报 1~6 号关节当前末端速度/加速度
-        :Byte 3: 末端负载参数设置是否生效, uint8, 有效值 : 0xAE
-        :Byte 4: 设置末端负载, uint8, 0x00 : 空载
-                                    0x01 : 半载
-                                    0x02 : 满载
-        """
         if param_enquiry not in [0x00, 0x01, 0x02]:
             raise ValueError(f"param_enquiry 值 {param_enquiry} 超出范围 [0x00, 0x01, 0x02]")
-        if param_setting not in [0x00, 0x01]:
-            raise ValueError(f"param_setting 值 {param_setting} 超出范围 [0x00, 0x01]")
+        if param_setting not in [0x00, 0x01, 0x02]:
+            raise ValueError(f"param_setting 值 {param_setting} 超出范围 [0x00, 0x01, 0x02]")
         if data_feedback_0x48x not in [0x00, 0x01, 0x02]:
             raise ValueError(f"data_feedback_0x48x 值 {data_feedback_0x48x} 超出范围 [0x00, 0x01, 0x02]")
         if end_load_param_setting_effective not in [0x00, 0xAE]:
@@ -62,9 +92,6 @@ class ArmMsgParamEnquiryAndConfig:
         self.set_end_load = set_end_load
 
     def __str__(self):
-        """
-        返回对象的字符串表示，用于打印。
-        """
         return (f"ArmMsgParamEnquiryAndConfig(\n"
                 f"  param_enquiry: {self.param_enquiry},\n"
                 f"  param_setting: {self.param_setting},\n"
@@ -74,9 +101,4 @@ class ArmMsgParamEnquiryAndConfig:
                 f")")
 
     def __repr__(self):
-        """
-        返回对象的正式字符串表示，通常用于调试。
-
-        :return: 对象的字符串表示，与 __str__ 相同。
-        """
         return self.__str__()

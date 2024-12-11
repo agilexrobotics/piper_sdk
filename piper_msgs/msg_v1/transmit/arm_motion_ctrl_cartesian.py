@@ -4,9 +4,31 @@
 class ArmMsgMotionCtrlCartesian():
     '''
     机械臂运动控制直角坐标系指令
+    
+    CAN ID:
+        0x152,0x153,0x154
 
-    0x152,0x153,0x154
+    Args:
+        X_axis: X坐标,单位0.001mm
+        Y_axis: Y坐标,单位0.001mm
+        Z_axis: Z坐标,单位0.001mm
+        RX_axis: RX角度,单位0.001度
+        RY_axis: RY角度,单位0.001度
+        RZ_axis: RZ角度,单位0.001度
+    '''
+    '''
+    Robotic Arm Motion Control Command in Cartesian Coordinate System
 
+    CAN ID:
+        0x152, 0x153, 0x154
+
+    Args:
+        X_axis: X-axis coordinate, in 0.001 mm.
+        Y_axis: Y-axis coordinate, in 0.001 mm.
+        Z_axis: Z-axis coordinate, in 0.001 mm.
+        RX_axis: Rotation about X-axis, in 0.001 degrees.
+        RY_axis: Rotation about Y-axis, in 0.001 degrees.
+        RZ_axis: Rotation about Z-axis, in 0.001 degrees.
     '''
     def __init__(self, X_axis: int=0, Y_axis: int=0, 
                  Z_axis: int=0, RX_axis: int=0, 

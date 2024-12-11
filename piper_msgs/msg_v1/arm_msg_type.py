@@ -7,7 +7,10 @@ class ArmMsgType(Enum):
     '''
     机械臂消息类型,枚举类型
     '''
-    # 接收
+    '''
+    Robotic Arm Message Types (Enumeration)
+    '''
+    # feedback
     PiperMsgUnkonwn = 0x00             #未知类型
     PiperMsgStatusFeedback = auto()    #机械臂状态消息反馈
     PiperMsgEndPoseFeedback_1 = auto() #机械臂末端位姿反馈1
@@ -29,7 +32,7 @@ class ArmMsgType(Enum):
     PiperMsgLowSpdFeed_4 = auto()
     PiperMsgLowSpdFeed_5 = auto()
     PiperMsgLowSpdFeed_6 = auto()
-    # 发送
+    # transmit
     PiperMsgMotionCtrl_1=auto()
     # PiperMsgStopCtrl = auto()
     # PiperMsgTrackCtrl = auto()
@@ -74,6 +77,7 @@ class ArmMsgType(Enum):
     PiperMsgFeedbackJointVelAcc_6=auto()
     PiperMsgLightCtrl=auto()
     PiperMsgCanUpdateSilentModeConfig=auto()
+    PiperMsgFirmwareRead=auto()
     def __str__(self):
         return f"{self.name} (0x{self.value:X})"
     def __repr__(self):

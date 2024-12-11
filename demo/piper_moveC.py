@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
+# piper机械臂圆弧模式demo
+# 注意机械臂工作空间内不要有障碍
+
 from typing import (
     Optional,
 )
@@ -49,41 +52,15 @@ if __name__ == "__main__":
     enable_fun(piper=piper)
     # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
-    factor = 57324.840764 #1000*180/3.14
-    factor =1
-    position = [0,0,0,0,0,0,0]
-    count = 0
-    while True:
-        print(piper.GetArmStatus())
-        import time
-        count  = count + 1
-        # print(count)
-        if(count == 0):
-            print("1-----------")
-            position = [0,0,0,0,0,0,0]
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-        elif(count == 800):
-            print("2-----------")
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-            # position = [0,0,0,0,0,0,0]
-            position = [-8524,104705,-78485,-451,-5486,29843,0]
-        elif(count == 1600):
-            print("1-----------")
-            position = [0,0,0,0,0,0,0]
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-            count = 0
-        
-        joint_0 = round(position[0]*factor)
-        joint_1 = round(position[1]*factor)
-        joint_2 = round(position[2]*factor)
-        joint_3 = round(position[3]*factor)
-        joint_4 = round(position[4]*factor)
-        joint_5 = round(position[5]*factor)
-        joint_6 = round(position[6]*1000*1000)
-        # piper.MotionCtrl_1()
-        piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
-        piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
-        piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-        piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
-        time.sleep(0.005)
-        pass
+    # X:135.481
+    piper.EndPoseCtrl(135481,9349,161129,178756,6035,-178440)
+    piper.MoveCAxisUpdateCtrl(0x01)
+    time.sleep(0.001)
+    piper.EndPoseCtrl(222158,128758,142126,175152,-1259,-157235)
+    piper.MoveCAxisUpdateCtrl(0x02)
+    time.sleep(0.001)
+    piper.EndPoseCtrl(359079,3221,153470,179038,1105,179035)
+    piper.MoveCAxisUpdateCtrl(0x03)
+    time.sleep(0.001)
+    piper.MotionCtrl_2(0x01, 0x03, 30, 0x00)
+    pass

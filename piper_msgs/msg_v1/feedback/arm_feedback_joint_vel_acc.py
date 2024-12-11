@@ -8,16 +8,52 @@ class ArmMsgFeedbackJointVelAcc:
     '''
     反馈各个关节当前末端速度/加速度
 
-    0x481 ~ 0x486 代表 1~6 号关节
+    CAN ID:
+        0x481 ~ 0x486
+        代表 1~6 号关节
 
-    :Byte 0: 末端线速度 H, uint16, 单位 0.001m/s
-    :Byte 1: 末端线速度 L,
-    :Byte 2: 末端角速度 H, uint16, 单位 0.001rad/s
-    :Byte 3: 末端角速度 L,
-    :Byte 4: 末端线加速度 H, uint16, 单位 0.001m/s^2
-    :Byte 5: 末端线加速度 L
-    :Byte 6: 末端角加速度 H, uint16, 单位 0.001rad/s^2
-    :Byte 7: 末端角加速度 L
+    Args:
+        can_id: 当前canid,用来代表关节序号
+        end_linear_vel: 末端线速度
+        end_angular_vel: 末端角速度
+        end_linear_acc: 末端线加速度
+        end_angular_acc: 末端角加速度
+    
+    位描述:
+
+        Byte 0: 末端线速度 H, uint16, 单位 0.001m/s
+        Byte 1: 末端线速度 L,
+        Byte 2: 末端角速度 H, uint16, 单位 0.001rad/s
+        Byte 3: 末端角速度 L,
+        Byte 4: 末端线加速度 H, uint16, 单位 0.001m/s^2
+        Byte 5: 末端线加速度 L
+        Byte 6: 末端角加速度 H, uint16, 单位 0.001rad/s^2
+        Byte 7: 末端角加速度 L
+    '''
+    '''
+    Feedback on Current End-Effector Speed/Acceleration for Each Joint
+
+    CAN ID:
+        0x481 ~ 0x486
+        Corresponds to Joints 1~6.
+
+    Args:
+        can_id: Current CAN ID, used to represent the joint number.
+        end_linear_vel: End-effector linear velocity.
+        end_angular_vel: End-effector angular velocity.
+        end_linear_acc: End-effector linear acceleration.
+        end_angular_acc: End-effector angular acceleration.
+    
+    Bit Description:
+
+        Byte 0: End-Effector Linear Velocity (High Byte), uint16, unit: 0.001 m/s
+        Byte 1: End-Effector Linear Velocity (Low Byte)
+        Byte 2: End-Effector Angular Velocity (High Byte), uint16, unit: 0.001 rad/s
+        Byte 3: End-Effector Angular Velocity (Low Byte)
+        Byte 4: End-Effector Linear Acceleration (High Byte), uint16, unit: 0.001 m/s²
+        Byte 5: End-Effector Linear Acceleration (Low Byte)
+        Byte 6: End-Effector Angular Acceleration (High Byte), uint16, unit: 0.001 rad/s²
+        Byte 7: End-Effector Angular Acceleration (Low Byte)
     '''
     def __init__(self, 
                  can_id:Literal[0,0x481,0x482,0x483,0x484,0x485,0x486]=0,
@@ -26,9 +62,6 @@ class ArmMsgFeedbackJointVelAcc:
                  end_linear_acc: int=0,
                  end_angular_acc: int=0
                  ):
-        """
-        初始化 ArmMsgFeedbackJointVelAcc 实例。
-        """
         if can_id not in [0,0x481,0x482,0x483,0x484,0x485,0x486]:
             raise ValueError(f"can_id 值 {can_id} 不在范围 [0x481,0x482,0x483,0x484,0x485,0x486]")
         self.can_id = can_id
@@ -38,9 +71,6 @@ class ArmMsgFeedbackJointVelAcc:
         self.end_angular_acc = end_angular_acc
 
     def __str__(self):
-        """
-        返回对象的字符串表示，用于打印。
-        """
         return (f"ArmMsgFeedbackJointVelAcc(\n"
                 f"  can_id: {self.can_id},\n"
                 f"  end_linear_vel: {self.end_linear_vel},\n"
@@ -50,27 +80,38 @@ class ArmMsgFeedbackJointVelAcc:
                 f")")
 
     def __repr__(self):
-        """
-        返回对象的正式字符串表示，通常用于调试。
-
-        :return: 对象的字符串表示，与 __str__ 相同。
-        """
         return self.__str__()
 
 class ArmMsgFeedbackAllJointVelAcc:
     '''
-    反馈各个关节当前末端速度/加速度,为全部关节的消息
+    反馈全部关节当前末端速度/加速度
 
-    0x481 ~ 0x486 代表 1~6 号关节
+    CAN ID:
+        0x481 ~ 0x486
+        代表 1~6 号关节
 
-    :Byte 0: 末端线速度 H, uint16, 单位 0.001m/s
-    :Byte 1: 末端线速度 L
-    :Byte 2: 末端角速度 H, uint16, 单位 0.001rad/s
-    :Byte 3: 末端角速度 L
-    :Byte 4: 末端线加速度 H, uint16, 单位 0.001m/s^2
-    :Byte 5: 末端线加速度 L
-    :Byte 6: 末端角加速度 H, uint16, 单位 0.001rad/s^2
-    :Byte 7: 末端角加速度 L
+    Args:
+        j1: 电机1的当前末端速度/加速度
+        j2: 电机2的当前末端速度/加速度
+        j3: 电机3的当前末端速度/加速度
+        j4: 电机4的当前末端速度/加速度
+        j5: 电机5的当前末端速度/加速度
+        j6: 电机6的当前末端速度/加速度
+    '''
+    '''
+    Feedback on Current End-Effector Speed/Acceleration for Each Joint
+
+    CAN ID:
+        0x481 ~ 0x486
+        Corresponds to Joints 1~6.
+
+    Args:
+        j1: Current end-effector velocity/acceleration for motor 1.
+        j2: Current end-effector velocity/acceleration for motor 2.
+        j3: Current end-effector velocity/acceleration for motor 3.
+        j4: Current end-effector velocity/acceleration for motor 4.
+        j5: Current end-effector velocity/acceleration for motor 5.
+        j6: Current end-effector velocity/acceleration for motor 6.
     '''
     def __init__(self, 
                  j1:ArmMsgFeedbackJointVelAcc = ArmMsgFeedbackJointVelAcc(0,0,0,0,0),
@@ -79,9 +120,6 @@ class ArmMsgFeedbackAllJointVelAcc:
                  j4:ArmMsgFeedbackJointVelAcc = ArmMsgFeedbackJointVelAcc(0,0,0,0,0),
                  j5:ArmMsgFeedbackJointVelAcc = ArmMsgFeedbackJointVelAcc(0,0,0,0,0),
                  j6:ArmMsgFeedbackJointVelAcc = ArmMsgFeedbackJointVelAcc(0,0,0,0,0)):
-        """
-        初始化 ArmMsgFeedbackAllJointVelAcc 实例。
-        """
         self.j = [ArmMsgFeedbackJointVelAcc(0,0,0,0,0), j1, j2, j3, j4, j5, j6]
         self.joint = [ArmMsgFeedbackJointVelAcc() for _ in range(7)]
         self.joint[0] = ArmMsgFeedbackJointVelAcc(0,0,0,0,0)
@@ -92,9 +130,6 @@ class ArmMsgFeedbackAllJointVelAcc:
                 self.joint[i] = self.j[i]
     
     def __str__(self):
-        """
-        返回对象的字符串表示，用于打印。
-        """
         return (f"{self.joint[1]}\n"
                 f"{self.joint[2]}\n"
                 f"{self.joint[3]}\n"
@@ -104,9 +139,4 @@ class ArmMsgFeedbackAllJointVelAcc:
                 f")")
 
     def __repr__(self):
-        """
-        返回对象的正式字符串表示，通常用于调试。
-
-        :return: 对象的字符串表示，与 __str__ 相同。
-        """
         return self.__str__()

@@ -16,7 +16,6 @@ from typing import (
 # import sys,os
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from ..piper_protocol_base import C_PiperParserBase
-# from ...protocol.piper_protocol_base import C_PiperParserBase
 from ...piper_msgs.msg_v1 import (
     ArmMsgType, 
     PiperMessage, 
@@ -31,6 +30,9 @@ class C_PiperParserV1(C_PiperParserBase):
     '''
     Piper机械臂解析数据类V1版本
     '''
+    '''
+    Piper Robotic Arm Data Parsing Class V1 Version
+    '''
     def __init__(self) -> None:
         pass
 
@@ -38,10 +40,13 @@ class C_PiperParserV1(C_PiperParserBase):
         '''
         获取当前协议版本,当前为V1
         '''
+        '''
+        Get the current protocol version, currently V1.
+        '''
         return self.ProtocolVersion.ARM_PROROCOL_V1
 
     def DecodeMessage(self, rx_can_frame: Optional[can.Message], msg:PiperMessage):
-        """解码消息,将can数据帧转为设定的类型
+        '''解码消息,将can数据帧转为设定的类型
 
         Args:
             rx_can_frame (Optional[can.Message]): can 数据帧, 为输入
@@ -52,11 +57,24 @@ class C_PiperParserV1(C_PiperParserBase):
                 can消息的id如果存在, 反馈True
 
                 can消息的id若不存在, 反馈False
-        """
+        '''
+        '''Decode the message, convert the CAN data frame to the specified type.
+
+        Args:
+
+            rx_can_frame (Optional[can.Message]): CAN data frame, input.
+            msg (PiperMessage): Custom intermediate data, output.
+
+        Returns:
+
+            bool:
+                If the CAN message ID exists, return True.
+                If the CAN message ID does not exist, return False.
+        '''
         ret:bool = True
         can_id:int = rx_can_frame.arbitration_id
         can_data:bytearray = rx_can_frame.data
-        # 机械臂状态反馈
+        # 机械臂状态反馈,piper Status Feedback
         if(can_id == CanIDPiper.ARM_STATUS_FEEDBACK.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_status_msgs.ctrl_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
@@ -66,7 +84,7 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_status_msgs.motion_status = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
             msg.arm_status_msgs.trajectory_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
             msg.arm_status_msgs.err_code = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
-        # 机械臂末端位姿
+        # 机械臂末端位姿,piper End-Effector Pose
         elif(can_id == CanIDPiper.ARM_END_POSE_FEEDBACK_1.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_end_pose.X_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
@@ -79,7 +97,7 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_end_pose.RY_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
             msg.arm_end_pose.RZ_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
-        # 关节角度反馈
+        # 关节角度反馈,Joint Angle Feedback
         elif(can_id == CanIDPiper.ARM_JOINT_FEEDBACK_12.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_joint_feedback.joint_1 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
@@ -92,14 +110,14 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_joint_feedback.joint_5 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
             msg.arm_joint_feedback.joint_6 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
-        # 夹爪反馈
+        # 夹爪反馈,Gripper Feedback
         elif(can_id == CanIDPiper.ARM_GRIPPER_FEEDBACK.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.gripper_feedback.grippers_angle = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
             msg.gripper_feedback.grippers_effort = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6))
             msg.gripper_feedback.status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,6,7),False)
             # print(rx_can_frame)
-        # 驱动器信息高速反馈
+        # 驱动器信息高速反馈,High-Speed Driver Information Feedback
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_1.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_1.can_id = can_id
@@ -136,8 +154,7 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_high_spd_feedback_6.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
             msg.arm_high_spd_feedback_6.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
             msg.arm_high_spd_feedback_6.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
-            # print(msg.arm_high_spd_feedback_6)
-        # 驱动器信息低速反馈
+        # 驱动器信息低速反馈,Low-Speed Driver Information Feedback
         elif(can_id == CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_1.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_low_spd_feedback_1.can_id = can_id
@@ -146,8 +163,6 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_low_spd_feedback_1.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
             msg.arm_low_spd_feedback_1.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
             msg.arm_low_spd_feedback_1.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
-            # print(rx_can_frame)
-            # print(msg.arm_low_spd_feedback_1)
         elif(can_id == CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_2.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_low_spd_feedback_2.can_id = can_id
@@ -193,7 +208,7 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
             msg.arm_feedback_current_motor_angle_limit_max_spd.max_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,1,3))
             msg.arm_feedback_current_motor_angle_limit_max_spd.min_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,3,5))
-            msg.arm_feedback_current_motor_angle_limit_max_spd.max_jonit_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
+            msg.arm_feedback_current_motor_angle_limit_max_spd.max_joint_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_feedback_current_end_vel_acc_param.end_max_linear_vel = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
@@ -202,12 +217,12 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_feedback_current_end_vel_acc_param.end_max_angular_acc = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
         elif(can_id == CanIDPiper.ARM_CRASH_PROTECTION_RATING_FEEDBACK.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
-            msg.arm_crash_protection_rating_feedback.jonit_1_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
-            msg.arm_crash_protection_rating_feedback.jonit_2_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
-            msg.arm_crash_protection_rating_feedback.jonit_3_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
-            msg.arm_crash_protection_rating_feedback.jonit_4_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
-            msg.arm_crash_protection_rating_feedback.jonit_5_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
-            msg.arm_crash_protection_rating_feedback.jonit_6_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_crash_protection_rating_feedback.joint_1_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_crash_protection_rating_feedback.joint_2_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_crash_protection_rating_feedback.joint_3_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+            msg.arm_crash_protection_rating_feedback.joint_4_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
+            msg.arm_crash_protection_rating_feedback.joint_5_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+            msg.arm_crash_protection_rating_feedback.joint_6_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_MAX_ACC_LIMIT.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
@@ -240,12 +255,15 @@ class C_PiperParserV1(C_PiperParserBase):
             msg.arm_gripper_ctrl.grippers_effort = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6))
             msg.arm_gripper_ctrl.status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,6,7),False)
             msg.arm_gripper_ctrl.set_zero = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,7,8),False)
+        elif(can_id == CanIDPiper.ARM_FIRMWARE_READ.value):
+            msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.firmware_data = can_data
         else:
             ret = False
         return ret
 
     def EncodeMessage(self, msg:PiperMessage, tx_can_frame: Optional[can.Message]):
-        """将消息转为can数据帧
+        '''将消息转为can数据帧
 
         Args:
             msg (PiperMessage): 自定义数据
@@ -256,18 +274,27 @@ class C_PiperParserV1(C_PiperParserBase):
                 msg消息的type如果存在, 反馈True
 
                 msg消息的type若不存在, 反馈False
-        """
+        '''
+        '''Convert the message to CAN data frame
+
+        Args:
+            msg (PiperMessage): Custom data
+            tx_can_frame (Optional[can.Message]): CAN data to be sent
+
+        Returns:
+            bool:
+                Returns True if the msg message type exists
+                Returns False if the msg message type does not exist
+        '''
         ret:bool = True
         msg_type_ = msg.type_
         tx_can_frame.arbitration_id = ArmMessageMapping.get_mapping(msg_type=msg_type_)
         if(msg_type_ == ArmMsgType.PiperMsgMotionCtrl_1):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motion_ctrl_1.emergency_stop,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_1.track_ctrl,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_1.grag_teach_ctrl,False) + \
                                 [0x00, 0x00, 0x00, 0x00, 0x00]
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrl_2):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motion_ctrl_2.ctrl_mode,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.move_mode,False) + \
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.move_spd_rate_ctrl,False) + \
@@ -275,66 +302,52 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_motion_ctrl_2.residence_time,False) + \
                                 [0x00, 0x00, 0x00]
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_1):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.X_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.Y_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_2):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.Z_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RX_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgMotionCtrlCartesian_3):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RY_axis) + \
                                 self.ConvertToList_32bit(msg.arm_motion_ctrl_cartesian.RZ_axis)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_12):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_1) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_2)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_34):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_3) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_4)
         elif(msg_type_ == ArmMsgType.PiperMsgJointCtrl_56):
-             
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_5) + \
                                 self.ConvertToList_32bit(msg.arm_joint_ctrl.joint_6)
         elif(msg_type_ == ArmMsgType.PiperMsgCircularPatternCoordNumUpdateCtrl):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_circular_ctrl.instruction_num,False) + \
                                 [0, 0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgGripperCtrl):
-             
-            # print(msg.arm_gripper_ctrl.grippers_angle)
             tx_can_frame.data = self.ConvertToList_32bit(msg.arm_gripper_ctrl.grippers_angle) + \
                                 self.ConvertToList_16bit(msg.arm_gripper_ctrl.grippers_effort,False) + \
                                 self.ConvertToList_8bit(msg.arm_gripper_ctrl.status_code,False) + \
                                 self.ConvertToList_8bit(msg.arm_gripper_ctrl.set_zero,False)
         elif(msg_type_ == ArmMsgType.PiperMsgMasterSlaveModeConfig):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_ms_config.linkage_config,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.feedback_offset,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.ctrl_offset,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.linkage_offset,False) + \
                                 [0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgMotorEnableDisableConfig):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_enable.motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_motor_enable.enable_flag,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgSearchMotorMaxAngleSpdAccLimit):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_search_motor_max_angle_spd_acc_limit.motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_search_motor_max_angle_spd_acc_limit.search_content,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_motor_angle_limit_max_spd_set.motor_num,False) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_angle_limit) + \
                                 self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.min_angle_limit) + \
-                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_jonit_spd,False) + \
+                                self.ConvertToList_16bit(msg.arm_motor_angle_limit_max_spd_set.max_joint_spd,False) + \
                                 [0]
         elif(msg_type_ == ArmMsgType.PiperMsgJointConfig):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_joint_config.joint_motor_num,False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_config.set_motor_current_pos_as_zero,False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_config.acc_param_config_is_effective_or_not,False) + \
@@ -342,12 +355,10 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_joint_config.clear_joint_err,False) + \
                                 [0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgInstructionResponseConfig):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_set_instruction_response.instruction_index,False) + \
                                 self.ConvertToList_8bit(msg.arm_set_instruction_response.zero_config_success_flag,False) + \
                                 [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgParamEnquiryAndConfig):
-             
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_enquiry,False) + \
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_setting,False) + \
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.data_feedback_0x48x,False) + \
@@ -355,19 +366,17 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.set_end_load,False) + \
                                 [0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgEndVelAccParamConfig):
-             
             tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_vel,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_vel,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_acc,False) + \
                                 self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_acc,False)
         elif(msg_type_ == ArmMsgType.PiperMsgCrashProtectionRatingConfig):
-             
-            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_1_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_2_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_3_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_4_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_5_protection_level,False) + \
-                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.jonit_6_protection_level,False) + \
+            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_1_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_2_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_3_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_4_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_5_protection_level,False) + \
+                                self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_6_protection_level,False) + \
                                 [0, 0]
         else:
             ret = False

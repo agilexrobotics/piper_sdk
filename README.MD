@@ -10,14 +10,15 @@ Test:
 |---|---|
 |![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
-本SDK用于接收can数据帧，然后处理为自定义数据类型,没有包括数据偏移帧
+本SDK用于接收can数据帧，然后处理为自定义数据类型，没有包括数据偏移帧
 
 |说明 |文档|
 |---|---|
 |接口函数的详细说明|[Interface README](./asserts/INTERFACE.MD)|
 |协议解析部分说明|[Protocol README](./asserts/PROTOCOL_V1.MD)|
 |消息部分说明|[Msgs README](./asserts/MSGS.MD)|
-|机械臂DEMO|[DMEO](./asserts/SDK_DEMO.MD)|
+|机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
+|机械臂DEMO|[`piper_sdk/demo`](./demo/README.MD)|
 
 ## 安装方法
 
@@ -29,6 +30,12 @@ pip3 install python-can
 
 ```shell
 pip3 install piper_sdk
+```
+
+查看`piper_sdk`细节，比如安装路径，版本等信息
+
+```shell
+pip3 show piper_sdk
 ```
 
 ### 安装can工具
@@ -79,7 +86,7 @@ ps:**一般第一个插入的can模块会默认是can0，如果没有查询到ca
 
 假设上面的操作记录的`bus-info`数值为`1-2:1.0`
 
-然后执行,查看can设备是否激活成功
+然后执行，查看can设备是否激活成功
 
 ```bash
 bash can_activate.sh can_piper 1000000 "1-2:1.0"
@@ -93,7 +100,7 @@ ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，�
 
 - **此处使用`can_config.sh`脚本**
 
-在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量,现在假设为2
+在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量，现在假设为2
 
 然后can模块中的其中一个单独插入PC，执行
 
@@ -121,7 +128,7 @@ ps:**一般第一个插入的can模块会默认是can0，第二个为can1，如�
 
 ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_left，波特率为1000000，并激活**
 
-然后执行`bash can_config.sh`,查看终端输出是否激活成功
+然后执行`bash can_config.sh`，查看终端输出是否激活成功
 
 然后执行`ifconfig`查看是不是有`can_left`和`can_right`，如果有则can模块设置成功
 

@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
-# 读取机械臂消息并打印,需要先安装piper_sdk
+# 设置机械臂重置，需要在mit或者示教模式切换为位置速度控制模式时执行
+
 from typing import (
     Optional,
 )
+import time
 from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
     piper = C_PiperInterface()
     piper.ConnectPort()
-    while True:
-        import time
-        print(piper.GetArmJointMsgs())
-        print(piper.GetArmGripperMsgs())
-        time.sleep(0.005)
-        pass
+    piper.MotionCtrl_1(0x02,0,0)#恢复
+    piper.MotionCtrl_2(0, 0, 0, 0x00)#位置速度模式

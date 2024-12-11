@@ -7,6 +7,10 @@ class CanIDPiper(Enum):
     '''
     机械臂can id
     '''
+    '''
+    piper's can_ids
+    '''
+    #---------------------------------feedback------------------------------------#
     # 主动反馈指令，可设置整体偏移为 0x2B1~0x2B8或 0x2C1~0x2C8，详见指令0x470
     ARM_STATUS_FEEDBACK = 0x2A1         #机械臂状态反馈ID
     ARM_END_POSE_FEEDBACK_1 = 0x2A2     #机械臂末端姿态反馈
@@ -16,6 +20,7 @@ class CanIDPiper(Enum):
     ARM_JOINT_FEEDBACK_34 = 0x2A6
     ARM_JOINT_FEEDBACK_56 = 0x2A7
     ARM_GRIPPER_FEEDBACK = 0x2A8        #机械臂夹爪反馈
+    #---------------------------------transmit------------------------------------#
     # 运动控制指令，可设置整体偏移为 0x160~0x169或 0x170~0x179，详见指令0x470
     ARM_MOTION_CTRL_1 = 0x150
     # ARM_STOP_CTRL = 0x150               #机械臂快速急停
@@ -82,6 +87,8 @@ class CanIDPiper(Enum):
     ARM_INFO_LOW_SPD_FEEDBACK_6 = 0x266
     #CAN 升级总线静默模式设定指令
     ARM_CAN_UPDATE_SILENT_MODE_CONFIG=0x422
+    # 固件读取指令
+    ARM_FIRMWARE_READ = 0x4AF
     def __str__(self):
         return f"{self.name} (0x{self.value:X})"
     def __repr__(self):

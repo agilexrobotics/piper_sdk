@@ -43,41 +43,43 @@ class PiperMessage:
     '''
     Piper机械臂全部消息,为所有消息的汇总
     '''
-    
+    '''
+    Piper Robotic Arm Complete Message Summary
+    '''
     def __init__(self, 
-                #  反馈
-                 type_: 'ArmMsgType' = None,
-                 arm_status_msgs: 'ArmMsgStatus' = None,
-                 arm_joint_feedback: 'ArmMsgJointFeedBack' = None,
-                 gripper_feedback: 'ArmMsgGripperFeedBack' = None,
-                 arm_end_pose: 'ArmMsgEndPoseFeedBack'=None,
-                 arm_feedback_current_motor_angle_limit_max_spd:'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd'=None,
-                 arm_feedback_current_end_vel_acc_param:'ArmMsgFeedbackCurrentEndVelAccParam'=None,
-                 arm_feedback_current_motor_max_acc_limit:'ArmMsgFeedbackCurrentMotorMaxAccLimit'=None,
-                 arm_crash_protection_rating_feedback:'ArmMsgCrashProtectionRatingFeedback'=None,
-                 #  arm_feedback_joint_vel_acc:'ArmMsgFeedbackJointVelAcc'=None
-                #  arm_feedback_all_current_motor_angle_limit_max_spd:'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd'=None,
-                #  arm_feedback_all_motor_max_acc_limit:'ArmMsgFeedbackAllCurrentMotorMaxAccLimit'=None,
-                 arm_high_spd_feedback:'ArmHighSpdFeedback'=None,
-                 arm_low_spd_feedback:'ArmLowSpdFeedback'=None,
-                #  发送
-                 arm_motion_ctrl_1: 'ArmMsgMotionCtrl_1'=None,
-                 arm_motion_ctrl_2: 'ArmMsgMotionCtrl_2'=None,
-                 arm_motion_ctrl_cartesian: 'ArmMsgMotionCtrlCartesian'=None,
-                 arm_joint_ctrl: 'ArmMsgJointCtrl'=None,
-                 arm_circular_ctrl: 'ArmMsgCircularPatternCoordNumUpdateCtrl'=None,
-                 arm_gripper_ctrl: 'ArmMsgGripperCtrl'=None,
-                 arm_ms_config: 'ArmMsgMasterSlaveModeConfig'=None,
-                 arm_motor_enable: 'ArmMsgMotorEnableDisableConfig'=None,
-                 arm_search_motor_max_angle_spd_acc_limit:'ArmMsgSearchMotorMaxAngleSpdAccLimit'=None,
-                 arm_motor_angle_limit_max_spd_set:'ArmMsgMotorAngleLimitMaxSpdSet'=None,
-                 arm_joint_config:'ArmMsgJointConfig'=None,
-                 arm_set_instruction_response:'ArmMsgInstructionResponseConfig'=None,
-                 arm_param_enquiry_and_config:'ArmMsgParamEnquiryAndConfig'=None,
-                 arm_end_vel_acc_param_config:'ArmMsgEndVelAccParamConfig'=None,
-                 arm_crash_protection_rating_config:'ArmMsgCrashProtectionRatingConfig'=None
-                 ):
-        #-------------------------------反馈-------------------------------------------
+                ## feedback
+                type_: 'ArmMsgType' = None,
+                arm_status_msgs: 'ArmMsgStatus' = None,
+                arm_joint_feedback: 'ArmMsgJointFeedBack' = None,
+                gripper_feedback: 'ArmMsgGripperFeedBack' = None,
+                arm_end_pose: 'ArmMsgEndPoseFeedBack'=None,
+                arm_feedback_current_motor_angle_limit_max_spd:'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd'=None,
+                arm_feedback_current_end_vel_acc_param:'ArmMsgFeedbackCurrentEndVelAccParam'=None,
+                arm_feedback_current_motor_max_acc_limit:'ArmMsgFeedbackCurrentMotorMaxAccLimit'=None,
+                arm_crash_protection_rating_feedback:'ArmMsgCrashProtectionRatingFeedback'=None,
+                # arm_feedback_joint_vel_acc:'ArmMsgFeedbackJointVelAcc'=None
+                # arm_feedback_all_current_motor_angle_limit_max_spd:'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd'=None,
+                # arm_feedback_all_motor_max_acc_limit:'ArmMsgFeedbackAllCurrentMotorMaxAccLimit'=None,
+                arm_high_spd_feedback:'ArmHighSpdFeedback'=None,
+                arm_low_spd_feedback:'ArmLowSpdFeedback'=None,
+                ## transmit
+                arm_motion_ctrl_1: 'ArmMsgMotionCtrl_1'=None,
+                arm_motion_ctrl_2: 'ArmMsgMotionCtrl_2'=None,
+                arm_motion_ctrl_cartesian: 'ArmMsgMotionCtrlCartesian'=None,
+                arm_joint_ctrl: 'ArmMsgJointCtrl'=None,
+                arm_circular_ctrl: 'ArmMsgCircularPatternCoordNumUpdateCtrl'=None,
+                arm_gripper_ctrl: 'ArmMsgGripperCtrl'=None,
+                arm_ms_config: 'ArmMsgMasterSlaveModeConfig'=None,
+                arm_motor_enable: 'ArmMsgMotorEnableDisableConfig'=None,
+                arm_search_motor_max_angle_spd_acc_limit:'ArmMsgSearchMotorMaxAngleSpdAccLimit'=None,
+                arm_motor_angle_limit_max_spd_set:'ArmMsgMotorAngleLimitMaxSpdSet'=None,
+                arm_joint_config:'ArmMsgJointConfig'=None,
+                arm_set_instruction_response:'ArmMsgInstructionResponseConfig'=None,
+                arm_param_enquiry_and_config:'ArmMsgParamEnquiryAndConfig'=None,
+                arm_end_vel_acc_param_config:'ArmMsgEndVelAccParamConfig'=None,
+                arm_crash_protection_rating_config:'ArmMsgCrashProtectionRatingConfig'=None
+                ):
+        #-------------------------------feedback-------------------------------------------
         # 初始化数据帧类型
         self.type_ = type_
         # 初始化机械臂状态消息
@@ -102,7 +104,7 @@ class PiperMessage:
         self.arm_low_spd_feedback_4 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
         self.arm_low_spd_feedback_5 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
         self.arm_low_spd_feedback_6 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        #-------------------------------发送-------------------------------------------
+        #-------------------------------transmit-------------------------------------------
         self.arm_motion_ctrl_1 = arm_motion_ctrl_1 if arm_motion_ctrl_1 else ArmMsgMotionCtrl_1()
         self.arm_motion_ctrl_2 = arm_motion_ctrl_2 if arm_motion_ctrl_2 else ArmMsgMotionCtrl_2()
         self.arm_motion_ctrl_cartesian = arm_motion_ctrl_cartesian if arm_motion_ctrl_cartesian else ArmMsgMotionCtrlCartesian()
@@ -155,8 +157,11 @@ class PiperMessage:
         # # 全部的电机最大加速度限制
         # self.arm_feedback_all_motor_max_acc_limit = arm_feedback_all_motor_max_acc_limit \
         #     if arm_feedback_all_motor_max_acc_limit else ArmMsgFeedbackAllCurrentMotorMaxAccLimit()
+        # # 机械臂固件字符存储值,只存储8位字符,在interface中做了拼接
+        self.firmware_data = bytearray()
 
     def __str__(self):
+        # feedback
         if(self.type_ == ArmMsgType.PiperMsgStatusFeedback):
             return (f"Type: {self.type_}\n"f"Arm Status: {self.arm_status_msgs}\n")
         elif(self.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
@@ -197,7 +202,7 @@ class PiperMessage:
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_5}\n")
         elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_6):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_6}\n")
-        # 发送
+        # transmit
         elif(self.type_ == ArmMsgType.PiperMsgMotionCtrl_1):
             return (f"Type: {self.type_}\n"f"PiperMsgMotionCtrl_1: {self.arm_motion_ctrl_1}\n")
         elif(self.type_ == ArmMsgType.PiperMsgMotionCtrl_2):

@@ -4,15 +4,66 @@
 class ArmMsgGripperFeedBack:
     '''
     夹爪反馈消息
+    
+    CAN ID:
+        0x2A8
+    
+    Args:
+        grippers_angle: 夹爪角度，以整数表示。
+        grippers_effort: 夹爪扭矩，以整数表示。
+        status_code: 夹爪状态码，以整数表示。
+    
+    位描述:
+
+        Byte 0: 夹爪行程最高位, int32, 单位 0.001mm
+        Byte 1: 
+        Byte 2: 
+        Byte 3: 
+        Byte 4: 夹爪扭矩 H, int16, 单位 0.001N/m
+        Byte 5: 夹爪扭矩 L
+        Byte 6: 状态码, uint8
+            - bit[0]      电源电压是否过低(0:正常 1:过低)
+            - bit[1]      电机是否过温(0:正常 1:过温)
+            - bit[2]      驱动器是否过流(0:正常 1:过流)
+            - bit[3]      驱动器是否过温(0:正常 1:过温)
+            - bit[4]      传感器状态(0:正常 1:异常)
+            - bit[5]      驱动器错误状态(0:正常 1:错误)
+            - bit[6]      驱动器使能状态(1:使能 0:失能)
+            - bit[7]      回零状态(0:没有回零 1:已经回零,或已经回过零)
+        Byte 7: 保留
+    '''
+    '''
+    Gripper Feedback Message
+
+    CAN ID:
+        0x2A8
+    
+    Args:
+        grippers_angle: The angle of the gripper, represented as an integer.
+        grippers_effort: The torque of the gripper, represented as an integer.
+        status_code: The status code of the gripper, represented as an integer.
+    
+    Bit Definitions:
+
+        Byte Definitions:
+        Byte 0: Gripper Stroke (Most Significant Byte), int32, unit: 0.001 mm
+        Byte 1: Gripper Stroke (Second Most Significant Byte)
+        Byte 2: Gripper Stroke (Second Least Significant Byte)
+        Byte 3: Gripper Stroke (Least Significant Byte)
+        Byte 4: Gripper Torque (High Byte), int16, unit: 0.001 N·m
+        Byte 5: Gripper Torque (Low Byte)
+        Byte 6: Status Code, uint8:
+            - bit[0]: Power voltage low (0: Normal, 1: Low)
+            - bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
+            - bit[2]: Driver over-current (0: Normal, 1: Over-current)
+            - bit[3]: Driver over-temperature (0: Normal, 1: Over-temperature)
+            - bit[4]: Sensor status (0: Normal, 1: Abnormal)
+            - bit[5]: Driver error status (0: Normal, 1: Error)
+            - bit[6]: Driver enable status (1: Enabled, 0: Disabled)
+            - bit[7]: Zeroing status (0: Not zeroed, 1: Zeroed or previously zeroed)
+        Byte 7: Reserved
     '''
     def __init__(self, grippers_angle: int=0, grippers_effort: int=0, status_code: int=0):
-        """
-        初始化 ArmMsgGripperFeedBack 实例。
-
-        :param grippers_angle: 夹爪角度，以整数表示。
-        :param grippers_effort: 夹爪扭矩，以整数表示。
-        :param status_code: 夹爪状态码，以整数表示。
-        """
         self.grippers_angle = grippers_angle
         self.grippers_effort = grippers_effort
         self._status_code = status_code
@@ -58,11 +109,6 @@ class ArmMsgGripperFeedBack:
         self.foc_status.homing_status = bool(value & (1 << 7))
     
     def __str__(self):
-        """
-        返回对象的字符串表示，用于打印。
-
-        :return: 格式化的字符串表示夹爪的角度、速度和状态码。
-        """
         return (f"ArmMsgGripperFeedBack(\n"
                 f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
                 f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.2f},\n"
@@ -70,9 +116,4 @@ class ArmMsgGripperFeedBack:
                 f")")
 
     def __repr__(self):
-        """
-        返回对象的正式字符串表示，通常用于调试。
-
-        :return: 对象的字符串表示，与 __str__ 相同。
-        """
         return self.__str__()

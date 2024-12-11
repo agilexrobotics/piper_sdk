@@ -13,9 +13,15 @@ class C_PiperParserBase(ABC):
     '''
     Piper机械臂数据解析基类
     '''
+    '''
+    Piper Robot Arm Data Parsing Base Class
+    '''
     class ProtocolVersion(Enum):
         '''
         协议版本枚举,需要在派生类中指定
+        '''
+        '''
+        Protocol Version Enumeration, needs to be specified in the derived class.
         '''
         ARM_PROTOCOL_UNKNOWN = auto()
         ARM_PROROCOL_V1 = auto()
@@ -32,6 +38,9 @@ class C_PiperParserBase(ABC):
         '''
         解码消息,将can数据帧转为设定的类型
         '''
+        '''
+        Decode the message, converting the CAN data frame into the specified type.
+        '''
         pass
     
     @abstractmethod
@@ -41,6 +50,11 @@ class C_PiperParserBase(ABC):
         
         只将输入数据转换为can数据的id和data, 没有为can message赋值channel、dlc、is_extended_id
         '''
+        '''
+        Convert the message into a CAN data frame.
+
+        This function only converts the input data into the id and data of the CAN message, without assigning values to channel, dlc, or is_extended_id for the CAN message.
+        '''
         pass
 
     @abstractmethod
@@ -48,13 +62,21 @@ class C_PiperParserBase(ABC):
         '''
         获取当前协议版本
         '''
+        '''
+        Get the current protocol version.
+        '''
         pass
     
     def ConvertToNegative_8bit(self, value: int, signed:bool=True) -> int:
         '''
         将输入的整数转换为8位整数。
-        如果 signed 为 True,则转换为32位有符号整数。[-128, 127]
-        如果 signed 为 False,则转换为32位无符号整数。[0, 255]
+        如果 signed 为 True,则转换为8位有符号整数。[-128, 127]
+        如果 signed 为 False,则转换为8位无符号整数。[0, 255]
+        '''
+        '''
+        Convert the input integer to an 8-bit integer.
+        If signed is True, it will be converted to a 32-bit signed integer. [-128, 127]
+        If signed is False, it will be converted to a 32-bit unsigned integer. [0, 255]
         '''
         # 范围检查
         if not (0 <= value <= 255):
@@ -69,7 +91,11 @@ class C_PiperParserBase(ABC):
     def ConvertToNegative_int8_t(value: int) -> int:
         '''
         将输入的整数转换为8位有符号整数。
-        范围: [-128, 127]
+        return范围: [-128, 127]
+        '''
+        '''
+        Convert the input integer to an 8-bit signed integer.
+        return Range: [-128, 127]
         '''
         # 范围检查
         if not (0 <= value <= 255):
@@ -85,6 +111,10 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为8位无符号整数。
         范围: [0, 255]
         '''
+        '''
+        Convert the input integer to an 8-bit unsigned integer.
+        Range: [0, 255]
+        '''
         # 范围检查
         if not (0 <= value <= 255):
             print("转换成8bit无符号整数时出错: 输入值超出范围: [0, 255]")
@@ -95,8 +125,13 @@ class C_PiperParserBase(ABC):
     def ConvertToNegative_16bit(self, value: int, signed:bool=True) -> int:
         '''
         将输入的整数转换为16位整数。
-        如果 signed 为 True,则转换为32位有符号整数。[-32768, 32767]
-        如果 signed 为 False,则转换为32位无符号整数。[0, 65535]
+        如果 signed 为 True,则转换为16位有符号整数。[-32768, 32767]
+        如果 signed 为 False,则转换为16位无符号整数。[0, 65535]
+        '''
+        '''
+        Convert the input integer to a 16-bit integer.
+        If signed is True, it will be converted to a 16-bit signed integer. Range: [-32768, 32767]
+        If signed is False, it will be converted to a 16-bit unsigned integer. Range: [0, 65535]
         '''
         # 范围检查
         if not (0 <= value <= 65535):
@@ -111,7 +146,11 @@ class C_PiperParserBase(ABC):
     def ConvertToNegative_int16_t(value: int) -> int:
         '''
         将输入的整数转换为16位有符号整数。
-        范围: [-32768, 32767]
+        return范围: [-32768, 32767]
+        '''
+        '''
+        Convert the input integer to a 16-bit signed integer.
+        return Range: [-32768, 32767]
         '''
         # 范围检查
         if not (0 <= value <= 65535):
@@ -127,6 +166,10 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为16位无符号整数。
         范围: [0, 65535]
         '''
+        '''
+        Convert the input integer to a 16-bit unsigned integer.
+        Range: [0, 65535]
+        '''
         # 范围检查
         if not (0 <= value <= 65535):
             print("转换成8bit无符号整数时出错: 输入值超出范围: [0, 65535]")
@@ -139,6 +182,11 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为32位整数。
         如果 signed 为 True,则转换为32位有符号整数。
         如果 signed 为 False,则转换为32位无符号整数。
+        '''
+        '''
+        Convert the input integer to a 32-bit integer.
+        If signed is True, it will be converted to a 32-bit signed integer.
+        If signed is False, it will be converted to a 32-bit unsigned integer.
         '''
         # 范围检查
         if not (0 <= value <= 4294967295):
@@ -153,7 +201,11 @@ class C_PiperParserBase(ABC):
     def ConvertToNegative_int32_t(value: int) -> int:
         '''
         将输入的整数转换为32位有符号整数。
-        范围: [-2147483648, 2147483647]
+        return范围: [-2147483648, 2147483647]
+        '''
+        '''
+        Convert the input integer to a 32-bit signed integer.
+        The return range: [-2147483648, 2147483647].
         '''
         # 范围检查
         if not (0 <= value <= 4294967295):
@@ -169,6 +221,10 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为32位无符号整数。
         范围: [0, 4294967295]
         '''
+        '''
+        Convert the input integer to a 32-bit unsigned integer.
+        Range: [0, 4294967295].
+        '''
         # 范围检查
         if not (0 <= value <= 4294967295):
             print("转换成8bit无符号整数时出错: 输入值超出范围: [0, 4294967295]")
@@ -181,6 +237,11 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为8位整数列表。
         根据signed参数判断是否将其视为带符号整数。
         超出范围时给出提示。
+        '''
+        '''
+        Convert the input integer into an 8-bit integer list.
+        The signed parameter determines whether it is treated as a signed integer.
+        A warning will be given if the value exceeds the allowed range.
         '''
         if signed:
             if not -128 <= value <= 127:
@@ -216,6 +277,11 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为16位整数列表。
         根据signed参数判断是否将其视为带符号整数。
         超出范围时给出提示。
+        '''
+        '''
+        Convert the input integer into a 16-bit integer list.
+        The signed parameter determines whether it is treated as a signed integer.
+        A warning will be given if the value exceeds the allowed range.
         '''
         if signed:
             if not -32768 <= value <= 32767:
@@ -261,6 +327,11 @@ class C_PiperParserBase(ABC):
         将输入的整数转换为32位整数列表。
         根据signed参数判断是否将其视为带符号整数。
         超出范围时给出提示。
+        '''
+        '''
+        Convert the input integer into a 32-bit integer list.
+        The signed parameter determines whether it is treated as a signed integer.
+        A warning will be given if the value exceeds the allowed range.
         '''
         if signed:
             if not -2147483648 <= value <= 2147483647:
@@ -310,5 +381,8 @@ class C_PiperParserBase(ABC):
     def ConvertBytesToInt(self, bytes:bytearray, first_index:int, second_index:int, byteorder:Literal["little", "big"]='big'):
         '''
         将字节串转换为int类型,默认为大端对齐
+        '''
+        '''
+        Convert a byte string to an int type, with big-endian byte order by default.
         '''
         return int.from_bytes(bytes[first_index:second_index], byteorder=byteorder)
