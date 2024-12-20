@@ -14,19 +14,19 @@ class ArmMsgJointConfig:
         joint_motor_num: 关节电机序号
         set_motor_current_pos_as_zero: 设置当前位置为零点
         acc_param_config_is_effective_or_not: 加速度参数设置是否生效
-        max_joint_acc: 最大关节加速度,单位0.01rad/s^2
+        max_joint_acc: 最大关节加速度,单位0.01rad/s^2(0x7FFF为设定无效数值)
         clear_joint_err: 清除关节错误代码
     
     位描述:
     
-        Byte 0: 关节电机序号 uint8, 值域 1-7:   
-                - 1-6 代表关节驱动器序号；
-                - 7 代表全部关节电机
-        Byte 1: 设置N号电机当前位置为零点: uint8, 有效值 : 0xAE
-        Byte 2: 加速度参数设置是否生效: uint8, 有效值 : 0xAE
-        Byte 3: 最大关节加速度 H: uint16, 单位 0.01rad/s^2
+        Byte 0: 关节电机序号 uint8, 值域 1-7 
+                1-6 代表关节驱动器序号；
+                7 代表全部关节电机
+        Byte 1: 设置N号电机当前位置为零点: uint8, 有效值-0xAE
+        Byte 2: 加速度参数设置是否生效: uint8, 有效值-0xAE
+        Byte 3: 最大关节加速度 H: uint16, 单位 0.01rad/s^2.(基于V1.5-2版本后增加无效数值0x7FFF)
         Byte 4: 最大关节加速度 L
-        Byte 5: 清除关节错误代码: uint8, 有效值 : 0xAE
+        Byte 5: 清除关节错误代码: uint8, 有效值-0xAE
         Byte 6: 保留
         Byte 7: 保留
     '''
@@ -42,7 +42,7 @@ class ArmMsgJointConfig:
             Value 7 applies to all joint motors.
         set_motor_current_pos_as_zero: Command to set the current position of the specified joint motor as zero, with a valid value of 0xAE.
         acc_param_config_is_effective_or_not: Indicates whether the acceleration parameter configuration is effective, with a valid value of 0xAE.
-        max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.
+        max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2, 0x7FFF is defined as the invalid value.
         clear_joint_err: Command to clear joint error codes, with a valid value of 0xAE.
 
     Bit Description:
@@ -54,7 +54,7 @@ class ArmMsgJointConfig:
                 - Valid value: 0xAE.
         Byte 2: Determines if the acceleration parameter configuration is effective (uint8).
                 - Valid value: 0xAE.
-        Byte 3-4: Maximum joint acceleration (uint16).
+        Byte 3-4: Maximum joint acceleration (uint16).(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
                 - Unit: 0.01rad/s^2.
                 - Byte 3: High byte, Byte 4: Low byte.
         Byte 5: Clear joint error code (uint8).
@@ -75,7 +75,7 @@ class ArmMsgJointConfig:
         if acc_param_config_is_effective_or_not not in [0x00, 0xAE]:
             raise ValueError(f"acc_param_config_is_effective_or_not 值 {acc_param_config_is_effective_or_not} 超出范围 [0x00, 0xAE]")
         if not (0 <= max_joint_acc <= 500):
-            raise ValueError(f"max_joint_acc 值 {max_joint_acc} 超出范围 [0, 500]")
+            raise ValueError(f"max_joint_acc 值 {max_joint_acc} 超出范围 [0, 65535]")
         if clear_joint_err not in [0x00, 0xAE]:
             raise ValueError(f"clear_joint_err 值 {clear_joint_err} 超出范围 [0x00, 0xAE]")
         self.joint_motor_num = joint_motor_num

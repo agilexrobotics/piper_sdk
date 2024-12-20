@@ -14,10 +14,10 @@ from typing_extensions import (
     Literal,
 )
 from ..hardware_port.can_encapsulation import C_STD_CAN
-from ..protocol.protocol_v1 import C_PiperParserBase, C_PiperParserV1
-from ..piper_msgs.msg_v1 import *
+from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
+from ..piper_msgs.msg_v2 import *
 
-class C_PiperInterface():
+class C_PiperInterface_V2():
     '''
     Piper interface class
     
@@ -151,9 +151,11 @@ class C_PiperInterface():
     class CurrentEndVelAndAccParam():
         '''
         当前末端速度/加速度参数
+        0x477 Byte 0 = 0x01 -> 0x478
         '''
         '''
         Current End-Effector Velocity/Acceleration Parameters
+        0x477 Byte 0 = 0x01 -> 0x478
         '''
         def __init__(self):
             self.time_stamp: float=0
@@ -165,9 +167,11 @@ class C_PiperInterface():
     class CrashProtectionLevelFeedback():
         '''
         碰撞防护等级设置反馈指令
+        0x477 Byte 0 = 0x02 -> 0x47B
         '''
         '''
         Collision Protection Level Setting Feedback Command
+        0x477 Byte 0 = 0x02 -> 0x47B
         '''
         def __init__(self):
             self.time_stamp: float=0
@@ -175,6 +179,22 @@ class C_PiperInterface():
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"crash_protection_level_feedback:{self.crash_protection_level_feedback}\n")
+    
+    class GripperTeachingPendantParamFeedback():
+        '''
+        夹爪/示教器参数反馈指令
+        0x477 Byte 0 = 0x04 -> 0x47E
+        '''
+        '''
+        Gripper/Teaching Pendant Parameter Feedback Command
+        0x477 Byte 0 = 0x04 -> 0x47E
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.arm_gripper_teaching_param_feedback=ArmMsgGripperTeachingPendantParamFeedback()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"arm_gripper_teaching_param_feedback:{self.arm_gripper_teaching_param_feedback}\n")
     
     class CurrentMotorMaxAccLimit():
         '''
@@ -318,10 +338,9 @@ class C_PiperInterface():
             raise IndexError("C_PiperBase input can name is not str type")
         self.arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
         # 协议解析
-        self.parser: Type[C_PiperParserBase] = C_PiperParserV1()
+        self.parser: Type[C_PiperParserBase] = C_PiperParserV2()
         self.__arm_time_stamp = self.ArmTimeStamp()#时间戳
-        self.__firmware_search_flag = True
-        
+        # 固件版本
         self.__firmware_data_mtx = threading.Lock()
         self.__firmware_data = bytearray()
         # 二次封装数据类型
@@ -351,6 +370,9 @@ class C_PiperInterface():
 
         self.__feedback_crash_protection_level_mtx = threading.Lock()
         self.__feedback_crash_protection_level = self.CrashProtectionLevelFeedback()
+        
+        self.__feedback_gripper_teaching_pendant_param_mtx = threading.Lock()
+        self.__feedback_gripper_teaching_pendant_param = self.GripperTeachingPendantParamFeedback()
 
         self.__feedback_current_motor_max_acc_limit_mtx = threading.Lock()
         self.__feedback_current_motor_max_acc_limit = self.CurrentMotorMaxAccLimit()
@@ -419,6 +441,7 @@ class C_PiperInterface():
 
             self.UpdateCurrentEndVelAndAccParam(msg)
             self.UpdateCrashProtectionLevelFeedback(msg)
+            self.UpdateGripperTeachingPendantParamFeedback(msg)
             self.UpdateCurrentMotorAngleLimitMaxVel(msg)
             self.UpdateCurrentMotorMaxAccLimit(msg)
             self.UpdateAllCurrentMotorAngleLimitMaxVel(msg)
@@ -557,6 +580,19 @@ class C_PiperInterface():
         '''
         with self.__feedback_crash_protection_level_mtx:
             return self.__feedback_crash_protection_level
+    
+    def GetGripperTeachingPendantParamFeedback(self):
+        '''夹爪/示教器参数反馈指令
+        
+        包括示教器行程系数反馈、夹爪/示教器最大控制行程限制值反馈
+        '''
+        '''Gripper/Teaching Pendant Parameter Feedback Command
+        This includes the following information:
+            Teaching pendant travel coefficient
+            Maximum control travel limit values for gripper/teaching pendant
+        '''
+        with self.__feedback_gripper_teaching_pendant_param_mtx:
+            return self.__feedback_gripper_teaching_pendant_param
 
     def GetCurrentMotorMaxAccLimit(self):
         '''获取当前电机最大加速度限制
@@ -1135,6 +1171,30 @@ class C_PiperInterface():
             # print(self.__feedback_crash_protection_level)
             return self.__feedback_crash_protection_level
     
+    def UpdateGripperTeachingPendantParamFeedback(self, msg:PiperMessage):
+        '''
+        夹爪/示教器参数反馈指令
+        对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x04
+
+        0x47E
+        '''
+        '''
+        Gripper/Teaching Pendant Parameter Feedback Command  
+        Corresponds to robotic arm parameter query and setting command 0x477, Byte 0 = 0x04
+
+        CAN ID:
+            0x47E
+        '''
+        with self.__feedback_gripper_teaching_pendant_param_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgGripperTeachingPendantParamFeedback):
+                self.__feedback_gripper_teaching_pendant_param.time_stamp = time.time_ns()/ 1_000_000_000
+                self.__feedback_gripper_teaching_pendant_param.arm_gripper_teaching_param_feedback.max_range_config = \
+                    msg.arm_gripper_teaching_param_feedback.max_range_config
+                self.__feedback_gripper_teaching_pendant_param.arm_gripper_teaching_param_feedback.teaching_range_per = \
+                    msg.arm_gripper_teaching_param_feedback.teaching_range_per
+            # print(self.__feedback_gripper_teaching_pendant_param)
+            return self.__feedback_gripper_teaching_pendant_param
+    
     def UpdateArmJointCtrl(self, msg:PiperMessage):
         '''更新关节和夹爪状态,为主臂发送的消息
 
@@ -1240,11 +1300,9 @@ class C_PiperInterface():
             0x150
         
         Args:
-            emergency_stop: 快速急停 uint8 
-                0x00 无效
+            emergency_stop: 快速急停 uint8 0x00 无效
                 0x01 快速急停 0x02 恢复
-            track_ctrl: 轨迹指令 uint8 
-                0x00 关闭
+            track_ctrl: 轨迹指令 uint8 0x00 关闭
                 0x01 暂停当前规划 
                 0x02 继续当前轨迹
                 0x03 清除当前轨迹 
@@ -1253,8 +1311,7 @@ class C_PiperInterface():
                 0x06 终止执行 
                 0x07 轨迹传输 
                 0x08 轨迹传输结束
-            grag_teach_ctrl: 拖动示教指令 uint8 
-                0x00 关闭
+            grag_teach_ctrl: 拖动示教指令 uint8 0x00 关闭
                 0x01 开始示教记录（进入拖动示教模式）
                 0x02 结束示教记录（退出拖动示教模式） 
                 0x03 执行示教轨迹（拖动示教轨迹复现） 
@@ -1318,6 +1375,7 @@ class C_PiperInterface():
                 0x01 MOVE J
                 0x02 MOVE L
                 0x03 MOVE C
+                0x04 MOVE M ---基于V1.5-2版本后
             move_spd_rate_ctrl 运动速度百分比 uint8
                 数值范围0~100 
             is_mit_mode mit模式 uint8 
@@ -1340,6 +1398,7 @@ class C_PiperInterface():
                 0x01: MOVE J (Joint)
                 0x02: MOVE L (Linear)
                 0x03: MOVE C (Circular)
+                0x04: MOVE M (MIT) ---- Based on version V1.5-2 and later
             move_spd_rate_ctrl (int): The movement speed percentage (0-100).
             is_mit_mode (int): The MIT mode.
                 0x00: Position-velocity mode
@@ -1353,7 +1412,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndPoseCtrl(self,X:int,Y:int,Z:int,RX:int,RY:int,RZ:int):
+    def EndPoseCtrl(self,X,Y,Z,RX,RY,RZ):
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
         
@@ -1386,7 +1445,7 @@ class C_PiperInterface():
         self.__CartesianCtrl_ZRX(Z,RX)
         self.__CartesianCtrl_RYRZ(RY,RZ)
 
-    def __CartesianCtrl_XY(self, X:int, Y:int):
+    def __CartesianCtrl_XY(self, X, Y):
         tx_can=Message()
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_1, arm_motion_ctrl_cartesian=cartesian_1)
@@ -1394,7 +1453,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_ZRX(self, Z:int, RX:int):
+    def __CartesianCtrl_ZRX(self, Z, RX):
         tx_can=Message()
         cartesian_2 = ArmMsgMotionCtrlCartesian(Z_axis=Z, RX_axis=RX)
         # print(cartesian_2)
@@ -1403,7 +1462,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_RYRZ(self, RY:int, RZ:int):
+    def __CartesianCtrl_RYRZ(self, RY, RZ):
         tx_can=Message()
         cartesian_3 = ArmMsgMotionCtrlCartesian(RY_axis=RY, RZ_axis=RZ)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_3, arm_motion_ctrl_cartesian=cartesian_3)
@@ -1718,14 +1777,13 @@ class C_PiperInterface():
         # print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def SearchMotorMaxAngleSpdAccLimit(self, motor_num:int, search_content:int):
+    def SearchMotorMaxAngleSpdAccLimit(self, motor_num, search_content):
         '''
         查询电机角度/最大速度/最大加速度限制指令
 
         对应反馈当前电机限制角度/最大速度
         
-        CAN ID:
-            0x472
+        0x472
         
         Args:
             motor_num: uint8, 关节电机序号。
@@ -1738,9 +1796,6 @@ class C_PiperInterface():
 
         This corresponds to feedback on the current motor angle/maximum speed limits.
 
-        CAN ID:
-            0x472
-        
         Args:
             command (list): The command list containing the following elements:
             
@@ -1781,36 +1836,60 @@ class C_PiperInterface():
         self.SearchMotorMaxAngleSpdAccLimit(5, 0x02)
         self.SearchMotorMaxAngleSpdAccLimit(6, 0x02)
     
-    def MotorAngleLimitMaxSpdSet(self, motor_num:int, max_angle_limit:int, min_angle_limit:int, max_joint_spd:int):
+    def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_joint_spd):
         '''
         电机角度限制/最大速度设置指令
         
-        CAN ID:
-            0x474
+        0x474
         
         Args:
             motor_num: 关节电机序号
-            max_angle_limit: 最大角度限制,单位 0.1°
-            min_angle_limit: 最小角度限制,单位 0.1°
-            max_joint_spd: 最大关节速度,单位 0.001rad/s
+            max_angle_limit: 最大角度限制,单位 0.1°,0x7FFF为设定无效数值
+            min_angle_limit: 最小角度限制,单位 0.1°,0x7FFF为设定无效数值
+            max_joint_spd: 最大关节速度,单位 0.001rad/s,0x7FFF为设定无效数值
         '''
         '''
         Sets the motor angle limit/maximum speed limit command 
         
-        CAN ID:
-            0x474
+        0x474
         
         Args:
             motor_num: Joint motor index.
-            max_angle_limit: Maximum angle limit, unit 0.1°.
-            min_angle_limit: Minimum angle limit, unit 0.1°.
-            max_joint_spd: Maximum joint speed, unit 0.001 rad/s.
+            max_angle_limit: Maximum angle limit, unit 0.1°.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
+            min_angle_limit: Minimum angle limit, unit 0.1°.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
+            max_joint_spd: Maximum joint speed, unit 0.001 rad/s.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
         '''
         tx_can=Message()
         motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_joint_spd)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet, arm_motor_angle_limit_max_spd_set=motor_set)
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def MotorMaxSpdSet(self, motor_num:Literal[1, 2, 3, 4, 5, 6] = 6, max_joint_spd:int = 3000):
+        '''
+        电机最大速度设置指令(基于V1.5-2版本后)
+        
+        CAN ID:
+            0x474
+        
+        范围:0-3rad/s
+        
+        Args:
+            motor_num: 电机序号
+            max_joint_spd: 关节电机最大速度设定,单位 0.001rad/s,0x7FFF为设定无效数值
+        '''
+        '''
+        Motor Maximum Speed Setting Command (Based on version V1.5-2 and later)
+
+        CAN ID:
+            0x474
+        
+        Range: 0-3 rad/s
+        
+        Args:
+            max_joint_spd: Maximum speed setting for joint motor, unit: 0.001 rad/s. 0x7FFF indicates an invalid value.
+        '''
+        self.MotorAngleLimitMaxSpdSet(motor_num, 0x7FFF, 0x7FFF, max_joint_spd)
 
     def JointConfig(self, 
                     joint_num:Literal[1, 2, 3, 4, 5, 6, 7]=7,
@@ -1826,11 +1905,11 @@ class C_PiperInterface():
         
         Args:
             joint_motor_num: 关节电机序号值域 1-7
-                1-6 代表关节驱动器序号；
-                7 代表全部关节电机
+                1-6 代表关节驱动器序号;
+                7 代表全部关节电机;
             set_motor_current_pos_as_zero: 设置当前位置为零点,有效值,0xAE
             acc_param_config_is_effective_or_not: 加速度参数设置是否生效,有效值,0xAE
-            max_joint_acc: 最大关节加速度,单位0.01rad/s^2
+            max_joint_acc: 最大关节加速度,单位0.01rad/s^2(0x7FFF为设定无效数值)
             clear_joint_err: 清除关节错误代码,有效值,0xAE
         '''
         '''
@@ -1845,7 +1924,7 @@ class C_PiperInterface():
                 Value 7 applies to all joint motors.
             set_motor_current_pos_as_zero: Command to set the current position of the specified joint motor as zero, with a valid value of 0xAE.
             acc_param_config_is_effective_or_not: Indicates whether the acceleration parameter configuration is effective, with a valid value of 0xAE.
-            max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.
+            max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
             clear_joint_err: Command to clear joint error codes, with a valid value of 0xAE.
         '''
         tx_can=Message()
@@ -1856,7 +1935,7 @@ class C_PiperInterface():
     
     def JointMaxAccConfig(self, motor_num:Literal[1, 2, 3, 4, 5, 6]=6, max_joint_acc:int=500):
         '''
-        关节最大加速度设置指令
+        关节最大加速度设置指令(基于V1.5-2版本后)
         
         CAN ID:
             0x475
@@ -1864,11 +1943,11 @@ class C_PiperInterface():
         范围:0-5 rad/s^2
         
         Args:
-            motor_num: 电机序号
-            max_joint_acc: 1关节电机最大速度设定,单位 0.01rad/s^2
+            motor_num: 电机序号[1,6]
+            max_joint_acc: 关节电机最大速度设定,单位 0.01rad/s^2
         '''
         '''
-        Joint Maximum Acceleration Command
+        Joint Maximum Acceleration Command (Based on version V1.5-2 and later)
 
         CAN ID:
             0x475
@@ -1876,12 +1955,12 @@ class C_PiperInterface():
         Range: 0-5 rad/s^2
         
         Args:
-            motor_num
-            m1_max_joint_spd: Maximum speed setting for joint motor 1, unit: 0.01 rad/s^2
+            motor_num:[1,6]
+            m1_max_joint_spd: Maximum speed setting for joint motor, unit: 0.01 rad/s^2
         '''
         self.JointConfig(motor_num,0,0xAE,max_joint_acc,0)
     
-    def SetInstructionResponse(self, instruction_index:int, zero_config_success_flag:int):
+    def SetInstructionResponse(self, instruction_index, zero_config_success_flag):
         '''
         设置指令应答
         
@@ -1918,19 +1997,22 @@ class C_PiperInterface():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def ArmParamEnquiryAndConfig(self, param_enquiry:int, param_setting:int, 
-                                 data_feedback_0x48x:int, end_load_param_setting_effective:int, set_end_load:int):
+    def ArmParamEnquiryAndConfig(self, param_enquiry, param_setting, data_feedback_0x48x, end_load_param_setting_effective, set_end_load):
         '''
-        机械臂参数查
-        询与设置指令
+        机械臂参数查询与设置指令
 
         CAN ID:
             0x477
 
         Args:
             param_enquiry: 参数查询
-                param_enquiry Byte 0 = 0x01 ->0x478
-                param_enquiry Byte 0 = 0x02 ->0x47B
+                0x01 ->0x478,查询末端 V/acc
+                
+                0x02 ->0x47B,查询碰撞防护等级
+                
+                0x03 查询当前轨迹索引
+                
+                0x04 ->0x47E,查询夹爪/示教器参数索引 ---- 基于V1.5-2版本后
             param_setting: 参数设置
                 设置末端 V/acc 参数为初始值--0x01
                 设置全部关节限位、关节最大速度、关节加速度为默认值--0x02
@@ -1953,8 +2035,10 @@ class C_PiperInterface():
 
         Args:
             param_enquiry (int): Parameter enquiry.
-                param_enquiry Byte 0 = 0x01 -> 0x478 (Parameter enquiry response).
-                param_enquiry Byte 0 = 0x02 -> 0x47B (Parameter enquiry response).
+                0x01 -> 0x478: Query end-effector velocity/acceleration
+                0x02 -> 0x47B: Query collision protection level
+                0x03: Query current trajectory index
+                0x04 -> 0x47E: Query gripper/teaching pendant parameter index(Based on version V1.5-2 and later)
             
             param_setting (int): Parameter setting.
                 0x01: Set end effector velocity/acceleration parameters to initial values.
@@ -1984,7 +2068,7 @@ class C_PiperInterface():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndSpdAndAccParamSet(self, end_max_linear_vel:int, end_max_angular_vel:int, end_max_linear_acc:int, end_max_angular_acc:int):
+    def EndSpdAndAccParamSet(self, end_max_linear_vel, end_max_angular_vel, end_max_linear_acc, end_max_angular_acc):
         '''
         末端速度/加
         速度参数设置
@@ -2020,12 +2104,12 @@ class C_PiperInterface():
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def CrashProtectionConfig(self, 
-                              joint_1_protection_level:int, 
-                              joint_2_protection_level:int, 
-                              joint_3_protection_level:int, 
-                              joint_4_protection_level:int,
-                              joint_5_protection_level:int,
-                              joint_6_protection_level:int):
+                              joint_1_protection_level, 
+                              joint_2_protection_level, 
+                              joint_3_protection_level, 
+                              joint_4_protection_level,
+                              joint_5_protection_level,
+                              joint_6_protection_level):
         '''
         碰撞防护等级
         设置指令
@@ -2073,7 +2157,7 @@ class C_PiperInterface():
         msg = PiperMessage(type_=ArmMsgType.PiperMsgCrashProtectionRatingConfig, arm_crash_protection_rating_config=crash_config)
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-    
+
     def SearchPiperFirmwareVersion(self):
         '''
         发送piper机械臂固件版本查询指令
@@ -2091,5 +2175,97 @@ class C_PiperInterface():
         tx_can.arbitration_id = 0x4AF
         tx_can.data = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-        self.__firmware_search_flag = True
         self.__firmware_data = bytearray()
+    
+    def __JointMitCtrl(self,motor_num:int,
+                            pos_ref:float, vel_ref:float, kp:float, kd:float, t_ref:float,
+                            p_min:float=-12.5,    p_max:float=12.5, 
+                            v_min:float=-45.0,    v_max:float=45.0, 
+                            kp_min:float=0.0,   kp_max:float=500.0, 
+                            kd_min:float=-5.0,   kd_max:float=5.0,
+                            t_min:float=-18.0,    t_max:float=18.0):
+        '''
+        机械臂关节1~6MIT控制指令
+        
+        CAN ID:
+            0x15A,0x15B,0x15C,0x15D,0x15E,0x15F
+        
+        注意:p_min,p_max,v_min,v_max,kp_min,kp_max,kd_min,kd_max,t_min,t_max参数为固定,不要更改
+        
+        Args:
+            motor_num:电机序号[1,6]
+            pos_ref: 设定期望的目标位置
+            vel_ref: 设定电机运动的速度
+            kp: 比例增益,控制位置误差对输出力矩的影响
+            kd: 微分增益,控制速度误差对输出力矩的影响
+            t_ref: 目标力矩参考值,用于控制电机施加的力矩或扭矩
+            p_min:位置最小值
+            p_max:位置最大值
+            v_min:速度最小值
+            v_max:速度最大值
+            kp_min:p参数最小值
+            kp_max:p参数最大值
+            kd_min:d参数最小值
+            kd_max:d参数最大值
+            t_min:扭矩参数最小值
+            t_max:扭矩参数最大值
+        '''
+        pos_tmp = self.parser.FloatToUint(pos_ref, p_min, p_max, 16)
+        vel_tmp = self.parser.FloatToUint(vel_ref, v_min, v_max, 12)
+        kp_tmp = self.parser.FloatToUint(kp, kp_min, kp_max, 12)
+        kd_tmp = self.parser.FloatToUint(kd, kd_min, kd_max, 12)
+        t_tmp = self.parser.FloatToUint(t_ref, t_min, t_max, 8)
+        tx_can=Message()
+        mit_ctrl = ArmMsgJointMitCtrl(  pos_ref=pos_tmp, 
+                                        vel_ref=vel_tmp,
+                                        kp=kp_tmp, 
+                                        kd=kd_tmp,
+                                        t_ref=t_tmp)
+        if(motor_num == 1):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_1,  arm_joint_mit_ctrl=mit_ctrl)
+        elif(motor_num == 2):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_2,  arm_joint_mit_ctrl=mit_ctrl)
+        elif(motor_num == 3):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_3,  arm_joint_mit_ctrl=mit_ctrl)
+        elif(motor_num == 4):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_4,  arm_joint_mit_ctrl=mit_ctrl)
+        elif(motor_num == 5):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_5,  arm_joint_mit_ctrl=mit_ctrl)
+        elif(motor_num == 6):
+            msg = PiperMessage(type_=ArmMsgType.PiperMsgJointMitCtrl_6,  arm_joint_mit_ctrl=mit_ctrl)
+        else:
+            raise ValueError(f"输入的电机序号 {motor_num} 超出范围 [0,6].")
+        self.parser.EncodeMessage(msg, tx_can)
+        self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def JointMitCtrl(self,motor_num:int,
+                    pos_ref:float, vel_ref:float, kp:float, kd:float, t_ref:float):
+        '''
+        机械臂关节1~6MIT控制指令
+        
+        CAN ID:
+            0x15A,0x15B,0x15C,0x15D,0x15E,0x15F
+        
+        Args:
+            motor_num:电机序号,[1,6]
+            pos_ref: 设定期望的目标位置,单位rad,[-12.5,12.5]
+            vel_ref: 设定电机运动的速度,[-45.0,45.0]
+            kp: 比例增益,控制位置误差对输出力矩的影响,参考值---10,[0.0,500.0]
+            kd: 微分增益,控制速度误差对输出力矩的影响,参考值---0.8,[-5.0,5.0]
+            t_ref: 目标力矩参考值,用于控制电机施加的力矩或扭矩,[-18.0,18.0]
+        '''
+        '''
+        Robotic Arm Joint 1~6 MIT Control Command
+
+        CAN IDs:
+            0x15A, 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
+        
+        Args:
+            motor_num: Motor index, range [1, 6]
+            pos_ref: Desired target position, unit: rad, range [-12.5, 12.5]
+            vel_ref: Desired motor speed, range [-45.0, 45.0]
+            kp: Proportional gain, controls the influence of position error on output torque, reference value: 10, range [0.0, 500.0]
+            kd: Derivative gain, controls the influence of speed error on output torque, reference value: 0.8, range [-5.0, 5.0]
+            t_ref: Target torque reference, controls the torque applied by the motor, range [-18.0, 18.0]
+        '''
+        self.__JointMitCtrl(motor_num, pos_ref, vel_ref, kp, kd, t_ref)

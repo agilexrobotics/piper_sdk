@@ -7,7 +7,7 @@ from typing import (
 import time
 from piper_sdk import *
 
-def enable_fun(piper:C_PiperInterface):
+def enable_fun(piper:C_PiperInterface_V2):
     '''
     使能机械臂并检测使能状态,尝试5s,如果使能超时则退出程序
     '''
@@ -43,14 +43,14 @@ def enable_fun(piper:C_PiperInterface):
         exit(0)
 
 if __name__ == "__main__":
-    piper = C_PiperInterface("can0")
+    piper = C_PiperInterface_V2("can0")
     piper.ConnectPort()
     piper.EnableArm(7)
     enable_fun(piper=piper)
     # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 57324.840764 #1000*180/3.14
-    factor =1
+    # factor =1
     position = [0,0,0,0,0,0,0]
     count = 0
     while True:
@@ -64,9 +64,9 @@ if __name__ == "__main__":
             # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
         elif(count == 800):
             print("2-----------")
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
+            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
             # position = [0,0,0,0,0,0,0]
-            position = [-8524,104705,-78485,-451,-5486,29843,0]
+            # position = [-8524,104705,-78485,-451,-5486,29843,0]
         elif(count == 1600):
             print("1-----------")
             position = [0,0,0,0,0,0,0]
@@ -81,9 +81,9 @@ if __name__ == "__main__":
         joint_5 = round(position[5]*factor)
         joint_6 = round(position[6]*1000*1000)
         # piper.MotionCtrl_1()
-        piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
+        piper.MotionCtrl_2(0x01, 0x01, 100, 0x00)
         piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
         piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-        piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
+        piper.MotionCtrl_2(0x01, 0x01, 100, 0x00)
         time.sleep(0.005)
         pass

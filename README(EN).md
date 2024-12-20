@@ -12,7 +12,7 @@ Test:
 
 |Description |doc|
 |---|---|
-|Detailed description of the interface function.|[Interface README](./asserts/INTERFACE(EN).MD)|
+|Detailed description of the interface function.|[Interface README](./asserts/INTERFACE_V1(EN).MD)|
 |Description of the protocol parsing section.|[Protocol README](./asserts/PROTOCOL_V1(EN).MD)|
 |Description of the message section.|[Msgs README](./asserts/MSGS(EN).MD)|
 |Piper DEMO|[DMEO](./asserts/SDK_DEMO(EN).MD)|

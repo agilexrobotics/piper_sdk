@@ -14,15 +14,17 @@ Test:
 
 |说明 |文档|
 |---|---|
-|接口函数的详细说明|[Interface README](./asserts/INTERFACE.MD)|
-|协议解析部分说明|[Protocol README](./asserts/PROTOCOL_V1.MD)|
-|消息部分说明|[Msgs README](./asserts/MSGS.MD)|
+|接口函数的详细说明|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
+|协议解析部分说明|[Protocol_V1 README](./asserts/V1/PROTOCOL_V1.MD) <br> [Protocol_V2 README](./asserts/V2/PROTOCOL_V2.MD)|
+|消息部分说明|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
 |机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
-|机械臂DEMO|[`piper_sdk/demo`](./demo/README.MD)|
+|机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
 
 ## 安装方法
 
 ### 安装依赖
+
+注:python-can>=4.3.1
 
 ```shell
 pip3 install python-can
@@ -31,6 +33,14 @@ pip3 install python-can
 ```shell
 pip3 install piper_sdk
 ```
+
+0.0.x 为机械臂V1.5-2固件版本前的sdk支持
+
+当前0.0.x最后一个版本号为0.0.9
+
+0.1.x 为机械臂V1.5-2固件版本后的sdk支持
+
+暂未上传
 
 查看`piper_sdk`细节，比如安装路径，版本等信息
 

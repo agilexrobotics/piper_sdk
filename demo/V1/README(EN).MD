@@ -42,7 +42,7 @@ Note: If the robot is in the master arm mode, you need to restart the robot afte
 
 - Diagram
 
-![ ](./asserts/接线图.PNG)
+![ ](../asserts/接线图.PNG)
 
 1. Set one of the robotic arms as the master arm and the other as the slave arm (as shown in the demo above), then power off both robotic arms.
 2. Connect the two robotic arms to a CAN module, and connect the CANs of the master and slave arms.

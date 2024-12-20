@@ -1,4 +1,4 @@
-# Piper 机械臂sdk部分demo
+# Piper 机械臂sdk(V2)demo
 
 [EN](README(EN).MD)
 
@@ -14,9 +14,13 @@ Test:
 
 ### 安装依赖
 
+注:python-can>=4.3.1
+
 ```shell
 pip3 install python-can
 ```
+
+注:piper_sdk>=0.1.9
 
 ```shell
 pip3 install piper_sdk
@@ -27,7 +31,8 @@ can模块激活说明[can README](./can_config.MD)
 ## demo说明
 
 ```shell
-.
+V2
+├── motor_max_acc_limit_config.py
 ├── piper_disable.py
 ├── piper_enable.py
 ├── piper_joint_ctrl.py
@@ -41,11 +46,17 @@ can模块激活说明[can README](./can_config.MD)
 ├── piper_slave_config.py
 ├── piper_status.py
 ├── read_joint_state.py
-└── read_piper_hardware.py
+├── read_piper_hardware.py
+├── V2_joint_mit_ctrl.py
+└── V2_motor_max_spd_set.py
 ```
 
 |文件 |说明|
 |---|---|
+|`motor_max_acc_limit_config.py`|V2版本sdk电机单独设定某个关节电机的最大加速度限制|
+|`piper_disable.py`|机械臂失能|
+|`piper_enable.py`|机械臂使能|
+|`piper_joint_ctrl.py`|机械臂关节控制|
 |`piper_disable.py`|机械臂失能|
 |`piper_enable.py`|机械臂使能|
 |`piper_joint_ctrl.py`|机械臂关节控制|
@@ -60,6 +71,8 @@ can模块激活说明[can README](./can_config.MD)
 |`piper_status.py`|机械臂状态读取|
 |`read_joint_state.py`|读取关节角消息并打印|
 |`read_piper_hardware.py`|读取机械臂主控固件版本|
+|`V2_joint_mit_ctrl.py`|V2版本sdk单独电机mit参数设定|
+|`V2_motor_max_spd_set.py`|V2版本sdk电机单独设定某个关节电机的最大速度限制|
 
 注意：如果是在机械臂处于主动臂模式下，发送设置为从动臂指令后需要重新启动机械臂，机械臂才会切换到从动臂模式
 
@@ -69,7 +82,7 @@ can模块激活说明[can README](./can_config.MD)
 
 - 示意图
 
-![ ](./asserts/接线图.PNG)
+![ ](../asserts/接线图.PNG)
 
 1. 单独将其中一个机械臂设定为主动臂，另一条设定为从动臂(如上demo)，然后将两个机械臂下电
 2. 将两个机械臂共同连接在一个can模块上，令主从臂的can连接
