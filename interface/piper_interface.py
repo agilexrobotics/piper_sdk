@@ -1721,7 +1721,8 @@ class C_PiperInterface():
 
         对应反馈当前电机限制角度/最大速度
         
-        0x472
+        CAN ID:
+            0x472
         
         Args:
             motor_num: uint8, 关节电机序号。
@@ -1734,6 +1735,9 @@ class C_PiperInterface():
 
         This corresponds to feedback on the current motor angle/maximum speed limits.
 
+        CAN ID:
+            0x472
+        
         Args:
             command (list): The command list containing the following elements:
             
@@ -1778,7 +1782,8 @@ class C_PiperInterface():
         '''
         电机角度限制/最大速度设置指令
         
-        0x474
+        CAN ID:
+            0x474
         
         Args:
             motor_num: 关节电机序号
@@ -1789,7 +1794,8 @@ class C_PiperInterface():
         '''
         Sets the motor angle limit/maximum speed limit command 
         
-        0x474
+        CAN ID:
+            0x474
         
         Args:
             motor_num: Joint motor index.
@@ -1807,10 +1813,13 @@ class C_PiperInterface():
                     joint_num:Literal[1, 2, 3, 4, 5, 6, 7]=7,
                     set_zero:Literal[0x00, 0xAE]=0,
                     acc_param_is_effective:Literal[0x00, 0xAE]=0,
-                    set_acc:int=0,
+                    max_joint_acc:int=0,
                     clear_err:Literal[0x00, 0xAE]=0):
         '''
         关节设置
+        
+        CAN ID:
+            0x475
         
         Args:
             joint_motor_num: 关节电机序号值域 1-7
@@ -1818,11 +1827,14 @@ class C_PiperInterface():
                 - 7 代表全部关节电机
             set_motor_current_pos_as_zero: 设置当前位置为零点,有效值,0xAE
             acc_param_config_is_effective_or_not: 加速度参数设置是否生效,有效值,0xAE
-            max_joint_acc: 最大关节加速度
+            max_joint_acc: 最大关节加速度,单位0.01rad/s^2
             clear_joint_err: 清除关节错误代码,有效值,0xAE
         '''
         '''
         Joint Configuration Command
+        
+        CAN ID:
+            0x475
         
         Args:
             joint_motor_num: Joint motor number.
@@ -1830,14 +1842,41 @@ class C_PiperInterface():
                 - Value 7 applies to all joint motors.
             set_motor_current_pos_as_zero: Command to set the current position of the specified joint motor as zero, with a valid value of 0xAE.
             acc_param_config_is_effective_or_not: Indicates whether the acceleration parameter configuration is effective, with a valid value of 0xAE.
-            max_joint_acc: Maximum joint acceleration, unit: 0.001rad/s^2.
+            max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.
             clear_joint_err: Command to clear joint error codes, with a valid value of 0xAE.
         '''
         tx_can=Message()
-        joint_config = ArmMsgJointConfig(joint_num, set_zero,acc_param_is_effective,set_acc,clear_err)
+        joint_config = ArmMsgJointConfig(joint_num, set_zero,acc_param_is_effective,max_joint_acc,clear_err)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointConfig,arm_joint_config=joint_config)
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def JointMaxAccConfig(self, motor_num:Literal[1, 2, 3, 4, 5, 6]=6, max_joint_acc:int=500):
+        '''
+        关节最大加速度设置指令
+        
+        CAN ID:
+            0x475
+        
+        范围:0-5 rad/s^2
+        
+        Args:
+            motor_num: 电机序号
+            max_joint_acc: 1关节电机最大速度设定,单位 0.01rad/s^2
+        '''
+        '''
+        Joint Maximum Acceleration Command
+
+        CAN ID:
+            0x475
+        
+        Range: 0-5 rad/s^2
+        
+        Args:
+            motor_num
+            m1_max_joint_spd: Maximum speed setting for joint motor 1, unit: 0.01 rad/s^2
+        '''
+        self.JointConfig(motor_num,0,0xAE,max_joint_acc,0)
     
     def SetInstructionResponse(self, instruction_index, zero_config_success_flag):
         '''
@@ -1905,7 +1944,8 @@ class C_PiperInterface():
         '''
         Robotic arm parameter query and setting instruction.
 
-        CAN ID: 0x477
+        CAN ID:
+            0x477
 
         Args:
             param_enquiry (int): Parameter enquiry.
@@ -2034,12 +2074,14 @@ class C_PiperInterface():
         '''
         发送piper机械臂固件版本查询指令
         
-        0x4AF
+        CAN ID:
+            0x4AF
         '''
         '''
         Send a firmware version query command for the Piper robotic arm.
         
-        0x4AF
+        CAN ID:
+            0x4AF
         '''
         tx_can=Message()
         tx_can.arbitration_id = 0x4AF

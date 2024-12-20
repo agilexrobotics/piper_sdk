@@ -14,7 +14,7 @@ class ArmMsgJointConfig:
         joint_motor_num: 关节电机序号
         set_motor_current_pos_as_zero: 设置当前位置为零点
         acc_param_config_is_effective_or_not: 加速度参数设置是否生效
-        max_joint_acc: 最大关节加速度
+        max_joint_acc: 最大关节加速度,单位0.01rad/s^2
         clear_joint_err: 清除关节错误代码
     
     位描述:
@@ -42,7 +42,7 @@ class ArmMsgJointConfig:
             Value 7 applies to all joint motors.
         set_motor_current_pos_as_zero: Command to set the current position of the specified joint motor as zero, with a valid value of 0xAE.
         acc_param_config_is_effective_or_not: Indicates whether the acceleration parameter configuration is effective, with a valid value of 0xAE.
-        max_joint_acc: Maximum joint acceleration, unit: 0.001rad/s^2.
+        max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.
         clear_joint_err: Command to clear joint error codes, with a valid value of 0xAE.
 
     Bit Description:
@@ -74,8 +74,8 @@ class ArmMsgJointConfig:
             raise ValueError(f"set_motor_current_pos_as_zero 值 {set_motor_current_pos_as_zero} 超出范围 [0x00, 0xAE]")
         if acc_param_config_is_effective_or_not not in [0x00, 0xAE]:
             raise ValueError(f"acc_param_config_is_effective_or_not 值 {acc_param_config_is_effective_or_not} 超出范围 [0x00, 0xAE]")
-        if not (0 <= max_joint_acc <= 65535):
-            raise ValueError(f"max_joint_acc 值 {max_joint_acc} 超出范围 [0, 65535]")
+        if not (0 <= max_joint_acc <= 500):
+            raise ValueError(f"max_joint_acc 值 {max_joint_acc} 超出范围 [0, 500]")
         if clear_joint_err not in [0x00, 0xAE]:
             raise ValueError(f"clear_joint_err 值 {clear_joint_err} 超出范围 [0x00, 0xAE]")
         self.joint_motor_num = joint_motor_num
@@ -89,7 +89,7 @@ class ArmMsgJointConfig:
                 f"  joint_motor_num: {self.joint_motor_num},\n"
                 f"  set_motor_current_pos_as_zero: {self.set_motor_current_pos_as_zero},\n"
                 f"  acc_param_config_is_effective_or_not: {self.acc_param_config_is_effective_or_not},\n"
-                f"  max_joint_acc: {self.max_joint_acc}, {self.max_joint_acc*0.001:.3f}\n"
+                f"  max_joint_acc: {self.max_joint_acc}, {self.max_joint_acc*0.01:.2f}\n"
                 f"  clear_joint_err: {self.clear_joint_err}\n"
                 f")")
 

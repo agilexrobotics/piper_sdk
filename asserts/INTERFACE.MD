@@ -116,7 +116,8 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`EnableArm`|Ctrl Method|0x471,使能机械臂电机，此时指定的机械臂电机上电，用手尝试移动机械臂关节是无法移动的|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`SearchMotorMaxAngleSpdAccLimit`|Ctrl Method|0x472,查询电机角度、最大速度及最大加速度限制。这是一个主动发送后反馈指定消息的指令，为应答式指令，可以通过修改`search_content`来查询指定的内容，反馈的内容是单个电机的|类外调用|`motor_num (int)`, `search_content (int)`|None|
 |`MotorAngleLimitMaxSpdSet`|Ctrl Method|设置电机角度限制及最大速度。|类外调用|`motor_num (int)`, `max_angle_limit (float)`, `min_angle_limit (float)`, `max_joint_spd (float)`|None|
-|`JointConfig`|Ctrl Method|配置关节参数。|类外调用|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `set_acc (int)`, `clear_err (int)`|None|
+|`JointConfig`|Ctrl Method|配置关节参数。|类外调用|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `max_joint_acc (int)`, `clear_err (int)`|None|
+|`JointMaxAccConfig`|Ctrl Method|设定关节最大加速度|类外调用|`motor_num (int)`, `max_joint_acc (int)`|None|
 |`SetInstructionResponse`|Ctrl Method|设置指令应答。|类外调用|`instruction_index (int)`, `zero_config_success_flag (int)`|None|
 |`ArmParamEnquiryAndConfig`|Ctrl Method|机械臂参数查询与设置。|类外调用|`param_enquiry (int)`, `param_setting (int)`, `data_feedback_0x48x (int)`, `end_load_param_setting_effective (int)`, `set_end_load (int)`|None|
 |`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (float)`, `end_max_angular_vel (float)`, `end_max_linear_acc (float)`, `end_max_angular_acc (float)`|None|
