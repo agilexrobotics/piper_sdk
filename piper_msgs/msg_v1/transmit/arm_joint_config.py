@@ -24,7 +24,7 @@ class ArmMsgJointConfig:
                 - 7 代表全部关节电机
         Byte 1: 设置N号电机当前位置为零点: uint8, 有效值 : 0xAE
         Byte 2: 加速度参数设置是否生效: uint8, 有效值 : 0xAE
-        Byte 3: 最大关节加速度 H: uint16, 单位 0.001rad/s
+        Byte 3: 最大关节加速度 H: uint16, 单位 0.01rad/s^2
         Byte 4: 最大关节加速度 L
         Byte 5: 清除关节错误代码: uint8, 有效值 : 0xAE
         Byte 6: 保留
@@ -55,7 +55,7 @@ class ArmMsgJointConfig:
         Byte 2: Determines if the acceleration parameter configuration is effective (uint8).
                 - Valid value: 0xAE.
         Byte 3-4: Maximum joint acceleration (uint16).
-                - Unit: 0.001rad/s^2.
+                - Unit: 0.01rad/s^2.
                 - Byte 3: High byte, Byte 4: Low byte.
         Byte 5: Clear joint error code (uint8).
                 - Valid value: 0xAE.
