@@ -102,25 +102,25 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`UpdatePiperFirmware`|Getter Method|更新发送4AF后，读取到的4AF反馈的字符并拼接|类内使用|msg:PiperMessage|self.__firmware_data|
 |`MotionCtrl_1`|Ctrl Method|0x150,可以控制急停、轨迹传输及拖动示教模式。|类外调用|`emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|None|
 |`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|None|
-|`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (float)`, `Y (float)`, `Z (float)`, `RX (float)`, `RY (float)`, `RZ (float)`|None|
-|`__CartesianCtrl_XY`|Ctrl Method|控制机械臂笛卡尔坐标的XY轴运动。|类内调用(私有)|`X (float)`, `Y (float)`|None|
-|`__CartesianCtrl_ZRX`|Ctrl Method|控制机械臂笛卡尔坐标的Z轴和RX轴运动。|类内调用(私有)|`Z (float)`, `RX (float)`|None|
-|`__CartesianCtrl_RYRZ`|Ctrl Method|控制机械臂笛卡尔坐标的RY轴和RZ轴运动。|类内调用(私有)|`RY (float)`, `RZ (float)`|None|
-|`JointCtrl`|Ctrl Method|0x155,0x156,0x157,控制机械臂的六个关节运动。需要注意的是，该函数发送出去的数值单位为0.001度,假如需要机械臂1号关节运动90度(1.57弧度)，则发送的数据为90*1000,如果是弧度，则1.57\*1000\*(180/3.14)|类外调用|`joint_1 (float)`, `joint_2 (float)`, `joint_3 (float)`, `joint_4 (float)`, `joint_5 (float)`, `joint_6 (float)`|None|
-|`__JointCtrl_12`|Ctrl Method|控制机械臂1,2关节运动。|类内调用(私有)|`joint_1 (float)`, `joint_2 (float)`|None|
-|`__JointCtrl_34`|Ctrl Method|控制机械臂3,4关节运动。|类内调用(私有)|`joint_3 (float)`, `joint_4 (float)`|None|
-|`__JointCtrl_56`|Ctrl Method|控制机械臂5,6关节运动。|类内调用(私有)|`joint_5 (float)`, `joint_6 (float)`|None|
+|`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`|None|
+|`__CartesianCtrl_XY`|Ctrl Method|控制机械臂笛卡尔坐标的XY轴运动。|类内调用(私有)|`X (int)`, `Y (int)`|None|
+|`__CartesianCtrl_ZRX`|Ctrl Method|控制机械臂笛卡尔坐标的Z轴和RX轴运动。|类内调用(私有)|`Z (int)`, `RX (int)`|None|
+|`__CartesianCtrl_RYRZ`|Ctrl Method|控制机械臂笛卡尔坐标的RY轴和RZ轴运动。|类内调用(私有)|`RY (int)`, `RZ (int)`|None|
+|`JointCtrl`|Ctrl Method|0x155,0x156,0x157,控制机械臂的六个关节运动。需要注意的是，该函数发送出去的数值单位为0.001度,假如需要机械臂1号关节运动90度(1.57弧度)，则发送的数据为90*1000,如果是弧度，则1.57\*1000\*(180/3.14)|类外调用|`joint_1 (int)`, `joint_2 (int)`, `joint_3 (int)`, `joint_4 (int)`, `joint_5 (int)`, `joint_6 (int)`|None|
+|`__JointCtrl_12`|Ctrl Method|控制机械臂1,2关节运动。|类内调用(私有)|`joint_1 (int)`, `joint_2 (int)`|None|
+|`__JointCtrl_34`|Ctrl Method|控制机械臂3,4关节运动。|类内调用(私有)|`joint_3 (int)`, `joint_4 (int)`|None|
+|`__JointCtrl_56`|Ctrl Method|控制机械臂5,6关节运动。|类内调用(私有)|`joint_5 (int)`, `joint_6 (int)`|None|
 |`GripperCtrl`|Ctrl Method|0x159控制机械臂夹爪的运动。夹爪适配agx的末端执行器，夹爪模块是独立使能,需要注意的是，该函数发送出去的数值单位为0.001mm,假如需要夹爪运动50mm，则发送的数据为50*1000=50000|类外调用|`gripper_angle (int)`, `gripper_effort (int)`, `gripper_code (int)`, `set_zero (int)`|None|
 |`MasterSlaveConfig`|Ctrl Method|0x470,配置机械臂随动主从模式。|类外调用|`linkage_config (int)`, `feedback_offset (int)`, `ctrl_offset (int)`, `linkage_offset (int)`|None|
 |`DisableArm`|Ctrl Method|0x471,失能电机。此时指定电机失去力，如果此时机械臂处于非零点位置，例如2号关节和3号关节抬起状态下，机械臂会直接失力掉下来|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`EnableArm`|Ctrl Method|0x471,使能机械臂电机，此时指定的机械臂电机上电，用手尝试移动机械臂关节是无法移动的|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`SearchMotorMaxAngleSpdAccLimit`|Ctrl Method|0x472,查询电机角度、最大速度及最大加速度限制。这是一个主动发送后反馈指定消息的指令，为应答式指令，可以通过修改`search_content`来查询指定的内容，反馈的内容是单个电机的|类外调用|`motor_num (int)`, `search_content (int)`|None|
-|`MotorAngleLimitMaxSpdSet`|Ctrl Method|设置电机角度限制及最大速度。|类外调用|`motor_num (int)`, `max_angle_limit (float)`, `min_angle_limit (float)`, `max_joint_spd (float)`|None|
+|`MotorAngleLimitMaxSpdSet`|Ctrl Method|设置电机角度限制及最大速度。|类外调用|`motor_num (int)`, `max_angle_limit (int)`, `min_angle_limit (int)`, `max_joint_spd (int)`|None|
 |`JointConfig`|Ctrl Method|配置关节参数。|类外调用|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `max_joint_acc (int)`, `clear_err (int)`|None|
 |`JointMaxAccConfig`|Ctrl Method|设定关节最大加速度|类外调用|`motor_num (int)`, `max_joint_acc (int)`|None|
 |`SetInstructionResponse`|Ctrl Method|设置指令应答。|类外调用|`instruction_index (int)`, `zero_config_success_flag (int)`|None|
 |`ArmParamEnquiryAndConfig`|Ctrl Method|机械臂参数查询与设置。|类外调用|`param_enquiry (int)`, `param_setting (int)`, `data_feedback_0x48x (int)`, `end_load_param_setting_effective (int)`, `set_end_load (int)`|None|
-|`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (float)`, `end_max_angular_vel (float)`, `end_max_linear_acc (float)`, `end_max_angular_acc (float)`|None|
+|`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (int)`, `end_max_angular_vel (int)`, `end_max_linear_acc (int)`, `end_max_angular_acc (int)`|None|
 |`CrashProtectionConfig`|Ctrl Method|配置机械臂碰撞防护等级。|类外调用|`joint_1_protection_level (int)`, `joint_2_protection_level (int)`, `joint_3_protection_level (int)`, `joint_4_protection_level (int)`, `joint_5_protection_level (int)`, `joint_6_protection_level (int)`|None|
 |`SearchPiperFirmwareVersion`|Ctrl Method|查询piper机械臂的主控固件版本|类外调用|None|None|
 

@@ -382,9 +382,9 @@ class C_PiperInterface():
         Starts a thread to process data from the connected CAN port.
 
         This function does the following:
-            - Starts a thread to read data from the CAN port.
-            - Sends a query for the joint motor's maximum angle and speed.
-            - Sends a query for the joint motor's maximum acceleration limit.
+            Starts a thread to read data from the CAN port.
+            Sends a query for the joint motor's maximum angle and speed.
+            Sends a query for the joint motor's maximum acceleration limit.
         '''
         def ReadCan():
             while True:
@@ -458,8 +458,8 @@ class C_PiperInterface():
         '''Retrieves the end effector pose message of the robotic arm.
 
         This includes the following information:
-            - X, Y, Z position (in 0.001 mm)
-            - RX, RY, RZ orientation (in 0.001 degrees)
+            X, Y, Z position (in 0.001 mm)
+            RX, RY, RZ orientation (in 0.001 degrees)
         '''
         with self.__arm_end_pose_mtx:
             return self.__arm_end_pose
@@ -488,9 +488,9 @@ class C_PiperInterface():
         '''Retrieves the high-speed feedback message of the robotic arm.
 
         This includes the following information:
-            - Speed (rotation speed)
-            - Current
-            - Position
+            Speed (rotation speed)
+            Current
+            Position
         '''
         with self.__arm_motor_info_high_spd_mtx:
             return self.__arm_motor_info_high_spd
@@ -503,11 +503,11 @@ class C_PiperInterface():
         '''Retrieves the low-speed feedback message of the robotic arm.
 
         This includes the following information:
-            - Voltage
-            - Driver temperature
-            - Motor temperature
-            - Driver status
-            - Bus current
+            Voltage
+            Driver temperature
+            Motor temperature
+            Driver status
+            Bus current
         '''
         with self.__arm_motor_info_low_spd_mtx:
             return self.__arm_motor_info_low_spd
@@ -520,9 +520,9 @@ class C_PiperInterface():
         '''Retrieves the motor angle limit/maximum speed command.
 
         This includes the following information:
-            - Maximum angle limit
-            - Minimum angle limit
-            - Maximum joint speed
+            Maximum angle limit
+            Minimum angle limit
+            Maximum joint speed
         '''
         with self.__feedback_current_motor_angle_limit_max_vel_mtx:
             return self.__feedback_current_motor_angle_limit_max_vel
@@ -535,10 +535,10 @@ class C_PiperInterface():
         '''Retrieves the end effector velocity and acceleration parameters.
 
         This includes the following information:
-            - End effector linear velocity
-            - End effector angular velocity
-            - End effector linear acceleration
-            - End effector angular acceleration
+            End effector linear velocity
+            End effector angular velocity
+            End effector linear acceleration
+            End effector angular acceleration
         '''
         with self.__feedback_current_end_vel_acc_param_mtx:
             return self.__feedback_current_end_vel_acc_param
@@ -551,9 +551,9 @@ class C_PiperInterface():
         '''Retrieves the collision protection level feedback.
 
         This includes the following information:
-            - Collision level for joints 1-6 (values range from 0 to 8).
-                - 0: No collision detection.
-                - 1-8: Detection levels, where the threshold for collision detection increases progressively.
+            Collision level for joints 1-6 (values range from 0 to 8).
+                0: No collision detection.
+                1-8: Detection levels, where the threshold for collision detection increases progressively.
         '''
         with self.__feedback_crash_protection_level_mtx:
             return self.__feedback_crash_protection_level
@@ -566,8 +566,8 @@ class C_PiperInterface():
         '''Retrieves the current motor's maximum acceleration limit.
 
         This includes the following information:
-            - Current motor number
-            - The maximum joint acceleration of the current motor
+            Current motor number
+            The maximum joint acceleration of the current motor
         '''
         with self.__feedback_current_motor_max_acc_limit_mtx:
             return self.__feedback_current_motor_max_acc_limit
@@ -601,9 +601,9 @@ class C_PiperInterface():
             grippers_angle (int): The gripper angle, in 0.001° (integer representation).
             grippers_effort (int): The gripper torque, in 0.001 N/m (integer representation).
             status_code (int): The gripper status code for enabling/disabling/clearing errors.
-                - 0x00: Disabled
-                - 0x01: Enabled
-                - 0x03/0x02: Enable and clear errors, or disable and clear errors.
+                0x00: Disabled
+                0x01: Enabled
+                0x03/0x02: Enable and clear errors, or disable and clear errors.
             set_zero (int): Set the current position as the zero point.
         '''
         with self.__arm_gripper_ctrl_msgs_mtx:
@@ -1240,53 +1240,56 @@ class C_PiperInterface():
             0x150
         
         Args:
-            emergency_stop: 快速急停 uint8 0x00 无效
-                - 0x01 快速急停 0x02 恢复
-            track_ctrl: 轨迹指令 uint8 0x00 关闭
-                - 0x01 暂停当前规划 
-                - 0x02 继续当前轨迹
-                - 0x03 清除当前轨迹 
-                - 0x04 清除所有轨迹 
-                - 0x05 获取当前规划轨迹 
-                - 0x06 终止执行 
-                - 0x07 轨迹传输 
-                - 0x08 轨迹传输结束
-            grag_teach_ctrl: 拖动示教指令 uint8 0x00 关闭
-                - 0x01 开始示教记录（进入拖动示教模式）
-                - 0x02 结束示教记录（退出拖动示教模式） 
-                - 0x03 执行示教轨迹（拖动示教轨迹复现） 
-                - 0x04 暂停执行 
-                - 0x05 继续执行（轨迹复现继续） 
-                - 0x06 终止执行 
-                - 0x07 运动到轨迹起点
+            emergency_stop: 快速急停 uint8 
+                0x00 无效
+                0x01 快速急停 0x02 恢复
+            track_ctrl: 轨迹指令 uint8 
+                0x00 关闭
+                0x01 暂停当前规划 
+                0x02 继续当前轨迹
+                0x03 清除当前轨迹 
+                0x04 清除所有轨迹 
+                0x05 获取当前规划轨迹 
+                0x06 终止执行 
+                0x07 轨迹传输 
+                0x08 轨迹传输结束
+            grag_teach_ctrl: 拖动示教指令 uint8 
+                0x00 关闭
+                0x01 开始示教记录（进入拖动示教模式）
+                0x02 结束示教记录（退出拖动示教模式） 
+                0x03 执行示教轨迹（拖动示教轨迹复现） 
+                0x04 暂停执行 
+                0x05 继续执行（轨迹复现继续） 
+                0x06 终止执行 
+                0x07 运动到轨迹起点
         '''
         '''
         Sends the robotic arm motion control command (0x150).
 
         Args:
             emergency_stop (int): The emergency stop command.
-                - 0x00: Invalid
-                - 0x01: Emergency stop
-                - 0x02: Resume
+                0x00: Invalid
+                0x01: Emergency stop
+                0x02: Resume
             track_ctrl (int): The trajectory control command.
-                - 0x00: Disable
-                - 0x01: Pause current plan
-                - 0x02: Continue current trajectory
-                - 0x03: Clear current trajectory
-                - 0x04: Clear all trajectories
-                - 0x05: Get current planned trajectory
-                - 0x06: Terminate execution
-                - 0x07: Trajectory transmission
-                - 0x08: End of trajectory transmission
+                0x00: Disable
+                0x01: Pause current plan
+                0x02: Continue current trajectory
+                0x03: Clear current trajectory
+                0x04: Clear all trajectories
+                0x05: Get current planned trajectory
+                0x06: Terminate execution
+                0x07: Trajectory transmission
+                0x08: End of trajectory transmission
             grag_teach_ctrl (int): The teach mode control command.
-                - 0x00: Disable
-                - 0x01: Start teaching record (enter teach mode)
-                - 0x02: End teaching record (exit teach mode)
-                - 0x03: Execute taught trajectory (reproduce teach mode trajectory)
-                - 0x04: Pause execution
-                - 0x05: Continue execution (resume trajectory reproduction)
-                - 0x06: Terminate execution
-                - 0x07: Move to trajectory start point
+                0x00: Disable
+                0x01: Start teaching record (enter teach mode)
+                0x02: End teaching record (exit teach mode)
+                0x03: Execute taught trajectory (reproduce teach mode trajectory)
+                0x04: Pause execution
+                0x05: Continue execution (resume trajectory reproduction)
+                0x06: Terminate execution
+                0x07: Move to trajectory start point
         '''
         tx_can=Message()
         motion_ctrl_1 = ArmMsgMotionCtrl_1(emergency_stop, track_ctrl, grag_teach_ctrl)
@@ -1304,43 +1307,43 @@ class C_PiperInterface():
 
         Args:
             ctrl_mode: 控制模式 uint8 
-                - 0x00 待机模式
-                - 0x01 CAN 指令控制模式
-                - 0x02 示教模式
-                - 0x03 以太网控制模式
-                - 0x04 wifi 控制模式
-                - 0x07 离线轨迹模式
+                0x00 待机模式
+                0x01 CAN 指令控制模式
+                0x02 示教模式
+                0x03 以太网控制模式
+                0x04 wifi 控制模式
+                0x07 离线轨迹模式
             move_mode: MOVE模式 uint8 
-                - 0x00 MOVE P
-                - 0x01 MOVE J
-                - 0x02 MOVE L
-                - 0x03 MOVE C
+                0x00 MOVE P
+                0x01 MOVE J
+                0x02 MOVE L
+                0x03 MOVE C
             move_spd_rate_ctrl 运动速度百分比 uint8
-                - 数值范围0~100 
+                数值范围0~100 
             is_mit_mode mit模式 uint8 
-                - 0x00 位置速度模式
-                - 0xAD MIT模式
+                0x00 位置速度模式
+                0xAD MIT模式
         '''
         '''
         Sends the robotic arm motion control command (0x151).
 
         Args:
             ctrl_mode (int): The control mode.
-                - 0x00: Standby mode
-                - 0x01: CAN command control mode
-                - 0x02: Teaching mode
-                - 0x03: Ethernet control mode
-                - 0x04: Wi-Fi control mode
-                - 0x07: Offline trajectory mode
+                0x00: Standby mode
+                0x01: CAN command control mode
+                0x02: Teaching mode
+                0x03: Ethernet control mode
+                0x04: Wi-Fi control mode
+                0x07: Offline trajectory mode
             move_mode (int): The MOVE mode.
-                - 0x00: MOVE P (Position)
-                - 0x01: MOVE J (Joint)
-                - 0x02: MOVE L (Linear)
-                - 0x03: MOVE C (Circular)
+                0x00: MOVE P (Position)
+                0x01: MOVE J (Joint)
+                0x02: MOVE L (Linear)
+                0x03: MOVE C (Circular)
             move_spd_rate_ctrl (int): The movement speed percentage (0-100).
             is_mit_mode (int): The MIT mode.
-                - 0x00: Position-velocity mode
-                - 0xAD: MIT mode
+                0x00: Position-velocity mode
+                0xAD: MIT mode
         '''
         tx_can=Message()
         motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode)
@@ -1350,7 +1353,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndPoseCtrl(self,X,Y,Z,RX,RY,RZ):
+    def EndPoseCtrl(self,X:int,Y:int,Z:int,RX:int,RY:int,RZ:int):
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
         
@@ -1383,7 +1386,7 @@ class C_PiperInterface():
         self.__CartesianCtrl_ZRX(Z,RX)
         self.__CartesianCtrl_RYRZ(RY,RZ)
 
-    def __CartesianCtrl_XY(self, X, Y):
+    def __CartesianCtrl_XY(self, X:int, Y:int):
         tx_can=Message()
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_1, arm_motion_ctrl_cartesian=cartesian_1)
@@ -1391,7 +1394,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_ZRX(self, Z, RX):
+    def __CartesianCtrl_ZRX(self, Z:int, RX:int):
         tx_can=Message()
         cartesian_2 = ArmMsgMotionCtrlCartesian(Z_axis=Z, RX_axis=RX)
         # print(cartesian_2)
@@ -1400,7 +1403,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_RYRZ(self, RY, RZ):
+    def __CartesianCtrl_RYRZ(self, RY:int, RZ:int):
         tx_can=Message()
         cartesian_3 = ArmMsgMotionCtrlCartesian(RY_axis=RY, RZ_axis=RZ)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_3, arm_motion_ctrl_cartesian=cartesian_3)
@@ -1528,10 +1531,10 @@ class C_PiperInterface():
 
         Args:
             instruction_num (int): 指令点序号
-                - 0x00 无效 
-                - 0x01 起点 
-                - 0x02 中点 
-                - 0x03 终点
+                0x00 无效 
+                0x01 起点 
+                0x02 中点 
+                0x03 终点
         首先使用 EndPoseCtrl 确定起点,piper.MoveCAxisUpdateCtrl(0x01)
         然后使用 EndPoseCtrl 确定中点,piper.MoveCAxisUpdateCtrl(0x02)
         最后使用 EndPoseCtrl 确定中点,piper.MoveCAxisUpdateCtrl(0x03)
@@ -1541,10 +1544,10 @@ class C_PiperInterface():
 
         Args:
             instruction_num (int): Instruction point sequence number
-                - 0x00 Invalid
-                - 0x01 Start point
-                - 0x02 Midpoint
-                - 0x03 Endpoint
+                0x00 Invalid
+                0x01 Start point
+                0x02 Midpoint
+                0x03 Endpoint
         First, use EndPoseCtrl to determine the start point:piper.MoveCAxisUpdateCtrl(0x01)
         Then, use EndPoseCtrl to determine the midpoint:piper.MoveCAxisUpdateCtrl(0x02)
         Finally, use EndPoseCtrl again to determine the endpoint:piper.MoveCAxisUpdateCtrl(0x03)
@@ -1567,11 +1570,11 @@ class C_PiperInterface():
             gripper_angle (int): 夹爪角度,单位 0.001°
             gripper_effort (int): 夹爪力矩,单位 0.001N/m
             gripper_code (int): 夹爪使能/失能/清除错误
-                - 0x00失能,0x01使能
-                - 0x03/0x02,使能清除错误,失能清除错误
+                0x00失能,0x01使能
+                0x03/0x02,使能清除错误,失能清除错误
             set_zero:(int): 设定当前位置为0点
-                - 0x00无效值
-                - 0xAE设置零点
+                0x00无效值
+                0xAE设置零点
         '''
         '''
         Controls the gripper of the robotic arm.
@@ -1583,12 +1586,12 @@ class C_PiperInterface():
             gripper_angle (int): The gripper angle, in 0.001°.
             gripper_effort (int): The gripper torque, in 0.001 N/m.
             gripper_code (int): The gripper enable/disable/clear error command.
-                - 0x00: Disable
-                - 0x01: Enable
-                - 0x03/0x02: Enable and clear error / Disable and clear error
+                0x00: Disable
+                0x01: Enable
+                0x03/0x02: Enable and clear error / Disable and clear error
             set_zero (int): Set the current position as the zero point.
-                - 0x00: Invalid value
-                - 0xAE: Set zero point
+                0x00: Invalid value
+                0xAE: Set zero point
         '''
         tx_can=Message()
         gripper_ctrl = ArmMsgGripperCtrl(gripper_angle, gripper_effort, gripper_code, set_zero)
@@ -1606,21 +1609,21 @@ class C_PiperInterface():
         
         Args:
             linkage_config: uint8, 联动设置指令。
-                - 0x00 无效
-                - 0xFA 设置为示教输入臂
-                - 0xFC 设置为运动输出臂
+                0x00 无效
+                0xFA 设置为示教输入臂
+                0xFC 设置为运动输出臂
             feedback_offset: uint8, 反馈指令偏移值。
-                - 0x00 : 不偏移/恢复默认
-                - 0x10 ：反馈指令基 ID 由 2Ax偏移为 2Bx
-                - 0x20 ：反馈指令基 ID 由 2Ax偏移为 2Cx
+                0x00 : 不偏移/恢复默认
+                0x10 ：反馈指令基 ID 由 2Ax偏移为 2Bx
+                0x20 ：反馈指令基 ID 由 2Ax偏移为 2Cx
             ctrl_offset: uint8, 控制指令偏移值。
-                - 0x00 : 不偏移/恢复默认
-                - 0x10 ：控制指令基 ID 由 15x偏移为 16x
-                - 0x20 ：控制指令基 ID 由 15x偏移为 17x
+                0x00 : 不偏移/恢复默认
+                0x10 ：控制指令基 ID 由 15x偏移为 16x
+                0x20 ：控制指令基 ID 由 15x偏移为 17x
             linkage_offset: uint8, 联动模式控制目标地址偏移值。
-                - 0x00 : 不偏移/恢复默认
-                - 0x10 : 控制目标地址基 ID由 15x 偏移为 16x
-                - 0x20 : 控制目标地址基 ID由 15x 偏移为 17x
+                0x00 : 不偏移/恢复默认
+                0x10 : 控制目标地址基 ID由 15x 偏移为 16x
+                0x20 : 控制目标地址基 ID由 15x 偏移为 17x
         '''
         '''
         Sets the linkage mode configuration.
@@ -1630,21 +1633,21 @@ class C_PiperInterface():
         
         Args:
             linkage_config (int): The linkage setting command.
-                - 0x00: Invalid
-                - 0xFA: Set as teaching input arm
-                - 0xFC: Set as motion output arm
+                0x00: Invalid
+                0xFA: Set as teaching input arm
+                0xFC: Set as motion output arm
             feedback_offset (int): The feedback command offset value.
-                - 0x00: No offset / restore default
-                - 0x10: Feedback command base ID shifts from 2Ax to 2Bx
-                - 0x20: Feedback command base ID shifts from 2Ax to 2Cx
+                0x00: No offset / restore default
+                0x10: Feedback command base ID shifts from 2Ax to 2Bx
+                0x20: Feedback command base ID shifts from 2Ax to 2Cx
             ctrl_offset (int): The control command offset value.
-                - 0x00: No offset / restore default
-                - 0x10: Control command base ID shifts from 15x to 16x
-                - 0x20: Control command base ID shifts from 15x to 17x
+                0x00: No offset / restore default
+                0x10: Control command base ID shifts from 15x to 16x
+                0x20: Control command base ID shifts from 15x to 17x
             linkage_offset (int): The linkage mode control target address offset value.
-                - 0x00: No offset / restore default
-                - 0x10: Control target address base ID shifts from 15x to 16x
-                - 0x20: Control target address base ID shifts from 15x to 17x
+                0x00: No offset / restore default
+                0x10: Control target address base ID shifts from 15x to 16x
+                0x20: Control target address base ID shifts from 15x to 17x
         '''
         tx_can=Message()
         ms_config = ArmMsgMasterSlaveModeConfig(linkage_config, feedback_offset, ctrl_offset, linkage_offset)
@@ -1675,7 +1678,7 @@ class C_PiperInterface():
             motor_num (int): The motor number, ranging from 1 to 7. 
                             7 represents all motors.
             enable_flag (int): The enable flag.
-                - 0x01: Disable
+                0x01: Disable
         '''
         tx_can=Message()
         enable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
@@ -1706,7 +1709,7 @@ class C_PiperInterface():
             motor_num (int): The motor number, ranging from 1 to 7. 
                             7 represents all motors.
             enable_flag (int): The enable flag.
-                - 0x02: Enable
+                0x02: Enable
         '''
         tx_can=Message()
         disable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
@@ -1715,7 +1718,7 @@ class C_PiperInterface():
         # print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def SearchMotorMaxAngleSpdAccLimit(self, motor_num, search_content):
+    def SearchMotorMaxAngleSpdAccLimit(self, motor_num:int, search_content:int):
         '''
         查询电机角度/最大速度/最大加速度限制指令
 
@@ -1728,8 +1731,8 @@ class C_PiperInterface():
             motor_num: uint8, 关节电机序号。
                 值域 1-6,1-6 代表关节驱动器序号
             search_content: uint8, 查询内容。
-                - 0x01 : 查询电机角度/最大速度
-                - 0x02 : 查询电机最大加速度限制
+                0x01 : 查询电机角度/最大速度
+                0x02 : 查询电机最大加速度限制
         '''
         '''Queries the motor angle/maximum speed/maximum acceleration limit command (0x472).
 
@@ -1741,12 +1744,12 @@ class C_PiperInterface():
         Args:
             command (list): The command list containing the following elements:
             
-            - motor_num (uint8)
-                - The joint motor number (1-6), representing the joint driver number.
+            motor_num (uint8)
+                The joint motor number (1-6), representing the joint driver number.
             
-            - search_content (uint8)
-                - 0x01: Query motor angle/maximum speed.
-                - 0x02: Query motor maximum acceleration limit.
+            search_content (uint8)
+                0x01: Query motor angle/maximum speed.
+                0x02: Query motor maximum acceleration limit.
         '''
         tx_can=Message()
         search_motor = ArmMsgSearchMotorMaxAngleSpdAccLimit(motor_num, search_content)
@@ -1778,7 +1781,7 @@ class C_PiperInterface():
         self.SearchMotorMaxAngleSpdAccLimit(5, 0x02)
         self.SearchMotorMaxAngleSpdAccLimit(6, 0x02)
     
-    def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_joint_spd):
+    def MotorAngleLimitMaxSpdSet(self, motor_num:int, max_angle_limit:int, min_angle_limit:int, max_joint_spd:int):
         '''
         电机角度限制/最大速度设置指令
         
@@ -1823,8 +1826,8 @@ class C_PiperInterface():
         
         Args:
             joint_motor_num: 关节电机序号值域 1-7
-                - 1-6 代表关节驱动器序号；
-                - 7 代表全部关节电机
+                1-6 代表关节驱动器序号；
+                7 代表全部关节电机
             set_motor_current_pos_as_zero: 设置当前位置为零点,有效值,0xAE
             acc_param_config_is_effective_or_not: 加速度参数设置是否生效,有效值,0xAE
             max_joint_acc: 最大关节加速度,单位0.01rad/s^2
@@ -1838,8 +1841,8 @@ class C_PiperInterface():
         
         Args:
             joint_motor_num: Joint motor number.
-                - Value range: 1-6 represents individual joint motor numbers.
-                - Value 7 applies to all joint motors.
+                Value range: 1-6 represents individual joint motor numbers.
+                Value 7 applies to all joint motors.
             set_motor_current_pos_as_zero: Command to set the current position of the specified joint motor as zero, with a valid value of 0xAE.
             acc_param_config_is_effective_or_not: Indicates whether the acceleration parameter configuration is effective, with a valid value of 0xAE.
             max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2.
@@ -1878,7 +1881,7 @@ class C_PiperInterface():
         '''
         self.JointConfig(motor_num,0,0xAE,max_joint_acc,0)
     
-    def SetInstructionResponse(self, instruction_index, zero_config_success_flag):
+    def SetInstructionResponse(self, instruction_index:int, zero_config_success_flag:int):
         '''
         设置指令应答
         
@@ -1890,9 +1893,9 @@ class C_PiperInterface():
                 取设置指令 id 最后一个字节
                 例如,应答 0x471 设置指令时此位填充0x71
             zero_config_success_flag: 零点是否设置成功
-                - 零点成功设置-0x01
-                - 设置失败/未设置-0x00
-                - 仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
+                零点成功设置-0x01
+                设置失败/未设置-0x00
+                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
         '''
         '''
         Sets the response for the instruction.
@@ -1901,13 +1904,13 @@ class C_PiperInterface():
 
         Args:
             instruction_index (int): The response instruction index.
-                - This is derived from the last byte of the set instruction ID.
-                - For example, when responding to the 0x471 set instruction, this would be 0x71.
+                This is derived from the last byte of the set instruction ID.
+                For example, when responding to the 0x471 set instruction, this would be 0x71.
             
             zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
-                - 0x01: Zero point successfully set.
-                - 0x00: Zero point set failed/not set.
-                - This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
+                0x01: Zero point successfully set.
+                0x00: Zero point set failed/not set.
+                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
         '''
         tx_can=Message()
         set_resp = ArmMsgInstructionResponseConfig(instruction_index, zero_config_success_flag)
@@ -1915,7 +1918,8 @@ class C_PiperInterface():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def ArmParamEnquiryAndConfig(self, param_enquiry, param_setting, data_feedback_0x48x, end_load_param_setting_effective, set_end_load):
+    def ArmParamEnquiryAndConfig(self, param_enquiry:int, param_setting:int, 
+                                 data_feedback_0x48x:int, end_load_param_setting_effective:int, set_end_load:int):
         '''
         机械臂参数查
         询与设置指令
@@ -1925,21 +1929,21 @@ class C_PiperInterface():
 
         Args:
             param_enquiry: 参数查询
-                - param_enquiry Byte 0 = 0x01 ->0x478
-                - param_enquiry Byte 0 = 0x02 ->0x47B
+                param_enquiry Byte 0 = 0x01 ->0x478
+                param_enquiry Byte 0 = 0x02 ->0x47B
             param_setting: 参数设置
-                - 设置末端 V/acc 参数为初始值--0x01
-                - 设置全部关节限位、关节最大速度、关节加速度为默认值--0x02
+                设置末端 V/acc 参数为初始值--0x01
+                设置全部关节限位、关节最大速度、关节加速度为默认值--0x02
             data_feedback_0x48x: 0x48X报文反馈设置
-                - 无效--0x00
-                - 关闭周期反馈--0x01
-                - 开启周期反馈--0x02
-                - 开启后周期上报 1~6 号关节当前末端速度/加速度
+                无效--0x00
+                关闭周期反馈--0x01
+                开启周期反馈--0x02
+                开启后周期上报 1~6 号关节当前末端速度/加速度
             end_load_param_setting_effective: 末端负载参数设置是否生效,有效值-0xAE
             set_end_load: 设置末端负载
-                - 0x00--空载
-                - 0x01--半载
-                - 0x02--满载
+                0x00--空载
+                0x01--半载
+                0x02--满载
         '''
         '''
         Robotic arm parameter query and setting instruction.
@@ -1949,26 +1953,26 @@ class C_PiperInterface():
 
         Args:
             param_enquiry (int): Parameter enquiry.
-                - param_enquiry Byte 0 = 0x01 -> 0x478 (Parameter enquiry response).
-                - param_enquiry Byte 0 = 0x02 -> 0x47B (Parameter enquiry response).
+                param_enquiry Byte 0 = 0x01 -> 0x478 (Parameter enquiry response).
+                param_enquiry Byte 0 = 0x02 -> 0x47B (Parameter enquiry response).
             
             param_setting (int): Parameter setting.
-                - 0x01: Set end effector velocity/acceleration parameters to initial values.
-                - 0x02: Set all joint limits, joint maximum speed, and joint acceleration to default values.
+                0x01: Set end effector velocity/acceleration parameters to initial values.
+                0x02: Set all joint limits, joint maximum speed, and joint acceleration to default values.
 
             data_feedback_0x48x (int): 0x48X message feedback settings.
-                - 0x00: Invalid.
-                - 0x01: Disable periodic feedback.
-                - 0x02: Enable periodic feedback.
-                - When enabled, periodic reporting includes the current end effector speed/acceleration for joints 1-6.
+                0x00: Invalid.
+                0x01: Disable periodic feedback.
+                0x02: Enable periodic feedback.
+                When enabled, periodic reporting includes the current end effector speed/acceleration for joints 1-6.
 
             end_load_param_setting_effective (int): Whether the end load parameter setting is effective.
-                - Valid value: 0xAE.
+                Valid value: 0xAE.
 
             set_end_load (int): Set end load.
-                - 0x00: No load.
-                - 0x01: Half load.
-                - 0x02: Full load.
+                0x00: No load.
+                0x01: Half load.
+                0x02: Full load.
         '''
         tx_can=Message()
         search_set_arm_param = ArmMsgParamEnquiryAndConfig(param_enquiry, 
@@ -1980,7 +1984,7 @@ class C_PiperInterface():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndSpdAndAccParamSet(self, end_max_linear_vel, end_max_angular_vel, end_max_linear_acc, end_max_angular_acc):
+    def EndSpdAndAccParamSet(self, end_max_linear_vel:int, end_max_angular_vel:int, end_max_linear_acc:int, end_max_angular_acc:int):
         '''
         末端速度/加
         速度参数设置
@@ -2016,12 +2020,12 @@ class C_PiperInterface():
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def CrashProtectionConfig(self, 
-                              joint_1_protection_level, 
-                              joint_2_protection_level, 
-                              joint_3_protection_level, 
-                              joint_4_protection_level,
-                              joint_5_protection_level,
-                              joint_6_protection_level):
+                              joint_1_protection_level:int, 
+                              joint_2_protection_level:int, 
+                              joint_3_protection_level:int, 
+                              joint_4_protection_level:int,
+                              joint_5_protection_level:int,
+                              joint_6_protection_level:int):
         '''
         碰撞防护等级
         设置指令
