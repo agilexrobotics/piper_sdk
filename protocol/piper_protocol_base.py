@@ -378,6 +378,11 @@ class C_PiperParserBase(ABC):
         byte_0 = value & 0xFF
         return [byte_3, byte_2, byte_1, byte_0]
 
+    def FloatToUint(self,x_float:float, x_min:float, x_max:float, bits:int):
+        span:float = x_max - x_min
+        offset:float = x_min
+        return int((x_float - offset) * (float((1<<bits)-1))/span)
+    
     def ConvertBytesToInt(self, bytes:bytearray, first_index:int, second_index:int, byteorder:Literal["little", "big"]='big'):
         '''
         将字节串转换为int类型,默认为大端对齐
