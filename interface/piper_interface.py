@@ -1232,7 +1232,7 @@ class C_PiperInterface():
             return self.__firmware_data
     
     # 控制发送函数------------------------------------------------------------------------------------------------------
-    def MotionCtrl_1(self, emergency_stop, track_ctrl, grag_teach_ctrl):
+    def MotionCtrl_1(self, emergency_stop:int, track_ctrl:int, grag_teach_ctrl:int):
         '''
         机械臂运动控制指令1 
         
@@ -1298,7 +1298,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode=0x00):
+    def MotionCtrl_2(self, ctrl_mode:int, move_mode:int, move_spd_rate_ctrl:int, is_mit_mode=0x00):
         '''
         机械臂运动控制指令2
         
@@ -1353,7 +1353,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndPoseCtrl(self,X:int,Y:int,Z:int,RX:int,RY:int,RZ:int):
+    def EndPoseCtrl(self, X:int, Y:int, Z:int, RX:int, RY:int, RZ:int):
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
         
@@ -1447,7 +1447,7 @@ class C_PiperInterface():
         self.__JointCtrl_34(joint_3, joint_4)
         self.__JointCtrl_56(joint_5, joint_6)
     
-    def __JointCtrl_12(self, joint_1, joint_2):
+    def __JointCtrl_12(self, joint_1:int, joint_2:int):
         '''
         机械臂1,2关节控制
 
@@ -1473,7 +1473,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __JointCtrl_34(self, joint_3, joint_4):
+    def __JointCtrl_34(self, joint_3:int, joint_4:int):
         '''
         机械臂3,4关节控制
         
@@ -1499,7 +1499,7 @@ class C_PiperInterface():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __JointCtrl_56(self, joint_5, joint_6):
+    def __JointCtrl_56(self, joint_5:int, joint_6:int):
         '''
         机械臂5,6关节控制
         
