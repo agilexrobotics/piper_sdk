@@ -84,6 +84,5 @@ if __name__ == "__main__":
         piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
         piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
         piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-        piper.MotionCtrl_2(0x01, 0x01, 30, 0x00)
         time.sleep(0.005)
         pass

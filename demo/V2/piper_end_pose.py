@@ -47,43 +47,73 @@ if __name__ == "__main__":
     piper.ConnectPort()
     piper.EnableArm(7)
     enable_fun(piper=piper)
-    # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
-    factor = 57324.840764 #1000*180/3.14
-    # factor =1
-    position = [0,0,0,0,0,0,0]
+    factor = 1000
+    position = [
+                55.0, \
+                0.0, \
+                206.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
+    # position = [0.0, \
+    #             0.0, \
+    #             80.0, \
+    #             0, \
+    #             203.386, \
+    #             0, \
+    #             0.8]
     count = 0
     while True:
+        print(piper.GetArmEndPoseMsgs())
+        # print(piper.GetArmStatus())
         import time
         count  = count + 1
         # print(count)
         if(count == 0):
             print("1-----------")
-            position = [0,0,0,0,0,0,0]
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-        elif(count == 800):
+            position = [
+                55.0, \
+                0.0, \
+                206.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
+        elif(count == 200):
             print("2-----------")
-            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-            # position = [0,0,0,0,0,0,0]
-            # position = [-8524,104705,-78485,-451,-5486,29843,0]
-        elif(count == 1600):
+            position = [
+                55.0, \
+                0.0, \
+                260.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
+        elif(count == 400):
             print("1-----------")
-            position = [0,0,0,0,0,0,0]
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
+            position = [
+                55.0, \
+                0.0, \
+                206.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
             count = 0
         
-        joint_0 = round(position[0]*factor)
-        joint_1 = round(position[1]*factor)
-        joint_2 = round(position[2]*factor)
-        joint_3 = round(position[3]*factor)
-        joint_4 = round(position[4]*factor)
-        joint_5 = round(position[5]*factor)
-        joint_6 = round(position[6]*1000*1000)
+        X = round(position[0]*factor)
+        Y = round(position[1]*factor)
+        Z = round(position[2]*factor)
+        RX = round(position[3]*factor)
+        RY = round(position[4]*factor)
+        RZ = round(position[5]*factor)
+        joint_6 = round(position[6]*factor)
+        print(X,Y,Z,RX,RY,RZ)
         # piper.MotionCtrl_1()
-        piper.MotionCtrl_2(0x01, 0x01, 100, 0x00)
-        piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
+        piper.MotionCtrl_2(0x01, 0x00, 100, 0x00)
+        piper.EndPoseCtrl(X,Y,Z,RX,RY,RZ)
         piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-        print(piper.GetArmStatus())
-        print(position)
-        time.sleep(0.005)
+        time.sleep(0.01)
         pass

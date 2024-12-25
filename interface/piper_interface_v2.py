@@ -1292,7 +1292,7 @@ class C_PiperInterface_V2():
             return self.__firmware_data
     
     # 控制发送函数------------------------------------------------------------------------------------------------------
-    def MotionCtrl_1(self, emergency_stop, track_ctrl, grag_teach_ctrl):
+    def MotionCtrl_1(self, emergency_stop:int, track_ctrl:int, grag_teach_ctrl:int):
         '''
         机械臂运动控制指令1 
         
@@ -1355,7 +1355,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def MotionCtrl_2(self, ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode=0x00):
+    def MotionCtrl_2(self, ctrl_mode:int, move_mode:int, move_spd_rate_ctrl:int, is_mit_mode=0x00):
         '''
         机械臂运动控制指令2
         
@@ -1412,7 +1412,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndPoseCtrl(self,X,Y,Z,RX,RY,RZ):
+    def EndPoseCtrl(self, X:int, Y:int, Z:int, RX:int, RY:int, RZ:int):
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
         
@@ -1445,7 +1445,7 @@ class C_PiperInterface_V2():
         self.__CartesianCtrl_ZRX(Z,RX)
         self.__CartesianCtrl_RYRZ(RY,RZ)
 
-    def __CartesianCtrl_XY(self, X, Y):
+    def __CartesianCtrl_XY(self, X:int, Y:int):
         tx_can=Message()
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_1, arm_motion_ctrl_cartesian=cartesian_1)
@@ -1453,7 +1453,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_ZRX(self, Z, RX):
+    def __CartesianCtrl_ZRX(self, Z:int, RX:int):
         tx_can=Message()
         cartesian_2 = ArmMsgMotionCtrlCartesian(Z_axis=Z, RX_axis=RX)
         # print(cartesian_2)
@@ -1462,7 +1462,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __CartesianCtrl_RYRZ(self, RY, RZ):
+    def __CartesianCtrl_RYRZ(self, RY:int, RZ:int):
         tx_can=Message()
         cartesian_3 = ArmMsgMotionCtrlCartesian(RY_axis=RY, RZ_axis=RZ)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_3, arm_motion_ctrl_cartesian=cartesian_3)
@@ -1506,7 +1506,7 @@ class C_PiperInterface_V2():
         self.__JointCtrl_34(joint_3, joint_4)
         self.__JointCtrl_56(joint_5, joint_6)
     
-    def __JointCtrl_12(self, joint_1, joint_2):
+    def __JointCtrl_12(self, joint_1:int, joint_2:int):
         '''
         机械臂1,2关节控制
 
@@ -1532,7 +1532,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __JointCtrl_34(self, joint_3, joint_4):
+    def __JointCtrl_34(self, joint_3:int, joint_4:int):
         '''
         机械臂3,4关节控制
         
@@ -1558,7 +1558,7 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def __JointCtrl_56(self, joint_5, joint_6):
+    def __JointCtrl_56(self, joint_5:int, joint_6:int):
         '''
         机械臂5,6关节控制
         
@@ -1777,7 +1777,7 @@ class C_PiperInterface_V2():
         # print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def SearchMotorMaxAngleSpdAccLimit(self, motor_num, search_content):
+    def SearchMotorMaxAngleSpdAccLimit(self, motor_num:int, search_content:int):
         '''
         查询电机角度/最大速度/最大加速度限制指令
 
@@ -1836,7 +1836,7 @@ class C_PiperInterface_V2():
         self.SearchMotorMaxAngleSpdAccLimit(5, 0x02)
         self.SearchMotorMaxAngleSpdAccLimit(6, 0x02)
     
-    def MotorAngleLimitMaxSpdSet(self, motor_num, max_angle_limit, min_angle_limit, max_joint_spd):
+    def MotorAngleLimitMaxSpdSet(self, motor_num:int, max_angle_limit:int, min_angle_limit:int, max_joint_spd:int):
         '''
         电机角度限制/最大速度设置指令
         
@@ -1960,7 +1960,7 @@ class C_PiperInterface_V2():
         '''
         self.JointConfig(motor_num,0,0xAE,max_joint_acc,0)
     
-    def SetInstructionResponse(self, instruction_index, zero_config_success_flag):
+    def SetInstructionResponse(self, instruction_index:int, zero_config_success_flag:int):
         '''
         设置指令应答
         
@@ -1997,7 +1997,12 @@ class C_PiperInterface_V2():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def ArmParamEnquiryAndConfig(self, param_enquiry, param_setting, data_feedback_0x48x, end_load_param_setting_effective, set_end_load):
+    def ArmParamEnquiryAndConfig(self, 
+                                 param_enquiry:int, 
+                                 param_setting:int, 
+                                 data_feedback_0x48x:int, 
+                                 end_load_param_setting_effective:int, 
+                                 set_end_load:int):
         '''
         机械臂参数查询与设置指令
 
@@ -2068,7 +2073,11 @@ class C_PiperInterface_V2():
         self.parser.EncodeMessage(msg, tx_can)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
-    def EndSpdAndAccParamSet(self, end_max_linear_vel, end_max_angular_vel, end_max_linear_acc, end_max_angular_acc):
+    def EndSpdAndAccParamSet(self, 
+                             end_max_linear_vel:int, 
+                             end_max_angular_vel:int, 
+                             end_max_linear_acc:int, 
+                             end_max_angular_acc:int):
         '''
         末端速度/加
         速度参数设置
@@ -2104,12 +2113,12 @@ class C_PiperInterface_V2():
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
     def CrashProtectionConfig(self, 
-                              joint_1_protection_level, 
-                              joint_2_protection_level, 
-                              joint_3_protection_level, 
-                              joint_4_protection_level,
-                              joint_5_protection_level,
-                              joint_6_protection_level):
+                              joint_1_protection_level:int, 
+                              joint_2_protection_level:int, 
+                              joint_3_protection_level:int, 
+                              joint_4_protection_level:int,
+                              joint_5_protection_level:int,
+                              joint_6_protection_level:int):
         '''
         碰撞防护等级
         设置指令
