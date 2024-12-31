@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 57324.840764 #1000*180/3.14
-    factor =1
+    # factor =1
     position = [0,0,0,0,0,0,0]
     count = 0
     while True:
@@ -64,9 +64,9 @@ if __name__ == "__main__":
             # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
         elif(count == 800):
             print("2-----------")
-            # position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
+            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
             # position = [0,0,0,0,0,0,0]
-            position = [-8524,104705,-78485,-451,-5486,29843,0]
+            # position = [-8524,104705,-78485,-451,-5486,29843,0]
         elif(count == 1600):
             print("1-----------")
             position = [0,0,0,0,0,0,0]
