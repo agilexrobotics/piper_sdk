@@ -16,6 +16,7 @@ class ArmMsgMotionCtrl_2():
         move_spd_rate_ctrl: 运动速度百分比
         mit_mode: mit模式
         residence_time: 离线轨迹点停留时间
+        installation_pos: 安装位置
     
     位描述:
     
@@ -33,15 +34,15 @@ class ArmMsgMotionCtrl_2():
                 0x03 MOVE C
                 0x04 MOVE M ---基于V1.5-2版本后
         Byte 2: 运动速度百分比 uint8    0~100
-        Byte 3: mit模式      uint8    
+        Byte 3: mit模式      uint8   
                 0x00 位置速度模式
                 0xAD MIT模式
-        Byte 4: 离线轨迹点停留时间 uint8 0~255 单位 s
+        Byte 4: 离线轨迹点停留时间 uint8 0~254 ,单位: s;255:轨迹终止
         Byte 5: 安装位置 uint8 注意接线朝后 ---基于V1.5-2版本后
                 0x00 无效值
                 0x01 水平正装
                 0x02 侧装左
-                0x03 侧装右  
+                0x03 侧装右
     '''
     '''
     Robotic Arm Motion Control Command 2

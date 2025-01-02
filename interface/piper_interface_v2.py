@@ -1355,7 +1355,13 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 
-    def MotionCtrl_2(self, ctrl_mode:int, move_mode:int, move_spd_rate_ctrl:int, is_mit_mode=0x00):
+    def MotionCtrl_2(self, 
+                     ctrl_mode:int, 
+                     move_mode:int, 
+                     move_spd_rate_ctrl:int, 
+                     is_mit_mode:int=0x00,
+                     residence_time:int = 0x00,
+                     installation_pos:int = 0):
         '''
         机械臂运动控制指令2
         
@@ -1378,9 +1384,16 @@ class C_PiperInterface_V2():
                 0x04 MOVE M ---基于V1.5-2版本后
             move_spd_rate_ctrl 运动速度百分比 uint8
                 数值范围0~100 
-            is_mit_mode mit模式 uint8 
+            is_mit_mode: mit模式 uint8 
                 0x00 位置速度模式
                 0xAD MIT模式
+            residence_time: 离线轨迹点停留时间 
+                uint8 0~254 ,单位: s;255:轨迹终止
+            installation_pos: 安装位置 uint8 注意接线朝后 ---基于V1.5-2版本后
+                    0x00 无效值
+                    0x01 水平正装
+                    0x02 侧装左
+                    0x03 侧装右
         '''
         '''
         Sends the robotic arm motion control command (0x151).
@@ -1403,9 +1416,16 @@ class C_PiperInterface_V2():
             is_mit_mode (int): The MIT mode.
                 0x00: Position-velocity mode
                 0xAD: MIT mode
+            residence_time: Offline trajectory point residence time
+                uint8 0~254, unit: seconds; 255: trajectory termination
+            installation_pos: Installation position uint8 (Pay attention to rear-facing wiring) --- Based on version V1.5-2 and later
+                            0x00 Invalid value
+                            0x01 Horizontal upright
+                            0x02 Side mount left
+                            0x03 Side mount right
         '''
         tx_can=Message()
-        motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode)
+        motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode, residence_time, installation_pos)
         # print(motion_ctrl_1)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_2)
         self.parser.EncodeMessage(msg, tx_can)

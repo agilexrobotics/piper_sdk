@@ -7,7 +7,7 @@ from typing import (
 import time
 from piper_sdk import *
 
-def enable_fun(piper:C_PiperInterface):
+def enable_fun(piper:C_PiperInterface_V2):
     '''
     使能机械臂并检测使能状态,尝试5s,如果使能超时则退出程序
     '''
@@ -43,9 +43,8 @@ def enable_fun(piper:C_PiperInterface):
         exit(0)
 
 if __name__ == "__main__":
-    piper = C_PiperInterface("can0")
+    piper = C_PiperInterface_V2("can0")
     piper.ConnectPort()
-    piper.EnableArm(7)
     enable_fun(piper=piper)
     piper.GripperCtrl(0,1000,0x01, 0)
     range = 0
