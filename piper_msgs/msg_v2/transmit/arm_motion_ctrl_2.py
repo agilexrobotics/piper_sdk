@@ -23,7 +23,6 @@ class ArmMsgMotionCtrl_2():
         Byte 0: 控制模式     uint8
                 0x00 待机模式
                 0x01 CAN 指令控制模式
-                0x02 示教模式
                 0x03 以太网控制模式
                 0x04 wifi 控制模式
                 0x07 离线轨迹模式
@@ -62,7 +61,6 @@ class ArmMsgMotionCtrl_2():
         Byte 0 control_mode: uint8, control mode selection.
             0x00: Standby mode.
             0x01: CAN command control mode.
-            0x02: Teach mode.
             0x03: Ethernet control mode.
             0x04: Wi-Fi control mode.
             0x07: Offline trajectory mode.
@@ -91,14 +89,14 @@ class ArmMsgMotionCtrl_2():
                 0x03: Right-side mount
     '''
     def __init__(self, 
-                 ctrl_mode:Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x07]=0x01, 
+                 ctrl_mode:Literal[0x00, 0x01, 0x03, 0x04, 0x07]=0x01, 
                  move_mode:Literal[0x00, 0x01, 0x02, 0x03, 0x04]=0x01, 
                  move_spd_rate_ctrl:int=50,
                  mit_mode:Literal[0x00, 0xAD, 0xFF]=0x00,
                  residence_time:int=0,
                  installation_pos:Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
         # 检查是否在有效范围内
-        if ctrl_mode not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]:
+        if ctrl_mode not in [0x00, 0x01, 0x03, 0x04, 0x07]:
             raise ValueError(f"ctrl_mode 值 {ctrl_mode} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
         if move_mode not in [0x00, 0x01, 0x02, 0x03, 0x04]:
             raise ValueError(f"move_mode 值 {move_mode} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04]")

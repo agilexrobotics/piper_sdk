@@ -1372,7 +1372,6 @@ class C_PiperInterface_V2():
             ctrl_mode: 控制模式 uint8 
                 0x00 待机模式
                 0x01 CAN 指令控制模式
-                0x02 示教模式
                 0x03 以太网控制模式
                 0x04 wifi 控制模式
                 0x07 离线轨迹模式
@@ -1402,7 +1401,6 @@ class C_PiperInterface_V2():
             ctrl_mode (int): The control mode.
                 0x00: Standby mode
                 0x01: CAN command control mode
-                0x02: Teaching mode
                 0x03: Ethernet control mode
                 0x04: Wi-Fi control mode
                 0x07: Offline trajectory mode

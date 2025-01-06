@@ -19,20 +19,22 @@ class ArmMsgMotionCtrl_2():
     
     位描述:
     
-        Byte 0: 控制模式     uint8    0x00 待机模式
-                                    0x01 CAN 指令控制模式
-                                    0x02 示教模式
-                                    0x03 以太网控制模式
-                                    0x04 wifi 控制模式
-                                    0x07 离线轨迹模式
-        Byte 1: MOVE模式     uint8    0x00 MOVE P
-                                    0x01 MOVE J
-                                    0x02 MOVE L
-                                    0x03 MOVE C
+        Byte 0: 控制模式     uint8
+                0x00 待机模式
+                0x01 CAN 指令控制模式
+                0x03 以太网控制模式
+                0x04 wifi 控制模式
+                0x07 离线轨迹模式
+        Byte 1: MOVE模式     uint8    
+                0x00 MOVE P
+                0x01 MOVE J
+                0x02 MOVE L
+                0x03 MOVE C
         Byte 2: 运动速度百分比 uint8    0~100
-        Byte 3: mit模式      uint8    0x00 位置速度模式
-                                    0xAD MIT模式
-        Byte 4: 离线轨迹点停留时间 uint8 0~255 单位 s
+        Byte 3: mit模式      uint8   
+                0x00 位置速度模式
+                0xAD MIT模式
+        Byte 4: 离线轨迹点停留时间 uint8 0~254 ,单位: s;255:轨迹终止
     '''
     '''
     Robotic Arm Motion Control Command 2
@@ -74,13 +76,13 @@ class ArmMsgMotionCtrl_2():
             Range: 0~255, unit: seconds.
     '''
     def __init__(self, 
-                 ctrl_mode:Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x07]=0x01, 
+                 ctrl_mode:Literal[0x00, 0x01, 0x03, 0x04, 0x07]=0x01, 
                  move_mode:Literal[0x00, 0x01, 0x02, 0x03]=0x01, 
                  move_spd_rate_ctrl:int=50,
                  mit_mode:Literal[0x00, 0xAD, 0xFF]=0x00,
                  residence_time:int=0):
         # 检查是否在有效范围内
-        if ctrl_mode not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]:
+        if ctrl_mode not in [0x00, 0x01, 0x03, 0x04, 0x07]:
             raise ValueError(f"ctrl_mode 值 {ctrl_mode} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
         if move_mode not in [0x00, 0x01, 0x02, 0x03]:
             raise ValueError(f"move_mode 值 {move_mode} 超出范围 [0x00, 0x01, 0x02, 0x03]")
