@@ -153,4 +153,4 @@ sudo ethtool -i can1 | grep bus
 
 你可以在github上提issue
 
-也可以加入google chat聊天室<https://chat.google.com/room/AAAABoKYIR4?cls=5>
+也可以加入discord<https://discord.gg/wrKYTxwDBd>
