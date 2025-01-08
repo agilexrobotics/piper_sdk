@@ -19,8 +19,9 @@ Test:
 |消息部分说明|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
 |机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
 |机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
+|双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
 
-## 1  安装方法
+## 1 安装方法
 
 ### 1.1 安装依赖
 
@@ -58,7 +59,7 @@ sudo apt update && sudo apt install can-utils ethtool
 
 如果执行bash脚本出现`ip: command not found`，请安装ip指令，一般是`sudo apt-get install iproute2`
 
-## 2  快速使用
+## 2 快速使用
 
 ### 2.1 使能can模块
 
@@ -147,3 +148,9 @@ sudo ethtool -i can1 | grep bus
 - 有时执行can发送，终端反馈`Message NOT sent`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
 - sdk的interface在创建实例后会检测是否激活自带的can模块，如果是其它can设备，可以将第二个形参设定为False，如：`piper = C_PiperInterface_V2("can0",False)`
 - **机械臂的mit协议控制单关节电机为高级功能,使用时需注意,此协议的使用不当会导致机械臂损坏！！！**
+
+## 联系我们
+
+你可以在github上提issue
+
+也可以加入google chat聊天室<https://chat.google.com/room/AAAABoKYIR4?cls=5>

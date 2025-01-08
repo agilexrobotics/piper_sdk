@@ -12,10 +12,12 @@ Test:
 
 |Description |doc|
 |---|---|
-|Detailed description of the interface function.|[Interface README](./asserts/INTERFACE_V1(EN).MD)|
-|Description of the protocol parsing section.|[Protocol README](./asserts/PROTOCOL_V1(EN).MD)|
-|Description of the message section.|[Msgs README](./asserts/MSGS(EN).MD)|
+|Detailed description of the interface function.|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
+|Description of the protocol parsing section.|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
+|Description of the message section.|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
 |Piper DEMO|[DMEO](./asserts/SDK_DEMO(EN).MD)|
+|Robotic Arm DEMO| [`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD) |
+|Master-slave configuration and data reading of dual arms| [double_piper](./asserts/double_piper.MD) |
 
 ## Installation Instructions
 
