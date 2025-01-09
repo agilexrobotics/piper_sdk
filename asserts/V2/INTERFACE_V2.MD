@@ -124,6 +124,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (int)`, `end_max_angular_vel (int)`, `end_max_linear_acc (int)`, `end_max_angular_acc (int)`|None|
 |`CrashProtectionConfig`|Ctrl Method|配置机械臂碰撞防护等级。|类外调用|`joint_1_protection_level (int)`, `joint_2_protection_level (int)`, `joint_3_protection_level (int)`, `joint_4_protection_level (int)`, `joint_5_protection_level (int)`, `joint_6_protection_level (int)`|None|
 |`SearchPiperFirmwareVersion`|Ctrl Method|查询piper机械臂的主控固件版本|类外调用|None|None|
+|`GripperTeachingPendantParamConfig`|Ctrl Method|夹爪/示教器参数设置指令(基于V1.5-2版本后)|类外调用|None|None|
 
 注意：
 

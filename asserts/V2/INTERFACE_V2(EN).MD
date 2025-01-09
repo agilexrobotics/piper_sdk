@@ -122,6 +122,7 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`EndSpdAndAccParamSet`|Ctrl Method|Set the end speed and acceleration parameters of the robotic arm.|Called from outside the class|`end_max_linear_vel (int)`, `end_max_angular_vel (int)`, `end_max_linear_acc (int)`, `end_max_angular_acc (int)`|None|
 |`CrashProtectionConfig`|Ctrl Method|Configure the collision protection level of the robotic arm.|Called from outside the class|`joint_1_protection_level (int)`, `joint_2_protection_level (int)`, `joint_3_protection_level (int)`, `joint_4_protection_level (int)`, `joint_5_protection_level (int)`, `joint_6_protection_level (int)`|None|
 |`SearchPiperFirmwareVersion`|Ctrl Method|Query the main controller firmware version of the Piper robotic arm|Called outside the class|None|None|
+|`GripperTeachingPendantParamConfig`|Ctrl Method|Gripper/Teach Pendant Parameter Setting Command (Based on version V1.5-2 and later)|Called outside the class|None|None|
 
 **Note:**
 

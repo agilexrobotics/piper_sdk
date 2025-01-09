@@ -20,6 +20,7 @@ Test:
 |机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
 |机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
 |双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
+|Q&A|[Q&A](./asserts/Q&A.MD)|
 
 ## 1 安装方法
 
@@ -151,6 +152,6 @@ sudo ethtool -i can1 | grep bus
 
 ## 联系我们
 
-你可以在github上提issue
+您可以在github上提issue
 
 也可以加入discord<https://discord.gg/wrKYTxwDBd>
