@@ -29,9 +29,14 @@ can模块激活说明[can README](./can_config.MD)
 ## demo说明
 
 ```shell
-.
+V1
+├── motor_max_acc_limit_config.py
 ├── piper_disable.py
 ├── piper_enable.py
+├── piper_end_pose.py
+├── piper_gripper_ctrl.py
+├── piper_gripper_zero_set.py
+├── piper_init_default.py
 ├── piper_joint_ctrl.py
 ├── piper_master_config.py
 ├── piper_moveC.py
@@ -42,14 +47,20 @@ can模块激活说明[can README](./can_config.MD)
 ├── piper_set_mit.py
 ├── piper_slave_config.py
 ├── piper_status.py
+├── read_gripper_status.py
 ├── read_joint_state.py
 └── read_piper_hardware.py
 ```
 
 |文件 |说明|
 |---|---|
+|`motor_max_acc_limit_config.py`|电机单独设定某个关节电机的最大加速度限制|
 |`piper_disable.py`|机械臂失能|
 |`piper_enable.py`|机械臂使能|
+|`piper_end_pose.py`|机械臂末端控制|
+|`piper_gripper_ctrl.py`|机械臂夹爪控制|
+|`piper_gripper_zero_set.py`|机械臂夹爪零点设定|
+|`piper_init_default.py`|机械臂 设置全部关节限位、关节最大速度、关节加速度为默认值|
 |`piper_joint_ctrl.py`|机械臂关节控制|
 |`piper_master_config.py`|机械臂设置为主臂|
 |`piper_moveC.py`|机械臂设置为主臂|
@@ -60,6 +71,7 @@ can模块激活说明[can README](./can_config.MD)
 |`piper_set_mit.py`|设定机械臂为mit模式，这个模式下机械臂响应最快速|
 |`piper_slave_config.py`|机械臂设置为从臂|
 |`piper_status.py`|机械臂状态读取|
+|`read_gripper_status.py`|机械臂夹爪状态读取|
 |`read_joint_state.py`|读取关节角消息并打印|
 |`read_piper_hardware.py`|读取机械臂主控固件版本|
 

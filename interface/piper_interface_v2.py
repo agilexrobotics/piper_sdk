@@ -2296,3 +2296,30 @@ class C_PiperInterface_V2():
             t_ref: Target torque reference, controls the torque applied by the motor, range [-18.0, 18.0]
         '''
         self.__JointMitCtrl(motor_num, pos_ref, vel_ref, kp, kd, t_ref)
+    
+    def GripperTeachingPendantParamConfig(self, teaching_range_per:int=100, max_range_config:int=70):
+        '''
+        夹爪/示教器参数设置指令(基于V1.5-2版本后)
+    
+        CAN ID:
+            0x47D
+        
+        Args:
+            teaching_range_per: 示教器行程系数设置,[100~200]
+            max_range_config: 夹爪/示教器最大控制行程限制值设置,[0,70,100]
+        '''
+        '''
+        Gripper/Teach Pendant Parameter Setting Command (Based on version V1.5-2 and later)
+
+        CAN ID:
+            0x47D
+
+        Args:
+            teaching_range_per: Teach pendant travel range coefficient setting, [100~200]
+            max_range_config: Gripper/Teach pendant maximum control travel limit setting, [0,70,100]
+        '''
+        tx_can=Message()
+        gripper_teaching_pendant_param_config = ArmMsgGripperTeachingPendantParamConfig(teaching_range_per, max_range_config)
+        msg = PiperMessage(type_=ArmMsgType.PiperMsgGripperTeachingPendantParamConfig, arm_gripper_teaching_param_config=gripper_teaching_pendant_param_config)
+        self.parser.EncodeMessage(msg, tx_can)
+        self.arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
