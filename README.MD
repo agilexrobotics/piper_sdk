@@ -1,6 +1,6 @@
 # Piper 机械臂 SDK使用说明
 
-[EN](README(EN).md)
+[EN](README(EN).MD)
 
 ![ubuntu](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)
 
@@ -20,6 +20,7 @@ Test:
 |机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
 |机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
 |双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
+|使用pyQT5的开源UI，非官方维护|[Piper_SDK_UI]<https://github.com/HoranTian/Piper_SDK_UI.git>|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 ## 1 安装方法

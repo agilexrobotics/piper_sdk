@@ -35,7 +35,6 @@ class C_PiperInterface():
         Piper Status Secondary Encapsulation Class, Add Timestamp
         '''
         def __init__(self):
-            # 将time_stamp和arm_status定义为实例变量
             self.time_stamp: float = 0
             self.arm_status = ArmMsgStatus()
         def __str__(self):
