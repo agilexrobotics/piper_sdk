@@ -60,10 +60,10 @@ if __name__ == "__main__":
         if(count == 0):
             print("1-----------")
             range = 0
-        elif(count == 800):
+        elif(count == 300):
             print("2-----------")
             range = 50 * 1000 # 50mm
-        elif(count == 1600):
+        elif(count == 600):
             print("1-----------")
             range = 0
             count = 0

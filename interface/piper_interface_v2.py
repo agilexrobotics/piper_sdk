@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 
-#机械臂使用接口
 import time
 import can
 from can.message import Message
 from typing import (
     Optional,
+    Type
 )
-from typing import Type
-import threading
 from typing_extensions import (
     Literal,
 )
+from queue import Queue
+import threading
+
 from ..hardware_port.can_encapsulation import C_STD_CAN
 from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
@@ -238,6 +239,7 @@ class C_PiperInterface_V2():
             self.joint_ctrl=ArmMsgJointCtrl()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
                     f"{self.joint_ctrl}\n")
     
     class ArmGripperCtrl():
@@ -255,6 +257,7 @@ class C_PiperInterface_V2():
             self.gripper_ctrl=ArmMsgGripperCtrl()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
                     f"{self.gripper_ctrl}\n")
     
     class ArmCtrlCode_151():
@@ -270,6 +273,7 @@ class C_PiperInterface_V2():
             self.ctrl_151=ArmMsgMotionCtrl_2()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
                     f"{self.ctrl_151}\n")
     
     class AllCurrentMotorMaxAccLimit():
@@ -354,11 +358,14 @@ class C_PiperInterface_V2():
             raise IndexError("C_PiperBase input can name is not str type")
         self.arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
         self.piper_fk = C_PiperForwardKinematics()
-        # 协议解析
+        # protocol
         self.parser: Type[C_PiperParserBase] = C_PiperParserV2()
-        # 帧率计算
+        # FPS cal
         self.fps_counter = C_FPSCounter()
         self.fps_counter.add_variable("CanMonitor")
+        self.q_can_fps = Queue(maxsize=100)
+        self.__is_ok_mtx = threading.Lock()
+        self.__is_ok = True
         self.fps_counter.add_variable("ArmStatus")
         self.fps_counter.add_variable("ArmEndPose_XY")
         self.fps_counter.add_variable("ArmEndPose_ZRX")
@@ -458,9 +465,16 @@ class C_PiperInterface_V2():
         def ReadCan():
             while True:
                 self.arm_can.ReadCanMessage()
-        can_deal_th = threading.Thread(target=ReadCan)
-        can_deal_th.daemon = True
-        can_deal_th.start()
+        self.can_deal_th = threading.Thread(target=ReadCan)
+        self.can_deal_th.daemon = True
+        self.can_deal_th.start()
+        def CanMonitor():
+            while True:
+                self.CanMonitor()
+                time.sleep(0.01)
+        self.can_monitor_th = threading.Thread(target=CanMonitor)
+        self.can_monitor_th.daemon = True
+        self.can_monitor_th.start()
         self.SearchAllMotorMaxAngleSpd()
         self.SearchAllMotorMaxAccLimit()
         self.SearchPiperFirmwareVersion()
@@ -511,6 +525,15 @@ class C_PiperInterface_V2():
         '''
         pass
     # 获取反馈值------------------------------------------------------------------------------------------------------
+    def GetCanFps(self):
+        '''
+        获取机械臂can模块帧率
+        '''
+        '''
+        Get the frame rate of the robotic arm CAN module
+        '''
+        return self.fps_counter.get_real_time_fps("CanMonitor")
+    
     def GetArmStatus(self):
         '''获取机械臂状态,0x2A1,详见 ArmMsgStatus
         '''
@@ -597,6 +620,13 @@ class C_PiperInterface_V2():
         '''获取电机角度限制/最大速度指令
         
         包括最大角度限制,最小角度限制,最大关节速度
+        为主动发送指令后反馈消息
+        对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x01
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+        
+        CAN ID:
+            0x473
         '''
         '''Retrieves the motor angle limit/maximum speed command.
 
@@ -604,6 +634,14 @@ class C_PiperInterface_V2():
             Maximum angle limit
             Minimum angle limit
             Maximum joint speed
+        This is the feedback message after actively sending a command.
+        Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
+        with Byte 1 = 0x01
+
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+        
+        CAN ID:
+            0x473
         '''
         with self.__feedback_current_motor_angle_limit_max_vel_mtx:
             return self.__feedback_current_motor_angle_limit_max_vel
@@ -612,6 +650,14 @@ class C_PiperInterface_V2():
         '''获取末端速度/加速度参数
         
         包括末端线速度,末端角速度,末端线加速度,末端角加速度
+        为主动发送指令后反馈消息
+
+        对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x01
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+
+        CAN ID:
+            0x478
         '''
         '''Retrieves the end effector velocity and acceleration parameters.
 
@@ -620,6 +666,14 @@ class C_PiperInterface_V2():
             End effector angular velocity
             End effector linear acceleration
             End effector angular acceleration
+        This is the feedback message after actively sending a command.
+        Corresponds to the robotic arm parameter query and setting command 0x477,
+        with Byte 0 = 0x01
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+
+        CAN ID:
+            0x478
         '''
         with self.__feedback_current_end_vel_acc_param_mtx:
             return self.__feedback_current_end_vel_acc_param
@@ -628,6 +682,13 @@ class C_PiperInterface_V2():
         '''获取碰撞防护等级反馈
         
         获取1-6关节碰撞等级,数值0-8,0代表不检测碰撞,1-8检测等级逐级递增(代表检测阈值逐级增加)
+        为主动发送指令后反馈消息
+        对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x02
+
+        ArmParamEnquiryAndConfig(param_enquiry=0x02)
+        
+        CAN ID:
+            0x47B
         '''
         '''Retrieves the collision protection level feedback.
 
@@ -635,6 +696,14 @@ class C_PiperInterface_V2():
             Collision level for joints 1-6 (values range from 0 to 8).
                 0: No collision detection.
                 1-8: Detection levels, where the threshold for collision detection increases progressively.
+        This is the feedback message after actively sending a command.
+        Corresponds to the robotic arm parameter query and setting command 0x477,
+        with Byte 0 = 0x02
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x02)
+        
+        CAN ID:
+            0x47B
         '''
         with self.__feedback_crash_protection_level_mtx:
             return self.__feedback_crash_protection_level
@@ -643,11 +712,23 @@ class C_PiperInterface_V2():
         '''夹爪/示教器参数反馈指令
         
         包括示教器行程系数反馈、夹爪/示教器最大控制行程限制值反馈
+        为主动发送指令后反馈消息
+        对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x04
+        ArmParamEnquiryAndConfig(param_enquiry=0x04)
+        
+        CAN ID:
+            0x47E
         '''
         '''Gripper/Teaching Pendant Parameter Feedback Command
         This includes the following information:
             Teaching pendant travel coefficient
             Maximum control travel limit values for gripper/teaching pendant
+        This is the feedback message after actively sending a command.
+        Corresponds to robotic arm parameter query and setting command 0x477, Byte 0 = 0x04
+        ArmParamEnquiryAndConfig(param_enquiry=0x04)
+        
+        CAN ID:
+            0x47E
         '''
         with self.__feedback_gripper_teaching_pendant_param_mtx:
             return self.__feedback_gripper_teaching_pendant_param
@@ -764,9 +845,35 @@ class C_PiperInterface_V2():
             # 提取版本信息，截取固定长度的字节数据
             firmware_version = self.__firmware_data[version_start:version_end].decode('utf-8', errors='ignore')
             return firmware_version  # 返回找到的固件版本字符串
+    
+    def isOk(self):
+        '''
+        反馈can数据读取线程是否正常
+        '''
+        '''
+        Feedback on whether the CAN data reading thread is functioning normally
+        '''
+        with self.__is_ok_mtx:
+            return self.__is_ok
     # 发送控制值-------------------------------------------------------------------------------------------------------
 
     # 接收反馈函数------------------------------------------------------------------------------------------------------
+    def CanMonitor(self):
+        '''
+        can数据帧率检测
+        '''
+        '''
+        CAN data frame rate detection
+        '''
+        if self.q_can_fps.full():
+            self.q_can_fps.get()
+        self.q_can_fps.put(self.GetCanFps())
+        with self.__is_ok_mtx:
+            if self.q_can_fps.full() and all(x == 0 for x in self.q_can_fps.queue):
+                    self.__is_ok = False
+            else:
+                self.__is_ok = True
+        
     def UpdateArmStatus(self, msg:PiperMessage):
         '''更新机械臂状态
 
@@ -781,7 +888,7 @@ class C_PiperInterface_V2():
         with self.__arm_status_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgStatusFeedback):
                 self.fps_counter.increment("ArmStatus")
-                self.__arm_status.Hz = self.fps_counter.get_fps("ArmStatus")
+                self.__arm_status.Hz = self.fps_counter.get_real_time_fps("ArmStatus")
                 self.__arm_status.time_stamp = time.time_ns()/ 1_000_000_000
                 self.__arm_status.arm_status.ctrl_mode = msg.arm_status_msgs.ctrl_mode
                 self.__arm_status.arm_status.arm_status = msg.arm_status_msgs.arm_status
@@ -820,9 +927,9 @@ class C_PiperInterface_V2():
                 self.__arm_time_stamp.time_stamp_end_pose_3 = time.time_ns()
                 self.__arm_end_pose.end_pose.RY_axis = msg.arm_end_pose.RY_axis
                 self.__arm_end_pose.end_pose.RZ_axis = msg.arm_end_pose.RZ_axis
-            self.__arm_end_pose.Hz = self.fps_counter.cal_average(self.fps_counter.get_fps('ArmEndPose_XY'),
-                                                                  self.fps_counter.get_fps('ArmEndPose_ZRX'),
-                                                                  self.fps_counter.get_fps('ArmEndPose_RYRZ'))
+            self.__arm_end_pose.Hz = self.fps_counter.cal_average(self.fps_counter.get_real_time_fps('ArmEndPose_XY'),
+                                                                  self.fps_counter.get_real_time_fps('ArmEndPose_ZRX'),
+                                                                  self.fps_counter.get_real_time_fps('ArmEndPose_RYRZ'))
             self.__arm_end_pose.time_stamp = max(self.__arm_time_stamp.time_stamp_end_pose_1, 
                                                 self.__arm_time_stamp.time_stamp_end_pose_2, 
                                                 self.__arm_time_stamp.time_stamp_end_pose_3) / 1_000_000_000
@@ -858,9 +965,9 @@ class C_PiperInterface_V2():
                 self.__arm_joint_msgs.joint_state.joint_6 = msg.arm_joint_feedback.joint_6
             else:
                 pass
-            self.__arm_joint_msgs.Hz = self.fps_counter.cal_average(self.fps_counter.get_fps('ArmJoint_12'),
-                                                                    self.fps_counter.get_fps('ArmJoint_34'),
-                                                                    self.fps_counter.get_fps('ArmJoint_56'))
+            self.__arm_joint_msgs.Hz = self.fps_counter.cal_average(self.fps_counter.get_real_time_fps('ArmJoint_12'),
+                                                                    self.fps_counter.get_real_time_fps('ArmJoint_34'),
+                                                                    self.fps_counter.get_real_time_fps('ArmJoint_56'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_joint_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_34, 
@@ -888,7 +995,7 @@ class C_PiperInterface_V2():
                 self.__arm_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
             else:
                 pass
-            self.__arm_gripper_msgs.Hz = self.fps_counter.get_fps('ArmGripper')
+            self.__arm_gripper_msgs.Hz = self.fps_counter.get_real_time_fps('ArmGripper')
             # print(self.__arm_gripper_msgs)
             return self.__arm_gripper_msgs
     
@@ -948,12 +1055,12 @@ class C_PiperInterface_V2():
                 self.__arm_motor_info_high_spd.motor_6.pos = msg.arm_high_spd_feedback_6.pos
             else:
                 pass
-            self.__arm_motor_info_high_spd.Hz = self.fps_counter.cal_average(self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_1'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_2'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_3'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_4'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_5'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoHighSpd_6'))
+            self.__arm_motor_info_high_spd.Hz = self.fps_counter.cal_average(self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_1'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_2'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_3'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_4'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_5'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_6'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_motor_info_high_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_low_spd_1, 
                                                     self.__arm_time_stamp.time_stamp_motor_low_spd_2, 
@@ -1032,12 +1139,12 @@ class C_PiperInterface_V2():
                 self.__arm_motor_info_low_spd.motor_6.bus_current = msg.arm_low_spd_feedback_6.bus_current
             else:
                 pass
-            self.__arm_motor_info_low_spd.Hz = self.fps_counter.cal_average(self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_1'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_2'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_3'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_4'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_5'),
-                                                                            self.fps_counter.get_fps('ArmMotorDriverInfoLowSpd_6'))
+            self.__arm_motor_info_low_spd.Hz = self.fps_counter.cal_average(self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_1'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_2'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_3'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_4'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_5'),
+                                                                            self.fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_6'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_motor_info_low_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_low_spd_1, 
                                                             self.__arm_time_stamp.time_stamp_motor_low_spd_2, 
@@ -1055,13 +1162,21 @@ class C_PiperInterface_V2():
         为主动发送指令后反馈消息
         对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x01
         
-        0x473
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x01)
+        
+        CAN_ID:
+            0x473
         '''
         '''
         Updates feedback for the current motor limit angles/maximum speeds.
         This is the feedback message after actively sending a command.
         Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
-        with Byte 1 = 0x01, and 0x473.
+        with Byte 1 = 0x01
+        
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x01)
+        
+        CAN_ID:
+            0x473
 
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
@@ -1085,15 +1200,23 @@ class C_PiperInterface_V2():
         反馈当前电机最大加速度限制
         为主动发送指令后反馈消息
         对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x02
+        
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x02)
 
-        0x47C
+        CAN_ID:
+            0x47C
         '''
         '''
         Updates feedback for the current motor maximum acceleration limit.
         This is the feedback message after actively sending a command.
         Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
-        with Byte 1 = 0x02, and 0x47C.
+        with Byte 1 = 0x02
+        
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x02)
 
+        CNA_ID:
+            0x47C
+        
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
         '''
@@ -1110,17 +1233,25 @@ class C_PiperInterface_V2():
     def UpdateAllCurrentMotorAngleLimitMaxVel(self, msg:PiperMessage):
         '''
         更新
-        反馈全部电机限制角度/最大速度
+        反馈全部电机限制角度/最大速度(注意是全部)
         为主动发送指令后反馈消息
         对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x01
         
-        0x473
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x01)
+        
+        CAN_ID:
+            0x473
         '''
         '''
         Updates feedback for the angle/maximum speed limits of all motors.
         This is the feedback message after actively sending a command.
         Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
-        with Byte 1 = 0x01, and 0x473.
+        with Byte 1 = 0x01
+        
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x01)
+        
+        CAN_ID:
+            0x473
 
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
@@ -1157,18 +1288,26 @@ class C_PiperInterface_V2():
     
     def UpdateAllCurrentMotorMaxAccLimit(self, msg:PiperMessage):
         '''
-        反馈全部电机最大加速度限制
+        反馈全部电机最大加速度限制(注意是全部)
         为主动发送指令后反馈消息
         对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x02
+        
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x02)
 
-        0x47C
+        CAN_ID:
+            0x47C
         '''
         '''
         Updates feedback for the maximum acceleration limits of all motors.
         This is the feedback message after actively sending a command.
         Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
-        with Byte 1 = 0x02, and 0x47C.
+        with Byte 1 = 0x02
+        
+        CAN_ID:
+            0x47C
 
+        SearchMotorMaxAngleSpdAccLimit(search_content=0x02)
+        
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
         '''
@@ -1208,14 +1347,20 @@ class C_PiperInterface_V2():
         为主动发送指令后反馈消息
 
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x01
-
-        0x478
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+        
+        CAN_ID:
+            0x478
         '''
         '''
         Updates feedback for the current end effector velocity/acceleration parameters.
         This is the feedback message after actively sending a command.
         Corresponds to the robotic arm parameter query and setting command 0x477,
-        with Byte 0 = 0x01, and 0x478.
+        ArmParamEnquiryAndConfig(param_enquiry=0x01)
+        with Byte 0 = 0x01
+        
+        CAN_ID:
+            0x478
 
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
@@ -1239,14 +1384,22 @@ class C_PiperInterface_V2():
         碰撞防护等级设置反馈指令
         为主动发送指令后反馈消息
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x02
-
-        0x47B
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x02)
+        
+        CAN_ID:
+            0x47B
         '''
         '''
         Updates feedback for the collision protection level setting.
         This is the feedback message after actively sending a command.
         Corresponds to the robotic arm parameter query and setting command 0x477,
-        with Byte 0 = 0x02, and 0x47B.
+        with Byte 0 = 0x02
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x02)
+        
+        CAN_ID:
+            0x47B
 
         Args:
             msg (PiperMessage): The input containing the summary of robotic arm messages.
@@ -1272,14 +1425,21 @@ class C_PiperInterface_V2():
     def UpdateGripperTeachingPendantParamFeedback(self, msg:PiperMessage):
         '''
         夹爪/示教器参数反馈指令
+        为主动发送指令后反馈消息
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x04
-
-        0x47E
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x04)
+        
+        CAN_ID:
+            0x47E
         '''
         '''
-        Gripper/Teaching Pendant Parameter Feedback Command  
+        Gripper/Teaching Pendant Parameter Feedback Command
+        This is the feedback message after actively sending a command.
         Corresponds to robotic arm parameter query and setting command 0x477, Byte 0 = 0x04
-
+        
+        ArmParamEnquiryAndConfig(param_enquiry=0x04)
+        
         CAN ID:
             0x47E
         '''
@@ -1322,9 +1482,9 @@ class C_PiperInterface_V2():
                 self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 = msg.arm_joint_ctrl.joint_6
             else:
                 pass
-            self.__arm_joint_ctrl_msgs.Hz = self.fps_counter.cal_average(self.fps_counter.get_fps('ArmJointCtrl_12'),
-                                                                        self.fps_counter.get_fps('ArmJointCtrl_34'),
-                                                                        self.fps_counter.get_fps('ArmJointCtrl_56'))
+            self.__arm_joint_ctrl_msgs.Hz = self.fps_counter.cal_average(self.fps_counter.get_real_time_fps('ArmJointCtrl_12'),
+                                                                        self.fps_counter.get_real_time_fps('ArmJointCtrl_34'),
+                                                                        self.fps_counter.get_real_time_fps('ArmJointCtrl_56'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_joint_ctrl_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_ctrl_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_ctrl_34, 
@@ -1346,7 +1506,7 @@ class C_PiperInterface_V2():
         with self.__arm_gripper_ctrl_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgGripperCtrl):
                 self.fps_counter.increment("ArmGripperCtrl")
-                self.__arm_gripper_ctrl_msgs.Hz = self.fps_counter.get_fps("ArmGripperCtrl")
+                self.__arm_gripper_ctrl_msgs.Hz = self.fps_counter.get_real_time_fps("ArmGripperCtrl")
                 self.__arm_gripper_ctrl_msgs.time_stamp = time.time_ns()
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_angle = msg.arm_gripper_ctrl.grippers_angle
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
@@ -1371,7 +1531,7 @@ class C_PiperInterface_V2():
         with self.__arm_ctrl_code_151_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgMotionCtrl_2):
                 self.fps_counter.increment("ArmCtrlCode_151")
-                self.__arm_ctrl_code_151.Hz = self.fps_counter.get_fps("ArmCtrlCode_151")
+                self.__arm_ctrl_code_151.Hz = self.fps_counter.get_real_time_fps("ArmCtrlCode_151")
                 self.__arm_ctrl_code_151.time_stamp = time.time_ns()/ 1_000_000_000
                 self.__arm_ctrl_code_151.ctrl_151.ctrl_mode = \
                     msg.arm_motion_ctrl_2.ctrl_mode
@@ -1545,12 +1705,12 @@ class C_PiperInterface_V2():
             0x152,0x153,0x154
         
         Args:
-            X (int): 关节1角度,单位0.001mm
-            Y (int): 关节2角度,单位0.001mm
-            Z (int): 关节3角度,单位0.001mm
-            RX (int): 关节4角度,单位0.001度
-            RX (int): 关节5角度,单位0.001度
-            RX (int): 关节6角度,单位0.001度
+            X_axis: X坐标,单位0.001mm
+            Y_axis: Y坐标,单位0.001mm
+            Z_axis: Z坐标,单位0.001mm
+            RX_axis: RX角度,单位0.001度
+            RY_axis: RY角度,单位0.001度
+            RZ_axis: RZ角度,单位0.001度
         '''
         '''
         Updates the joint control for the robotic arm.
@@ -1559,12 +1719,12 @@ class C_PiperInterface_V2():
             0x152,0x153,0x154
         
         Args:
-            X (int): The angle of joint 1.in 0.001mm
-            Y (int): The angle of joint 2.in 0.001mm
-            Z (int): The angle of joint 3.in 0.001mm
-            RX (int): The angle of joint 4.in 0.001°
-            RY (int): The angle of joint 5.in 0.001°
-            RZ (int): The angle of joint 6.in 0.001°
+            X_axis: X-axis coordinate, in 0.001 mm.
+            Y_axis: Y-axis coordinate, in 0.001 mm.
+            Z_axis: Z-axis coordinate, in 0.001 mm.
+            RX_axis: Rotation about X-axis, in 0.001 degrees.
+            RY_axis: Rotation about Y-axis, in 0.001 degrees.
+            RZ_axis: Rotation about Z-axis, in 0.001 degrees.
         '''
         self.__CartesianCtrl_XY(X,Y)
         self.__CartesianCtrl_ZRX(Z,RX)
@@ -1603,7 +1763,7 @@ class C_PiperInterface_V2():
                   joint_5:int,
                   joint_6:int):
         '''
-        机械臂关节控制
+        机械臂关节控制, 发送前需要切换机械臂模式为关节控制模式
 
         CAN ID:
             0x155,0x156,0x157
@@ -1617,7 +1777,7 @@ class C_PiperInterface_V2():
             joint_6 (float): 关节6角度,单位0.001度
         '''
         '''
-        Updates the joint control for the robotic arm.
+        Updates the joint control for the robotic arm.Before sending, switch the robotic arm mode to joint control mode
 
         Args:
             joint_1 (float): The angle of joint 1.in 0.001°
@@ -1711,7 +1871,7 @@ class C_PiperInterface_V2():
 
     def MoveCAxisUpdateCtrl(self, instruction_num:int):
         '''
-        MoveC模式坐标点更新指令
+        MoveC模式坐标点更新指令, 发送前需要切换机械臂模式为MoveC控制模式
 
         Args:
             instruction_num (int): 指令点序号
@@ -1724,7 +1884,7 @@ class C_PiperInterface_V2():
         最后使用 EndPoseCtrl 确定中点,piper.MoveCAxisUpdateCtrl(0x03)
         '''
         '''
-        MoveC Mode Coordinate Point Update Command
+        MoveC Mode Coordinate Point Update Command.Before sending, switch the robotic arm mode to MoveC control mode
 
         Args:
             instruction_num (int): Instruction point sequence number
@@ -1908,7 +2068,8 @@ class C_PiperInterface_V2():
 
         对应反馈当前电机限制角度/最大速度
         
-        0x472
+        CAN ID:
+            0x472
         
         Args:
             motor_num: uint8, 关节电机序号。
@@ -1921,6 +2082,9 @@ class C_PiperInterface_V2():
 
         This corresponds to feedback on the current motor angle/maximum speed limits.
 
+        CAN ID:
+            0x472
+        
         Args:
             command (list): The command list containing the following elements:
             
@@ -1965,7 +2129,8 @@ class C_PiperInterface_V2():
         '''
         电机角度限制/最大速度设置指令
         
-        0x474
+        CAN ID:
+            0x474
         
         Args:
             motor_num: 关节电机序号
@@ -1976,7 +2141,8 @@ class C_PiperInterface_V2():
         '''
         Sets the motor angle limit/maximum speed limit command 
         
-        0x474
+        CAN ID:
+            0x474
         
         Args:
             motor_num: Joint motor index.
@@ -2060,7 +2226,7 @@ class C_PiperInterface_V2():
     
     def JointMaxAccConfig(self, motor_num:Literal[1, 2, 3, 4, 5, 6]=6, max_joint_acc:int=500):
         '''
-        关节最大加速度设置指令(基于V1.5-2版本后)
+        关节最大加速度设置指令
         
         CAN ID:
             0x475
@@ -2072,7 +2238,7 @@ class C_PiperInterface_V2():
             max_joint_acc: 关节电机最大速度设定,单位 0.01rad/s^2
         '''
         '''
-        Joint Maximum Acceleration Command (Based on version V1.5-2 and later)
+        Joint Maximum Acceleration Command
 
         CAN ID:
             0x475
