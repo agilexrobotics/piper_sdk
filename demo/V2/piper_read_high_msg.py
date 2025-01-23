@@ -14,5 +14,5 @@ if __name__ == "__main__":
     while True:
         import time
         print(piper.GetArmHighSpdInfoMsgs())
-        time.sleep(0.005)
+        time.sleep(0.5)
         pass

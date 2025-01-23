@@ -14,6 +14,7 @@ if __name__ == "__main__":
     while True:
         import time
         print()
+        print(f"isOK: {piper.isOk()}")
         print(f"status: {piper.GetArmStatus().Hz}")
         print(f"end_pose: {piper.GetArmEndPoseMsgs().Hz}")
         print(f"joint_states: {piper.GetArmJointMsgs().Hz}")
