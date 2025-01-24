@@ -75,7 +75,6 @@ class C_STD_CAN():
         '''Initialize the CAN bus.
         '''
         if self.bus is not None:
-            print("CAN bus is already open.")
             return
         try:
             self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)

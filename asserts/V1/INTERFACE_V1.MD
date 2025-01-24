@@ -8,10 +8,13 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 
 `C_PiperInterface` 类初始化参数及成员变量说明
 
-|变量|类型|说明|
+内类依照can_port识别实例，防止重复创建同can_port的interface实例
+
+|形参|类型|说明|
 | --- |------| --- |
-|can_name|str|CAN 路由名称，指示从哪个 CAN 中收发数据。|
-|arm_can|C_STD_CAN|CAN 封装类|
+|can_name|`str`|CAN 路由名称，指示从哪个 CAN 中收发数据。|
+|judge_flag|`Bool`|是否在创建实例时判断can模块状态|
+|can_auto_init|`Bool`|是否在创建实例时初始化can bus|
 
 ### 1.二次封装类
 
@@ -42,10 +45,12 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 
 | 变量   | 类型 |说明                                                          |
 | ----- | ---- |------------------------------------------------------------ |
-|`arm_can`|`C_STD_CAN`|`can_encapsulation.py` 中的类的实例化，为硬件接收数据层,注册数据处理回调函数|
-|`parser`|`C_PiperParserBase`|数据协议解析类实例化，当前为V1版本协议解析，类型为数据解析类的基类|
+|`__arm_can`|`C_STD_CAN`|`can_encapsulation.py` 中的类的实例化，为硬件接收数据层,注册数据处理回调函数|
+|`__parser`|`C_PiperParserBase`|数据协议解析类实例化，当前为V1版本协议解析，类型为数据解析类的基类|
 |`__firmware_data`|`bytearray`|固件版本字符串|
-|`__arm_time_stamp`|`ArmTimeStamp`|时间戳类的实例化，是`C_PiperInterface`的私有类，是一些由多个can帧组合一起的机械臂变量的时间戳，例如关节角|
+|`__fps_counter`|`C_FPSCounter`|can帧率计算|
+|`__is_ok`|`Bool`|can总线是否还有数据|
+|`__arm_time_stamp`|`ArmTimeStamp`|时间戳类的实例化，是`C_PiperInterface_V2`的私有类，是一些由多个can帧组合一起的机械臂变量的时间戳，例如关节角|
 |`__arm_status`|`ArmMsgStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
 |`__arm_end_pose`|`ArmEndPose`|机械臂末端姿态反馈消息的实例，包含末端的姿态信息。|
 |`__arm_joint_msgs`|`ArmJoint`|机械臂关节角度反馈消息的实例，包含各关节的状态信息。|
@@ -61,13 +66,16 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__arm_ctrl_code_151`|`ArmCtrlCode_151`|变量为读取主动臂发送给从动臂的0x151指令消息|
 |`__arm_all_motor_max_acc_limit`|`AllCurrentMotorMaxAccLimit`|变量为机械臂关节所有关节电机的最大加速度限制消息|
 |`__arm_all_motor_angle_limit_max_spd`|`AllCurrentMotorAngleLimitMaxSpd`|机械臂关节所有关节电机的角度限制和最大速度|
+|`_initialized`|`Bool`|类内防止重复实例标志位|
 
 ### 3.函数解析
 
 | 函数   | 类型 |说明                                                         |使用                | 参数                        |反馈       |
 | ----- | ---- |------------------------------------------------------------ |-------------------|--------------------------- |--------|
-|`ConnectPort`|Getter Method|该函数为打开can消息读取函数，该函数调用读取can消息函数，并创建读取线程，打开线程|用来在外部实例化类后，打开数据处理线程，并且发送读取机械臂电机的最大加速度、关节限位和最大速度|None|None|
+|`get_instance`|Getter Method|获取当前实例地址|bj.GetArmStatus()|`can_name (str)`, `judge_flag (Bool)`, `can_auto_init (Bool)`|self@C_PiperInterface|
+|`ConnectPort`|Start Method|该函数为打开can消息读取函数，该函数调用读取can消息函数，并创建读取线程，打开线程|用来在外部实例化类后，打开数据处理线程，并且发送读取机械臂电机的最大加速度、关节限位和最大速度读取指令|`can_init (Bool)`|None|
 |`ParseCANFrame`|Getter Method|can协议解析函数，用来处理接收到的can数据帧，为can接收消息的回调函数|先创建局部变量，然后调用解析协议类中的解码函数如果解码成功，则更新对应的消息，更新到上述的私有变量中，每个更新数据函数都有筛选当前数据类型，对应的数据类型才会被更新|`rx_message: Optional[can.Message]`|None|
+|`GetCanFps`|Getter Method|获取can总线当前实时帧率|obj.GetArmStatus()|None|int|
 |`GetArmStatus`|Getter Method|获取机械臂状态信息。使用互斥锁`__arm_status_mtx`保证线程安全。|obj.GetArmStatus()|None|self.__arm_status|
 |`GetArmEndPoseMsgs`|Getter Method|获取机械臂末端位置的消息。使用互斥锁`__arm_end_pose_mtx`保证线程安全。|obj.GetArmEndPoseMsgs()|None|self.__arm_end_pose|
 |`GetArmJointMsgs`|Getter Method|获取机械臂关节的状态消息。使用互斥锁`__arm_joint_msgs_mtx`保证线程安全。|obj.GetArmJointMsgs()|None|self.__arm_joint_msgs|
@@ -84,22 +92,23 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`GetAllMotorMaxAccLimit`|Getter Method|获取机械臂控关节所有关节电机的最大加速度限制消息，使用互斥锁`__arm_all_motor_max_acc_limit_mtx`保证线程安全。|obj.GetAllMotorMaxAccLimit()|None|self.__arm_all_motor_max_acc_limit|
 |`GetAllMotorAngleLimitMaxSpd`|Getter Method|获取机械臂控关节所有关节电机的角度限制和最大速度，使用互斥锁`__arm_all_motor_angle_limit_max_spd_mtx`保证线程安全。|obj.GetAllMotorAngleLimitMaxSpd()|None|self.__arm_all_motor_angle_limit_max_spd|
 |`GetPiperFirmwareVersion`|Getter Method|获取piper机械臂的主控固件版本，反馈固件版本字符串|obj.GetPiperFirmwareVersion()|None|firmware_version|
-|`UpdateArmStatus`|Getter Method|更新机械臂状态|类内使用|msg:PiperMessage|self.__arm_status|
-|`UpdateArmEndPoseState`|Getter Method|更新末端位姿状态，单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_end_pose|
-|`UpdateArmJointState`|Getter Method|更新关节状态，关节角单位为0.001度|类内使用|msg:PiperMessage|self.__arm_joint_msgs|
-|`UpdateArmGripperState`|Getter Method|更新夹爪状态，夹爪反馈的行程单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_gripper_msgs|
-|`UpdateDriverInfoHighSpdFeedback`|Getter Method|更新驱动器信息反馈（高速）|类内使用|msg:PiperMessage|self.__arm_motor_info_high_spd|
-|`UpdateDriverInfoLowSpdFeedback`|Getter Method|更新驱动器信息反馈（低速）|类内使用|msg:PiperMessage|self.__arm_motor_info_low_spd|
-|`UpdateCurrentMotorAngleLimitMaxVel`|Getter Method|更新当前电机限制角度/最大速度|类内使用|msg:PiperMessage|self.__feedback_current_motor_angle_limit_max_vel|
-|`UpdateCurrentMotorMaxAccLimit`|Getter Method|更新当前电机最大加速度限制|类内使用|msg:PiperMessage|self.__feedback_current_motor_max_acc_limit|
-|`UpdateAllCurrentMotorAngleLimitMaxVel`|Getter Method|更新所有电机最大加速度限制|类内使用|msg:PiperMessage|self.__arm_all_motor_angle_limit_max_spd|
-|`UpdateAllCurrentMotorMaxAccLimit`|Getter Method|更新所有电机角度限制和最大速度|类内使用|msg:PiperMessage|self.__arm_all_motor_max_acc_limit|
-|`UpdateCurrentEndVelAndAccParam`|Getter Method|更新当前末端速度/加速度参数|类内使用|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
-|`UpdateCrashProtectionLevelFeedback`|Getter Method|更新碰撞防护等级设置反馈指令|类内使用|msg:PiperMessage|self.__feedback_crash_protection_level|
-|`UpdateArmJointCtrl`|Getter Method|更新关节状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_joint_ctrl_msgs|
-|`UpdateArmGripperCtrl`|Getter Method|更新夹爪状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_gripper_ctrl_msgs|
-|`UpdateArmCtrlCode151`|Getter Method|更新主臂发送的151控制指令|类内使用|msg:PiperMessage|self.__arm_ctrl_code_151|
-|`UpdatePiperFirmware`|Getter Method|更新发送4AF后，读取到的4AF反馈的字符并拼接|类内使用|msg:PiperMessage|self.__firmware_data|
+|`isOk`|Getter Method|反馈can数据读取线程是否正常|obj.isOk()|None|self.__is_ok|
+|`__UpdateArmStatus`|Getter Method|更新机械臂状态|类内使用|msg:PiperMessage|self.__arm_status|
+|`__UpdateArmEndPoseState`|Getter Method|更新末端位姿状态，单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_end_pose|
+|`__UpdateArmJointState`|Getter Method|更新关节状态，关节角单位为0.001度|类内使用|msg:PiperMessage|self.__arm_joint_msgs|
+|`__UpdateArmGripperState`|Getter Method|更新夹爪状态，夹爪反馈的行程单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_gripper_msgs|
+|`__UpdateDriverInfoHighSpdFeedback`|Getter Method|更新驱动器信息反馈（高速）|类内使用|msg:PiperMessage|self.__arm_motor_info_high_spd|
+|`__UpdateDriverInfoLowSpdFeedback`|Getter Method|更新驱动器信息反馈（低速）|类内使用|msg:PiperMessage|self.__arm_motor_info_low_spd|
+|`__UpdateCurrentMotorAngleLimitMaxVel`|Getter Method|更新当前电机限制角度/最大速度|类内使用|msg:PiperMessage|self.__feedback_current_motor_angle_limit_max_vel|
+|`__UpdateCurrentMotorMaxAccLimit`|Getter Method|更新当前电机最大加速度限制|类内使用|msg:PiperMessage|self.__feedback_current_motor_max_acc_limit|
+|`__UpdateAllCurrentMotorAngleLimitMaxVel`|Getter Method|更新所有电机最大加速度限制|类内使用|msg:PiperMessage|self.__arm_all_motor_angle_limit_max_spd|
+|`__UpdateAllCurrentMotorMaxAccLimit`|Getter Method|更新所有电机角度限制和最大速度|类内使用|msg:PiperMessage|self.__arm_all_motor_max_acc_limit|
+|`__UpdateCurrentEndVelAndAccParam`|Getter Method|更新当前末端速度/加速度参数|类内使用|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
+|`__UpdateCrashProtectionLevelFeedback`|Getter Method|更新碰撞防护等级设置反馈指令|类内使用|msg:PiperMessage|self.__feedback_crash_protection_level|
+|`__UpdateArmJointCtrl`|Getter Method|更新关节状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_joint_ctrl_msgs|
+|`__UpdateArmGripperCtrl`|Getter Method|更新夹爪状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_gripper_ctrl_msgs|
+|`__UpdateArmCtrlCode151`|Getter Method|更新主臂发送的151控制指令|类内使用|msg:PiperMessage|self.__arm_ctrl_code_151|
+|`__UpdatePiperFirmware`|Getter Method|更新发送4AF后，读取到的4AF反馈的字符并拼接|类内使用|msg:PiperMessage|self.__firmware_data|
 |`MotionCtrl_1`|Ctrl Method|0x150,可以控制急停、轨迹传输及拖动示教模式。|类外调用|`emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|None|
 |`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|None|
 |`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`|None|
