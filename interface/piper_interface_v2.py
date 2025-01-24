@@ -503,7 +503,7 @@ class C_PiperInterface_V2():
             self.__connected = True
             self.__read_can_stop_event.clear()
             self.__can_monitor_stop_event.clear()  # 允许线程运行
-        if(can_init or not self.__can_auto_init):
+        if(can_init or not self.__connected):
             self.__arm_can.Init()
         # 读取can数据线程
         def ReadCan():

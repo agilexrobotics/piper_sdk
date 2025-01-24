@@ -477,6 +477,8 @@ class C_PiperInterface():
             Sends a query for the joint motor's maximum angle and speed.
             Sends a query for the joint motor's maximum acceleration limit.
         '''
+        if(can_init or not self.__connected):
+            self.__arm_can.Init()
         # 检查线程是否开启
         with self.__lock:
             if self.__connected:
@@ -484,8 +486,6 @@ class C_PiperInterface():
             self.__connected = True
             self.__read_can_stop_event.clear()
             self.__can_monitor_stop_event.clear()  # 允许线程运行
-        if(can_init or not self.__can_auto_init):
-            self.__arm_can.Init()
         # 读取can数据线程
         def ReadCan():
             while not self.__read_can_stop_event.is_set():
