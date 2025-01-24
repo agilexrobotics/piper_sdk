@@ -16,7 +16,7 @@ class C_FPSCounter:
         self.thread = None  # 线程对象
         self.stop_event = threading.Event()  # 用于控制线程退出
 
-    def add_variable(self, name, window_size=100):
+    def add_variable(self, name, window_size=5000):
         """ 添加新的 FPS 变量，并限制时间窗口大小 """
         with self.lock:
             if name not in self.fps_data:

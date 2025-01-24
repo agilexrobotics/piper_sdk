@@ -392,7 +392,7 @@ class C_PiperInterface_V2():
         # FPS cal
         self.__fps_counter = C_FPSCounter()
         self.__fps_counter.add_variable("CanMonitor")
-        self.__q_can_fps = Queue(maxsize=100)
+        self.__q_can_fps = Queue(maxsize=20)
         self.__is_ok_mtx = threading.Lock()
         self.__is_ok = True
         self.__fps_counter.add_variable("ArmStatus")
@@ -496,6 +496,8 @@ class C_PiperInterface_V2():
             Sends a query for the joint motor's maximum angle and speed.
             Sends a query for the joint motor's maximum acceleration limit.
         '''
+        if(can_init or not self.__connected):
+            self.__arm_can.Init()
         # 检查线程是否开启
         with self.__lock:
             if self.__connected:
@@ -503,8 +505,6 @@ class C_PiperInterface_V2():
             self.__connected = True
             self.__read_can_stop_event.clear()
             self.__can_monitor_stop_event.clear()  # 允许线程运行
-        if(can_init or not self.__connected):
-            self.__arm_can.Init()
         # 读取can数据线程
         def ReadCan():
             while not self.__read_can_stop_event.is_set():
@@ -629,6 +629,7 @@ class C_PiperInterface_V2():
         For detailed information, refer to the `ArmMsgStatus` class.
         '''
         with self.__arm_status_mtx:
+            self.__arm_status.Hz = self.__fps_counter.get_real_time_fps("ArmStatus")
             return self.__arm_status
 
     def GetArmEndPoseMsgs(self):
@@ -644,6 +645,9 @@ class C_PiperInterface_V2():
             RX, RY, RZ orientation (in 0.001 degrees)
         '''
         with self.__arm_end_pose_mtx:
+            self.__arm_end_pose.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmEndPose_XY'),
+                                                                  self.__fps_counter.get_real_time_fps('ArmEndPose_ZRX'),
+                                                                  self.__fps_counter.get_real_time_fps('ArmEndPose_RYRZ'))
             return self.__arm_end_pose
 
     def GetArmJointMsgs(self):
@@ -652,6 +656,9 @@ class C_PiperInterface_V2():
         '''Retrieves the joint status message of the robotic arm.(in 0.001 degrees)
         '''
         with self.__arm_joint_msgs_mtx:
+            self.__arm_joint_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmJoint_12'),
+                                                                    self.__fps_counter.get_real_time_fps('ArmJoint_34'),
+                                                                    self.__fps_counter.get_real_time_fps('ArmJoint_56'))
             return self.__arm_joint_msgs
     
     def GetFK(self):
@@ -670,6 +677,7 @@ class C_PiperInterface_V2():
         '''Retrieves the gripper status message of the robotic arm.
         '''
         with self.__arm_gripper_msgs_mtx:
+            self.__arm_gripper_msgs.Hz = self.__fps_counter.get_real_time_fps('ArmGripper')
             return self.__arm_gripper_msgs
     
     def GetArmHighSpdInfoMsgs(self):
@@ -685,6 +693,12 @@ class C_PiperInterface_V2():
             Position
         '''
         with self.__arm_motor_info_high_spd_mtx:
+            self.__arm_motor_info_high_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_1'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_2'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_3'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_4'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_5'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_6'))
             return self.__arm_motor_info_high_spd
     
     def GetArmLowSpdInfoMsgs(self):
@@ -702,6 +716,12 @@ class C_PiperInterface_V2():
             Bus current
         '''
         with self.__arm_motor_info_low_spd_mtx:
+            self.__arm_motor_info_low_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_1'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_2'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_3'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_4'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_5'),
+                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_6'))
             return self.__arm_motor_info_low_spd
     
     def GetCurrentMotorAngleLimitMaxVel(self):
@@ -843,6 +863,9 @@ class C_PiperInterface_V2():
         The units for these commands are 0.001 degrees.
         '''
         with self.__arm_joint_ctrl_msgs_mtx:
+            self.__arm_joint_ctrl_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmJointCtrl_12'),
+                                                                        self.__fps_counter.get_real_time_fps('ArmJointCtrl_34'),
+                                                                        self.__fps_counter.get_real_time_fps('ArmJointCtrl_56'))
             return self.__arm_joint_ctrl_msgs
     
     def GetArmGripperCtrl(self):
@@ -870,6 +893,7 @@ class C_PiperInterface_V2():
             set_zero (int): Set the current position as the zero point.
         '''
         with self.__arm_gripper_ctrl_msgs_mtx:
+            self.__arm_gripper_ctrl_msgs.Hz = self.__fps_counter.get_real_time_fps("ArmGripperCtrl")
             return self.__arm_gripper_ctrl_msgs
     
     def GetArmCtrlCode151(self):
@@ -880,6 +904,7 @@ class C_PiperInterface_V2():
         For detailed information, refer to the `ArmMsgMotionCtrl_1` class.
         '''
         with self.__arm_ctrl_code_151_mtx:
+            self.__arm_ctrl_code_151.Hz = self.__fps_counter.get_real_time_fps("ArmCtrlCode_151")
             return self.__arm_ctrl_code_151
     
     def GetAllMotorMaxAccLimit(self):
@@ -961,7 +986,7 @@ class C_PiperInterface_V2():
                     self.__is_ok = False
             else:
                 self.__is_ok = True
-        
+    
     def __UpdateArmStatus(self, msg:PiperMessage):
         '''更新机械臂状态
 
@@ -976,7 +1001,6 @@ class C_PiperInterface_V2():
         with self.__arm_status_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgStatusFeedback):
                 self.__fps_counter.increment("ArmStatus")
-                self.__arm_status.Hz = self.__fps_counter.get_real_time_fps("ArmStatus")
                 self.__arm_status.time_stamp = time.time_ns()/ 1_000_000_000
                 self.__arm_status.arm_status.ctrl_mode = msg.arm_status_msgs.ctrl_mode
                 self.__arm_status.arm_status.arm_status = msg.arm_status_msgs.arm_status
@@ -1015,9 +1039,6 @@ class C_PiperInterface_V2():
                 self.__arm_time_stamp.time_stamp_end_pose_3 = time.time_ns()
                 self.__arm_end_pose.end_pose.RY_axis = msg.arm_end_pose.RY_axis
                 self.__arm_end_pose.end_pose.RZ_axis = msg.arm_end_pose.RZ_axis
-            self.__arm_end_pose.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmEndPose_XY'),
-                                                                  self.__fps_counter.get_real_time_fps('ArmEndPose_ZRX'),
-                                                                  self.__fps_counter.get_real_time_fps('ArmEndPose_RYRZ'))
             self.__arm_end_pose.time_stamp = max(self.__arm_time_stamp.time_stamp_end_pose_1, 
                                                 self.__arm_time_stamp.time_stamp_end_pose_2, 
                                                 self.__arm_time_stamp.time_stamp_end_pose_3) / 1_000_000_000
@@ -1053,9 +1074,6 @@ class C_PiperInterface_V2():
                 self.__arm_joint_msgs.joint_state.joint_6 = msg.arm_joint_feedback.joint_6
             else:
                 pass
-            self.__arm_joint_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmJoint_12'),
-                                                                    self.__fps_counter.get_real_time_fps('ArmJoint_34'),
-                                                                    self.__fps_counter.get_real_time_fps('ArmJoint_56'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_joint_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_34, 
@@ -1081,9 +1099,6 @@ class C_PiperInterface_V2():
                 self.__arm_gripper_msgs.gripper_state.grippers_angle = msg.gripper_feedback.grippers_angle
                 self.__arm_gripper_msgs.gripper_state.grippers_effort = msg.gripper_feedback.grippers_effort
                 self.__arm_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
-            else:
-                pass
-            self.__arm_gripper_msgs.Hz = self.__fps_counter.get_real_time_fps('ArmGripper')
             # print(self.__arm_gripper_msgs)
             return self.__arm_gripper_msgs
     
@@ -1143,12 +1158,6 @@ class C_PiperInterface_V2():
                 self.__arm_motor_info_high_spd.motor_6.pos = msg.arm_high_spd_feedback_6.pos
             else:
                 pass
-            self.__arm_motor_info_high_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_1'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_2'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_3'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_4'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_5'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoHighSpd_6'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_motor_info_high_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_low_spd_1, 
                                                     self.__arm_time_stamp.time_stamp_motor_low_spd_2, 
@@ -1227,12 +1236,6 @@ class C_PiperInterface_V2():
                 self.__arm_motor_info_low_spd.motor_6.bus_current = msg.arm_low_spd_feedback_6.bus_current
             else:
                 pass
-            self.__arm_motor_info_low_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_1'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_2'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_3'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_4'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_5'),
-                                                                            self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_6'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_motor_info_low_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_low_spd_1, 
                                                             self.__arm_time_stamp.time_stamp_motor_low_spd_2, 
@@ -1570,9 +1573,6 @@ class C_PiperInterface_V2():
                 self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 = msg.arm_joint_ctrl.joint_6
             else:
                 pass
-            self.__arm_joint_ctrl_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_real_time_fps('ArmJointCtrl_12'),
-                                                                        self.__fps_counter.get_real_time_fps('ArmJointCtrl_34'),
-                                                                        self.__fps_counter.get_real_time_fps('ArmJointCtrl_56'))
             # 更新时间戳，取筛选ID的最新一个
             self.__arm_joint_ctrl_msgs.time_stamp = max(self.__arm_time_stamp.time_stamp_joint_ctrl_12, 
                                                         self.__arm_time_stamp.time_stamp_joint_ctrl_34, 
@@ -1594,14 +1594,11 @@ class C_PiperInterface_V2():
         with self.__arm_gripper_ctrl_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgGripperCtrl):
                 self.__fps_counter.increment("ArmGripperCtrl")
-                self.__arm_gripper_ctrl_msgs.Hz = self.__fps_counter.get_real_time_fps("ArmGripperCtrl")
                 self.__arm_gripper_ctrl_msgs.time_stamp = time.time_ns()
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_angle = msg.arm_gripper_ctrl.grippers_angle
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.status_code = msg.arm_gripper_ctrl.status_code
                 self.__arm_gripper_ctrl_msgs.gripper_ctrl.set_zero = msg.arm_gripper_ctrl.set_zero
-            else:
-                pass
             # print(self.__arm_gripper_ctrl_msgs)
             return self.__arm_gripper_ctrl_msgs
     
@@ -1619,7 +1616,6 @@ class C_PiperInterface_V2():
         with self.__arm_ctrl_code_151_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgMotionCtrl_2):
                 self.__fps_counter.increment("ArmCtrlCode_151")
-                self.__arm_ctrl_code_151.Hz = self.__fps_counter.get_real_time_fps("ArmCtrlCode_151")
                 self.__arm_ctrl_code_151.time_stamp = time.time_ns()/ 1_000_000_000
                 self.__arm_ctrl_code_151.ctrl_151.ctrl_mode = \
                     msg.arm_motion_ctrl_2.ctrl_mode
