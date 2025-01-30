@@ -334,7 +334,7 @@ class C_PiperInterface():
     _instances = {}  # 存储不同参数的实例
 
     def __new__(cls, 
-                can_port:str="can0", 
+                can_name:str="can0", 
                 judge_flag=True,
                 can_auto_init=True):
         """
@@ -342,7 +342,7 @@ class C_PiperInterface():
         - 相同 can_port & can_auto_init 参数，只会创建一个实例
         - 不同参数，允许创建新的实例
         """
-        key = (can_port)  # 生成唯一 Key
+        key = (can_name)  # 生成唯一 Key
         if key not in cls._instances:
             instance = super().__new__(cls)  # 创建新实例
             instance._initialized = False  # 确保 init 只执行一次
