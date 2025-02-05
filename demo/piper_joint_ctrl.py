@@ -54,7 +54,8 @@ if __name__ == "__main__":
     position = [0,0,0,0,0,0,0]
     count = 0
     while True:
-        print(piper.GetArmStatus())
+        # print(piper.GetArmStatus())
+        print(piper.GetArmJointMsgs())
         import time
         count  = count + 1
         # print(count)

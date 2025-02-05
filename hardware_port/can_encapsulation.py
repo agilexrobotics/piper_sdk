@@ -75,7 +75,6 @@ class C_STD_CAN():
         '''Initialize the CAN bus.
         '''
         if self.bus is not None:
-            print("CAN bus is already open.")
             return
         try:
             self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)
@@ -253,7 +252,9 @@ class C_STD_CAN():
         '''
         try:
             result = subprocess.run(['ip', '-details', 'link', 'show', channel_name],
-                                    capture_output=True, text=True)
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    universal_newlines=True, check=True)  # Python 3.6
+                                    # capture_output=True, text=True)
             output = result.stdout
             for line in output.split('\n'):
                 if 'bitrate' in line:
