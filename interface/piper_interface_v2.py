@@ -350,15 +350,15 @@ class C_PiperInterface_V2():
     _instances = {}  # 存储不同参数的实例
 
     def __new__(cls, 
-                can_port:str="can0", 
+                can_name:str="can0", 
                 judge_flag=True,
                 can_auto_init=True):
         """
         实现单例模式：
-        - 相同 can_port & can_auto_init 参数，只会创建一个实例
+        - 相同 can_name & can_auto_init 参数，只会创建一个实例
         - 不同参数，允许创建新的实例
         """
-        key = (can_port)  # 生成唯一 Key
+        key = (can_name)  # 生成唯一 Key
         if key not in cls._instances:
             instance = super().__new__(cls)  # 创建新实例
             instance._initialized = False  # 确保 init 只执行一次
@@ -1651,9 +1651,12 @@ class C_PiperInterface_V2():
             0x150
         
         Args:
-            emergency_stop: 快速急停 uint8 0x00 无效
-                0x01 快速急停 0x02 恢复
-            track_ctrl: 轨迹指令 uint8 0x00 关闭
+            emergency_stop: 快速急停 uint8 
+                0x00 无效
+                0x01 快速急停
+                0x02 恢复
+            track_ctrl: 轨迹指令 uint8 
+                0x00 关闭
                 0x01 暂停当前规划 
                 0x02 继续当前轨迹
                 0x03 清除当前轨迹 
@@ -1662,7 +1665,8 @@ class C_PiperInterface_V2():
                 0x06 终止执行 
                 0x07 轨迹传输 
                 0x08 轨迹传输结束
-            grag_teach_ctrl: 拖动示教指令 uint8 0x00 关闭
+            grag_teach_ctrl: 拖动示教指令 uint8 
+                0x00 关闭
                 0x01 开始示教记录（进入拖动示教模式）
                 0x02 结束示教记录（退出拖动示教模式） 
                 0x03 执行示教轨迹（拖动示教轨迹复现） 
@@ -2331,7 +2335,7 @@ class C_PiperInterface_V2():
         
         Args:
             motor_num:[1,6]
-            m1_max_joint_spd: Maximum speed setting for joint motor, unit: 0.01 rad/s^2
+            max_joint_acc: Maximum speed setting for joint motor, unit: 0.01 rad/s^2
         '''
         self.JointConfig(motor_num,0,0xAE,max_joint_acc,0)
     
