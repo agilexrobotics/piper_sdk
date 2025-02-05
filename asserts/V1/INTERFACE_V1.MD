@@ -1,5 +1,7 @@
 # PIPER SDK Interface 使用文档
 
+[EN](INTERFACE_V1(EN).MD)
+
 本SDK用于接收can数据帧，然后处理为自定义数据类型
 
 ps：有些地方略写，代码中有详细的中文注释，本文这里只是理清结构
@@ -51,7 +53,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__fps_counter`|`C_FPSCounter`|can帧率计算|
 |`__is_ok`|`Bool`|can总线是否还有数据|
 |`__arm_time_stamp`|`ArmTimeStamp`|时间戳类的实例化，是`C_PiperInterface_V2`的私有类，是一些由多个can帧组合一起的机械臂变量的时间戳，例如关节角|
-|`__arm_status`|`ArmMsgStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
+|`__arm_status`|`ArmStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
 |`__arm_end_pose`|`ArmEndPose`|机械臂末端姿态反馈消息的实例，包含末端的姿态信息。|
 |`__arm_joint_msgs`|`ArmJoint`|机械臂关节角度反馈消息的实例，包含各关节的状态信息。|
 |`__arm_gripper_msgs`|`ArmGripper`|机械臂夹爪反馈消息的实例，包含各夹爪的状态信息。|
@@ -74,6 +76,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 | ----- | ---- |------------------------------------------------------------ |-------------------|--------------------------- |--------|
 |`get_instance`|Getter Method|获取当前实例地址|bj.GetArmStatus()|`can_name (str)`, `judge_flag (Bool)`, `can_auto_init (Bool)`|self@C_PiperInterface|
 |`ConnectPort`|Start Method|该函数为打开can消息读取函数，该函数调用读取can消息函数，并创建读取线程，打开线程|用来在外部实例化类后，打开数据处理线程，并且发送读取机械臂电机的最大加速度、关节限位和最大速度读取指令|`can_init (Bool)`|None|
+|`DisconnectPort`|Close Method|该函数为停止can读取线程并关闭can总线读取|外部实例化类后，关闭读取|`can_init (Bool)`|None|
 |`ParseCANFrame`|Getter Method|can协议解析函数，用来处理接收到的can数据帧，为can接收消息的回调函数|先创建局部变量，然后调用解析协议类中的解码函数如果解码成功，则更新对应的消息，更新到上述的私有变量中，每个更新数据函数都有筛选当前数据类型，对应的数据类型才会被更新|`rx_message: Optional[can.Message]`|None|
 |`GetCanFps`|Getter Method|获取can总线当前实时帧率|obj.GetArmStatus()|None|int|
 |`GetArmStatus`|Getter Method|获取机械臂状态信息。使用互斥锁`__arm_status_mtx`保证线程安全。|obj.GetArmStatus()|None|self.__arm_status|
@@ -93,6 +96,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`GetAllMotorAngleLimitMaxSpd`|Getter Method|获取机械臂控关节所有关节电机的角度限制和最大速度，使用互斥锁`__arm_all_motor_angle_limit_max_spd_mtx`保证线程安全。|obj.GetAllMotorAngleLimitMaxSpd()|None|self.__arm_all_motor_angle_limit_max_spd|
 |`GetPiperFirmwareVersion`|Getter Method|获取piper机械臂的主控固件版本，反馈固件版本字符串|obj.GetPiperFirmwareVersion()|None|firmware_version|
 |`isOk`|Getter Method|反馈can数据读取线程是否正常|obj.isOk()|None|self.__is_ok|
+|`__CanMonitor`|Getter Method|can数据帧率检测|类内使用|None|None|
 |`__UpdateArmStatus`|Getter Method|更新机械臂状态|类内使用|msg:PiperMessage|self.__arm_status|
 |`__UpdateArmEndPoseState`|Getter Method|更新末端位姿状态，单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_end_pose|
 |`__UpdateArmJointState`|Getter Method|更新关节状态，关节角单位为0.001度|类内使用|msg:PiperMessage|self.__arm_joint_msgs|
@@ -119,11 +123,14 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__JointCtrl_12`|Ctrl Method|控制机械臂1,2关节运动。|类内调用(私有)|`joint_1 (int)`, `joint_2 (int)`|None|
 |`__JointCtrl_34`|Ctrl Method|控制机械臂3,4关节运动。|类内调用(私有)|`joint_3 (int)`, `joint_4 (int)`|None|
 |`__JointCtrl_56`|Ctrl Method|控制机械臂5,6关节运动。|类内调用(私有)|`joint_5 (int)`, `joint_6 (int)`|None|
+|`MoveCAxisUpdateCtrl`|Ctrl Method|机械臂圆弧模式控制，需要EndPoseCtrl配合使用。EndPoseCtrl发布目标位姿，MoveCAxisUpdateCtrl按照参数执行上一条 EndPoseCtrl() 设定的目标位姿，并更新运动轨迹。|类外调用|`instruction_num:int`|None|
 |`GripperCtrl`|Ctrl Method|0x159控制机械臂夹爪的运动。夹爪适配agx的末端执行器，夹爪模块是独立使能,需要注意的是，该函数发送出去的数值单位为0.001mm,假如需要夹爪运动50mm，则发送的数据为50*1000=50000|类外调用|`gripper_angle (int)`, `gripper_effort (int)`, `gripper_code (int)`, `set_zero (int)`|None|
 |`MasterSlaveConfig`|Ctrl Method|0x470,配置机械臂随动主从模式。|类外调用|`linkage_config (int)`, `feedback_offset (int)`, `ctrl_offset (int)`, `linkage_offset (int)`|None|
 |`DisableArm`|Ctrl Method|0x471,失能电机。此时指定电机失去力，如果此时机械臂处于非零点位置，例如2号关节和3号关节抬起状态下，机械臂会直接失力掉下来|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`EnableArm`|Ctrl Method|0x471,使能机械臂电机，此时指定的机械臂电机上电，用手尝试移动机械臂关节是无法移动的|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`SearchMotorMaxAngleSpdAccLimit`|Ctrl Method|0x472,查询电机角度、最大速度及最大加速度限制。这是一个主动发送后反馈指定消息的指令，为应答式指令，可以通过修改`search_content`来查询指定的内容，反馈的内容是单个电机的|类外调用|`motor_num (int)`, `search_content (int)`|None|
+|`SearchAllMotorMaxAngleSpd`|Ctrl Method|查询全部电机的电机最大角度/最小角度/最大速度指令|类外调用|None|None|
+|`SearchAllMotorMaxAccLimit`|Ctrl Method|查询全部电机的最大加速度限制指令|类外调用|None|None|
 |`MotorAngleLimitMaxSpdSet`|Ctrl Method|设置电机角度限制及最大速度。|类外调用|`motor_num (int)`, `max_angle_limit (int)`, `min_angle_limit (int)`, `max_joint_spd (int)`|None|
 |`JointConfig`|Ctrl Method|配置关节参数。|类外调用|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `max_joint_acc (int)`, `clear_err (int)`|None|
 |`JointMaxAccConfig`|Ctrl Method|设定关节最大加速度|类外调用|`motor_num (int)`, `max_joint_acc (int)`|None|

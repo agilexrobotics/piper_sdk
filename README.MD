@@ -26,7 +26,7 @@ Test:
 |机械臂DEMO列举|[DMEO](./asserts/SDK_DEMO.MD)|
 |机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
 |双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
-|使用pyQT5的开源UI，非官方维护|[Piper_SDK_UI]<https://github.com/HoranTian/Piper_SDK_UI.git>|
+|使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 ## 1 安装方法
@@ -51,7 +51,6 @@ pip3 show piper_sdk
 
 0.0.x 为机械臂V1.5-2固件版本前的sdk支持
 
-当前0.0.x最后一个版本号为0.0.9
 
 若要卸载
 
@@ -65,6 +64,7 @@ pip3 uninstall piper_sdk
 sudo apt update && sudo apt install can-utils ethtool
 ```
 
+这两个工具用于配置 CAN 模块
 如果执行bash脚本出现`ip: command not found`，请安装ip指令，一般是`sudo apt-get install iproute2`
 
 ## 2 快速使用
@@ -135,7 +135,7 @@ sudo ethtool -i can1 | grep bus
 
 最终结果为：
 
-`USB_PORTS["1-2:1.0"]="can_right:1000000"`
+`USB_PORTS["1-2:1.0"]="can_left:1000000"`
 
 `USB_PORTS["1-4:1.0"]="can_right:1000000"`
 

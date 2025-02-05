@@ -1,28 +1,37 @@
 # Piper SDK
 
-[CN](README.MD)
+[中文](README.MD)
 
-![ubuntu](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)
+|Ubuntu |STATE|
+|---|---|
+|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 Test:
+|PYTHON |STATE|
+|---|---|
+|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
-| PYTHON                                                       | STATE                                               |
-| ------------------------------------------------------------ | --------------------------------------------------- |
-| ![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg) | ![Pass](https://img.shields.io/badge/Pass-blue.svg) |
+This SDK is used to receive CAN data frames and then process them into custom data types, without including data offset frames.
 
 |Description |doc|
 |---|---|
 |Detailed description of the interface function.|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|Description of the protocol parsing section.|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
+|Description of the protocol parsing section.|[Protocol_V1 README](./asserts/V1/PROTOCOL_V1.MD) <br> [Protocol_V2 README](./asserts/V2/PROTOCOL_V2.MD)|
 |Description of the message section.|[Msgs_V1 README](./asserts/V1/MSGS_V1.MD) <br> [Msgs_V2 README](./asserts/V2/MSGS_V2.MD)|
 |Piper DEMO|[DMEO](./asserts/SDK_DEMO(EN).MD)|
 |Robotic Arm DEMO| [`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD) |
 |Master-slave configuration and data reading of dual arms| [double_piper](./asserts/double_piper.MD) |
+| Open-source UI using PyQt5 | [Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>) |
+|Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## Installation Instructions
+## 1 Installation Instructions
 
-### Install dependencies
-
+### 1.1 Install dependencies
+The python-can version should be higher than 4.3.1.
 ```shell
 pip3 install python-can
 ```
@@ -36,6 +45,7 @@ View piper_sdk Details, Such as Installation Path, Version, etc.
 ```shell
 pip3 show piper_sdk
 ```
+0.0.x provides SDK support for robotic arm firmware versions prior to V1.5-2.
 
 To uninstall
 
@@ -43,7 +53,7 @@ To uninstall
 pip3 uninstall piper_sdk
 ```
 
-### Install can tools
+### 1.2 Install can tools
 
 ```shell
 sudo apt update && sudo apt install can-utils ethtool
@@ -53,17 +63,13 @@ These two tools are used to configure the CAN module.
 
 If you encounter the error `ip: command not found` while running the bash script, please install the `ip` command by running `sudo apt-get install iproute2`.
 
-## Quick Start
+## 2 Quick Start
 
-### Enable CAN module
+### 2.1 Enable CAN module
 
-First, you need to set the shell script parameters.
+#### 2.1.1 Activate a single CAN module, **using the `can_activate.sh` script here**.
 
-#### Single Robotic Arm
-
-##### PC with only one USB-to-CAN module inserted
-
-- **Use the `can_activate.sh` script here**
+##### 1) PC with only one USB-to-CAN module inserted
 
 Simply execute the script.
 
@@ -71,41 +77,45 @@ Simply execute the script.
 bash can_activate.sh can0 1000000
 ```
 
-##### PC with Multiple USB-to-CAN Modules Inserted
+##### 2) PC is connected to multiple USB-to-CAN modules, but only one CAN module is activated at a time
 
-- **Use the `can_activate.sh` script here**
 
-Disconnect all CAN modules.
+Note: This is for scenarios where both the robotic arm and the chassis are used simultaneously.
 
-Only connect the CAN module linked to the robotic arm to the PC, then run the script.
+(1) Check the hardware address of the CAN module connected to the USB port.  
+
+Unplug all CAN modules, then insert only the CAN module connected to the robotic arm into the PC and execute.
 
 ```shell
 sudo ethtool -i can0 | grep bus
 ```
 
-and record the value of `bus-info`, for example, `1-2:1.0`.
+And record the value of `bus-info`, for example, `1-2:1.0`.
 
-**Note: The first inserted CAN module usually defaults to `can0`. If you do not find the CAN interface, you can use `bash find_all_can_port.sh` to check the CAN names corresponding to the USB addresses.**
+Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_piper`, with a baud rate of 1000000, and is activated.**
 
-Assuming the recorded `bus-info` value from the above operation is `1-2:1.0`, then run the command to check if the CAN device has been successfully activated.
+(2) Activate the CAN device. 
+
+Assuming the `bus-info` value recorded from the previous operation is `1-2:1.0`, execute:
 
 ```bash
 bash can_activate.sh can_piper 1000000 "1-2:1.0"
 ```
 
-**Note: This means that the CAN device connected to the USB port with hardware encoding `1-2:1.0` has been renamed to `can_piper`, set to a baud rate of 1,000,000, and activated.**
+Note: **This means that the CAN device connected to the USB port with hardware encoding `1-2:1.0` has been renamed to `can_piper`, set to a baud rate of 1,000,000, and activated.**
 
-Then, run `ifconfig` to check if `can_piper` is listed. If it appears, the CAN module has been successfully configured.
 
-#### Two Pairs of Robotic Arms (Four Arms)
+(3) Check if activation was successful.
 
-For four robotic arms, which means two pairs of master-slave robotic arms:
+Execute `ifconfig` to check if `can_piper` appears. If it does, the CAN module has been successfully configured.
 
-- **Use the `can_config.sh`**
-  
-In the `can_config.sh` , the `EXPECTED_CAN_COUNT` parameter is usually set to `2`, as four robotic arms use two CAN modules.
+#### 2.1.2 Activate multiple CAN modules simultaneously, **using the `can_config.sh` script here**.
 
-Then, insert one of the two CAN modules (usually the one connected to the left arm) into the PC alone, and execute the script.
+##### 1) Unplug and plug each CAN module one by one, and record the hardware address of each module corresponding to the USB port.
+
+In the `can_config.sh` script, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules you want to activate. For this example, let's assume it is set to 2.
+
+(1) Then, insert one of the CAN modules into the PC alone and execute.
 
 ```shell
 sudo ethtool -i can0 | grep bus
@@ -113,169 +123,46 @@ sudo ethtool -i can0 | grep bus
 
 and record the `bus-info` value, for example, `1-2:1.0`.
 
-Next, insert the second CAN module, ensuring that it is connected to a different USB port with the one used previously, and then run:
+(2) Next, insert the next CAN module, making sure that it **cannot** be inserted into the same USB port as the previous CAN module, and then execute.
 
 ```shell
 sudo ethtool -i can1 | grep bus
 ```
 
-**Note: Generally, the first inserted CAN module defaults to `can0`, and the second one to `can1`. If the CAN interfaces are not found, use `bash find_all_can_port.sh` to check the CAN names corresponding to the USB addresses.**
+Note: **Generally, the first inserted CAN module defaults to `can0`, and the second one to `can1`. If the CAN interfaces are not found, use `bash find_all_can_port.sh` to check the CAN names corresponding to the USB addresses.**
 
-Assuming the recorded `bus-info` values from the above operations are `1-2:1.0` and `1-4:1.0`, then replace the parameters inside the double quotes in `USB_PORTS["1-9:1.0"]="can_left:1000000"` with `1-2:1.0`.
+##### 2) Predefine the USB ports, target interface names, and their bitrates.
 
-Similarly, update the other one.
+Assuming the `bus-info` values recorded from the previous operation are `1-2:1.0` and `1-4:1.0`, the `USB_PORTS["1-9:1.0"]="can_left:1000000"` should be updated as follows:
 
-`USB_PORTS["1-5:1.0"]="can_right:1000000"` -> `USB_PORTS["1-4:1.0"]="can_right:1000000"`
+`USB_PORTS["1-2:1.0"]="can_left:1000000"`
 
-**Note: This means that the CAN device connected to the USB port with hardware encoding `1-2:1.0` is renamed to `can_left`, set to a baud rate of 1,000,000, and activated.**
+`USB_PORTS["1-4:1.0"]="can_right:1000000"`
 
-Then, run `bash can_config.sh` and check the terminal output to see if the activation was successful.
+Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_left`, with a baud rate of 1000000, and is activated.**
 
-Afterward, run `ifconfig` to verify if `can_left` and `can_right` are listed. If they appear, the CAN modules have been successfully configured.
+##### 3) Check the terminal output to see if activation was successful.
 
-## Read robotic arm information
 
-```python
-#!/usr/bin/env python3
-# -*-coding:utf8-*-
-# 注意demo无法直接运行，需要pip安装sdk后才能运行
-# 读取机械臂消息并打印,需要先安装piper_sdk
-from typing import (
-    Optional,
-)
-from piper_sdk import *
+Execute `bash can_config.sh`.
 
-# 测试代码
-if __name__ == "__main__":
-    piper = C_PiperInterface()
-    piper.ConnectPort()
-    while True:
-        import time
-        # a.SearchMotorMaxAngleSpdAccLimit(1, 1)
-        # a.ArmParamEnquiryAndConfig(1,0,2,0,3)
-        # a.GripperCtrl(50000,1500,0x01)
-        print(piper.GetArmJointMsgs())
-        print(piper.GetArmGripperMsgs())
-        time.sleep(0.005)
-        pass
-```
 
-## arm reset
+##### 4) Check if the CAN module was successfully configured.
 
-```python
-#!/usr/bin/env python3
-# -*-coding:utf8-*-
-# 注意demo无法直接运行，需要pip安装sdk后才能运行 you need to pip3 install piper_sdk and then you can run demo
-# 设置机械臂重置，需要在mit或者示教模式切换为位置速度控制模式时执行 Arm reset. Need to be executed when MIT or teaching mode is switched to position speed control mode
 
-from typing import (
-    Optional,
-)
-import time
-from piper_sdk import *
+Execute `ifconfig` to check if `can_left` and `can_right` are listed. If they appear, it means the CAN modules have been successfully configured.
 
-# 测试代码
-if __name__ == "__main__":
-    piper = C_PiperInterface()
-    piper.ConnectPort()
-    piper.MotionCtrl_1(0x02,0,0)#恢复 recover
-    piper.MotionCtrl_2(0, 0, 0, 0x00)#位置速度模式 postion&velocity mode
-```
-
-## Control the robotic arm movement
-
-Note that if the robot arm has entered the teaching mode or MIT mode, a reset is required to switch the robot arm to the position speed mode.
-
-```python
-#!/usr/bin/env python3
-# -*-coding:utf8-*-
-# 注意demo无法直接运行，需要pip安装sdk后才能运行
-from typing import (
-    Optional,
-)
-import time
-from piper_sdk import *
-
-def enable_fun(piper:C_PiperInterface):
-    '''
-    使能机械臂并检测使能状态,尝试5s,如果使能超时则退出程序
-    '''
-    enable_flag = False
-    # 设置超时时间（秒）
-    timeout = 5
-    # 记录进入循环前的时间
-    start_time = time.time()
-    elapsed_time_flag = False
-    while not (enable_flag):
-        elapsed_time = time.time() - start_time
-        print("--------------------")
-        enable_flag = piper.GetArmLowSpdInfoMsgs().motor_1.foc_status.driver_enable_status and \
-            piper.GetArmLowSpdInfoMsgs().motor_2.foc_status.driver_enable_status and \
-            piper.GetArmLowSpdInfoMsgs().motor_3.foc_status.driver_enable_status and \
-            piper.GetArmLowSpdInfoMsgs().motor_4.foc_status.driver_enable_status and \
-            piper.GetArmLowSpdInfoMsgs().motor_5.foc_status.driver_enable_status and \
-            piper.GetArmLowSpdInfoMsgs().motor_6.foc_status.driver_enable_status
-        print("使能状态:",enable_flag)
-        piper.EnableArm(7)
-        piper.GripperCtrl(0,1000,0x01, 0)
-        print("--------------------")
-        # 检查是否超过超时时间
-        if elapsed_time > timeout:
-            print("Timeout....")
-            elapsed_time_flag = True
-            enable_flag = True
-            break
-        time.sleep(1)
-        pass
-    if(elapsed_time_flag):
-        print("The program automatically enables timeout, exit the program")
-        exit(0)
-
-if __name__ == "__main__":
-    piper = C_PiperInterface("can0")
-    piper.ConnectPort()
-    piper.EnableArm(7)
-    enable_fun(piper=piper)
-    # piper.DisableArm(7)
-    piper.GripperCtrl(0,1000,0x01, 0)
-    factor = 57324.840764 #1000*180/3.14
-    position = [0,0,0,0,0,0,0]
-    count = 0
-    while True:
-        print(piper.GetArmStatus())
-        import time
-        count  = count + 1
-        # print(count)
-        if(count == 0):
-            print("1-----------")
-            position = [0,0,0,0,0,0,0]
-        elif(count == 500):
-            print("2-----------")
-            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
-        elif(count == 1000):
-            print("1-----------")
-            position = [0,0,0,0,0,0,0]
-            count = 0
-        
-        joint_0 = round(position[0]*factor)
-        joint_1 = round(position[1]*factor)
-        joint_2 = round(position[2]*factor)
-        joint_3 = round(position[3]*factor)
-        joint_4 = round(position[4]*factor)
-        joint_5 = round(position[5]*factor)
-        joint_6 = round(position[6]*1000*1000)
-        # piper.MotionCtrl_1()
-        piper.MotionCtrl_2(0x01, 0x01, 50, 0x00)
-        piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
-        piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-        piper.MotionCtrl_2(0x01, 0x01, 50, 0x00)
-        time.sleep(0.005)
-        pass
-```
 
 ## Notes
 
-- You need to activate the CAN device and set the correct baud rate before you can read messages from or control the robotic arm.
-- The `C_PiperInterface` class can be instantiated with the active CAN route name, which can be obtained using `ifconfig`.
+- The CAN device must be activated and the correct baud rate set before reading messages from or controlling the robotic arm.
+- The `C_PiperInterface` interface class can accept the activated CAN route name as a parameter when instantiated, which can be obtained using `ifconfig`.
+- Sometimes when sending CAN messages, the terminal may show `Message NOT sent`. This indicates that the CAN module is not properly connected to the device. First, check the connection between the module and the robotic arm, then power cycle the robotic arm (turn it off and on) before attempting to send the message again.
+- The SDK interface will check if the built-in CAN module is activated after creating an instance. If using another CAN device, you can set the second parameter to `False`, for example: `piper = C_PiperInterface_V2("can0", False)`.
+- **The MIT protocol for controlling individual joints of the robotic arm is an advanced feature. Be cautious when using it, as improper use of this protocol may damage the robotic arm!!!**
 
-- Sometimes, when executing a CAN send operation, the terminal may display `Message NOT sent`. This indicates that the CAN module has not successfully connected to the device. First, check the connection between the module and the robotic arm. Then, power off and up the robotic arm, and try sending the message once more.
+## Contact Us
+
+You can open an issue on GitHub.
+
+Alternatively, you can join our Discord at <https://discord.gg/wrKYTxwDBd>.

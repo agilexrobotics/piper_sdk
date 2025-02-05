@@ -1,6 +1,6 @@
 # PIPER SDK Interface User Manual
 
-[CN](INTERFACE.MD)
+[中文](INTERFACE_V1.MD)
 
 This SDK is used to receive CAN data frames and process them into a custom data type.
 
@@ -54,7 +54,7 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 | `__fps_counter` | `C_FPSCounter` | CAN frame rate calculation |
 | `__is_ok`       | `Bool`         | Whether there is still data on the CAN bus |
 |`__arm_time_stamp`|`ArmTimeStamp`|The instantiation of the timestamp class is a private class of `C_PiperInterface_V2`. It handles timestamps for robotic arm variables that are composed of multiple CAN frames, such as joint angles.|
-|`__arm_status`|`ArmMsgStatus`|Instance of the robotic arm status message, containing the status information of the robotic arm.|
+|`__arm_status`|`ArmStatus`|Instance of the robotic arm status message, containing the status information of the robotic arm.|
 |`__arm_end_pose`|`ArmEndPose`|Instance of the robotic arm end-effector pose feedback message, containing the end-effector's pose information.|
 |`__arm_joint_msgs`|`ArmJoint`|Instance of the robotic arm joint angle feedback message, containing status information for each joint.|
 |`__arm_gripper_msgs`|`ArmGripper`|Instance of the robotic arm gripper feedback message, containing status information for each gripper.|
@@ -95,6 +95,9 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`GetArmCtrlCode151`|Getter Method|Get the status of control code 151 sent by the active arm. Use the mutex `__arm_ctrl_code_151_mtx` to ensure thread safety.|obj.GetArmCtrlCode151()|None|self.__arm_ctrl_code_151|
 |`GetAllMotorMaxAccLimit`|Getter Method|Retrieve the maximum acceleration limit message for all joint motors of the robotic arm. Uses the mutex lock `__arm_all_motor_max_acc_limit_mtx` to ensure thread safety.|obj.GetAllMotorMaxAccLimit()|None|self.__arm_all_motor_max_acc_limit|
 |`GetAllMotorAngleLimitMaxSpd`|Getter Method|Retrieve the angle limits and maximum speed for all joint motors of the robotic arm. Uses the mutex lock __arm_all_motor_angle_limit_max_spd_mtx to ensure thread safety.|obj.GetAllMotorAngleLimitMaxSpd()|None|self.__arm_all_motor_angle_limit_max_spd|
+| `GetPiperFirmwareVersion` | Getter Method | Retrieves the firmware version of the Piper robotic arm's main controller, returning the firmware version as a string. | `obj.GetPiperFirmwareVersion()` | None | `firmware_version` |  
+| `isOk` | Getter Method | Checks whether the CAN data reading thread is functioning properly. | `obj.isOk()` | None | `self.__is_ok` |  
+| `__CanMonitor` | Getter Method | Monitors the CAN data frame rate. | Internal use only | None | None |  
 |`UpdateArmStatus`|Getter Method|Update the robotic arm status.| Used within the class                                        | sg:PiperMessage                                              |self.__arm_status|
 |`__UpdateArmEndPoseState`|Getter Method|Update the end pose state, unit is 0.001 mm.| Used within the class                                        |msg:PiperMessage|self.__arm_end_pose|
 |`__UpdateArmJointState`|Getter Method|Update the joint state, joint angle unit is 0.001 degrees.|Used within the class|msg:PiperMessage|self.__arm_joint_msgs|
@@ -103,6 +106,8 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`__UpdateDriverInfoLowSpdFeedback`|Getter Method|Update low-speed driver information feedback.|Used within the class|msg:PiperMessage|self.__arm_motor_info_low_spd|
 |`__UpdateCurrentMotorAngleLimitMaxVel`|Getter Method|Feedback on the current motor angle limit/maximum speed.|Used within the class|msg:PiperMessage|self.__feedback_current_motor_angle_limit_max_vel|
 |`__UpdateCurrentMotorMaxAccLimit`|Getter Method|Feedback on the current maximum acceleration limit of the motor.|Used within the class|msg:PiperMessage|self.__feedback_current_motor_max_acc_limit|
+| `__UpdateAllCurrentMotorAngleLimitMaxVel` | Getter Method | Updates the maximum acceleration limit for all motors. | Internal use only | `msg: PiperMessage` | `self.__arm_all_motor_angle_limit_max_spd` |  
+| `__UpdateAllCurrentMotorMaxAccLimit` | Getter Method | Updates the angle limits and maximum speed for all motors. | Internal use only | `msg: PiperMessage` | `self.__arm_all_motor_max_acc_limit` |  
 |`__UpdateCurrentEndVelAndAccParam`|Getter Method|Feedback on the current end velocity/acceleration parameters.|Used within the class|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
 |`__UpdateCrashProtectionLevelFeedback`|Getter Method|Feedback command for collision protection level settings.|Used within the class|msg:PiperMessage|self.__feedback_crash_protection_level|
 |`__UpdateArmJointCtrl`|Getter Method|Update joint status (messages sent from the master arm).|Used within the class|msg:PiperMessage|self.__arm_joint_ctrl_msgs|
@@ -118,12 +123,15 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`JointCtrl`|Ctrl Method|0x155, 0x156, 0x157, control the movement of the six joints of the robotic arm. Note that the values sent by this function are in units of 0.001 degrees. For example, to move joint 1 by 90 degrees (1.57 radians), the data sent should be 90 \* 1000. If using radians, it should be 1.57 \* 1000 \* (180/3.14).|Called from outside the class|`joint_1 (int)`, `joint_2 (int)`, `joint_3 (int)`, `joint_4 (int)`, `joint_5 (int)`, `joint_6 (int)`|None|
 |`__JointCtrl_12`|Ctrl Method|Control the movement of joints 1 and 2 of the robotic arm.|Called within the class (private)|`joint_1 (int)`, `joint_2 (int)`|None|
 |`__JointCtrl_34`|Ctrl Method|Control the movement of joints 3 and 4 of the robotic arm.|Called within the class (private)|`joint_3 (int)`, `joint_4 (int)`|None|
-|`__JointCtrl_56`|Ctrl Method|Control the movement of joints 5 and 6 of the robotic arm.|Called within the class (private)|`joint_5 (int)`, `joint_6 (int)`|None|
+|`__JointCtrl_56`|Ctrl Method|Control the movement of joints 5 and 6 of the robotic arm.|Called within the class (private)|`joint_5 (int)`, `joint_6 (int)`|None| 
+| `MoveCAxisUpdateCtrl` | Ctrl Method | Controls the robotic arm in arc mode. It must be used in conjunction with `EndPoseCtrl`. `EndPoseCtrl` sets the target pose, while `MoveCAxisUpdateCtrl` executes the previously set target pose and updates the motion trajectory according to the given parameters. | External call | `instruction_num: int` | None |  
 |`GripperCtrl`|Ctrl Method| 0x159 control the movement of the robotic arm's gripper. The gripper is adapted to the AGX end effector, and the gripper module is independently enabled. Note that the values sent by this function are in units of 0.001 mm. For example, to move the gripper by 50 mm, the data sent should be 50 * 1000 = 50000. |Called from outside the class|`gripper_angle (int)`, `gripper_effort (int)`, `gripper_code (int)`, `set_zero (int)`|None|
 |`MasterSlaveConfig`|Ctrl Method|0x470, configure the master-slave mode of the robotic arm.|Called from outside the class|`linkage_config (int)`, `feedback_offset (int)`, `ctrl_offset (int)`, `linkage_offset (int)`|None|
 |`DisableArm`|Ctrl Method|0x471, disable the motor. At this point, the specified motor loses power. If the robotic arm is in a non-zero position (e.g., joints 2 and 3 are raised), the arm will drop due to loss of power.|Called from outside the class|`motor_num (int)`, `enable_flag (int)`|None|
 |`EnableArm`|Ctrl Method|0x471, enable the robotic arm's motor. At this point, the specified motor is powered on, and trying to move the joints by hand will not be possible.|Called from outside the class|`motor_num (int)`, `enable_flag (int)`|None|
 |`SearchMotorMaxAngleSpdAccLimit`|Ctrl Method|0x472, query the angle, maximum speed, and maximum acceleration limits of the motor. This is a command for actively sending and then receiving a specified message. It can be modified by changing `search_content` to query specific content, with feedback for a single motor.|Called from outside the class|`motor_num (int)`, `search_content (int)`|None|
+| `SearchAllMotorMaxAngleSpd` | Ctrl Method | Queries the maximum angle, minimum angle, and maximum speed of all motors. | External call | None | None |  
+| `SearchAllMotorMaxAccLimit` | Ctrl Method | Queries the maximum acceleration limit of all motors. | External call | None | None |  
 |`MotorAngleLimitMaxSpdSet`|Ctrl Method|Set the angle limit and maximum speed for the motor.|Called from outside the class|`motor_num (int)`, `max_angle_limit (int)`, `min_angle_limit (int)`, `max_joint_spd (int)`|None|
 |`JointConfig`|Ctrl Method|Configure joint parameters.|Called from outside the class|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `max_joint_acc (int)`, `clear_err (int)`|None|
 |`JointMaxAccConfig`|Ctrl Method|Set Joint Maximum Acceleration Command|Called from outside the class|`motor_num (int)`, `max_joint_acc (int)`|None|

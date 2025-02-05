@@ -602,16 +602,16 @@ class C_PiperInterface_V2():
             self.__UpdateArmCtrlCode151(msg)
             self.__UpdatePiperFirmware(msg)
     
-    def JudgeExsitedArm(self, can_id:int):
-        '''判断当前can socket是否有指定的机械臂设备,通过can id筛选
-        Args:
-            can_id (int): 输入can 🆔
-        '''
-        '''Checks if the current CAN socket contains the specified robotic arm device by filtering through the CAN ID.
-        Args:
-            can_id (int): The input CAN ID
-        '''
-        pass
+    # def JudgeExsitedArm(self, can_id:int):
+    #     '''判断当前can socket是否有指定的机械臂设备,通过can id筛选
+    #     Args:
+    #         can_id (int): 输入can 🆔
+    #     '''
+    #     '''Checks if the current CAN socket contains the specified robotic arm device by filtering through the CAN ID.
+    #     Args:
+    #         can_id (int): The input CAN ID
+    #     '''
+    #     pass
     # 获取反馈值------------------------------------------------------------------------------------------------------
     def GetCanFps(self):
         '''

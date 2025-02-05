@@ -1,5 +1,5 @@
 # PIPER SDK Interface_V2 使用文档
-
+[EN](INTERFACE_V2(EN).MD)
 本SDK用于接收can数据帧，然后处理为自定义数据类型
 
 ps：有些地方略写，代码中有详细的中文注释，本文这里只是理清结构
@@ -29,6 +29,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`ArmMotorAngleLimitAndMaxVel`|当前电机限制角度/最大速度反馈信息类，增加时间戳。|
 |`CurrentEndVelAndAccParam`|当前末端速度/加速度参数反馈信息类，增加时间戳。|
 |`CrashProtectionLevelFeedback`|碰撞防护等级设置反馈指令信息类，增加时间戳。|
+|`GripperTeachingPendantParamFeedback`|夹爪/示教器参数反馈指令信息类，增加时间戳。|
 |`CurrentMotorMaxAccLimit`|当前电机最大加速度限制反馈信息类，增加时间戳。|
 |`ArmJointCtrl`|机械臂关节角度控制消息类，增加时间戳。|
 |`ArmGripperCtrl`|机械臂夹爪控制消息类，增加时间戳。|
@@ -51,7 +52,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__fps_counter`|`C_FPSCounter`|can帧率计算|
 |`__is_ok`|`Bool`|can总线是否还有数据|
 |`__arm_time_stamp`|`ArmTimeStamp`|时间戳类的实例化，是`C_PiperInterface_V2`的私有类，是一些由多个can帧组合一起的机械臂变量的时间戳，例如关节角|
-|`__arm_status`|`ArmMsgStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
+|`__arm_status`|`ArmStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
 |`__arm_end_pose`|`ArmEndPose`|机械臂末端姿态反馈消息的实例，包含末端的姿态信息。|
 |`__arm_joint_msgs`|`ArmJoint`|机械臂关节角度反馈消息的实例，包含各关节的状态信息。|
 |`__arm_gripper_msgs`|`ArmGripper`|机械臂夹爪反馈消息的实例，包含各夹爪的状态信息。|
@@ -95,6 +96,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`GetAllMotorAngleLimitMaxSpd`|Getter Method|获取机械臂控关节所有关节电机的角度限制和最大速度，使用互斥锁`__arm_all_motor_angle_limit_max_spd_mtx`保证线程安全。|obj.GetAllMotorAngleLimitMaxSpd()|None|self.__arm_all_motor_angle_limit_max_spd|
 |`GetPiperFirmwareVersion`|Getter Method|获取piper机械臂的主控固件版本，反馈固件版本字符串|obj.GetPiperFirmwareVersion()|None|firmware_version|
 |`isOk`|Getter Method|反馈can数据读取线程是否正常|obj.isOk()|None|self.__is_ok|
+|`__CanMonitor`|Getter Method|can数据帧率检测|类内使用|None|None|
 |`__UpdateArmStatus`|Getter Method|更新机械臂状态|类内使用|msg:PiperMessage|self.__arm_status|
 |`__UpdateArmEndPoseState`|Getter Method|更新末端位姿状态，单位为0.001mm|类内使用|msg:PiperMessage|self.__arm_end_pose|
 |`__UpdateArmJointState`|Getter Method|更新关节状态，关节角单位为0.001度|类内使用|msg:PiperMessage|self.__arm_joint_msgs|
@@ -122,11 +124,14 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__JointCtrl_12`|Ctrl Method|控制机械臂1,2关节运动。|类内调用(私有)|`joint_1 (int)`, `joint_2 (int)`|None|
 |`__JointCtrl_34`|Ctrl Method|控制机械臂3,4关节运动。|类内调用(私有)|`joint_3 (int)`, `joint_4 (int)`|None|
 |`__JointCtrl_56`|Ctrl Method|控制机械臂5,6关节运动。|类内调用(私有)|`joint_5 (int)`, `joint_6 (int)`|None|
+|`MoveCAxisUpdateCtrl`|Ctrl Method|机械臂圆弧模式控制，需要EndPoseCtrl配合使用。EndPoseCtrl发布目标位姿，MoveCAxisUpdateCtrl按照参数执行上一条 EndPoseCtrl() 设定的目标位姿，并更新运动轨迹。|类外调用|`instruction_num:int`|None|
 |`GripperCtrl`|Ctrl Method|0x159控制机械臂夹爪的运动。夹爪适配agx的末端执行器，夹爪模块是独立使能,需要注意的是，该函数发送出去的数值单位为0.001mm,假如需要夹爪运动50mm，则发送的数据为50*1000=50000|类外调用|`gripper_angle (int)`, `gripper_effort (int)`, `gripper_code (int)`, `set_zero (int)`|None|
 |`MasterSlaveConfig`|Ctrl Method|0x470,配置机械臂随动主从模式。|类外调用|`linkage_config (int)`, `feedback_offset (int)`, `ctrl_offset (int)`, `linkage_offset (int)`|None|
 |`DisableArm`|Ctrl Method|0x471,失能电机。此时指定电机失去力，如果此时机械臂处于非零点位置，例如2号关节和3号关节抬起状态下，机械臂会直接失力掉下来|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`EnableArm`|Ctrl Method|0x471,使能机械臂电机，此时指定的机械臂电机上电，用手尝试移动机械臂关节是无法移动的|类外调用|`motor_num (int)`, `enable_flag (int)`|None|
 |`SearchMotorMaxAngleSpdAccLimit`|Ctrl Method|0x472,查询电机角度、最大速度及最大加速度限制。这是一个主动发送后反馈指定消息的指令，为应答式指令，可以通过修改`search_content`来查询指定的内容，反馈的内容是单个电机的|类外调用|`motor_num (int)`, `search_content (int)`|None|
+|`SearchAllMotorMaxAngleSpd`|Ctrl Method|查询全部电机的电机最大角度/最小角度/最大速度指令|类外调用|None|None|
+|`SearchAllMotorMaxAccLimit`|Ctrl Method|查询全部电机的最大加速度限制指令|类外调用|None|None|
 |`MotorAngleLimitMaxSpdSet`|Ctrl Method|设置电机角度限制及最大速度。|类外调用|`motor_num (int)`, `max_angle_limit (int)`, `min_angle_limit (int)`, `max_joint_spd (int)`|None|
 |`MotorMaxSpdSet`|Ctrl Method|设置电机最大速度。|类外调用|`motor_num (int)`, `max_joint_spd (int)`|None|
 |`JointConfig`|Ctrl Method|配置关节参数。|类外调用|`joint_num (int)`, `set_zero (int)`, `acc_param_is_effective (int)`, `max_joint_acc (int)`, `clear_err (int)`|None|
@@ -136,6 +141,8 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (int)`, `end_max_angular_vel (int)`, `end_max_linear_acc (int)`, `end_max_angular_acc (int)`|None|
 |`CrashProtectionConfig`|Ctrl Method|配置机械臂碰撞防护等级。|类外调用|`joint_1_protection_level (int)`, `joint_2_protection_level (int)`, `joint_3_protection_level (int)`, `joint_4_protection_level (int)`, `joint_5_protection_level (int)`, `joint_6_protection_level (int)`|None|
 |`SearchPiperFirmwareVersion`|Ctrl Method|查询piper机械臂的主控固件版本|类外调用|None|None|
+|`__JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`,`p_min:float=-12.5`,`p_max:float=12.5`,`v_min:float=-45.0`,`v_max:float=45.0`,`kp_min:float=0.0`,`kp_max:float=500.0`,`kd_min:float=-5.0`,`kd_max:float=5.0`,`t_min:float=-18.0`,`t_max:float=18.0`|None|
+|`JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,` kp:float`,` kd:float`,` t_ref:float`|None|
 |`GripperTeachingPendantParamConfig`|Ctrl Method|夹爪/示教器参数设置指令(基于V1.5-2版本后)|类外调用|`teaching_range_per:int=100`, `max_range_config:int=70`|None|
 
 注意：
