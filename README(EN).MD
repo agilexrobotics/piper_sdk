@@ -33,7 +33,7 @@ This SDK is used to receive CAN data frames and then process them into custom da
 
 ### 1.1 Install dependencies
 
-The python-can version should be higher than 4.3.1.
+The python-can version should be higher than 3.3.4.
 
 ```shell
 pip3 install python-can
