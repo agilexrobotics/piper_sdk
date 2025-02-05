@@ -31,7 +31,7 @@ to prevent duplicate creation of interface instances with the same can_port
 |`ArmMotorDriverInfoLowSpd`|Robotic arm motor driver low-speed feedback information class, with added timestamp.|
 |`ArmMotorAngleLimitAndMaxVel`|Current motor limit angle/maximum speed feedback information class, with added timestamp.|
 |`CurrentEndVelAndAccParam`|Current end-effector velocity/acceleration parameter feedback information class, with added timestamp.|
-|`CrashProtectionLevelFeedback`|Collision protection level setting feedback command information class, with added timestamp.| 
+|`CrashProtectionLevelFeedback`|Collision protection level setting feedback command information class, with added timestamp.|
 | `GripperTeachingPendantParamFeedback` | Class for gripper/teaching pendant parameter feedback instruction, with an added timestamp. |  
 |`CurrentMotorMaxAccLimit`|Current motor maximum acceleration limit feedback information class, with added timestamp.|
 |`ArmJointCtrl`|Robotic arm joint angle control message class, with added timestamp.|

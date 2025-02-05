@@ -9,6 +9,7 @@
 |![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 Test:
+
 |PYTHON |STATE|
 |---|---|
 |![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
@@ -31,7 +32,9 @@ This SDK is used to receive CAN data frames and then process them into custom da
 ## 1 Installation Instructions
 
 ### 1.1 Install dependencies
+
 The python-can version should be higher than 4.3.1.
+
 ```shell
 pip3 install python-can
 ```
@@ -45,6 +48,7 @@ View piper_sdk Details, Such as Installation Path, Version, etc.
 ```shell
 pip3 show piper_sdk
 ```
+
 0.0.x provides SDK support for robotic arm firmware versions prior to V1.5-2.
 
 To uninstall
@@ -67,7 +71,7 @@ If you encounter the error `ip: command not found` while running the bash script
 
 ### 2.1 Enable CAN module
 
-#### 2.1.1 Activate a single CAN module, **using the `can_activate.sh` script here**.
+#### 2.1.1 Activate a single CAN module, **using the `can_activate.sh` script here**
 
 ##### 1) PC with only one USB-to-CAN module inserted
 
@@ -78,7 +82,6 @@ bash can_activate.sh can0 1000000
 ```
 
 ##### 2) PC is connected to multiple USB-to-CAN modules, but only one CAN module is activated at a time
-
 
 Note: This is for scenarios where both the robotic arm and the chassis are used simultaneously.
 
@@ -94,7 +97,7 @@ And record the value of `bus-info`, for example, `1-2:1.0`.
 
 Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_piper`, with a baud rate of 1000000, and is activated.**
 
-(2) Activate the CAN device. 
+(2) Activate the CAN device
 
 Assuming the `bus-info` value recorded from the previous operation is `1-2:1.0`, execute:
 
@@ -104,14 +107,13 @@ bash can_activate.sh can_piper 1000000 "1-2:1.0"
 
 Note: **This means that the CAN device connected to the USB port with hardware encoding `1-2:1.0` has been renamed to `can_piper`, set to a baud rate of 1,000,000, and activated.**
 
-
 (3) Check if activation was successful.
 
 Execute `ifconfig` to check if `can_piper` appears. If it does, the CAN module has been successfully configured.
 
-#### 2.1.2 Activate multiple CAN modules simultaneously, **using the `can_config.sh` script here**.
+#### 2.1.2 Activate multiple CAN modules simultaneously, **using the `can_config.sh` script here**
 
-##### 1) Unplug and plug each CAN module one by one, and record the hardware address of each module corresponding to the USB port.
+##### 1) Unplug and plug each CAN module one by one, and record the hardware address of each module corresponding to the USB port
 
 In the `can_config.sh` script, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules you want to activate. For this example, let's assume it is set to 2.
 
@@ -131,7 +133,7 @@ sudo ethtool -i can1 | grep bus
 
 Note: **Generally, the first inserted CAN module defaults to `can0`, and the second one to `can1`. If the CAN interfaces are not found, use `bash find_all_can_port.sh` to check the CAN names corresponding to the USB addresses.**
 
-##### 2) Predefine the USB ports, target interface names, and their bitrates.
+##### 2) Predefine the USB ports, target interface names, and their bitrates
 
 Assuming the `bus-info` values recorded from the previous operation are `1-2:1.0` and `1-4:1.0`, the `USB_PORTS["1-9:1.0"]="can_left:1000000"` should be updated as follows:
 
@@ -141,17 +143,13 @@ Assuming the `bus-info` values recorded from the previous operation are `1-2:1.0
 
 Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_left`, with a baud rate of 1000000, and is activated.**
 
-##### 3) Check the terminal output to see if activation was successful.
-
+##### 3) Check the terminal output to see if activation was successful
 
 Execute `bash can_config.sh`.
 
-
-##### 4) Check if the CAN module was successfully configured.
-
+##### 4) Check if the CAN module was successfully configured
 
 Execute `ifconfig` to check if `can_left` and `can_right` are listed. If they appear, it means the CAN modules have been successfully configured.
-
 
 ## Notes
 
@@ -165,4 +163,4 @@ Execute `ifconfig` to check if `can_left` and `can_right` are listed. If they ap
 
 You can open an issue on GitHub.
 
-Alternatively, you can join our Discord at <https://discord.gg/wrKYTxwDBd>.
+Alternatively, you can join our Discord at <https://discord.gg/wrKYTxwDBd>
