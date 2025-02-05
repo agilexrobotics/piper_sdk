@@ -1,6 +1,6 @@
 # Piper SDK
 
-[中文](README.MD)
+[![GitHub](https://img.shields.io/badge/GitHub-blue.svg)](https://github.com/agilexrobotics/piper_sdk)
 
 |Ubuntu |STATE|
 |---|---|
