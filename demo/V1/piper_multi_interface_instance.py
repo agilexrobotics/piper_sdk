@@ -8,10 +8,10 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface("can0")
     piper.ConnectPort(True)
-    piper = C_PiperInterface_V2("can0",can_auto_init=False)
+    piper = C_PiperInterface("can0",can_auto_init=False)
     piper.ConnectPort(True)
     count = 0
-    piper = C_PiperInterface_V2("can1",can_auto_init=False)
+    piper = C_PiperInterface("can1",can_auto_init=False)
     piper.ConnectPort()
-    piper = C_PiperInterface_V2("can1")
+    piper = C_PiperInterface("can1")
     piper.ConnectPort()
