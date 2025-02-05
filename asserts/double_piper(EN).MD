@@ -15,7 +15,7 @@
 
 See the interface description in the SDK for details.
 
-[Interface_V1 README](./V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./V2/INTERFACE_V2.MD)
+[Interface_V1 README](./INTERFACE.MD)
 
 Here is just a brief description
 

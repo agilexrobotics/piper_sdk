@@ -33,7 +33,7 @@ Test:
 
 ### 1.1 安装依赖
 
-注: python-can版本应高于4.3.1
+注: python-can版本应高于3.3.4
 
 ```shell
 pip3 install python-can

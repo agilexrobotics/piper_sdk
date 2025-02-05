@@ -15,7 +15,7 @@
 
 详见SDK中接口函数文档
 
-[Interface_V1 README](./V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./V2/INTERFACE_V2.MD)
+[Interface_V1 README](./INTERFACE.MD)
 
 这里只作简要
 
