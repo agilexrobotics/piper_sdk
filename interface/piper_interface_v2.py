@@ -379,7 +379,7 @@ class C_PiperInterface_V2():
         self.__can_judge_flag = judge_flag
         self.__can_auto_init = can_auto_init
         self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
-        self.piper_fk = C_PiperForwardKinematics()
+        self.__piper_fk = C_PiperForwardKinematics()
         # protocol
         self.__parser: Type[C_PiperParserBase] = C_PiperParserV2()
         # thread
@@ -422,6 +422,9 @@ class C_PiperInterface_V2():
         self.__fps_counter.add_variable("ArmCtrlCode_151")
         # 时间戳
         self.__arm_time_stamp = self.ArmTimeStamp()#时间戳
+        # 机械臂正解，包含每个关节的正解
+        self.__piper_fk_mtx = threading.Lock()
+        self.__link_fk = [[0.0] * 6 for _ in range(6)]
         # 固件版本
         self.__firmware_data_mtx = threading.Lock()
         self.__firmware_data = bytearray()
@@ -601,6 +604,7 @@ class C_PiperInterface_V2():
             self.__UpdateArmGripperCtrl(msg)
             self.__UpdateArmCtrlCode151(msg)
             self.__UpdatePiperFirmware(msg)
+            self.__UpdatePiperFK()
     
     # def JudgeExsitedArm(self, can_id:int):
     #     '''判断当前can socket是否有指定的机械臂设备,通过can id筛选
@@ -662,14 +666,14 @@ class C_PiperInterface_V2():
             return self.__arm_joint_msgs
     
     def GetFK(self):
-        with self.__arm_joint_msgs_mtx:
-            joint_states = [self.__arm_joint_msgs.joint_state.joint_1 / 1000,
-                            self.__arm_joint_msgs.joint_state.joint_2 / 1000,
-                            self.__arm_joint_msgs.joint_state.joint_3 / 1000,
-                            self.__arm_joint_msgs.joint_state.joint_4 / 1000,
-                            self.__arm_joint_msgs.joint_state.joint_5 / 1000,
-                            self.__arm_joint_msgs.joint_state.joint_6 / 1000]
-            return self.piper_fk.arm_forward(joint_states)
+        '''获取机械臂每个关节的正解,XYZ单位为mm,RXRYRZ单位为度
+        反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿
+        '''
+        '''Get the forward kinematics of each joint of the robotic arm, XYZ in mm, RXRYRZ in degrees
+        Feedback a list of 6 float-type data, representing the relative pose of joints 1-6 with respect to base_link
+        '''
+        with self.__piper_fk_mtx:
+            return self.__link_fk
     
     def GetArmGripperMsgs(self):
         '''获取机械臂夹爪消息
@@ -1641,6 +1645,23 @@ class C_PiperInterface_V2():
             if(msg.type_ == ArmMsgType.PiperMsgFirmwareRead):
                 self.__firmware_data = self.__firmware_data + msg.firmware_data
             return self.__firmware_data
+    
+    def __UpdatePiperFK(self):
+        '''
+        更新piper正解数据
+        '''
+        '''
+        Update Piper FK Data
+        '''
+        with self.__arm_joint_msgs_mtx:
+            joint_states = [self.__arm_joint_msgs.joint_state.joint_1 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_msgs.joint_state.joint_2 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_msgs.joint_state.joint_3 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_msgs.joint_state.joint_4 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_msgs.joint_state.joint_5 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_msgs.joint_state.joint_6 / (1000*self.__piper_fk.RADIAN)]
+        with self.__piper_fk_mtx:
+            self.__link_fk = self.__piper_fk.CalFK(joint_states)
     
     # 控制发送函数------------------------------------------------------------------------------------------------------
     def MotionCtrl_1(self, emergency_stop:int, track_ctrl:int, grag_teach_ctrl:int):

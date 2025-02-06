@@ -51,7 +51,6 @@ pip3 show piper_sdk
 
 0.0.x 为机械臂V1.5-2固件版本前的sdk支持
 
-
 若要卸载
 
 ```shell
