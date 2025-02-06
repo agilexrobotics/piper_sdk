@@ -48,11 +48,13 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 | 变量   | 类型 |说明                                                          |
 | ----- | ---- |------------------------------------------------------------ |
 |`__arm_can`|`C_STD_CAN`|`can_encapsulation.py` 中的类的实例化，为硬件接收数据层,注册数据处理回调函数|
+|`__piper_fk`|`C_PiperForwardKinematics`|机械臂正解类|
 |`__parser`|`C_PiperParserBase`|数据协议解析类实例化，当前为V1版本协议解析，类型为数据解析类的基类|
 |`__firmware_data`|`bytearray`|固件版本字符串|
 |`__fps_counter`|`C_FPSCounter`|can帧率计算|
 |`__is_ok`|`Bool`|can总线是否还有数据|
 |`__arm_time_stamp`|`ArmTimeStamp`|时间戳类的实例化，是`C_PiperInterface_V2`的私有类，是一些由多个can帧组合一起的机械臂变量的时间戳，例如关节角|
+|`__link_fk`|`list[float]`|机械臂所有关节的正解位置|
 |`__arm_status`|`ArmStatus`|机械臂状态消息的实例，包含机械臂的状态信息。|
 |`__arm_end_pose`|`ArmEndPose`|机械臂末端姿态反馈消息的实例，包含末端的姿态信息。|
 |`__arm_joint_msgs`|`ArmJoint`|机械臂关节角度反馈消息的实例，包含各关节的状态信息。|
@@ -82,6 +84,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`GetArmStatus`|Getter Method|获取机械臂状态信息。使用互斥锁`__arm_status_mtx`保证线程安全。|obj.GetArmStatus()|None|self.__arm_status|
 |`GetArmEndPoseMsgs`|Getter Method|获取机械臂末端位置的消息。使用互斥锁`__arm_end_pose_mtx`保证线程安全。|obj.GetArmEndPoseMsgs()|None|self.__arm_end_pose|
 |`GetArmJointMsgs`|Getter Method|获取机械臂关节的状态消息。使用互斥锁`__arm_joint_msgs_mtx`保证线程安全。|obj.GetArmJointMsgs()|None|self.__arm_joint_msgs|
+|`GetFK`|Getter Method|获取机械臂每个关节的正解,XYZ单位为mm,RXRYRZ单位为度，反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿|obj.GetFK()|None|self.__link_fk|
 |`GetArmGripperMsgs`|Getter Method|获取机械臂夹爪的状态消息。使用互斥锁`__arm_gripper_msgs_mtx`保证线程安全。|obj.GetArmGripperMsgs()|None|self.__arm_gripper_msgs|
 |`GetArmHighSpdInfoMsgs`|Getter Method|获取机械臂高速运动信息的消息。使用互斥锁`__arm_motor_info_high_spd_mtx`保证线程安全。|obj.GetArmHighSpdInfoMsgs()|None|self.__arm_motor_info_high_spd|
 |`GetArmLowSpdInfoMsgs`|Getter Method|获取机械臂低速运动信息的消息。使用互斥锁`__arm_motor_info_low_spd_mtx`保证线程安全。|obj.GetArmLowSpdInfoMsgs()|None|self.__arm_motor_info_low_spd|
@@ -108,11 +111,12 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__UpdateAllCurrentMotorAngleLimitMaxVel`|Getter Method|更新所有电机最大加速度限制|类内使用|msg:PiperMessage|self.__arm_all_motor_angle_limit_max_spd|
 |`__UpdateAllCurrentMotorMaxAccLimit`|Getter Method|更新所有电机角度限制和最大速度|类内使用|msg:PiperMessage|self.__arm_all_motor_max_acc_limit|
 |`__UpdateCurrentEndVelAndAccParam`|Getter Method|更新当前末端速度/加速度参数|类内使用|msg:PiperMessage|self.__feedback_current_end_vel_acc_param|
-|`__UpdateCrashProtectionLevelFeedback`|Getter Method|更新碰撞防护等级设置反馈指令|类内使用|msg:PiperMessage|self.__feedback_crash_protection_level|
+|`__UpdateCrashProtectionLevelFeedback`|Getter Method|更新碰撞防护等级设置反馈指令|类内使用|msg:Pipe self.__UpdatePiperFK()rMessage|self.__feedback_crash_protection_level|
 |`__UpdateArmJointCtrl`|Getter Method|更新关节状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_joint_ctrl_msgs|
 |`__UpdateArmGripperCtrl`|Getter Method|更新夹爪状态（为主臂发送的消息）|类内使用|msg:PiperMessage|self.__arm_gripper_ctrl_msgs|
 |`__UpdateArmCtrlCode151`|Getter Method|更新主臂发送的151控制指令|类内使用|msg:PiperMessage|self.__arm_ctrl_code_151|
 |`__UpdatePiperFirmware`|Getter Method|更新发送4AF后，读取到的4AF反馈的字符并拼接|类内使用|msg:PiperMessage|self.__firmware_data|
+|`__UpdatePiperFK`|Getter Method|更新piper正解数据|类内使用|None|None|
 |`MotionCtrl_1`|Ctrl Method|0x150,可以控制急停、轨迹传输及拖动示教模式。|类外调用|`emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|None|
 |`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|None|
 |`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`|None|
