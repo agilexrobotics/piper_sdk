@@ -1,4 +1,4 @@
-# Piper 机械臂sdk demo
+# Piper 机械臂sdk(V1) demo
 
 [EN](README(EN).MD)
 

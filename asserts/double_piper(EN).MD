@@ -1,5 +1,7 @@
 # Use two arm to remote control
 
+[中文](double_piper.MD)
+
 ## 1 Hardware connection
 
 - Diagram

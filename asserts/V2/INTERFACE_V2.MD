@@ -1,6 +1,7 @@
 # PIPER SDK Interface_V2 使用文档
 
 [EN](INTERFACE_V2(EN).MD)
+
 本SDK用于接收can数据帧，然后处理为自定义数据类型
 
 ps：有些地方略写，代码中有详细的中文注释，本文这里只是理清结构
@@ -146,7 +147,7 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`EndSpdAndAccParamSet`|Ctrl Method|设置机械臂末端速度及加速度参数。|类外调用|`end_max_linear_vel (int)`, `end_max_angular_vel (int)`, `end_max_linear_acc (int)`, `end_max_angular_acc (int)`|None|
 |`CrashProtectionConfig`|Ctrl Method|配置机械臂碰撞防护等级。|类外调用|`joint_1_protection_level (int)`, `joint_2_protection_level (int)`, `joint_3_protection_level (int)`, `joint_4_protection_level (int)`, `joint_5_protection_level (int)`, `joint_6_protection_level (int)`|None|
 |`SearchPiperFirmwareVersion`|Ctrl Method|查询piper机械臂的主控固件版本|类外调用|None|None|
-|`__JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`,`p_min:float=-12.5`,`p_max:float=12.5`,`v_min:float=-45.0`,`v_max:float=45.0`,`kp_min:float=0.0`,`kp_max:float=500.0`,`kd_min:float=-5.0`,`kd_max:float=5.0`,`t_min:float=-18.0`,`t_max:float=18.0`|None|
+|`__JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类内调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`,`p_min:float=-12.5`,`p_max:float=12.5`,`v_min:float=-45.0`,`v_max:float=45.0`,`kp_min:float=0.0`,`kp_max:float=500.0`,`kd_min:float=-5.0`,`kd_max:float=5.0`,`t_min:float=-18.0`,`t_max:float=18.0`|None|
 |`JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`|None|
 |`GripperTeachingPendantParamConfig`|Ctrl Method|夹爪/示教器参数设置指令(基于V1.5-2版本后)|类外调用|`teaching_range_per:int=100`, `max_range_config:int=70`|None|
 

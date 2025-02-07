@@ -1,6 +1,6 @@
 # ChangeLog-V2
 
-这里的V1和V2版本代码，都是在0.1.x版本下的代码
+**这里的V1和V2，都是属于0.1.x版本的内容，与0.0.x版本无关**
 
 在0.1.x版本下，V2与V1的区别是协议不同
 
@@ -155,6 +155,6 @@ Byte 5 安装位置设定
 | ----- | ---- |------------------------------------------------------------ |-------------------|--------------------------- |--------|
 |`GetGripperTeachingPendantParamFeedback`|Getter Method|获取夹爪/示教器参数反馈指令，包括示教器行程系数反馈、夹爪/示教器最大控制行程限制值反馈 为主动发送指令后反馈消息|obj.GetGripperTeachingPendantParamFeedback()|None|self.__feedback_gripper_teaching_pendant_param|
 |`MotorMaxSpdSet`|Ctrl Method|设置电机最大速度。|类外调用|`motor_num (int)`, `max_joint_spd (int)`|None|
-|`__JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`,`p_min:float=-12.5`,`p_max:float=12.5`,`v_min:float=-45.0`,`v_max:float=45.0`,`kp_min:float=0.0`,`kp_max:float=500.0`,`kd_min:float=-5.0`,`kd_max:float=5.0`,`t_min:float=-18.0`,`t_max:float=18.0`|None|
+|`__JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类内调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`,`p_min:float=-12.5`,`p_max:float=12.5`,`v_min:float=-45.0`,`v_max:float=45.0`,`kp_min:float=0.0`,`kp_max:float=500.0`,`kd_min:float=-5.0`,`kd_max:float=5.0`,`t_min:float=-18.0`,`t_max:float=18.0`|None|
 |`JointMitCtrl`|Ctrl Method|0x15A,0x15B,0x15C,0x15D,0x15E,0x15F,机械臂关节1~6MIT控制指令|类外调用|`self,motor_num:int`,`pos_ref:float`,`vel_ref:float`,`kp:float`,`kd:float`,`t_ref:float`|None|
 |`GripperTeachingPendantParamConfig`|Ctrl Method|夹爪/示教器参数设置指令(基于V1.5-2版本后)|类外调用|`teaching_range_per:int=100`, `max_range_config:int=70`|None|

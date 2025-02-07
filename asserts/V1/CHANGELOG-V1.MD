@@ -1,6 +1,6 @@
 # ChangeLog-V1
 
-这里的V1版本代码，是在0.1.x版本下的代码
+这里的V1版本代码，是属于0.1.x版本的代码
 
 0.1.x版本代码与0.0.x代码区别较大，前者的V1是在后者基础上更新迭代
 
@@ -30,4 +30,4 @@
 |`GetFK`|Getter Method|获取机械臂每个关节的正解,XYZ单位为mm,RXRYRZ单位为度，反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿|obj.GetFK()|None|self.__link_fk|
 |`isOk`|Getter Method|反馈can数据读取线程是否正常|obj.isOk()|None|self.__is_ok|
 |`__CanMonitor`|Getter Method|can数据帧率检测|类内使用|None|None|
-|`__UpdatePiperFK`| Getter Method | Updates the Piper forward kinematics data | Used internally in the class | None | None |
+|`__UpdatePiperFK`|Getter Method|更新piper正解数据|类内使用|None|None|

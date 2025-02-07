@@ -1,6 +1,8 @@
-# PIPER SDK Protocol V1 Description Document
+# PIPER SDK Protocol V2 Description Document
 
-## protocol V1 parsing
+[中文](PROTOCOL_V2.MD)
+
+## protocol V2 parsing
 
 The entire protocol parsing is divided into two parts, one is the base class, and the other is the actual data parsing class
 
@@ -18,7 +20,7 @@ Contains multiple abstract methods, which the derived class needs to implement t
 
 Defines the version enumeration of the robot arm protocol.
 
-The enumeration values include ARM_PROTOCOL_UNKNOWN and ARM_PROROCOL_V1, which can be extended and specified in the derived class.
+The enumeration values include ARM_PROTOCOL_UNKNOWN and ARM_PROROCOL_V2, which can be extended and specified in the derived class.
 
 **1.2 Abstract methods**
 
@@ -58,11 +60,11 @@ ConvertBytesToInt(): Convert a byte sequence to an integer, supporting big-endia
 
 Used to convert the received can data frame raw data (byte type) to an integer, and then call the above conversion function to limit the data type
 
-### C_PiperParserV1 derived class
+### C_PiperParserV2 derived class
 
 1. **Class and inheritance relationship**
 
-C_PiperParserV1 inherits from C_PiperParserBase and is the V1 version of the Piper robot arm parsing data class.
+C_PiperParserV2 inherits from C_PiperParserBase and is the V2 version of the Piper robot arm parsing data class.
 
 The inheritance mechanism indicates that this class may be based on an abstract or more general parser framework to process the robot arm's protocol data.
 
@@ -76,7 +78,7 @@ Message encoding: EncodeMessage() converts the data type defined in the program 
 
 - GetParserProtocolVersion()
 
-Returns the current protocol version (ARM_PROTOCOL_V1), which identifies the protocol version adapted by the parser.
+Returns the current protocol version (ARM_PROTOCOL_V2), which identifies the protocol version adapted by the parser.
 
 - DecodeMessage(rx_can_frame, msg) 
 
@@ -111,11 +113,3 @@ DecodeMessage() parses rx_can_frame and converts byte data into msg objects defi
 msg is used as input and contains control or feedback data to be sent.
 
 EncodeMessage() encodes msg data into tx_can_frame and prepares to send it through the CAN bus.
-
-5. Scalability and maintainability
-
-The parsing and encoding logic of each CAN message is encapsulated in a specific conditional branch, which is convenient for subsequent expansion of new message types.
-
-DecodeMessage and EncodeMessage are the main business logic entrances.
-
-A large number of data conversion methods are used to ensure the consistency of conversion between bytes and values.

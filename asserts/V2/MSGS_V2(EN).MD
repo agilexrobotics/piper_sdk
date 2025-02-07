@@ -1,5 +1,7 @@
 # PIPER SDK msgs
 
+[中文](MSGS_V2.MD)
+
 ```shell
 piper_msgs
 ├── __init__.py
