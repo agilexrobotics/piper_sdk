@@ -1,4 +1,4 @@
-# Piper SDK 0.1.12
+# Piper SDK 0.1.13
 
 [![GitHub](https://img.shields.io/badge/GitHub-blue.svg)](https://github.com/agilexrobotics/piper_sdk)
 
@@ -125,11 +125,11 @@ Note: Ensure wiring faces backward.
 |       Byte 0                            |  Pos_ref [bit15~bit8] High 8 bits      |       uint8      |                 |
 |       Byte 1                            |  Pos_ref [bit7~bit0] Low 8 bits        |       uint8      |                 |
 |       Byte 2                            |  Vel_ref [bit11~bit4] Low 12 bits      |       uint8      |                 |
-|       Byte 3                            |  Vel_ref [bit3~bit0] Kp [bit11~bit8]  |       uint8      |                 |
+|       Byte 3                            |  Vel_ref \[bit3 \~ bit0\] Kp \[bit11 \~ bit8\]  |       uint8      |                 |
 |       Byte 4                            |  Kp [bit7~bit0]                       |       uint8      | Kp reference value: 10  |
 |       Byte 5                            |  Kd [bit11~bit4] Low 12 bits          |       uint8      | Kd reference value: 0.8 |
-|       Byte 6                            |  Kd [bit3~bit0] T_ref [bit7~bit4]      |       uint8      |                 |
-|       Byte 7                            |  T_ref [bit3~bit0] CRC [bit3~bit0]     |       uint8      |                 |
+|       Byte 6                            |  Kd \[bit3 \~ bit0\] T_ref \[bit7 \~ bit4\]      |       uint8      |                 |
+|       Byte 7                            |  T_ref \[bit3 \~ bit0\] CRC \[bit3 \~ bit0\]     |       uint8      |                 |
 
 ##### 4) ID 0x474 Motor Angle Limit / Maximum Speed Setting Command
 
