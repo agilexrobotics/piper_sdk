@@ -14,5 +14,5 @@
 
 1. 执行[piper_disable.py](../demo/V2/piper_disable.py)来失能机械臂，注意失能机械臂会令所有电机立刻失电
 2. 执行[V2_gripper_param_config.py](../demo/V2/V2_gripper_param_config.py)来设定末端执行器行程
-3. 然后执行[V2_gripper_param_config.py](../demo/V2/V2_gripper_param_config.py)查看末端执行器是否有数据
+3. 然后执行[read_gripper_status.py](../demo/V2/read_gripper_status.py)查看末端执行器是否有数据
 4. 如果发现末端执行器反馈的行程数据在闭合时的数值偏大，可以使用[piper_gripper_zero_set.py](../demo/V2/piper_gripper_zero_set.py)来设定末端执行器零点
