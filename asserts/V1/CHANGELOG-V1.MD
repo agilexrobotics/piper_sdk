@@ -27,7 +27,8 @@
 | 函数   | 类型 |说明                                                         |使用                | 参数                        |反馈       |
 | ----- | ---- |------------------------------------------------------------ |-------------------|--------------------------- |--------|
 |`GetCanFps`|Getter Method|获取can总线当前实时帧率|obj.GetArmStatus()|None|int|
-|`GetFK`|Getter Method|获取机械臂每个关节的正解,XYZ单位为mm,RXRYRZ单位为度，反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿|obj.GetFK()|None|self.__link_fk|
+|`GetFK`|Getter Method|获取机械臂每个关节控制信息和反馈信息的正解,XYZ单位为mm,RXRYRZ单位为度，反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿|obj.GetFK()|mode:Literal["feedback", "control"]="feedback"|self.__link_fk|
 |`isOk`|Getter Method|反馈can数据读取线程是否正常|obj.isOk()|None|self.__is_ok|
 |`__CanMonitor`|Getter Method|can数据帧率检测|类内使用|None|None|
-|`__UpdatePiperFK`|Getter Method|更新piper正解数据|类内使用|None|None|
+|`__UpdatePiperFeedbackFK`|Getter Method|更新piper反馈信息正解数据|类内使用|None|None|
+|`__UpdatePiperCtrlFK`|Getter Method|更新piper控制信息正解数据|类内使用|None|None|

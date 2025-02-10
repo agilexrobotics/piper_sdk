@@ -584,7 +584,8 @@ class C_PiperInterface():
             self.__UpdateArmGripperCtrl(msg)
             self.__UpdateArmCtrlCode151(msg)
             self.__UpdatePiperFirmware(msg)
-            self.__UpdatePiperFK()
+            self.__UpdatePiperFeedbackFK()
+            self.__UpdatePiperCtrlFK()
     
     # def JudgeExsitedArm(self, can_id:int):
     #     '''判断当前can socket是否有指定的机械臂设备,通过can id筛选
@@ -645,15 +646,34 @@ class C_PiperInterface():
                                                                     self.__fps_counter.get_real_time_fps('ArmJoint_56'))
             return self.__arm_joint_msgs
     
-    def GetFK(self):
-        '''获取机械臂每个关节的正解,XYZ单位为mm,RXRYRZ单位为度
-        反馈长度为6的float类型数据列表,代表 1-6 关节相对 base_link 的位姿
+    def GetFK(self, mode:Literal["feedback", "control"]="feedback"):
+        '''获取机械臂每个关节的正向运动学解。XYZ 的单位为毫米 (mm),RX、RY、RZ 的单位为度 
+        返回一个包含 6 个浮点数的列表，表示 1-6 号关节相对于 base_link 的位姿
+
+        Args:
+            mode (str): "feedback" 获取反馈数据，"control" 获取控制数据  
+
+        Returns:
+            list: 一个包含 6 个浮点数的列表，表示 1-6 号关节的位姿
         '''
-        '''Get the forward kinematics of each joint of the robotic arm, XYZ in mm, RXRYRZ in degrees
-        Feedback a list of 6 float-type data, representing the relative pose of joints 1-6 with respect to base_link
+        '''Obtain the forward kinematics solution for each joint of the robotic arm. The units for XYZ are in millimeters (mm), and for RX, RY, RZ are in degrees.
+        Returns a list containing 6 floating-point numbers, representing the pose of joints 1-6 relative to the base_link.
+
+        Args:
+            mode (str): "feedback" to retrieve feedback data, "control" to retrieve control data  
+
+        Returns:
+            list: A list containing 6 floating-point numbers, representing the pose of joints 1-6
         '''
-        with self.__piper_fk_mtx:
-            return self.__link_fk
+
+        if mode == "feedback":
+            with self.__piper_feedback_fk_mtx:
+                return self.__link_feedback_fk
+        elif mode == "control":
+            with self.__piper_ctrl_fk_mtx:
+                return self.__link_ctrl_fk
+        else:
+            raise ValueError("Invalid mode! Use 'feedback' or 'control'.")
     
     def GetArmGripperMsgs(self):
         '''获取机械臂夹爪消息
@@ -1570,9 +1590,9 @@ class C_PiperInterface():
                 self.__firmware_data = self.__firmware_data + msg.firmware_data
             return self.__firmware_data
     
-    def __UpdatePiperFK(self):
+    def __UpdatePiperFeedbackFK(self):
         '''
-        更新piper正解数据
+        更新piper反馈消息正解数据
         '''
         '''
         Update Piper FK Data
@@ -1584,8 +1604,25 @@ class C_PiperInterface():
                             self.__arm_joint_msgs.joint_state.joint_4 / (1000*self.__piper_fk.RADIAN),
                             self.__arm_joint_msgs.joint_state.joint_5 / (1000*self.__piper_fk.RADIAN),
                             self.__arm_joint_msgs.joint_state.joint_6 / (1000*self.__piper_fk.RADIAN)]
-        with self.__piper_fk_mtx:
-            self.__link_fk = self.__piper_fk.CalFK(joint_states)
+        with self.__piper_feedback_fk_mtx:
+            self.__link_feedback_fk = self.__piper_fk.CalFK(joint_states)
+    
+    def __UpdatePiperCtrlFK(self):
+        '''
+        更新piper控制消息正解数据
+        '''
+        '''
+        Update Piper FK Data
+        '''
+        with self.__arm_joint_ctrl_msgs_mtx:
+            joint_states = [self.__arm_joint_ctrl_msgs.joint_ctrl.joint_1 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_ctrl_msgs.joint_ctrl.joint_2 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_ctrl_msgs.joint_ctrl.joint_3 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_ctrl_msgs.joint_ctrl.joint_4 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_ctrl_msgs.joint_ctrl.joint_5 / (1000*self.__piper_fk.RADIAN),
+                            self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 / (1000*self.__piper_fk.RADIAN)]
+        with self.__piper_ctrl_fk_mtx:
+            self.__link_ctrl_fk = self.__piper_fk.CalFK(joint_states)
     
     # 控制发送函数------------------------------------------------------------------------------------------------------
     def MotionCtrl_1(self, emergency_stop:int, track_ctrl:int, grag_teach_ctrl:int):
