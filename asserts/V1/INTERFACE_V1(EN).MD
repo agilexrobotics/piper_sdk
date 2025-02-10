@@ -55,7 +55,8 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 | `__fps_counter` | `C_FPSCounter` | CAN frame rate calculation |
 | `__is_ok`       | `Bool`         | Whether there is still data on the CAN bus |
 |`__arm_time_stamp`|`ArmTimeStamp`|The instantiation of the timestamp class is a private class of `C_PiperInterface_V2`. It handles timestamps for robotic arm variables that are composed of multiple CAN frames, such as joint angles.|
-| `__link_fk` | `list[float]` | Forward kinematics positions of all the joints of the robotic arm |
+| `__link_feedback_fk` | `list[float]` | The forward kinematics position of all joint feedback information of the robotic arm |
+| `__link_ctrl_fk`     | `list[float]` | The forward kinematics position of all joint control information of the robotic arm |
 |`__arm_status`|`ArmStatus`|Instance of the robotic arm status message, containing the status information of the robotic arm.|
 |`__arm_end_pose`|`ArmEndPose`|Instance of the robotic arm end-effector pose feedback message, containing the end-effector's pose information.|
 |`__arm_joint_msgs`|`ArmJoint`|Instance of the robotic arm joint angle feedback message, containing status information for each joint.|
@@ -85,7 +86,7 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`GetArmStatus`|Getter Method| Retrieve robotic arm status information. Use the mutex `__arm_status_mtx` to ensure thread safety. |obj.GetArmStatus()|None|self.__arm_status|
 |`GetArmEndPoseMsgs`|Getter Method|Get messages regarding the end pose of the robotic arm. Use the mutex `__arm_end_pose_mtx` to ensure thread safety.|obj.GetArmEndPoseMsgs()|None|self.__arm_end_pose|
 |`GetArmJointMsgs`|Getter Method|Get the status messages of the robotic arm joints. Use the mutex `__arm_joint_msgs_mtx` to ensure thread safety.|obj.GetArmJointMsgs()|None|self.__arm_joint_msgs|
-|`GetFK`| Getter Method | Retrieves the forward kinematics of each joint of the robotic arm. The position is in mm (XYZ), and the orientation is in degrees (RX, RY, RZ). The returned data is a list of 6 float values representing the pose of joints 1 to 6 relative to base_link. | obj.GetFK() | None | self.__link_fk |
+| `GetFK` | Getter Method | Retrieves the forward kinematics solution for both control and feedback information of each joint of the robotic arm. XYZ units are in mm, and RXRYRZ units are in degrees. Returns a list of 6 float-type data representing the pose of joints 1-6 relative to the base_link. | `obj.GetFK()` | `mode: Literal["feedback", "control"] = "feedback"` | `self.__link_fk` |
 |`GetArmGripperMsgs`|Getter Method|Get the status messages of the robotic arm gripper. Use the mutex `__arm_gripper_msgs_mtx` to ensure thread safety.|obj.GetArmGripperMsgs()|None|self.__arm_gripper_msgs|
 |`GetArmHighSpdInfoMsgs`|Getter Method|Get messages regarding high-speed motion information of the robotic arm. Use the mutex `__arm_motor_info_high_spd_mtx` to ensure thread safety.|obj.GetArmHighSpdInfoMsgs()|None|self.__arm_motor_info_high_spd|
 |`GetArmLowSpdInfoMsgs`|Getter Method|Get messages regarding low-speed motion information of the robotic arm. Use the mutex `__arm_motor_info_low_spd_mtx` to ensure thread safety.|obj.GetArmLowSpdInfoMsgs()|None|self.__arm_motor_info_low_spd|
@@ -117,7 +118,8 @@ Each robot-related class has a timestamp. If the data can only be obtained by mu
 |`__UpdateArmGripperCtrl`|Getter Method|Update gripper status (messages sent from the master arm).|Used within the class|msg:PiperMessage|self.__arm_gripper_ctrl_msgs|
 |`__UpdateArmCtrlCode151`|Getter Method|Update the control command 151 sent by the active arm.|Used within the class|msg:PiperMessage|self.__arm_ctrl_code_151|
 |`__UpdatePiperFirmware`|Getter Method|Update by appending the characters received from the 4AF feedback after sending 4AF|Used within the class|msg:PiperMessage|self.__firmware_data|
-|`__UpdatePiperFK`| Getter Method | Updates the Piper forward kinematics data | Used internally in the class | None | None |
+| `__UpdatePiperFeedbackFK` | Getter Method | Updates the forward kinematics data for piper feedback information. | For internal class use only. | None | None |
+| `__UpdatePiperCtrlFK`     | Getter Method | Updates the forward kinematics data for piper control information. | For internal class use only. | None | None |
 |`MotionCtrl_1`|Ctrl Method| 0x150, can control emergency stop, trajectory transmission, and teach mode. |Called from outside the class|`emergency_stop (uint8)`, `track_ctrl (uint8)`, `grag_teach_ctrl (uint8)``emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|NoneNone|
 |`MotionCtrl_2`|Ctrl MethodCtrl Method|0x151, can set control mode, MOVE mode, and motion speed. Each time before controlling the robotic arm's motion, this must be sent, otherwise the arm may not move.|Called from outside the class|`ctrl_mode (uint8)`, `move_mode (uint8)`, `move_spd_rate_ctrl (uint8)``ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|NoneNone|
 |`EndPoseCtrl`|Ctrl MethodCtrl Method|0x152, 0x153, 0x154, control the end position and posture of the robotic arm. This function consolidates the three functions below; note that the x, y, z values sent by this function are in units of 0.001 mm, and the rx, ry, rz values are in units of 0.001 degrees. For example, if the robotic arm needs to move 0.3 m in the x-axis direction, the data sent should be 0.3 \* 100 \* 1000 = 30000.|Called from outside the class|`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`,`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`|None|
