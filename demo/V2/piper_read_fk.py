@@ -12,7 +12,6 @@ if __name__ == "__main__":
     piper = C_PiperInterface_V2()
     piper.ConnectPort()
     while True:
-        print(piper.GetFK())
-        print(piper.GetArmEndPoseMsgs())
-        # print(piper.GetArmJointMsgs())
+        print(f"feedback:{piper.GetFK('feedback')}")
+        print(f"control:{piper.GetFK('control')}")
         time.sleep(0.01)
