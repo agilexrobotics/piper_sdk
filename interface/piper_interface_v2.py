@@ -422,9 +422,12 @@ class C_PiperInterface_V2():
         self.__fps_counter.add_variable("ArmCtrlCode_151")
         # 时间戳
         self.__arm_time_stamp = self.ArmTimeStamp()#时间戳
-        # 机械臂正解，包含每个关节的正解
-        self.__piper_fk_mtx = threading.Lock()
-        self.__link_fk = [[0.0] * 6 for _ in range(6)]
+        # 机械臂反馈消息正解，包含每个关节的正解
+        self.__piper_feedback_fk_mtx = threading.Lock()
+        self.__link_feedback_fk = [[0.0] * 6 for _ in range(6)]
+        # 机械臂控制消息正解，包含每个关节的正解
+        self.__piper_ctrl_fk_mtx = threading.Lock()
+        self.__link_ctrl_fk = [[0.0] * 6 for _ in range(6)]
         # 固件版本
         self.__firmware_data_mtx = threading.Lock()
         self.__firmware_data = bytearray()
