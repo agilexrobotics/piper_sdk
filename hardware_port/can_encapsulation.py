@@ -170,7 +170,9 @@ class C_STD_CAN():
         '''
         Check whether the CAN bus status is normal.
         '''
-        bus_state = self.bus.state
+        if isinstance(self.bus, can.BusABC):
+            bus_state = self.bus.state
+        else: bus_state = None
         if bus_state == can.BusState.ACTIVE:
             # print("CAN bus state: ACTIVE - Bus is functioning normally")
             return True
