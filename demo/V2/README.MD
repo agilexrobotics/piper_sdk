@@ -49,6 +49,7 @@ V2
 ├── piper_set_mit.py
 ├── piper_slave_config.py
 ├── piper_status.py
+├── piper_stop.py
 ├── read_gripper_status.py
 ├── read_joint_state.py
 ├── read_piper_hardware.py
@@ -77,6 +78,7 @@ V2
 |`piper_set_mit.py`|设定机械臂为mit模式，这个模式下机械臂响应最快速|
 |`piper_slave_config.py`|机械臂设置为从臂|
 |`piper_status.py`|机械臂状态读取|
+|`piper_stop.py`|机械臂停止缓慢下落，需要在使用后reset，并重新使能两次|
 |`read_gripper_status.py`|机械臂夹爪状态读取|
 |`read_joint_state.py`|读取关节角消息并打印|
 |`read_piper_hardware.py`|读取机械臂主控固件版本|
