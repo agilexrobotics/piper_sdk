@@ -49,6 +49,7 @@ V2
 ├── piper_set_mit.py
 ├── piper_slave_config.py
 ├── piper_status.py
+├── piper_stop.py
 ├── read_gripper_status.py
 ├── read_joint_state.py
 ├── read_piper_hardware.py
@@ -77,6 +78,7 @@ V2
 | `piper_set_mit.py` | Set the robotic arm to MIT mode, where it responds the fastest |
 | `piper_slave_config.py` | Set the robotic arm as the slave arm |
 | `piper_status.py` | Read the status of the robotic arm |
+| `piper_stop.py` |The robotic arm stops with a slow descent, and it needs to be reset and re-enabled twice after use|
 | `read_gripper_status.py` | Read the status of the gripper |
 | `read_joint_state.py` | Read joint angle messages and print them |
 | `read_piper_hardware.py` | Read the firmware version of the robotic arm's main controller |
