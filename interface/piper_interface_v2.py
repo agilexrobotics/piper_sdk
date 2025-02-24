@@ -755,7 +755,9 @@ class C_PiperInterface_V2():
         '''获取电机角度限制/最大速度指令
         
         包括最大角度限制,最小角度限制,最大关节速度
+        
         为主动发送指令后反馈消息
+        
         对应查询电机角度/最大速度/最大加速度限制指令 0x472 Byte 1 = 0x01
         
         ArmParamEnquiryAndConfig(param_enquiry=0x01)
@@ -785,6 +787,7 @@ class C_PiperInterface_V2():
         '''获取末端速度/加速度参数
         
         包括末端线速度,末端角速度,末端线加速度,末端角加速度
+        
         为主动发送指令后反馈消息
 
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x01
@@ -816,8 +819,10 @@ class C_PiperInterface_V2():
     def GetCrashProtectionLevelFeedback(self):
         '''获取碰撞防护等级反馈
         
-        获取1-6关节碰撞等级,数值0-8,0代表不检测碰撞,1-8检测等级逐级递增(代表检测阈值逐级增加)
-        为主动发送指令后反馈消息
+        获取1-6关节碰撞等级,数值0-8,0代表不检测碰撞,1-8检测等级逐级递增(代表检测阈值逐级增加),
+        
+        为主动发送指令后反馈消息,
+        
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x02
 
         ArmParamEnquiryAndConfig(param_enquiry=0x02)
@@ -846,9 +851,12 @@ class C_PiperInterface_V2():
     def GetGripperTeachingPendantParamFeedback(self):
         '''夹爪/示教器参数反馈指令
         
-        包括示教器行程系数反馈、夹爪/示教器最大控制行程限制值反馈
-        为主动发送指令后反馈消息
+        包括示教器行程系数反馈、夹爪/示教器最大控制行程限制值反馈,
+        
+        为主动发送指令后反馈消息,
+        
         对应机械臂参数查询与设置指令 0x477 Byte 0 = 0x04
+        
         ArmParamEnquiryAndConfig(param_enquiry=0x04)
         
         CAN ID:
@@ -943,7 +951,9 @@ class C_PiperInterface_V2():
     
     def GetAllMotorMaxAccLimit(self):
         '''获取所有电机的最大加速度限制,(m1-m6)
+        
         此为应答式消息,意为需要发送请求指令该数据才会有数值
+        
         已经在 ConnectPort 中调用了请求指令 self.SearchAllMotorMaxAccLimit()
         '''
         '''Retrieves the maximum acceleration limits for all motors (m1-m6).
@@ -956,7 +966,9 @@ class C_PiperInterface_V2():
     
     def GetAllMotorAngleLimitMaxSpd(self):
         '''获取所有电机的最大限制角度/最小限制角度/最大速度,(m1-m6)
+        
         此为应答式消息,意为需要发送请求指令该数据才会有数值
+        
         已经在 ConnectPort 中调用了请求指令 self.SearchAllMotorMaxAngleSpd()
         '''
         '''Retrieves the maximum limit angle, minimum limit angle, and maximum speed for all motors (m1-m6).
