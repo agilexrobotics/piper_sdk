@@ -15,6 +15,7 @@ if __name__ == "__main__":
         import time
         print()
         print(f"can: {piper.GetCanFps()}")
+        print(f"all_fps: {piper.GetCanFps()}")
         print(f"status: {piper.GetArmStatus().Hz}")
         print(f"end_pose: {piper.GetArmEndPoseMsgs().Hz}")
         print(f"joint_states: {piper.GetArmJointMsgs().Hz}")

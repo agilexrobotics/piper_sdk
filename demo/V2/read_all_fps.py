@@ -13,6 +13,7 @@ if __name__ == "__main__":
     while True:
         print()
         print(f"isOK: {piper.isOk()}")
+        print(f"all_fps: {piper.GetCanFps()}")
         print(f"status: {piper.GetArmStatus().Hz}")
         print(f"end_pose: {piper.GetArmEndPoseMsgs().Hz}")
         print(f"joint_states: {piper.GetArmJointMsgs().Hz}")
