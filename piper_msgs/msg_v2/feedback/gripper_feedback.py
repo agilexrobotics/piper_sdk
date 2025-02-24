@@ -118,7 +118,7 @@ class ArmMsgGripperFeedBack:
     def __str__(self):
         return (f"ArmMsgGripperFeedBack(\n"
                 f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
-                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.2f},\n"
+                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.3f},\n"
                 f"  status_code: \n{self.foc_status}\n"
                 f")")
 

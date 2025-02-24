@@ -858,10 +858,14 @@ class C_PiperInterface():
         Args:
             grippers_angle: int32, 单位 0.001°, 夹爪角度,以整数表示。
             grippers_effort: uint16, 单位 0.001N/m, 夹爪扭矩,以整数表示。
-            status_code: uint8, 夹爪状态码，使能/失能/清除错误
-                            0x00失能,0x01使能
-                            0x03/0x02,使能清除错误,失能清除错误
-            set_zero: uint8, 设定当前位置为0点
+            status_code: uint8
+                0x00失能;
+                0x01使能;
+                0x02失能清除错误;
+                0x03使能清除错误.
+            set_zero: uint8, 设定当前位置为0点.
+                0x00无效值;
+                0xAE设置零点
         '''
         ''' Retrieves the gripper control message using the 0x159 command.
 
@@ -869,10 +873,13 @@ class C_PiperInterface():
             grippers_angle (int): The gripper angle, in 0.001° (integer representation).
             grippers_effort (int): The gripper torque, in 0.001 N/m (integer representation).
             status_code (int): The gripper status code for enabling/disabling/clearing errors.
-                0x00: Disabled
-                0x01: Enabled
-                0x03/0x02: Enable and clear errors, or disable and clear errors.
+                0x00: Disabled;
+                0x01: Enabled;
+                0x03: Enable and clear errors;
+                0x02: Disable and clear errors.
             set_zero (int): Set the current position as the zero point.
+                0x00: Invalid;
+                0xAE: Set zero.
         '''
         with self.__arm_gripper_ctrl_msgs_mtx:
             self.__arm_gripper_ctrl_msgs.Hz = self.__fps_counter.get_real_time_fps("ArmGripperCtrl")

@@ -24,14 +24,14 @@ class ArmMsgGripperFeedBack:
         Byte 4: 夹爪扭矩 H, int16, 单位 0.001N/m
         Byte 5: 夹爪扭矩 L
         Byte 6: 状态码, uint8
-            - bit[0]      电源电压是否过低(0:正常 1:过低)
-            - bit[1]      电机是否过温(0:正常 1:过温)
-            - bit[2]      驱动器是否过流(0:正常 1:过流)
-            - bit[3]      驱动器是否过温(0:正常 1:过温)
-            - bit[4]      传感器状态(0:正常 1:异常)
-            - bit[5]      驱动器错误状态(0:正常 1:错误)
-            - bit[6]      驱动器使能状态(1:使能 0:失能)
-            - bit[7]      回零状态(0:没有回零 1:已经回零,或已经回过零)
+            bit[0]      电源电压是否过低(0:正常 1:过低)
+            bit[1]      电机是否过温(0:正常 1:过温)
+            bit[2]      驱动器是否过流(0:正常 1:过流)
+            bit[3]      驱动器是否过温(0:正常 1:过温)
+            bit[4]      传感器状态(0:正常 1:异常)
+            bit[5]      驱动器错误状态(0:正常 1:错误)
+            bit[6]      驱动器使能状态(1:使能 0:失能)
+            bit[7]      回零状态(0:没有回零 1:已经回零,或已经回过零)
         Byte 7: 保留
     '''
     '''
@@ -57,14 +57,14 @@ class ArmMsgGripperFeedBack:
         Byte 4: Gripper Torque (High Byte), int16, unit: 0.001 N·m
         Byte 5: Gripper Torque (Low Byte)
         Byte 6: Status Code, uint8:
-            - bit[0]: Power voltage low (0: Normal, 1: Low)
-            - bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
-            - bit[2]: Driver over-current (0: Normal, 1: Over-current)
-            - bit[3]: Driver over-temperature (0: Normal, 1: Over-temperature)
-            - bit[4]: Sensor status (0: Normal, 1: Abnormal)
-            - bit[5]: Driver error status (0: Normal, 1: Error)
-            - bit[6]: Driver enable status (1: Enabled, 0: Disabled)
-            - bit[7]: Zeroing status (0: Not zeroed, 1: Zeroed or previously zeroed)
+            bit[0]: Power voltage low (0: Normal, 1: Low)
+            bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
+            bit[2]: Driver over-current (0: Normal, 1: Over-current)
+            bit[3]: Driver over-temperature (0: Normal, 1: Over-temperature)
+            bit[4]: Sensor status (0: Normal, 1: Abnormal)
+            bit[5]: Driver error status (0: Normal, 1: Error)
+            bit[6]: Driver enable status (1: Enabled, 0: Disabled)
+            bit[7]: Zeroing status (0: Not zeroed, 1: Zeroed or previously zeroed)
         Byte 7: Reserved
     '''
     def __init__(self, 
@@ -118,7 +118,7 @@ class ArmMsgGripperFeedBack:
     def __str__(self):
         return (f"ArmMsgGripperFeedBack(\n"
                 f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
-                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.2f},\n"
+                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.3f},\n"
                 f"  status_code: \n{self.foc_status}\n"
                 f")")
 

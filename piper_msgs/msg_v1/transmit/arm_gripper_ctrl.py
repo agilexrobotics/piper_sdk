@@ -21,6 +21,8 @@ class ArmMsgGripperCtrl:
                 0x02失能清除错误;
                 0x03使能清除错误.
         set_zero: 夹爪零点设置
+                0x00无效值
+                0xAE设置零点
     
     位描述:
     
@@ -50,18 +52,27 @@ class ArmMsgGripperCtrl:
     Args:
         grippers_angle: Gripper stroke, represented as an integer, unit: 0.001°.
         grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000,corresponse 0-5N/m
-        status_code: Gripper state for enable/disable/clear error.
-            0x00: Disable.
-            0x01: Enable.
-            0x03/0x02: Enable with clear error / Disable with clear error.
+        status_code: 
+            0x00: Disable;
+            0x01: Enable;
+            0x03: Enable with clear error;
+            0x02: Disable with clear error.
         set_zero: Set the current position as the zero point.
+            0x00: Invalid;
+            0xAE: Set zero.
 
     Bit Description:
 
         Byte 0-3 grippers_angle: int32, unit: 0.001°, represents the gripper angle.
         Byte 4-5 grippers_effort: uint16, unit: 0.001N·m, represents the gripper torque.
         Byte 6 status_code: uint8, gripper status code for enable/disable/clear error.
+            0x00: Disable;
+            0x01: Enable;
+            0x03: Enable with clear error;
+            0x02: Disable with clear error.
         Byte 7 set_zero: uint8, flag to set the current position as the zero point.
+            0x00: Invalid;
+            0xAE: Set zero.
     '''
     def __init__(self, 
                  grippers_angle: int = 0, 
@@ -81,8 +92,8 @@ class ArmMsgGripperCtrl:
 
     def __str__(self):
         return (f"ArmMsgGripperCtrl(\n"
-                f"  grippers_angle: {self.grippers_angle * 0.001:.3f},\n"
-                f"  grippers_effort: {self.grippers_effort * 0.01:.2f},\n"
+                f"  grippers_angle: {self.grippers_angle}, {self.grippers_angle * 0.001:.3f},\n"
+                f"  grippers_effort: {self.grippers_effort} \t {self.grippers_effort * 0.001:.3f},\n"
                 f"  status_code: {self.status_code},\n"
                 f"  set_zero: {self.set_zero}\n"
                 f")")
