@@ -29,7 +29,7 @@ Test:
 |使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## 1 安装方法
+## 1 软件安装方法
 
 ### 1.1 安装依赖
 

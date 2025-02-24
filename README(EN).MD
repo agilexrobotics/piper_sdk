@@ -29,7 +29,7 @@ This SDK is used to receive CAN data frames and then process them into custom da
 | Open-source UI using PyQt5 | [Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>) |
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## 1 Installation Instructions
+## 1 Software Installation Instructions
 
 ### 1.1 Install dependencies
 
