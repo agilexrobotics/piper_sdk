@@ -6,6 +6,8 @@ from typing_extensions import (
 )
 class ArmMsgFeedbackJointVelAcc:
     '''
+    msg_v1_feedback
+    
     反馈各个关节当前末端速度/加速度
 
     CAN ID:
@@ -31,6 +33,8 @@ class ArmMsgFeedbackJointVelAcc:
         Byte 7: 末端角加速度 L
     '''
     '''
+    msg_v1_feedback
+    
     Feedback on Current End-Effector Speed/Acceleration for Each Joint
 
     CAN ID:
@@ -56,14 +60,14 @@ class ArmMsgFeedbackJointVelAcc:
         Byte 7: End-Effector Angular Acceleration (Low Byte)
     '''
     def __init__(self, 
-                 can_id:Literal[0,0x481,0x482,0x483,0x484,0x485,0x486]=0,
-                 end_linear_vel:int=0, 
-                 end_angular_vel:int=0, 
-                 end_linear_acc: int=0,
-                 end_angular_acc: int=0
+                 can_id: Literal[0, 0x481, 0x482, 0x483, 0x484, 0x485, 0x486] = 0,
+                 end_linear_vel: int = 0, 
+                 end_angular_vel: int = 0, 
+                 end_linear_acc: int = 0,
+                 end_angular_acc: int = 0
                  ):
-        if can_id not in [0,0x481,0x482,0x483,0x484,0x485,0x486]:
-            raise ValueError(f"can_id 值 {can_id} 不在范围 [0x481,0x482,0x483,0x484,0x485,0x486]")
+        if can_id not in [0, 0x481, 0x482, 0x483, 0x484, 0x485, 0x486]:
+            raise ValueError(f"'can_id' Value {can_id} out of range [0x481, 0x482, 0x483, 0x484, 0x485, 0x486]")
         self.can_id = can_id
         self.end_linear_vel = end_linear_vel
         self.end_angular_vel = end_angular_vel

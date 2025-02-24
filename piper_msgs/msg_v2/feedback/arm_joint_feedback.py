@@ -3,6 +3,8 @@
 
 class ArmMsgJointFeedBack():
     '''
+    msg_v2_feedback
+    
     机械臂关节角度反馈,单位0.001度
     
     CAN ID: 
@@ -17,6 +19,8 @@ class ArmMsgJointFeedBack():
         joint_6: 关节6反馈角度
     '''
     '''
+    msg_v2_feedback
+    
     Joint Angle Feedback for Robotic Arm, in 0.001 Degrees
     
     CAN ID: 
@@ -30,9 +34,13 @@ class ArmMsgJointFeedBack():
         joint_5: Feedback angle of joint 5, in 0.001 degrees.
         joint_6: Feedback angle of joint 6, in 0.001 degrees.
     '''
-    def __init__(self, joint_1: int=0, joint_2: int=0, 
-                 joint_3: int=0, joint_4: int=0, 
-                 joint_5: int=0, joint_6: int=0):
+    def __init__(self, 
+                 joint_1: int = 0, 
+                 joint_2: int = 0, 
+                 joint_3: int = 0, 
+                 joint_4: int = 0, 
+                 joint_5: int = 0, 
+                 joint_6: int = 0):
         self.joint_1 = joint_1
         self.joint_2 = joint_2
         self.joint_3 = joint_3

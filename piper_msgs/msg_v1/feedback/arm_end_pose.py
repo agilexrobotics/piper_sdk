@@ -3,6 +3,8 @@
 
 class ArmMsgEndPoseFeedBack():
     '''
+    msg_v1_feedback
+    
     机械臂末端姿态反馈,单位0.001mm
     
     CAN ID: 
@@ -17,6 +19,8 @@ class ArmMsgEndPoseFeedBack():
         RZ_axis: RZ角度
     '''
     '''
+    msg_v1_feedback
+    
     End-Effector Pose Feedback for the Robotic Arm, unit: 0.001 mm.
     
     CAN ID: 
@@ -30,9 +34,13 @@ class ArmMsgEndPoseFeedBack():
         RY_axis: Rotation angle around the Y-axis (RY).
         RZ_axis: Rotation angle around the Z-axis (RZ).
     '''
-    def __init__(self, X_axis: int=0, Y_axis: int=0, 
-                 Z_axis: int=0, RX_axis: int=0, 
-                 RY_axis: int=0, RZ_axis: int=0):
+    def __init__(self, 
+                 X_axis: int = 0, 
+                 Y_axis: int = 0, 
+                 Z_axis: int = 0, 
+                 RX_axis: int = 0, 
+                 RY_axis: int = 0, 
+                 RZ_axis: int = 0):
         self.X_axis = X_axis
         self.Y_axis = Y_axis
         self.Z_axis = Z_axis

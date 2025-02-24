@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgMasterSlaveModeConfig:
     '''
+    msg_v2_transmit
+    
     随动主从模式设置指令
     
     CAN ID:
@@ -37,6 +39,8 @@ class ArmMsgMasterSlaveModeConfig:
                                 0x20 : 控制目标地址基 ID由 15x 偏移为 17x
     '''
     '''
+    msg_v2_transmit
+    
     Follow Master-Slave Mode Setting Command
 
     CAN ID:
@@ -71,18 +75,18 @@ class ArmMsgMasterSlaveModeConfig:
             0x20: Control target address base ID shifted from 15x to 17x.
     '''
     def __init__(self, 
-                 linkage_config:Literal[0x00, 0xFA, 0xFC]=0x00,
-                 feedback_offset:Literal[0x00, 0x10, 0x20]=0x00,
-                 ctrl_offset:Literal[0x00, 0x10, 0x20]=0x00,
-                 linkage_offset:Literal[0x00, 0x10, 0x20]=0x00):
+                 linkage_config: Literal[0x00, 0xFA, 0xFC] = 0x00,
+                 feedback_offset: Literal[0x00, 0x10, 0x20] = 0x00,
+                 ctrl_offset: Literal[0x00, 0x10, 0x20] = 0x00,
+                 linkage_offset: Literal[0x00, 0x10, 0x20] = 0x00):
         if linkage_config not in [0x00, 0xFA, 0xFC]:
-            raise ValueError(f"linkage_config 值 {linkage_config} 超出范围 [0x00, 0xFA, 0xFC]")
+            raise ValueError(f"'linkage_config' Value {linkage_config} out of range [0x00, 0xFA, 0xFC]")
         if feedback_offset not in [0x00, 0x10, 0x20]:
-            raise ValueError(f"feedback_offset 值 {feedback_offset} 超出范围 [0x00, 0x10, 0x20]")
+            raise ValueError(f"'feedback_offset' Value {feedback_offset} out of range [0x00, 0x10, 0x20]")
         if ctrl_offset not in [0x00, 0x10, 0x20]:
-            raise ValueError(f"ctrl_offset 值 {ctrl_offset} 超出范围 [0x00, 0x10, 0x20]")
+            raise ValueError(f"'ctrl_offset' Value {ctrl_offset} out of range [0x00, 0x10, 0x20]")
         if linkage_offset not in [0x00, 0x10, 0x20]:
-            raise ValueError(f"linkage_offset 值 {linkage_offset} 超出范围 [0x00, 0x10, 0x20]")
+            raise ValueError(f"'linkage_offset' Value {linkage_offset} out of range [0x00, 0x10, 0x20]")
         self.linkage_config = linkage_config
         self.feedback_offset = feedback_offset
         self.ctrl_offset = ctrl_offset

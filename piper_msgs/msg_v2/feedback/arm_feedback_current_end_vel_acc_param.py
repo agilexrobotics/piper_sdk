@@ -3,6 +3,8 @@
 import math
 class ArmMsgFeedbackCurrentEndVelAccParam:
     '''
+    msg_v2_feedback
+    
     反馈当前末端速度/加速度参数
     
     0x477 Byte 0 = 0x01 feedback
@@ -28,6 +30,8 @@ class ArmMsgFeedbackCurrentEndVelAccParam:
         Byte 7: 末端最大角加速度 L
     '''
     '''
+    msg_v2_feedback
+    
     Feedback of Current End-Effector Speed/Acceleration Parameters
 
     0x477 Byte 0 = 0x01 feedback
@@ -53,10 +57,10 @@ class ArmMsgFeedbackCurrentEndVelAccParam:
         Byte 7: Maximum Angular Acceleration (Low Byte)
     '''
     def __init__(self, 
-                 end_max_linear_vel:int=0, 
-                 end_max_angular_vel:int=0, 
-                 end_max_linear_acc: int=0,
-                 end_max_angular_acc: int=0
+                 end_max_linear_vel: int = 0, 
+                 end_max_angular_vel: int = 0, 
+                 end_max_linear_acc: int = 0,
+                 end_max_angular_acc: int = 0
                  ):
         self.end_max_linear_vel = end_max_linear_vel
         self.end_max_angular_vel = end_max_angular_vel

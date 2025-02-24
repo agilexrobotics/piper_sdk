@@ -3,6 +3,8 @@
 
 class ArmMsgStatus:
     '''
+    msg_v2_feedback
+    
     机械臂状态
 
     CAN ID:
@@ -85,6 +87,8 @@ class ArmMsgStatus:
             bit[7]      保留
     '''
     '''
+    msg_v2_feedback
+    
     Robot Arm Status
 
     CAN ID: 
@@ -168,19 +172,19 @@ class ArmMsgStatus:
     '''
     
     def __init__(self,
-                 ctrl_mode=0,
-                 arm_status=0,
-                 mode_feed=0,
-                 teach_status=0,
-                 motion_status=0,
-                 trajectory_num=0,
-                 err_code=0):
-        self.ctrl_mode:int=ctrl_mode       #控制模式
-        self.arm_status:int=arm_status      #机械臂状态
-        self.mode_feed:int=mode_feed       #模式反馈
-        self.teach_status:int=teach_status    #示教状态
-        self.motion_status:int=motion_status   #运动状态
-        self.trajectory_num:int=trajectory_num  #当前运行轨迹点序号
+                 ctrl_mode: int = 0,
+                 arm_status: int = 0,
+                 mode_feed: int = 0,
+                 teach_status: int = 0,
+                 motion_status: int = 0,
+                 trajectory_num: int = 0,
+                 err_code: int = 0):
+        self.ctrl_mode: int = ctrl_mode       #控制模式
+        self.arm_status: int = arm_status      #机械臂状态
+        self.mode_feed: int = mode_feed       #模式反馈
+        self.teach_status: int = teach_status    #示教状态
+        self.motion_status: int = motion_status   #运动状态
+        self.trajectory_num: int = trajectory_num  #当前运行轨迹点序号
         self._err_code = err_code         #故障码
         self.err_status = self.ErrStatus()#故障码
 

@@ -3,6 +3,8 @@
 
 class ArmMsgGripperFeedBack:
     '''
+    msg_v1_feedback
+    
     夹爪反馈消息
     
     CAN ID:
@@ -33,6 +35,8 @@ class ArmMsgGripperFeedBack:
         Byte 7: 保留
     '''
     '''
+    msg_v1_feedback
+    
     Gripper Feedback Message
 
     CAN ID:
@@ -63,7 +67,10 @@ class ArmMsgGripperFeedBack:
             - bit[7]: Zeroing status (0: Not zeroed, 1: Zeroed or previously zeroed)
         Byte 7: Reserved
     '''
-    def __init__(self, grippers_angle: int=0, grippers_effort: int=0, status_code: int=0):
+    def __init__(self, 
+                 grippers_angle: int = 0, 
+                 grippers_effort: int = 0, 
+                 status_code: int = 0):
         self.grippers_angle = grippers_angle
         self.grippers_effort = grippers_effort
         self._status_code = status_code

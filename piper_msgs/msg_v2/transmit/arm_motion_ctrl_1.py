@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgMotionCtrl_1():
     '''
+    msg_v2_transmit
+    
     机械臂运动控制指令1
     
     CAN ID:
@@ -46,6 +48,8 @@ class ArmMsgMotionCtrl_1():
         Byte 7: crc16_L
     '''
     '''
+    msg_v2_transmit
+    
     Robotic Arm Motion Control Command 1
 
     CAN ID:
@@ -94,20 +98,20 @@ class ArmMsgMotionCtrl_1():
         Byte 6-7: crc16_H/L: uint16, CRC checksum for validation.
     '''
     def __init__(self, 
-                 emergency_stop:Literal[0x00, 0x01, 0x02]=0, 
-                 track_ctrl:Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]=0, 
-                 grag_teach_ctrl:Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]=0):
+                 emergency_stop: Literal[0x00, 0x01, 0x02] = 0, 
+                 track_ctrl: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08] = 0, 
+                 grag_teach_ctrl: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07] = 0):
         # 检查 emergency_stop 是否在有效范围内
         if emergency_stop not in [0x00, 0x01, 0x02]:
-            raise ValueError(f"emergency_stop 值 {emergency_stop} 超出范围 [0x00, 0x01, 0x02]")
+            raise ValueError(f"'emergency_stop' Value {emergency_stop} out of range [0x00, 0x01, 0x02]")
         
         # 检查 track_ctrl 是否在有效范围内
         if track_ctrl not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]:
-            raise ValueError(f"track_ctrl 值 {track_ctrl} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]")
+            raise ValueError(f"'track_ctrl' Value {track_ctrl} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]")
         
         # 检查 grag_teach_ctrl 是否在有效范围内
         if grag_teach_ctrl not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]:
-            raise ValueError(f"grag_teach_ctrl 值 {grag_teach_ctrl} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]")
+            raise ValueError(f"'grag_teach_ctrl' Value {grag_teach_ctrl} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]")
         self.emergency_stop = emergency_stop
         self.track_ctrl = track_ctrl
         self.grag_teach_ctrl = grag_teach_ctrl

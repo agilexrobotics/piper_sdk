@@ -3,6 +3,8 @@
 
 class ArmMsgJointCtrl():
     '''
+    msg_v2_transmit
+    
     机械臂关节控制,单位0.001度
     
     CAN ID:
@@ -17,6 +19,8 @@ class ArmMsgJointCtrl():
         joint_6: joint_6角度
     '''
     '''
+    msg_v2_transmit
+    
     Robotic Arm Joint Control (Unit: 0.001°)
 
     CAN IDs:
@@ -30,9 +34,13 @@ class ArmMsgJointCtrl():
         joint_5: The target angle of joint 5 in 0.001°.
         joint_6: The target angle of joint 6 in 0.001°.
     '''
-    def __init__(self, joint_1: int=0, joint_2: int=0, 
-                 joint_3: int=0, joint_4: int=0, 
-                 joint_5: int=0, joint_6: int=0):
+    def __init__(self, 
+                 joint_1: int = 0, 
+                 joint_2: int = 0, 
+                 joint_3: int = 0, 
+                 joint_4: int = 0, 
+                 joint_5: int = 0, 
+                 joint_6: int = 0):
         self.joint_1 = joint_1
         self.joint_2 = joint_2
         self.joint_3 = joint_3

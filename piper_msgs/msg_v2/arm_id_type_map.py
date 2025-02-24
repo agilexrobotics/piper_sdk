@@ -9,9 +9,13 @@ from .can_id import CanIDPiper
 
 class ArmMessageMapping:
     '''
+    msg_v2
+    
     机械臂消息类型和CAN ID的映射
     '''
     '''
+    msg_v2
+    
     Mapping of Robotic Arm Message Types and CAN IDs
     '''
     # 初始化映射字典

@@ -3,6 +3,8 @@
 
 class ArmMsgJointMitCtrl():
     '''
+    msg_v2_transmit
+    
     机械臂关节mit控制
     
     CAN ID:
@@ -30,6 +32,8 @@ class ArmMsgJointMitCtrl():
         Byte 7: T_ref [bit3~bit0] CRC [bit3~bit0]
     '''
     '''
+    msg_v2_transmit
+    
     Mechanical Arm Joint MIT Control
 
     CAN IDs:
@@ -91,6 +95,8 @@ class ArmMsgJointMitCtrl():
 
 class ArmMsgAllJointMitCtrl:
     '''
+    msg_v2_transmit
+    
     机械臂关节mit控制,全部关节
     
     CAN ID:
@@ -118,6 +124,8 @@ class ArmMsgAllJointMitCtrl:
         Byte 7: T_ref [bit3~bit0] CRC [bit3~bit0]
     '''
     '''
+    msg_v2_transmit
+    
     Mechanical Arm Joint MIT Control
 
     CAN IDs:

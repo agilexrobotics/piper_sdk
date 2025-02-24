@@ -3,6 +3,8 @@
 
 class ArmMsgCrashProtectionRatingFeedback:
     '''
+    msg_v1_feedback
+    
     碰撞防护等级反馈指令
     
     CAN ID: 
@@ -33,6 +35,8 @@ class ArmMsgCrashProtectionRatingFeedback:
     '''
     
     '''
+    msg_v1_feedback
+    
     Get the collision protection level feedback for each joint.
 
     CAN ID: 
@@ -62,12 +66,12 @@ class ArmMsgCrashProtectionRatingFeedback:
         Byte 7: Reserved
     '''
     def __init__(self, 
-                 joint_1_protection_level:int=0, 
-                 joint_2_protection_level:int=0, 
-                 joint_3_protection_level: int=0,
-                 joint_4_protection_level: int=0,
-                 joint_5_protection_level: int=0,
-                 joint_6_protection_level: int=0
+                 joint_1_protection_level: int = 0, 
+                 joint_2_protection_level: int = 0, 
+                 joint_3_protection_level: int = 0,
+                 joint_4_protection_level: int = 0,
+                 joint_5_protection_level: int = 0,
+                 joint_6_protection_level: int = 0
                  ):
         self.joint_1_protection_level = joint_1_protection_level
         self.joint_2_protection_level = joint_2_protection_level

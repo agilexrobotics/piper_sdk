@@ -3,6 +3,8 @@
 
 class ArmMsgCrashProtectionRatingConfig:
     '''
+    msg_v2_transmit
+    
     碰撞防护等级设置指令
     
     CAN ID:
@@ -32,6 +34,8 @@ class ArmMsgCrashProtectionRatingConfig:
         Byte 7: 保留
     '''
     '''
+    msg_v2_transmit
+    
     End Effector Speed/Acceleration Parameter Setting Command
 
     CAN ID:
@@ -61,12 +65,12 @@ class ArmMsgCrashProtectionRatingConfig:
         Byte 7: Reserved.
     '''
     def __init__(self, 
-                 joint_1_protection_level:int=0xFF, 
-                 joint_2_protection_level:int=0xFF, 
-                 joint_3_protection_level: int=0xFF,
-                 joint_4_protection_level: int=0xFF,
-                 joint_5_protection_level: int=0xFF,
-                 joint_6_protection_level: int=0xFF
+                 joint_1_protection_level: int = 0xFF, 
+                 joint_2_protection_level: int = 0xFF, 
+                 joint_3_protection_level: int = 0xFF,
+                 joint_4_protection_level: int = 0xFF,
+                 joint_5_protection_level: int = 0xFF,
+                 joint_6_protection_level: int = 0xFF
                  ):
         self.joint_1_protection_level = joint_1_protection_level
         self.joint_2_protection_level = joint_2_protection_level

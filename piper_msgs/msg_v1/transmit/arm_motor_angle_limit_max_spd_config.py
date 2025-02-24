@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgMotorAngleLimitMaxSpdSet:
     '''
+    msg_v1_transmit
+    
     电机角度限制/最大速度设置指令
 
     CAN ID:
@@ -14,7 +16,16 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         motor_num: 关节电机序号
         max_angle_limit: 最大角度限制,单位 0.1°
         min_angle_limit: 最小角度限制,单位 0.1°
-        max_joint_spd: 最大关节速度,单位 0.001rad/s
+        max_joint_spd: 最大关节速度,单位 0.001rad/s,范围[0,3000]
+    
+    |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
+    |----------|     ----------     |     ----------     |     ----------     |
+    |joint1    |   [-2.618, 2.618]  |    [-150.0, 150.0] |      [0, 3.0]      |
+    |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
+    |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
+    |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
+    |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
+    |joint6    |   [-2.0944, 2.0944]|    [-120.0, 120.0] |      [0, 3.0]      |
     
     位描述:
     
@@ -27,6 +38,8 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         Byte 6: 最大关节速度 L
     '''
     '''
+    msg_v1_transmit
+    
     Motor Angle Limits/Maximum Speed Setting Command
 
     CAN ID:
@@ -36,8 +49,17 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         motor_num: Joint motor index.
         max_angle_limit: Maximum angle limit, unit 0.1°.
         min_angle_limit: Minimum angle limit, unit 0.1°.
-        max_joint_spd: Maximum joint speed, unit 0.001 rad/s.
-
+        max_joint_spd: Maximum joint speed, unit 0.001 rad/s,Range [0, 3000].
+    
+    |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
+    |----------|     ----------     |     ----------     |     ----------     |
+    |joint1    |   [-2.618, 2.618]  |    [-150.0, 150.0] |      [0, 3.0]      |
+    |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
+    |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
+    |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
+    |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
+    |joint6    |   [-2.0944, 2.0944]|    [-120.0, 120.0] |      [0, 3.0]      |
+    
     Bit Description:
 
         Byte 0: Joint motor index, uint8, range 1-6.
@@ -49,12 +71,14 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         Byte 6: Maximum joint speed (low byte).
     '''
     def __init__(self, 
-                 motor_num:Literal[1, 2, 3, 4, 5, 6]=1, 
-                 max_angle_limit: int=0, 
-                 min_angle_limit: int=0,
-                 max_joint_spd: int=0):
+                 motor_num: Literal[1, 2, 3, 4, 5, 6] = 1, 
+                 max_angle_limit: int = 0, 
+                 min_angle_limit: int = 0,
+                 max_joint_spd: int = 3000):
         if motor_num not in [1, 2, 3, 4, 5, 6]:
-            raise ValueError(f"motor_num 值 {motor_num} 超出范围 [1, 2, 3, 4, 5, 6]")
+            raise ValueError(f"'motor_num' Value {motor_num} out of range [1, 2, 3, 4, 5, 6]")
+        if not (0 <= max_joint_spd <= 3000):
+            raise ValueError(f"'max_joint_spd' Value {max_joint_spd} out of range 0-3000")
         self.motor_num = motor_num
         self.max_angle_limit = max_angle_limit
         self.min_angle_limit = min_angle_limit

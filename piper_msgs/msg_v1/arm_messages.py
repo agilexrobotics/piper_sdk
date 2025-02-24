@@ -41,9 +41,13 @@ from .feedback.arm_crash_protection_rating_feedback import ArmMsgCrashProtection
 
 class PiperMessage:
     '''
+    msg_v1
+    
     Piper机械臂全部消息,为所有消息的汇总
     '''
     '''
+    msg_v1
+    
     Piper Robotic Arm Complete Message Summary
     '''
     def __init__(self, 

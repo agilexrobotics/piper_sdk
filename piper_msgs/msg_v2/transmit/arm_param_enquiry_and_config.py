@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgParamEnquiryAndConfig:
     '''
+    msg_v2_transmit
+    
     机械臂参数查询与设置指令
     
     CAN ID:
@@ -36,9 +38,12 @@ class ArmMsgParamEnquiryAndConfig:
         Byte 4: uint8,设置末端负载,
                 0x00 : 空载;
                 0x01 : 半载;
-                0x02 : 满载
+                0x02 : 满载;
+                0x03 : 无效
     '''
     '''
+    msg_v2_transmit
+    
     Robot Arm Parameter Query and Setting Command
 
     CAN ID:
@@ -71,24 +76,25 @@ class ArmMsgParamEnquiryAndConfig:
             0x00: No load.
             0x01: Half load.
             0x02: Full load.
+            0x03: Invalid.
     '''
     def __init__(self, 
-                 param_enquiry:Literal[0x00, 0x01, 0x02, 0x03, 0x04]=0x00, 
-                 param_setting: Literal[0x00, 0x01, 0x02]=0, 
-                 data_feedback_0x48x: Literal[0x00, 0x01, 0x02]=0x02,
-                 end_load_param_setting_effective: Literal[0x00, 0xAE]=0,
-                 set_end_load: Literal[0x00, 0x01, 0x02, 0x03]=0x03
+                 param_enquiry:Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00, 
+                 param_setting: Literal[0x00, 0x01, 0x02] = 0, 
+                 data_feedback_0x48x: Literal[0x00, 0x01, 0x02] = 0x00,
+                 end_load_param_setting_effective: Literal[0x00, 0xAE] = 0,
+                 set_end_load: Literal[0x00, 0x01, 0x02, 0x03] = 0x03
                  ):
         if param_enquiry not in [0x00, 0x01, 0x02, 0x03, 0x04]:
-            raise ValueError(f"param_enquiry 值 {param_enquiry} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04]")
+            raise ValueError(f"'param_enquiry' Value {param_enquiry} out of range [0x00, 0x01, 0x02, 0x03, 0x04]")
         if param_setting not in [0x00, 0x01, 0x02]:
-            raise ValueError(f"param_setting 值 {param_setting} 超出范围 [0x00, 0x01, 0x02]")
+            raise ValueError(f"'param_setting' Value {param_setting} out of range [0x00, 0x01, 0x02]")
         if data_feedback_0x48x not in [0x00, 0x01, 0x02]:
-            raise ValueError(f"data_feedback_0x48x 值 {data_feedback_0x48x} 超出范围 [0x00, 0x01, 0x02]")
+            raise ValueError(f"'data_feedback_0x48x' Value {data_feedback_0x48x} out of range [0x00, 0x01, 0x02]")
         if end_load_param_setting_effective not in [0x00, 0xAE]:
-            raise ValueError(f"end_load_param_setting_effective 值 {end_load_param_setting_effective} 超出范围 [0x00, 0xAE]")
+            raise ValueError(f"'end_load_param_setting_effective' Value {end_load_param_setting_effective} out of range [0x00, 0xAE]")
         if set_end_load not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"set_end_load 值 {set_end_load} 超出范围 [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(f"'set_end_load' Value {set_end_load} out of range [0x00, 0x01, 0x02, 0x03]")
         self.param_enquiry = param_enquiry
         self.param_setting = param_setting
         self.data_feedback_0x48x = data_feedback_0x48x

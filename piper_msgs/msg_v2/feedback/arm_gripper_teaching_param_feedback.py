@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgGripperTeachingPendantParamFeedback:
     '''
+    msg_v2_feedback
+    
     夹爪/示教器参数反馈指令(基于V1.5-2版本后)
     
     CAN ID:
@@ -31,6 +33,8 @@ class ArmMsgGripperTeachingPendantParamFeedback:
         Byte 7 保留
     '''
     '''
+    msg_v2_feedback
+    
     Gripper/Teaching Pendant Parameter Feedback(Based on version V1.5-2 and later)
 
     CAN ID:
@@ -56,8 +60,8 @@ class ArmMsgGripperTeachingPendantParamFeedback:
         Byte 7	Reserved	-	Reserved for future use.
     '''
     def __init__(self, 
-                 teaching_range_per: int=0, 
-                 max_range_config:int = 0):
+                 teaching_range_per: int = 0, 
+                 max_range_config: int = 0):
         self.teaching_range_per = teaching_range_per
         self.max_range_config = max_range_config
 

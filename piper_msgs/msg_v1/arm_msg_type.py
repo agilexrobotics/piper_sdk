@@ -5,9 +5,13 @@ from enum import Enum, auto
 
 class ArmMsgType(Enum):
     '''
+    msg_v1
+    
     机械臂消息类型,枚举类型
     '''
     '''
+    msg_v1
+    
     Robotic Arm Message Types (Enumeration)
     '''
     # feedback

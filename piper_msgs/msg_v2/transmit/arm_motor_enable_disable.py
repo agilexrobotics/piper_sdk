@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgMotorEnableDisableConfig:
     '''
+    msg_v2_transmit
+    
     电机使能/失能设置指令
     
     CAN ID:
@@ -24,6 +26,8 @@ class ArmMsgMotorEnableDisableConfig:
                 0x02 : 使能
     '''
     '''
+    msg_v2_transmit
+    
     Motor Enable/Disable Command
 
     CAN ID:
@@ -47,12 +51,12 @@ class ArmMsgMotorEnableDisableConfig:
             0x02: Enable.
     '''
     def __init__(self, 
-                 motor_num:Literal[1, 2, 3, 4, 5, 6, 7, 0xFF]=0xFF,
-                 enable_flag:Literal[0x01, 0x02]=0x01):
+                 motor_num: Literal[1, 2, 3, 4, 5, 6, 7, 0xFF] = 0xFF,
+                 enable_flag: Literal[0x01, 0x02] = 0x01):
         if motor_num not in [1, 2, 3, 4, 5, 6, 7, 0xFF]:
-            raise ValueError(f"motor_num 值 {motor_num} 超出范围 [1, 2, 3, 4, 5, 6, 7, 0xFF]")
+            raise ValueError(f"'motor_num' Value {motor_num} out of range [1, 2, 3, 4, 5, 6, 7, 0xFF]")
         if enable_flag not in [0x01, 0x02]:
-            raise ValueError(f"enable_flag 值 {enable_flag} 超出范围 [0x01, 0x02]")
+            raise ValueError(f"'enable_flag' Value {enable_flag} out of range [0x01, 0x02]")
         self.motor_num = motor_num
         self.enable_flag = enable_flag
 

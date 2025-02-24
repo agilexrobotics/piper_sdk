@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgMotionCtrl_2():
     '''
+    msg_v2_transmit
+    
     机械臂运动控制指令2
 
     CAN ID:
@@ -36,6 +38,7 @@ class ArmMsgMotionCtrl_2():
         Byte 3: mit模式      uint8   
                 0x00 位置速度模式
                 0xAD MIT模式
+                0xFF 无效
         Byte 4: 离线轨迹点停留时间 uint8 0~254 ,单位: s;255:轨迹终止
         Byte 5: 安装位置 uint8 注意接线朝后 ---基于V1.5-2版本后
                 0x00 无效值
@@ -44,6 +47,8 @@ class ArmMsgMotionCtrl_2():
                 0x03 侧装右
     '''
     '''
+    msg_v2_transmit
+    
     Robotic Arm Motion Control Command 2
 
     CAN ID:
@@ -78,6 +83,7 @@ class ArmMsgMotionCtrl_2():
         Byte 3 mit_mode: uint8, motion control mode.
             0x00: Position-speed mode.
             0xAD: MIT mode.
+            0xFF: Invalid.
 
         Byte 4 offline_trajectory_hold_time: uint8, duration to hold at offline trajectory points.
             Range: 0~255, unit: seconds.
@@ -89,25 +95,25 @@ class ArmMsgMotionCtrl_2():
                 0x03: Right-side mount
     '''
     def __init__(self, 
-                 ctrl_mode:Literal[0x00, 0x01, 0x03, 0x04, 0x07]=0x01, 
-                 move_mode:Literal[0x00, 0x01, 0x02, 0x03, 0x04]=0x01, 
-                 move_spd_rate_ctrl:int=50,
-                 mit_mode:Literal[0x00, 0xAD, 0xFF]=0x00,
-                 residence_time:int=0,
-                 installation_pos:Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
+                 ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
+                 move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x01, 
+                 move_spd_rate_ctrl: int = 50,
+                 mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
+                 residence_time: int = 0,
+                 installation_pos: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
         # 检查是否在有效范围内
         if ctrl_mode not in [0x00, 0x01, 0x03, 0x04, 0x07]:
-            raise ValueError(f"ctrl_mode 值 {ctrl_mode} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
+            raise ValueError(f"'ctrl_mode' Value {ctrl_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
         if move_mode not in [0x00, 0x01, 0x02, 0x03, 0x04]:
-            raise ValueError(f"move_mode 值 {move_mode} 超出范围 [0x00, 0x01, 0x02, 0x03, 0x04]")
-        if not (0<= move_spd_rate_ctrl <=100):
-            raise ValueError(f"输入的值 {move_spd_rate_ctrl} 超出范围 [0, 100]")
+            raise ValueError(f"'move_mode' Value {move_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04]")
+        if not (0 <= move_spd_rate_ctrl <= 100):
+            raise ValueError(f"'move_spd_rate_ctrl' Value {move_spd_rate_ctrl} out of range 0-100")
         if mit_mode not in [0x00, 0xAD, 0xFF]:
-            raise ValueError(f"mit_mode 值 {mit_mode} 超出范围 [0x00, 0xAD, 0xFF]")
-        if not (0<= residence_time <=255):
-            raise ValueError(f"输入的值 {residence_time} 超出范围 [0, 255]")
+            raise ValueError(f"'mit_mode' Value {mit_mode} out of range [0x00, 0xAD, 0xFF]")
+        if not (0 <= residence_time <= 255):
+            raise ValueError(f"'residence_time' Value {residence_time} out of range 0-255")
         if installation_pos not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"installation_pos 值 {installation_pos} 超出范围 [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(f"'installation_pos' Value {installation_pos} out of range [0x00, 0x01, 0x02, 0x03]")
         self.ctrl_mode = ctrl_mode
         self.move_mode = move_mode
         self.move_spd_rate_ctrl = move_spd_rate_ctrl

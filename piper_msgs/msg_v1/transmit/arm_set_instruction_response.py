@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgInstructionResponseConfig:
     '''
+    msg_v1_transmit
+    
     设置指令应答
 
     CAN ID:
@@ -18,14 +20,16 @@ class ArmMsgInstructionResponseConfig:
     位描述:
     
         Byte 0: uint8, 应答指令索引
-                - 取设置指令 id 最后一个字节
-                - 例如：应答 0x471 设置指令时此位填充0x71
+                取设置指令 id 最后一个字节
+                例如：应答 0x471 设置指令时此位填充0x71
         Byte 1: uint8, 零点是否设置成功
-                - 零点成功设置 : 0x01
-                - 设置失败/未设置: 0x00
-                - 仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答 0x01
+                零点成功设置 : 0x01
+                设置失败/未设置: 0x00
+                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答 0x01
     '''
     '''
+    msg_v1_transmit
+    
     Set Command Response
 
     CAN ID:
@@ -45,10 +49,10 @@ class ArmMsgInstructionResponseConfig:
             0x00: Failed to set/Not set.
     '''
     def __init__(self,
-                 instruction_index:int=0,
-                 zero_config_success_flag:Literal[0x00, 0x01]=0):
+                 instruction_index: int = 0,
+                 zero_config_success_flag: Literal[0x00, 0x01] =0 ):
         if zero_config_success_flag not in [0x00, 0x01]:
-            raise ValueError(f"zero_config_success_flag 值 {zero_config_success_flag} 超出范围 [0x01, 0x02]")
+            raise ValueError(f"'zero_config_success_flag' Value {zero_config_success_flag} out of range [0x01, 0x02]")
         self.instruction_index = instruction_index
         self.zero_config_success_flag = zero_config_success_flag
 

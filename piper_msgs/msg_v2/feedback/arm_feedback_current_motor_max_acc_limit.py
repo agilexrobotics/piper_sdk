@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgFeedbackCurrentMotorMaxAccLimit:
     '''
+    msg_v2_feedback
+    
     反馈当前电机最大加速度限制
 
     CAN ID:
@@ -21,6 +23,8 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
         Byte 2: 最大关节加速度 L
     '''
     '''
+    msg_v2_feedback
+    
     Feedback on Current Motor Maximum Acceleration Limit
 
     CAN ID: 
@@ -37,11 +41,11 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
         Byte 2: Maximum Joint Acceleration (Low Byte)
     '''
     def __init__(self, 
-                 joint_motor_num:Literal[0, 1, 2, 3, 4, 5, 6]=0, 
-                 max_joint_acc:int=0
+                 joint_motor_num: Literal[0, 1, 2, 3, 4, 5, 6] = 0, 
+                 max_joint_acc: int = 0
                  ):
         if joint_motor_num not in [0, 1, 2, 3, 4, 5, 6]:
-            raise ValueError(f"joint_motor_num 值 {joint_motor_num} 超出范围 [1, 2, 3, 4, 5, 6]")
+            raise ValueError(f"'joint_motor_num' Value {joint_motor_num} out of range [1, 2, 3, 4, 5, 6]")
         self.joint_motor_num = joint_motor_num
         self.max_joint_acc = max_joint_acc
 

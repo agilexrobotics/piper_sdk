@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgSearchMotorMaxAngleSpdAccLimit:
     '''
+    msg_v1_transmit
+    
     查询电机角度/最大速度/最大加速度限制指令
 
     CAN ID:
@@ -18,12 +20,14 @@ class ArmMsgSearchMotorMaxAngleSpdAccLimit:
     位描述:
     
         :Byte 0 motor_num: uint8, 关节电机序号。
-                - 值域 1-6,1-6 代表关节驱动器序号
+                值域 1-6,1-6 代表关节驱动器序号
         :Byte 1 search_content: uint8, 查询内容。
-                - 0x01 : 查询电机角度/最大速度
-                - 0x02 : 查询电机最大加速度限制
+                0x01 : 查询电机角度/最大速度
+                0x02 : 查询电机最大加速度限制
     '''
     '''
+    msg_v1_transmit
+    
     Motor Angle/Max Speed/Max Acceleration Limit Query Command
 
     CAN ID:
@@ -43,12 +47,12 @@ class ArmMsgSearchMotorMaxAngleSpdAccLimit:
             0x02: Query motor max acceleration limit.
     '''
     def __init__(self, 
-                 motor_num:Literal[1, 2, 3, 4, 5, 6]=1,
-                 search_content:Literal[0x01, 0x02]=0x01):
+                 motor_num: Literal[1, 2, 3, 4, 5, 6] = 1,
+                 search_content: Literal[0x01, 0x02] = 0x01):
         if motor_num not in [1, 2, 3, 4, 5, 6, 7]:
-            raise ValueError(f"motor_num 值 {motor_num} 超出范围 [1, 2, 3, 4, 5, 6, 7]")
+            raise ValueError(f"'motor_num' Value {motor_num} out of range [1, 2, 3, 4, 5, 6, 7]")
         if search_content not in [0x01, 0x02]:
-            raise ValueError(f"search_content 值 {search_content} 超出范围 [0x01, 0x02]")
+            raise ValueError(f"'search_content' Value {search_content} out of range [0x01, 0x02]")
         self.motor_num = motor_num
         self.search_content = search_content
 

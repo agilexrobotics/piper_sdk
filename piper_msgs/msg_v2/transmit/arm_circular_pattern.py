@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgCircularPatternCoordNumUpdateCtrl:
     '''
+    msg_v2_transmit
+    
     圆弧模式坐标序号更新指令
     
     CAN ID:
@@ -23,6 +25,8 @@ class ArmMsgCircularPatternCoordNumUpdateCtrl:
                 0x03 终点
     '''
     '''
+    msg_v2_transmit
+    
     Arc Mode Coordinate Index Update Command
 
     CAN ID:
@@ -39,9 +43,9 @@ class ArmMsgCircularPatternCoordNumUpdateCtrl:
                         0x02 Midpoint
                         0x03 Endpoint
     '''
-    def __init__(self, instruction_num:Literal[0x00, 0x01, 0x02, 0x03]=0x00):
+    def __init__(self, instruction_num: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
         if instruction_num not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"instruction_num 值 {instruction_num} 超出范围 [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(f"'instruction_num' Value {instruction_num} out of range [0x00, 0x01, 0x02, 0x03]")
         self.instruction_num = instruction_num
 
     def __str__(self):

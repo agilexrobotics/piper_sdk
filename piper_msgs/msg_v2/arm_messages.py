@@ -48,9 +48,13 @@ from .transmit.arm_gripper_teaching_param_config import ArmMsgGripperTeachingPen
 #---------------------------------------------------------------------------------------------#
 class PiperMessage:
     '''
+    msg_v2
+    
     Piper机械臂全部消息,为所有消息的汇总
     '''
     '''
+    msg_v2
+    
     Piper Robotic Arm Complete Message Summary
     '''
     def __init__(self, 

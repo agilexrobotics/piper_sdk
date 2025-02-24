@@ -3,6 +3,8 @@
 
 class ArmMsgEndVelAccParamConfig:
     '''
+    msg_v1_transmit
+    
     末端速度/加速度参数设置指令
     
     CAN ID:
@@ -26,6 +28,8 @@ class ArmMsgEndVelAccParamConfig:
         Byte 7: 末端最大角加速度 L
     '''
     '''
+    msg_v1_transmit
+    
     End Effector Speed/Acceleration Parameter Setting Command
 
     CAN ID:
@@ -49,10 +53,10 @@ class ArmMsgEndVelAccParamConfig:
         Byte 7: Low byte of maximum angular acceleration.
     '''
     def __init__(self, 
-                 end_max_linear_vel:int=0, 
-                 end_max_angular_vel:int=0, 
-                 end_max_linear_acc: int=0,
-                 end_max_angular_acc: int=0
+                 end_max_linear_vel: int = 0, 
+                 end_max_angular_vel: int = 0, 
+                 end_max_linear_acc: int = 0,
+                 end_max_angular_acc: int = 0
                  ):
         self.end_max_linear_vel = end_max_linear_vel
         self.end_max_angular_vel = end_max_angular_vel

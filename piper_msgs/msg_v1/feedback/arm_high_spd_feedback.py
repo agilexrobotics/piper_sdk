@@ -6,6 +6,8 @@ from typing_extensions import (
 )
 class ArmHighSpdFeedback:
     '''
+    msg_v1_feedback
+    
     驱动器信息高速反馈 0x5
 
     节点 ID:
@@ -32,6 +34,8 @@ class ArmHighSpdFeedback:
         Byte 7: 位置最低位
     '''
     '''
+    msg_v1_feedback
+    
     High-Speed Feedback of Drive Information 0x5
 
     Node ID:
@@ -58,13 +62,13 @@ class ArmHighSpdFeedback:
         Byte 7: Motor Position (Least Significant Byte)
     '''
     def __init__(self, 
-                 can_id:Literal[0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]=0,
-                 motor_speed:int=0, 
-                 current:int=0, 
-                 pos: int=0,
+                 can_id: Literal[0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256] = 0,
+                 motor_speed: int = 0, 
+                 current: int = 0, 
+                 pos: int = 0,
                  ):
-        if can_id not in [0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]:
-            raise ValueError(f"can_id 值 {can_id} 不在范围 [0x000,0x251,0x252,0x253,0x254,0x254,0x255,0x256]")
+        if can_id not in [0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256]:
+            raise ValueError(f"'can_id' Value {can_id} out of range [0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256]")
         self.can_id = can_id
         self.motor_speed = motor_speed
         self.current = current

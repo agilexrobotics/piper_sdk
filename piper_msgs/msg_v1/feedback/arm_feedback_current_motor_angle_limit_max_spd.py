@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
     '''
+    msg_v1_feedback
+    
     反馈当前电机限制角度/最大速度
     
     CAN ID:
@@ -28,6 +30,8 @@ class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
         Byte 7: 保留
     '''
     '''
+    msg_v1_feedback
+    
     Feedback on Current Motor Angle Limits/Maximum Speed
 
     CAN ID:
@@ -51,12 +55,12 @@ class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
         Byte 7: Reserved
     '''
     def __init__(self, 
-                 motor_num:Literal[0, 1, 2, 3, 4, 5, 6]=0, 
-                 max_angle_limit: int=0, 
-                 min_angle_limit: int=0,
-                 max_joint_spd: int=0):
+                 motor_num: Literal[0, 1, 2, 3, 4, 5, 6] = 0, 
+                 max_angle_limit: int = 0, 
+                 min_angle_limit: int = 0,
+                 max_joint_spd: int = 0):
         if motor_num not in [0, 1, 2, 3, 4, 5, 6]:
-            raise ValueError(f"motor_num 值 {motor_num} 超出范围 [1, 2, 3, 4, 5, 6]")
+            raise ValueError(f"'motor_num' Value {motor_num} out of range [1, 2, 3, 4, 5, 6]")
         self.motor_num = motor_num
         self.max_angle_limit = max_angle_limit
         self.min_angle_limit = min_angle_limit

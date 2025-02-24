@@ -5,6 +5,8 @@ from typing_extensions import (
 )
 class ArmMsgGripperTeachingPendantParamConfig:
     '''
+    msg_v2_transmit
+    
     夹爪/示教器参数设置指令(基于V1.5-2版本后)
     
     CAN ID:
@@ -31,6 +33,8 @@ class ArmMsgGripperTeachingPendantParamConfig:
         Byte 7: 保留
     '''
     '''
+    msg_v2_transmit
+    
     Gripper/Teaching Pendant Parameter Configuration Command(Based on version V1.5-2 and later)
 
     CAN ID:
@@ -56,12 +60,12 @@ class ArmMsgGripperTeachingPendantParamConfig:
         Byte 7	Reserved	-	Reserved for future use.
     '''
     def __init__(self, 
-                 teaching_range_per: int=100, 
-                 max_range_config: Literal[0,70,100] = 0):
-        if not (100<= teaching_range_per <=200):
-            raise ValueError(f"输入的值 {teaching_range_per} 超出范围 [100, 200]")
-        if max_range_config not in [0,70,100]:
-            raise ValueError(f"max_range_config 值 {max_range_config} 超出范围 [0,70,100]")
+                 teaching_range_per: int = 100, 
+                 max_range_config: Literal[0, 70, 100] = 0):
+        if not (100 <= teaching_range_per <= 200):
+            raise ValueError(f"'teaching_range_per' Value {teaching_range_per} out of range [100, 200]")
+        if max_range_config not in [0, 70, 100]:
+            raise ValueError(f"'max_range_config' Value {max_range_config} out of range [0,70,100]")
         self.teaching_range_per = teaching_range_per
         self.max_range_config = max_range_config
 

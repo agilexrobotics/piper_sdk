@@ -6,6 +6,8 @@ from typing_extensions import (
 
 class ArmMsgInstructionResponseConfig:
     '''
+    msg_v2_transmit
+    
     设置指令应答
 
     CAN ID:
@@ -26,6 +28,8 @@ class ArmMsgInstructionResponseConfig:
                 仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答 0x01
     '''
     '''
+    msg_v2_transmit
+    
     Set Command Response
 
     CAN ID:
@@ -45,10 +49,10 @@ class ArmMsgInstructionResponseConfig:
             0x00: Failed to set/Not set.
     '''
     def __init__(self,
-                 instruction_index:int=0,
-                 zero_config_success_flag:Literal[0x00, 0x01]=0):
+                 instruction_index: int = 0,
+                 zero_config_success_flag: Literal[0x00, 0x01] =0 ):
         if zero_config_success_flag not in [0x00, 0x01]:
-            raise ValueError(f"zero_config_success_flag 值 {zero_config_success_flag} 超出范围 [0x01, 0x02]")
+            raise ValueError(f"'zero_config_success_flag' Value {zero_config_success_flag} out of range [0x01, 0x02]")
         self.instruction_index = instruction_index
         self.zero_config_success_flag = zero_config_success_flag
 

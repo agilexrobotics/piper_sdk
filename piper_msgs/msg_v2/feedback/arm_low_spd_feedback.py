@@ -6,6 +6,8 @@ from typing_extensions import (
 )
 class ArmLowSpdFeedback:
     '''
+    msg_v2_feedback
+    
     驱动器信息高速反馈 0x6
 
     节点 ID:
@@ -41,6 +43,8 @@ class ArmLowSpdFeedback:
         Byte 7:母线电流低八位
     '''
     '''
+    msg_v2_feedback
+    
     High-Speed Feedback of Drive Information 0x6
 
     Node ID:
@@ -77,15 +81,15 @@ class ArmLowSpdFeedback:
         Byte 7: Bus Current (Low Byte)
     '''
     def __init__(self, 
-                 can_id:Literal[0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]=0,
-                 vol:int=0, 
-                 foc_temp:int=0, 
-                 motor_temp: int=0,
-                 foc_status: int=0,
-                 bus_current: int=0,
+                 can_id: Literal[0x000, 0x261, 0x262, 0x263, 0x264, 0x264, 0x265, 0x266] = 0,
+                 vol: int = 0, 
+                 foc_temp: int = 0, 
+                 motor_temp: int = 0,
+                 foc_status: int = 0,
+                 bus_current: int = 0,
                  ):
-        if can_id not in [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]:
-            raise ValueError(f"can_id 值 {can_id} 不在范围 [0x000,0x261,0x262,0x263,0x264,0x264,0x265,0x266]")
+        if can_id not in [0x000, 0x261, 0x262, 0x263, 0x264, 0x264, 0x265, 0x266]:
+            raise ValueError(f"'can_id' Value {can_id} out of range [0x000, 0x261, 0x262, 0x263, 0x264, 0x264, 0x265, 0x266]")
         self.can_id = can_id
         self.vol = vol
         self.foc_temp = foc_temp
