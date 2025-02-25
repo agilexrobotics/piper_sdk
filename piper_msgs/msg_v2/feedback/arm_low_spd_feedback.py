@@ -104,19 +104,19 @@ class ArmLowSpdFeedback:
             self.motor_overheating = False
             self.driver_overcurrent = False
             self.driver_overheating = False
-            self.sensor_status = False
+            self.collision_status = False
             self.driver_error_status = False
             self.driver_enable_status = False
-            self.homing_status  = False
+            self.stall_status  = False
         def __str__(self): 
             return (f"    voltage_too_low : {self.voltage_too_low}\n"
                     f"    motor_overheating: {self.motor_overheating}\n"
                     f"    driver_overcurrent: {self.driver_overcurrent}\n"
                     f"    driver_overheating: {self.driver_overheating}\n"
-                    f"    sensor_status: {self.sensor_status}\n"
+                    f"    collision_status: {self.collision_status}\n"
                     f"    driver_error_status: {self.driver_error_status}\n"
                     f"    driver_enable_status: {self.driver_enable_status}\n"
-                    f"    homing_status: {self.homing_status}\n"
+                    f"    stall_status: {self.stall_status}\n"
                     )
 
     @property
@@ -133,10 +133,10 @@ class ArmLowSpdFeedback:
         self.foc_status.motor_overheating = bool(value & (1 << 1))
         self.foc_status.driver_overcurrent = bool(value & (1 << 2))
         self.foc_status.driver_overheating = bool(value & (1 << 3))
-        self.foc_status.sensor_status = bool(value & (1 << 4))
+        self.foc_status.collision_status = bool(value & (1 << 4)) # 碰撞状态
         self.foc_status.driver_error_status = bool(value & (1 << 5))
         self.foc_status.driver_enable_status = bool(value & (1 << 6))
-        self.foc_status.homing_status = bool(value & (1 << 7))
+        self.foc_status.stall_status = bool(value & (1 << 7)) # 堵转状态
 
     def __str__(self):
         return (f"ArmLowSpdFeedback(\n"

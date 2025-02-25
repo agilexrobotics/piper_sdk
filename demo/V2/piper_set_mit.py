@@ -13,4 +13,6 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface_V2()
     piper.ConnectPort()
-    piper.MotionCtrl_2(0, 0, 0, 0xAD)# 0xFC
+    while True:
+        piper.MotionCtrl_2(1, 1, 0, 0xAD)# 0xFC
+        time.sleep(1)

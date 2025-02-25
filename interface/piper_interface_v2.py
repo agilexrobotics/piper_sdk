@@ -1870,6 +1870,13 @@ class C_PiperInterface_V2():
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
     
+    def __ValidateEndPoseValue(self, endpose_num:str, endpose_value):
+        # 类型判断
+        if not isinstance(endpose_value, int):
+            print(f"Error: EndPose_{endpose_num} value {endpose_value} is not an integer.")
+            return False
+        return True
+    
     def EndPoseCtrl(self, X: int, Y: int, Z: int, RX: int, RY: int, RZ: int):
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
@@ -1899,10 +1906,17 @@ class C_PiperInterface_V2():
             RY_axis: Rotation about Y-axis, in 0.001 degrees.
             RZ_axis: Rotation about Z-axis, in 0.001 degrees.
         '''
+        if not self.__ValidateEndPoseValue("X", X) or \
+        not self.__ValidateEndPoseValue("Y", Y) or \
+        not self.__ValidateEndPoseValue("Z", Z) or \
+        not self.__ValidateEndPoseValue("RX", RX) or \
+        not self.__ValidateEndPoseValue("RY", RY) or \
+        not self.__ValidateEndPoseValue("RZ", RZ):
+            return
         self.__CartesianCtrl_XY(X,Y)
         self.__CartesianCtrl_ZRX(Z,RX)
         self.__CartesianCtrl_RYRZ(RY,RZ)
-
+    
     def __CartesianCtrl_XY(self, X:int, Y:int):
         tx_can = Message()
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
@@ -1927,7 +1941,18 @@ class C_PiperInterface_V2():
         self.__parser.EncodeMessage(msg, tx_can)
         #print(hex(tx_can.arbitration_id), tx_can.data)
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-
+    
+    def __ValidateJointValue(self, joint_value, joint_num:str, min_value, max_value):
+        # 类型判断
+        if not isinstance(joint_value, int):
+            print(f"Error: Joint{joint_num} value {joint_value} is not an integer.")
+            return False
+        # 数值限幅判断
+        if joint_value < min_value or joint_value > max_value:
+            print(f"Error: Joint{joint_num} value {joint_value} is out of range ({min_value}, {max_value}).")
+            return False
+        return True
+    
     def JointCtrl(self, 
                   joint_1: int, 
                   joint_2: int,
@@ -1951,12 +1976,12 @@ class C_PiperInterface_V2():
         |joint6    |   [-2.0944, 2.0944]|    [-120.0, 120.0] |
         
         Args:
-            joint_1 (float): 关节1角度,单位0.001度
-            joint_2 (float): 关节2角度,单位0.001度
-            joint_3 (float): 关节3角度,单位0.001度
-            joint_4 (float): 关节4角度,单位0.001度
-            joint_5 (float): 关节5角度,单位0.001度
-            joint_6 (float): 关节6角度,单位0.001度
+            joint_1 (int): 关节1角度,单位0.001度
+            joint_2 (int): 关节2角度,单位0.001度
+            joint_3 (int): 关节3角度,单位0.001度
+            joint_4 (int): 关节4角度,单位0.001度
+            joint_5 (int): 关节5角度,单位0.001度
+            joint_6 (int): 关节6角度,单位0.001度
         '''
         '''
         Updates the joint control for the robotic arm.Before sending, switch the robotic arm mode to joint control mode
@@ -1974,13 +1999,20 @@ class C_PiperInterface_V2():
         |joint6    |   [-2.0944, 2.0944]|    [-120.0, 120.0] |
         
         Args:
-            joint_1 (float): The angle of joint 1.in 0.001°
-            joint_2 (float): The angle of joint 2.in 0.001°
-            joint_3 (float): The angle of joint 3.in 0.001°
-            joint_4 (float): The angle of joint 4.in 0.001°
-            joint_5 (float): The angle of joint 5.in 0.001°
-            joint_6 (float): The angle of joint 6.in 0.001°
+            joint_1 (int): The angle of joint 1.in 0.001°
+            joint_2 (int): The angle of joint 2.in 0.001°
+            joint_3 (int): The angle of joint 3.in 0.001°
+            joint_4 (int): The angle of joint 4.in 0.001°
+            joint_5 (int): The angle of joint 5.in 0.001°
+            joint_6 (int): The angle of joint 6.in 0.001°
         '''
+        if not self.__ValidateJointValue(joint_1, "1", -150 * 1000, 150 * 1000) or \
+        not self.__ValidateJointValue(joint_2, "2", 0, 180 * 1000) or \
+        not self.__ValidateJointValue(joint_3, "3", -170 * 1000, 0) or \
+        not self.__ValidateJointValue(joint_4, "4", -100 * 1000, 100 * 1000) or \
+        not self.__ValidateJointValue(joint_5, "5", -70 * 1000, 70 * 1000) or \
+        not self.__ValidateJointValue(joint_6, "6", -120 * 1000, 120 * 1000):
+            return
         self.__JointCtrl_12(joint_1, joint_2)
         self.__JointCtrl_34(joint_3, joint_4)
         self.__JointCtrl_56(joint_5, joint_6)
@@ -2309,8 +2341,14 @@ class C_PiperInterface_V2():
 
     def SearchAllMotorMaxAngleSpd(self):
         '''查询全部电机的电机最大角度/最小角度/最大速度指令
+
+        CAN ID:
+            0x472
         '''
         '''Queries the maximum angle, minimum angle, and maximum speed for all motors.
+
+        CAN ID:
+            0x472
         '''
         self.SearchMotorMaxAngleSpdAccLimit(1, 0x01)
         self.SearchMotorMaxAngleSpdAccLimit(2, 0x01)
@@ -2321,8 +2359,14 @@ class C_PiperInterface_V2():
     
     def SearchAllMotorMaxAccLimit(self):
         '''查询全部电机的最大加速度限制指令
+
+        CAN ID:
+            0x472
         '''
         '''Queries the maximum acceleration limits for all motors.
+
+        CAN ID:
+            0x472
         '''
         self.SearchMotorMaxAngleSpdAccLimit(1, 0x02)
         self.SearchMotorMaxAngleSpdAccLimit(2, 0x02)
