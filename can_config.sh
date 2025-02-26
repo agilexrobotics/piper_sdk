@@ -137,7 +137,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
         INTERFACE_NAME=""
         for iface in $(ip -br link show type can | awk '{print $1}'); do
             BUS_INFO=$(sudo ethtool -i "$iface" | grep "bus-info" | awk '{print $2}')
-            if [ "$BUS_INFO" == "$USB_ADDRESS" ]; then
+            if [ "$BUS_INFO" = "$USB_ADDRESS" ]; then
                 INTERFACE_NAME="$iface"
                 break
             fi
@@ -168,7 +168,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
     # 获取当前接口的比特率
     CURRENT_BITRATE=$(ip -details link show "$INTERFACE_NAME" | grep -oP 'bitrate \K\d+')
 
-    if [ "$IS_LINK_UP" == "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
+    if [ "$IS_LINK_UP" = "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
         echo "接口 $INTERFACE_NAME 已经激活，并且比特率为 $DEFAULT_BITRATE"
         
         # 检查接口名称是否与默认的名称匹配
@@ -183,7 +183,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
         fi
     else
         # 如果接口未激活或比特率不同，进行设置
-        if [ "$IS_LINK_UP" == "yes" ]; then
+        if [ "$IS_LINK_UP" = "yes" ]; then
             echo "接口 $INTERFACE_NAME 已经激活，但比特率为 $CURRENT_BITRATE，与设定的 $DEFAULT_BITRATE 不符。"
         else
             echo "接口 $INTERFACE_NAME 未激活或未设置比特率。"
@@ -236,7 +236,7 @@ else
             # 获取当前接口的比特率
             CURRENT_BITRATE=$(ip -details link show "$iface" | grep -oP 'bitrate \K\d+')
 
-            if [ "$IS_LINK_UP" == "yes" ] && [ "$CURRENT_BITRATE" -eq "$TARGET_BITRATE" ]; then
+            if [ "$IS_LINK_UP" = "yes" ] && [ "$CURRENT_BITRATE" -eq "$TARGET_BITRATE" ]; then
                 echo "接口 $iface 已经激活，并且比特率为 $TARGET_BITRATE"
                 
                 # 检查接口名称是否与目标名称匹配
@@ -251,7 +251,7 @@ else
                 fi
             else
                 # 如果接口未激活或比特率不同，进行设置
-                if [ "$IS_LINK_UP" == "yes" ]; then
+                if [ "$IS_LINK_UP" = "yes" ]; then
                     echo "接口 $iface 已经激活，但比特率为 $CURRENT_BITRATE，与设定的 $TARGET_BITRATE 不符。"
                 else
                     echo "接口 $iface 未激活或未设置比特率。"

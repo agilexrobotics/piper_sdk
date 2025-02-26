@@ -41,13 +41,13 @@ while true; do
     DEVICE_FOUND=false
     for iface in $(ip -br link show type can | awk '{print $1}'); do
         BUS_INFO=$(sudo ethtool -i "$iface" | grep "bus-info" | awk '{print $2}')
-        if [ "$BUS_INFO" == "$USB_ADDRESS" ]; then
+        if [ "$BUS_INFO" = "$USB_ADDRESS" ]; then
             DEVICE_FOUND=true
             break
         fi
     done
 
-    if [ "$DEVICE_FOUND" == "true" ]; then
+    if [ "$DEVICE_FOUND" = "true" ]; then
         echo "找到 CAN 设备，调用配置脚本..."
         sudo bash $ROOT/can_activate.sh "$CAN_NAME" "$BITRATE" "$USB_ADDRESS"
         if [ $? -eq 0 ]; then
@@ -66,7 +66,7 @@ while true; do
 done
 
 # 如果循环结束并且超时，输出超时信息
-if [ "$TIMED_OUT" == "true" ]; then
+if [ "$TIMED_OUT" = "true" ]; then
     echo "未能在规定时间内找到 CAN 设备，脚本退出。"
     exit 1
 fi

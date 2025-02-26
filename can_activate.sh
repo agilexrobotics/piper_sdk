@@ -67,7 +67,7 @@ if [ -n "$USB_ADDRESS" ]; then
     INTERFACE_NAME=""
     for iface in $(ip -br link show type can | awk '{print $1}'); do
         BUS_INFO=$(sudo ethtool -i "$iface" | grep "bus-info" | awk '{print $2}')
-        if [ "$BUS_INFO" == "$USB_ADDRESS" ]; then
+        if [ "$BUS_INFO" = "$USB_ADDRESS" ]; then
             INTERFACE_NAME="$iface"
             break
         fi
@@ -98,7 +98,7 @@ IS_LINK_UP=$(ip link show "$INTERFACE_NAME" | grep -q "UP" && echo "yes" || echo
 # Retrieve the bitrate of the current interface.
 CURRENT_BITRATE=$(ip -details link show "$INTERFACE_NAME" | grep -oP 'bitrate \K\d+')
 
-if [ "$IS_LINK_UP" == "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
+if [ "$IS_LINK_UP" = "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
     echo "Interface $INTERFACE_NAME is already activated with a bitrate of $DEFAULT_BITRATE."
     
     # Check if the interface name matches the default name.
