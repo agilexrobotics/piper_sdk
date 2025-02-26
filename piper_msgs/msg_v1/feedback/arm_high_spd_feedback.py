@@ -24,9 +24,9 @@ class ArmHighSpdFeedback:
     
     位描述:
 
-        Byte 0: 转速高八位, int16, 电机当前转速 单位: RPM
+        Byte 0: 转速高八位, int16, 电机当前转速 单位: 0.001rad/s
         Byte 1: 转速低八位
-        Byte 2: 电流高八位, uint16, 电机当前电流 单位: 0.1A
+        Byte 2: 电流高八位, uint16, 电机当前电流 单位: 0.001A
         Byte 3: 电流低八位
         Byte 4: 位置最高位, int32, 电机当前位置 单位: rad
         Byte 5: 位置次高位
@@ -52,9 +52,9 @@ class ArmHighSpdFeedback:
     
     Bit Description:
 
-        Byte 0: Motor Speed (High Byte), int16, unit: RPM
+        Byte 0: Motor Speed (High Byte), int16, unit: 0.001rad/s
         Byte 1: Motor Speed (Low Byte)
-        Byte 2: Motor Current (High Byte), uint16, unit: 0.1 A
+        Byte 2: Motor Current (High Byte), uint16, unit: 0.001A
         Byte 3: Motor Current (Low Byte)
         Byte 4: Motor Position (Most Significant Byte), int32, unit: rad
         Byte 5: Motor Position (Second Most Significant Byte)
@@ -77,8 +77,8 @@ class ArmHighSpdFeedback:
     def __str__(self):
         return (f"ArmHighSpdFeedback(\n"
                 f"  can_id: {hex(self.can_id)},\n"
-                f"  motor_speed: {self.motor_speed} RPM,\n"
-                f"  current: {self.current}, {self.current*0.1}A\n"
+                f"  motor_speed: {self.motor_speed}, {self.current*0.001} rad/s,\n"
+                f"  current: {self.current}, {self.current*0.001}A\n"
                 f"  pos: {self.pos} rad\n"
                 f")")
 
