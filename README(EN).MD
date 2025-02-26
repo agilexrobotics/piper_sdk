@@ -27,6 +27,7 @@ This SDK is used to receive CAN data frames and then process them into custom da
 |Robotic Arm DEMO| [`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD) |
 |Master-slave configuration and data reading of dual arms| [double_piper](./asserts/double_piper.MD) |
 | Open-source UI using PyQt5 | [Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>) |
+|CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 ## 1 Software Installation Instructions

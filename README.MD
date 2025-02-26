@@ -27,6 +27,7 @@ Test:
 |机械臂DEMO|[`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD)|
 |双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
 |使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
+|CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 ## 1 软件安装方法
