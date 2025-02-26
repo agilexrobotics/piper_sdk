@@ -15,6 +15,6 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://github.com/agilexrobotics/piper_sdk"
-repository = "https://github.com/agilexrobotics/piper_sdk"
-changelog = "https://github.com/agilexrobotics/piper_sdk/blob/master/CHANGELOG.MD"
+Homepage = "https://github.com/agilexrobotics/piper_sdk"
+Repository = "https://github.com/agilexrobotics/piper_sdk"
+ChangeLog = "https://github.com/agilexrobotics/piper_sdk/blob/master/CHANGELOG.MD"
