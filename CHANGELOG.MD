@@ -1,5 +1,5 @@
 
-Version 0.2.16
+Version 0.2.17
 =============
 
 Features
@@ -12,6 +12,8 @@ Features
 - Added type checking (must be of Python's int type) for the `EndPoseCtrl` function's input values
 - Modified the comments in the `SearchAllMotorMaxAngleSpd` and `SearchAllMotorMaxAccLimit` functions to include CAN ID descriptions.
 - Added a demo file to set and print the robotic arm's collision level `piper_read_crash_protectation.py`.
+- Modified the `arm_high_spd_feedback` to set the `motor_speed` unit to 0.001 rad/s and the `current` unit to 0.001 A.
+- Modified the shell script. Since the `sh` command does not support `==` for equality comparison, but `bash` does, changed it to use `=` for equality comparison. This allows the script to be used in `zsh`.
 
 Bug Fixes
 ---------
