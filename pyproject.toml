@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools >= 45.2.0"]
+
+[project]
+name = "piper_sdk"
+description = "A sdk to control piper"
+long_description = "file: DESCRIPTION.MD"
+long_description_content_type = "text/markdown"
+authors = [
+    {name = "RosenYin", email = "yinruocheng321@gmail.com"},
+]
+license = {text = "MIT License"}
+dependencies = [
+    "python-can>=3.3.4",
+]
+
+[project.urls]
+homepage = "https://github.com/agilexrobotics/piper_sdk"
+repository = "https://github.com/agilexrobotics/piper_sdk"
+changelog = "https://github.com/agilexrobotics/piper_sdk/blob/master/CHANGELOG.MD"
