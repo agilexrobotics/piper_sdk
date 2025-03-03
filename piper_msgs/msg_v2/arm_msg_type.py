@@ -54,12 +54,12 @@ class ArmMsgType(Enum):
     PiperMsgCircularPatternCoordNumUpdateCtrl=auto()
     PiperMsgGripperCtrl = auto()
     #----------------------------------基于V1.5-2版本后---------------------------------------------#
-    PiperMsgJointMitCtrl_1 = 0x15A
-    PiperMsgJointMitCtrl_2 = 0x15B
-    PiperMsgJointMitCtrl_3 = 0x15C
-    PiperMsgJointMitCtrl_4 = 0x15D
-    PiperMsgJointMitCtrl_5 = 0x15E
-    PiperMsgJointMitCtrl_6 = 0x15F
+    PiperMsgJointMitCtrl_1 = auto()
+    PiperMsgJointMitCtrl_2 = auto()
+    PiperMsgJointMitCtrl_3 = auto()
+    PiperMsgJointMitCtrl_4 = auto()
+    PiperMsgJointMitCtrl_5 = auto()
+    PiperMsgJointMitCtrl_6 = auto()
     #---------------------------------------------------------------------------------------------#
     PiperMsgMasterSlaveModeConfig = auto()
     # PiperMsgMSLinkageConfig = auto()
@@ -82,8 +82,8 @@ class ArmMsgType(Enum):
     PiperMsgCrashProtectionRatingFeedback=auto()
     PiperMsgFeedbackCurrentMotorMaxAccLimit=auto()
     #----------------------------------基于V1.5-2版本后---------------------------------------------#
-    PiperMsgGripperTeachingPendantParamConfig = 0x47D
-    PiperMsgGripperTeachingPendantParamFeedback = 0x47E
+    PiperMsgGripperTeachingPendantParamConfig = auto()
+    PiperMsgGripperTeachingPendantParamFeedback = auto()
     #---------------------------------------------------------------------------------------------#
     PiperMsgFeedbackJointVelAcc_1=auto()
     PiperMsgFeedbackJointVelAcc_2=auto()
