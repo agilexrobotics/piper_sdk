@@ -32,7 +32,7 @@ class C_PiperParserV2(C_PiperParserBase):
     Piper机械臂解析数据类V2版本
     '''
     '''
-    Piper Robotic Arm Data Parsing Class V1 Version
+    Piper Robotic Arm Data Parsing Class V2 Version
     '''
     def __init__(self) -> None:
         pass

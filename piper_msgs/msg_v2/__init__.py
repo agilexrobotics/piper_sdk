@@ -2,7 +2,6 @@
 
 # msg_v2/__init__.py
 
-# 导入 msg_v1 模块的类
 from .arm_messages import PiperMessage
 from .can_id import CanIDPiper
 from .arm_msg_type import ArmMsgType
@@ -47,7 +46,6 @@ from .transmit.arm_param_enquiry_and_config import ArmMsgParamEnquiryAndConfig
 from .transmit.arm_search_motor_max_angle_spd_acc_limit import ArmMsgSearchMotorMaxAngleSpdAccLimit
 from .transmit.arm_set_instruction_response import ArmMsgInstructionResponseConfig
 
-# 定义 __all__ 使得 from msg_v1 import * 可以导入这些类
 __all__ = [
     # 反馈
     'PiperMessage',
