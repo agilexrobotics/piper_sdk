@@ -12,8 +12,9 @@ class C_PiperForwardKinematics():
         self._a     = [0     , 0                      , 285.03                   , -21.98        , 0             , 0          ]
         self._alpha = [0     , -self.PI / 2           , 0                        , self.PI / 2   , -self.PI / 2  , self.PI / 2]
         self._theta = [0     , -self.PI * 174.22 / 180, -100.78 / 180 * self.PI  , 0             , 0             , 0          ]
+        # self._theta = [0     , -self.PI * 172.22 / 180, -102.78 / 180 * self.PI  , 0             , 0             , 0          ]
         self._d     = [123   , 0                      , 0                        , 250.75        , 0             , 91         ]
-    
+        # self.zero   = [56.128, 0, 213.266, 0.0, 85.0, 0.0]
     def __MatrixToeula(self, T):
         '''
         Convert a transformation matrix to Euler angles (roll, pitch, yaw).
