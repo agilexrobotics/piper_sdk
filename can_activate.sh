@@ -113,7 +113,7 @@ if [ "$IS_LINK_UP" = "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; t
     fi
 else
     # If the interface is not activated or the bitrate is different, configure it.
-    if [ "$IS_LINK_UP" == "yes" ]; then
+    if [ "$IS_LINK_UP" = "yes" ]; then
         echo "Interface $INTERFACE_NAME is already activated, but the bitrate is $CURRENT_BITRATE, which does not match the set value of $DEFAULT_BITRATE."
     else
         echo "Interface $INTERFACE_NAME is not activated or bitrate is not set."
