@@ -13,11 +13,12 @@ PS: Some parts are written in shorthand. The code contains detailed Chinese comm
 The inner class identifies instances based on can_port
 to prevent duplicate creation of interface instances with the same can_port
 
-|Variable|Type|Description|
-| --- |------| --- |
-| can_name      | `str`  | CAN route name, indicating from which CAN to send and receive data. |
-| judge_flag   | `Bool` | Whether to check the CAN module status when creating an instance. |
-| can_auto_init | `Bool` | Whether to initialize the CAN bus when creating an instance. |
+| Parameter      | Type    | Default  | Description |
+|---------------|--------|----------|-------------|
+| can_name      | `str`  | `"can0"` | CAN route name, indicating from which CAN to send and receive data. |
+| judge_flag    | `Bool` | `True`   | Whether to check the CAN module status when creating an instance. If an error occurs due to using a non-default CAN module, set this to `False` and try again. |
+| can_auto_init | `Bool` | `True`   | Whether to initialize the CAN bus when creating an instance. |
+| dh_is_offset  | `int`  | `0`      | Whether J2 and J3 in the DH parameters are offset by 2°. `0` means no offset, `1` means offset by 2°. |
 
 ### 1. Secondary encapsulation class
 

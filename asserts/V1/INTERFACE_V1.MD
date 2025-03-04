@@ -14,11 +14,12 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 
 内类依照can_port识别实例，防止重复创建同can_port的interface实例
 
-|形参|类型|说明|
-| --- |------| --- |
-|can_name|`str`|CAN 路由名称，指示从哪个 CAN 中收发数据。|
-|judge_flag|`Bool`|是否在创建实例时判断can模块状态|
-|can_auto_init|`Bool`|是否在创建实例时初始化can bus|
+|形参           |类型      | 默认值    | 说明|
+|     -----     |------   |   ---    |--- |
+|can_name       |`str`    |`"can0"`  |CAN 路由名称，指示从哪个 CAN 中收发数据。|
+|judge_flag     |`Bool`   |`True`    |是否在创建实例时判断can模块状态，如果使用了非机械臂自带的can模块而导致报错，请置为`False`后再尝试|
+|can_auto_init  |`Bool`   |`True`    |是否在创建实例时初始化can bus|
+|dh_is_offset   |`int`    |`0`       |dh参数中的J2 J3是否偏移了2°，0为没有偏移，1为偏移了2°|
 
 ### 1.二次封装类
 
