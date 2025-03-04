@@ -1,7 +1,10 @@
 import math
+from typing_extensions import (
+    Literal,
+)
 
 class C_PiperForwardKinematics():
-    def __init__(self):
+    def __init__(self, dh_is_offset: Literal[0x00, 0x01] = 0x00):
         self.RADIAN = 180 / math.pi
         self.PI = math.pi
         # Denavit-Hartenberg parameters for each link
@@ -12,9 +15,15 @@ class C_PiperForwardKinematics():
         self._a     = [0     , 0                      , 285.03                   , -21.98        , 0             , 0          ]
         self._alpha = [0     , -self.PI / 2           , 0                        , self.PI / 2   , -self.PI / 2  , self.PI / 2]
         self._theta = [0     , -self.PI * 174.22 / 180, -100.78 / 180 * self.PI  , 0             , 0             , 0          ]
-        # self._theta = [0     , -self.PI * 172.22 / 180, -102.78 / 180 * self.PI  , 0             , 0             , 0          ]
         self._d     = [123   , 0                      , 0                        , 250.75        , 0             , 91         ]
-        # self.zero   = [56.128, 0, 213.266, 0.0, 85.0, 0.0]
+        self.init_pos   = [55.0  , 0.0                    , 205.0                    , 0.0           , 85.0          , 0.0] # unit xyz-mm, rpy-degree
+        # if j2, j3 offset 2°
+        if(dh_is_offset == 0x01):
+            self._a     = [0     , 0                      , 285.03                   , -21.98        , 0             , 0          ]
+            self._alpha = [0     , -self.PI / 2           , 0                        , self.PI / 2   , -self.PI / 2  , self.PI / 2]
+            self._theta = [0     , -self.PI * 172.22 / 180, -102.78 / 180 * self.PI  , 0             , 0             , 0          ]
+            self._d     = [123   , 0                      , 0                        , 250.75        , 0             , 91         ]
+            self.init_pos   = [56.128, 0.0                    , 213.266                  , 0.0           , 85.0          , 0.0] # unit xyz-mm, rpy-degree
     def __MatrixToeula(self, T):
         '''
         Convert a transformation matrix to Euler angles (roll, pitch, yaw).

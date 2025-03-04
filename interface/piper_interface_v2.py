@@ -29,6 +29,9 @@ class C_PiperInterface_V2():
         judge_flag(bool): Determines if the CAN port is functioning correctly.
                         When using a PCIe-to-CAN module, set to false.
         can_auto_init(bool): Determines if the CAN port is automatically initialized.
+        dh_is_offset([0,1] -> default 0): Does the j1-j2 offset by 2° in the DH parameters? 
+                    0 -> No offset
+                    1 -> Offset applied
     '''
     class ArmStatus():
         '''
@@ -368,7 +371,8 @@ class C_PiperInterface_V2():
     def __init__(self,
                  can_name:str="can0",
                  judge_flag=True,
-                 can_auto_init=True) -> None:
+                 can_auto_init=True,
+                 dh_is_offset: int = 0) -> None:
         if getattr(self, "_initialized", False):  
             return  # 避免重复初始化
         self.__can_channel_name:str
@@ -379,7 +383,8 @@ class C_PiperInterface_V2():
         self.__can_judge_flag = judge_flag
         self.__can_auto_init = can_auto_init
         self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
-        self.__piper_fk = C_PiperForwardKinematics()
+        self.__dh_is_offset = dh_is_offset
+        self.__piper_fk = C_PiperForwardKinematics(self.__dh_is_offset)
         # protocol
         self.__parser: Type[C_PiperParserBase] = C_PiperParserV2()
         # thread
