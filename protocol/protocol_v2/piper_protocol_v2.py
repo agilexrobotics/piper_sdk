@@ -130,7 +130,7 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.arm_high_spd_feedback_2.can_id = can_id
             msg.arm_high_spd_feedback_2.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
             msg.arm_high_spd_feedback_2.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
-            msg.arm_high_spd_feedback_3.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+            msg.arm_high_spd_feedback_2.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_3.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_3.can_id = can_id

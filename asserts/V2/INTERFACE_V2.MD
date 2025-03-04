@@ -2,6 +2,8 @@
 
 [EN](INTERFACE_V2(EN).MD)
 
+Based on version V1.5-2 and later
+
 本SDK用于接收can数据帧，然后处理为自定义数据类型
 
 ps：有些地方略写，代码中有详细的中文注释，本文这里只是理清结构

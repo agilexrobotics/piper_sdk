@@ -1114,55 +1114,61 @@ class C_PiperInterface_V1():
         with self.__arm_motor_info_high_spd_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_1):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_1")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_1 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_1 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_1.can_id = msg.arm_high_spd_feedback_1.can_id
                 self.__arm_motor_info_high_spd.motor_1.motor_speed = msg.arm_high_spd_feedback_1.motor_speed
                 self.__arm_motor_info_high_spd.motor_1.current = msg.arm_high_spd_feedback_1.current
                 self.__arm_motor_info_high_spd.motor_1.pos = msg.arm_high_spd_feedback_1.pos
+                self.__arm_motor_info_high_spd.motor_1.effort = msg.arm_high_spd_feedback_1.cal_effort()
             elif(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_2):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_2")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_2 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_2 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_2.can_id = msg.arm_high_spd_feedback_2.can_id
                 self.__arm_motor_info_high_spd.motor_2.motor_speed = msg.arm_high_spd_feedback_2.motor_speed
                 self.__arm_motor_info_high_spd.motor_2.current = msg.arm_high_spd_feedback_2.current
                 self.__arm_motor_info_high_spd.motor_2.pos = msg.arm_high_spd_feedback_2.pos
+                self.__arm_motor_info_high_spd.motor_2.effort = msg.arm_high_spd_feedback_2.cal_effort()
             elif(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_3):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_3")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_3 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_3 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_3.can_id = msg.arm_high_spd_feedback_3.can_id
                 self.__arm_motor_info_high_spd.motor_3.motor_speed = msg.arm_high_spd_feedback_3.motor_speed
                 self.__arm_motor_info_high_spd.motor_3.current = msg.arm_high_spd_feedback_3.current
                 self.__arm_motor_info_high_spd.motor_3.pos = msg.arm_high_spd_feedback_3.pos
+                self.__arm_motor_info_high_spd.motor_3.effort = msg.arm_high_spd_feedback_3.cal_effort()
             elif(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_4):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_4")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_4 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_4 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_4.can_id = msg.arm_high_spd_feedback_4.can_id
                 self.__arm_motor_info_high_spd.motor_4.motor_speed = msg.arm_high_spd_feedback_4.motor_speed
                 self.__arm_motor_info_high_spd.motor_4.current = msg.arm_high_spd_feedback_4.current
                 self.__arm_motor_info_high_spd.motor_4.pos = msg.arm_high_spd_feedback_4.pos
+                self.__arm_motor_info_high_spd.motor_4.effort = msg.arm_high_spd_feedback_4.cal_effort()
             elif(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_5):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_5")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_5 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_5 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_5.can_id = msg.arm_high_spd_feedback_5.can_id
                 self.__arm_motor_info_high_spd.motor_5.motor_speed = msg.arm_high_spd_feedback_5.motor_speed
                 self.__arm_motor_info_high_spd.motor_5.current = msg.arm_high_spd_feedback_5.current
                 self.__arm_motor_info_high_spd.motor_5.pos = msg.arm_high_spd_feedback_5.pos
+                self.__arm_motor_info_high_spd.motor_5.effort = msg.arm_high_spd_feedback_5.cal_effort()
             elif(msg.type_ == ArmMsgType.PiperMsgHighSpdFeed_6):
                 self.__fps_counter.increment("ArmMotorDriverInfoHighSpd_6")
-                self.__arm_time_stamp.time_stamp_motor_low_spd_6 = time.time_ns()
+                self.__arm_time_stamp.time_stamp_motor_high_spd_6 = time.time_ns()
                 self.__arm_motor_info_high_spd.motor_6.can_id = msg.arm_high_spd_feedback_6.can_id
                 self.__arm_motor_info_high_spd.motor_6.motor_speed = msg.arm_high_spd_feedback_6.motor_speed
                 self.__arm_motor_info_high_spd.motor_6.current = msg.arm_high_spd_feedback_6.current
                 self.__arm_motor_info_high_spd.motor_6.pos = msg.arm_high_spd_feedback_6.pos
+                self.__arm_motor_info_high_spd.motor_6.effort = msg.arm_high_spd_feedback_6.cal_effort()
             else:
                 pass
             # 更新时间戳，取筛选ID的最新一个
-            self.__arm_motor_info_high_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_low_spd_1, 
-                                                    self.__arm_time_stamp.time_stamp_motor_low_spd_2, 
-                                                    self.__arm_time_stamp.time_stamp_motor_low_spd_3, 
-                                                    self.__arm_time_stamp.time_stamp_motor_low_spd_4, 
-                                                    self.__arm_time_stamp.time_stamp_motor_low_spd_5, 
-                                                    self.__arm_time_stamp.time_stamp_motor_low_spd_6) / 1_000_000_000
+            self.__arm_motor_info_high_spd.time_stamp = max(self.__arm_time_stamp.time_stamp_motor_high_spd_1, 
+                                                    self.__arm_time_stamp.time_stamp_motor_high_spd_2, 
+                                                    self.__arm_time_stamp.time_stamp_motor_high_spd_3, 
+                                                    self.__arm_time_stamp.time_stamp_motor_high_spd_4, 
+                                                    self.__arm_time_stamp.time_stamp_motor_high_spd_5, 
+                                                    self.__arm_time_stamp.time_stamp_motor_high_spd_6) / 1_000_000_000
             # print(self.__arm_motor_info_high_spd)
             return self.__arm_motor_info_high_spd
     

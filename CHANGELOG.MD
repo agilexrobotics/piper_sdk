@@ -117,6 +117,8 @@ Features
 
 ### 1 ChangeLog-V1
 
+V1 based on version V1.5-1 and before
+
 The V1 version code here is the code under version 0.1.x.
 
 The code in version 0.1.x differs significantly from the code in version 0.0.x. The V1 version in the former is an update and iteration based on the latter.
@@ -150,6 +152,8 @@ Compared to version 0.0.x, version 0.1.x-V1 adds several functions as follows:
 | `__UpdatePiperFK`| Getter Method | Updates the Piper forward kinematics data. | Used internally in class | None | None |
 
 ### 2 ChangeLog-V2
+
+V2 based on version V1.5-2 and later
 
 The V1 and V2 version codes here are both under version 0.1.x.
 

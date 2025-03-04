@@ -18,9 +18,10 @@ class ArmHighSpdFeedback:
 
     Args:
         can_id: 当前canid,用来代表关节序号
-        motor_speed: 驱动器反馈的转速
-        current: 驱动器反馈的电流
-        pos: 驱动器反馈的位置
+        motor_speed: 电机当前转速
+        current: 电机当前电流
+        pos: 电机当前位置
+        effort: 经过固定系数转换的力矩
     
     位描述:
 
@@ -46,9 +47,9 @@ class ArmHighSpdFeedback:
 
     Args:
         can_id: Current CAN ID, used to represent the joint number.
-        motor_speed: Motor speed reported by the driver.
-        current: Current reported by the driver.
-        pos: Position reported by the driver.
+        motor_speed: Motor Speed.
+        current: Motor Current.
+        pos: Motor Position.
     
     Bit Description:
 
@@ -62,17 +63,35 @@ class ArmHighSpdFeedback:
         Byte 7: Motor Position (Least Significant Byte)
     '''
     def __init__(self, 
-                 can_id: Literal[0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256] = 0,
+                 can_id: Literal[0x000, 0x251, 0x252, 0x253, 0x254, 0x255, 0x256] = 0,
                  motor_speed: int = 0, 
                  current: int = 0, 
                  pos: int = 0,
+                 effort: float = 0
                  ):
-        if can_id not in [0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256]:
-            raise ValueError(f"'can_id' Value {can_id} out of range [0x000, 0x251, 0x252, 0x253, 0x254, 0x254, 0x255, 0x256]")
+        if can_id not in [0x000, 0x251, 0x252, 0x253, 0x254, 0x255, 0x256]:
+            raise ValueError(f"'can_id' Value {can_id} out of range [0x000, 0x251, 0x252, 0x253, 0x254, 0x255, 0x256]")
+        self.COEFFICIENT_1_3 = 1.18125
+        self.COEFFICIENT_4_6 = 0.95844
         self.can_id = can_id
         self.motor_speed = motor_speed
         self.current = current
         self.pos = pos
+        self.effort = effort
+    
+    def cal_effort(self, current: int = None)-> float:
+        current_ = 0
+        if(current is None):
+            current_ = self.current
+        elif(isinstance(current, (int, float))):
+            current_ = current
+        else:
+            raise TypeError(f"current {current} is not 'int' or 'float'.")
+        if(self.can_id in [0x251, 0x252, 0x253]):
+            self.effort = current_ * self.COEFFICIENT_1_3
+        elif(self.can_id in [0x254, 0x255, 0x256]):
+            self.effort = current_ * self.COEFFICIENT_4_6
+        return self.effort
 
     def __str__(self):
         return (f"ArmHighSpdFeedback(\n"
@@ -80,6 +99,7 @@ class ArmHighSpdFeedback:
                 f"  motor_speed: {self.motor_speed}, {self.current*0.001} rad/s,\n"
                 f"  current: {self.current}, {self.current*0.001}A\n"
                 f"  pos: {self.pos} rad\n"
+                f"  effort: {self.effort}, {self.effort*0.001}N/m\n"
                 f")")
 
     def __repr__(self):

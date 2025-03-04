@@ -17,11 +17,11 @@ class ArmLowSpdFeedback:
 
     Args:
         can_id: canid,表示当前电机序号
-        vol: 驱动器电压
+        vol: 当前驱动器电压
         foc_temp: 驱动器温度
         motor_temp: 电机温度
-        foc_status: 驱动器状态
-        bus_current: 母线电流
+        foc_status: 驱动器状态码
+        bus_current: 当前驱动器电流,单位0.001A,1.5KG关节电机无母线电流采样,默认发送0
     
     位描述:
     
@@ -31,15 +31,15 @@ class ArmLowSpdFeedback:
         Byte 3:驱动器温度低八位
         Byte 4:电机温度,int8,单位: 1℃
         Byte 5:驱动器状态,uint8
-            - bit[0] 电源电压是否过低(0--正常; 1--过低)
-            - bit[1] 电机是否过温(0--正常; 1--过温)
-            - bit[2] 驱动器是否过流(0--正常; 1--过流)
-            - bit[3] 驱动器是否过温(0--正常; 1--过温)
-            - bit[4] 碰撞保护状态(0--正常; 1--异常)-7.25修改,之前为传感器状态
-            - bit[5] 驱动器错误状态(0: 正常; 1--错误)
-            - bit[6] 驱动器使能状态(1--使能; 0--失能)
-            - bit[7] 堵转保护状态(0--没有回零; 1--已经回零,或已经回过零)-2024-7-25修改,之前为回零状态
-        Byte 6:母线电流高八位, uint16, 当前驱动器电流单位: 0.001A
+            bit[0] 电源电压是否过低(0--正常; 1--过低)
+            bit[1] 电机是否过温(0--正常; 1--过温)
+            bit[2] 驱动器是否过流(0--正常; 1--过流)
+            bit[3] 驱动器是否过温(0--正常; 1--过温)
+            bit[4] 碰撞保护状态(0--正常; 1--触发保护)-7.25修改,之前为传感器状态
+            bit[5] 驱动器错误状态(0: 正常; 1--错误)
+            bit[6] 驱动器使能状态(1--使能; 0--失能)
+            bit[7] 堵转保护状态(0--正常; 1--触发保护)-2024-7-25修改,之前为回零状态
+        Byte 6:母线电流高八位,uint16,当前驱动器电流单位: 0.001A,1.5KG关节电机无母线电流采样,默认发送0
         Byte 7:母线电流低八位
     '''
     '''
@@ -55,11 +55,11 @@ class ArmLowSpdFeedback:
 
     Args:
         can_id: CAN ID, representing the current motor number.
-        vol: Driver voltage.
+        vol: Current driver voltage.
         foc_temp: Driver temperature.
         motor_temp: Motor temperature.
         foc_status: Driver status.
-        bus_current: Bus current.
+        bus_current: Current driver current.
     
     Bit Definitions:
     
@@ -69,15 +69,15 @@ class ArmLowSpdFeedback:
         Byte 3: Drive Temperature (Low Byte)
         Byte 4: Motor Temperature, int8, unit: 1°C
         Byte 5: Drive Status, uint8:
-            - bit[0]: Power voltage low (0: Normal, 1: Low)
-            - bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
-            - bit[2]: Drive over-current (0: Normal, 1: Over-current)
-            - bit[3]: Drive over-temperature (0: Normal, 1: Over-temperature)
-            - bit[4]: Collision protection status (0: Normal, 1: Abnormal) (Updated 7.25, previously sensor status)
-            - bit[5]: Drive error status (0: Normal, 1: Error)
-            - bit[6]: Drive enable status (1: Enabled, 0: Disabled)
-            - bit[7]: Stalling protection status (0: Not returned to zero, 1: Returned or previously returned to zero) (Updated 7.25, previously zeroing status)
-        Byte 6: Bus Current (High Byte), uint16, unit: 0.001 A
+            bit[0]: Power voltage low (0: Normal, 1: Low)
+            bit[1]: Motor over-temperature (0: Normal, 1: Over-temperature)
+            bit[2]: Drive over-current (0: Normal, 1: Over-current)
+            bit[3]: Drive over-temperature (0: Normal, 1: Over-temperature)
+            bit[4]: Collision protection status (0: Normal, 1: Trigger protection) (Updated 7.25, previously sensor status)
+            bit[5]: Drive error status (0: Normal, 1: Error)
+            bit[6]: Drive enable status (1: Enabled, 0: Disabled)
+            bit[7]: Stalling protection status (0: Normal, 1: Trigger protection) (Updated 7.25, previously zeroing status)
+        Byte 6: Bus Current (High Byte), uint16, unit: 0.001 A, The 1.5KG joint motor has no bus current sampling and defaults to sending 0.
         Byte 7: Bus Current (Low Byte)
     '''
     def __init__(self, 

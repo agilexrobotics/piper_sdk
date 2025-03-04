@@ -19,7 +19,7 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
     位描述:
 
         Byte 0: 关节序号, uint8, 值域 1-6(1-6 代表关节驱动器序号)
-        Byte 1: 最大关节加速度 H, uint16, 单位 RPM/s
+        Byte 1: 最大关节加速度 H, uint16, 单位 0.001rad/^2
         Byte 2: 最大关节加速度 L
     '''
     '''
@@ -37,7 +37,7 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
     Bit Description:
 
         Byte 0: Joint Index, uint8, range 1-6(1-6 represent the joint motor index)
-        Byte 1: Maximum Joint Acceleration (High Byte), uint16, unit: RPM/s
+        Byte 1: Maximum Joint Acceleration (High Byte), uint16, unit: 0.001rad/^2
         Byte 2: Maximum Joint Acceleration (Low Byte)
     '''
     def __init__(self, 
@@ -52,7 +52,7 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
     def __str__(self):
         return (f"ArmMsgFeedbackCurrentMotorMaxAccLimit(\n"
                 f"  joint_motor_num: {self.joint_motor_num},\n"
-                f"  max_joint_acc: {self.max_joint_acc}\n"
+                f"  max_joint_acc: {self.max_joint_acc}, {self.max_joint_acc*0.001} rad/^2\n"
                 f")")
 
     def __repr__(self):
