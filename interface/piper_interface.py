@@ -339,7 +339,8 @@ class C_PiperInterface():
     def __new__(cls, 
                 can_name:str="can0", 
                 judge_flag=True,
-                can_auto_init=True):
+                can_auto_init=True,
+                dh_is_offset: int = 0):
         """
         实现单例模式：
         - 相同 can_name & can_auto_init 参数，只会创建一个实例
