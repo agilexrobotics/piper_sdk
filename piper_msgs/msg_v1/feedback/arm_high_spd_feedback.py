@@ -21,7 +21,7 @@ class ArmHighSpdFeedback:
         motor_speed: 电机当前转速
         current: 电机当前电流
         pos: 电机当前位置
-        effort: 经过固定系数转换的力矩
+        effort: 经过固定系数转换的力矩,单位0.001N/m
     
     位描述:
 
@@ -50,6 +50,7 @@ class ArmHighSpdFeedback:
         motor_speed: Motor Speed.
         current: Motor Current.
         pos: Motor Position.
+        effort: Torque converted using a fixed coefficient, with a unit of 0.001 N/m.
     
     Bit Description:
 
