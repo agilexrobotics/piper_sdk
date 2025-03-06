@@ -6,6 +6,7 @@ Features
 --------
 
 - Added `effort` feedback to high-speed information feedback, with a unit of 0.001 N/m.
+- Removed elements in the `sh` script to ensure compatibility with `zsh`.
 - Added `interface_v1` without affecting previous versions, reserving it for future updates.
 - Added class references in `__init__.py`.
 - Fixed incorrect comments in `msg_v1/__init__.py`, `msg_v2/__init__.py`, `protocol/protocol_v2/piper_protocol_v2.py`, and `arm_low_spd_feedback.py`.
