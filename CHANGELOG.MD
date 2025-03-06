@@ -1,4 +1,30 @@
 
+Version 0.2.18
+=============
+
+Features
+--------
+
+- Added `interface_v1` without affecting previous versions, reserving it for future updates.
+- Added class references in `__init__.py`.
+- Fixed incorrect comments in `msg_v1/__init__.py`, `msg_v2/__init__.py`, `protocol/protocol_v2/piper_protocol_v2.py`, and `arm_low_spd_feedback.py`.
+- Corrected the unit description of `max_joint_acc` in the `ArmMsgFeedbackCurrentMotorMaxAccLimit` class to `0.001 rad/s^2`.
+- Added firmware version descriptions in the interface documentation.
+
+Bug Fixes
+---------
+
+- Modified `pyproject.toml` to allow proper installation using `setup.py` (the previous version was missing the `version` field in the `project` tag, causing `pip install .` to fail).
+- Fixed the issue where `msg_type` in `msg_v2` was not assigned using `auto`.
+- Fixed missing class references in `piper_sdk/__init__.py`, which caused errors.
+- Fixed an error in `protocol` where the position information of motor 2 was incorrectly assigned to motor 3.
+- Fixed an issue in `interface` where the timestamp for high-speed feedback data was mistakenly using the timestamp from low-speed feedback data.
+
+Miscellaneous
+---------
+
+None
+
 Version 0.2.17
 =============
 
