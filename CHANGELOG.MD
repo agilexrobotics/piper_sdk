@@ -1,4 +1,26 @@
 
+Version 0.2.19
+=============
+
+Features
+--------
+
+None
+
+Bug Fixes
+---------
+
+- Fixed abnormal current feedback values.(High speed piper msg)
+  piper_sdk/piper_msgs/msg_v1/feedback/arm_high_spd_feedback.py
+  piper_sdk/piper_msgs/msg_v2/feedback/arm_high_spd_feedback.py
+  piper_sdk/protocol/protocol_v1/piper_protocol_v1.py
+  piper_sdk/protocol/protocol_v2/piper_protocol_v2.py
+
+Miscellaneous
+---------
+
+None
+
 Version 0.2.18
 =============
 
