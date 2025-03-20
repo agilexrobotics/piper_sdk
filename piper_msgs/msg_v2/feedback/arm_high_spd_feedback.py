@@ -98,7 +98,7 @@ class ArmHighSpdFeedback:
     def __str__(self):
         return (f"ArmHighSpdFeedback(\n"
                 f"  can_id: {hex(self.can_id)},\n"
-                f"  motor_speed: {self.motor_speed}, {self.current*0.001} rad/s,\n"
+                f"  motor_speed: {self.motor_speed}, {self.motor_speed*0.001} rad/s,\n"
                 f"  current: {self.current}, {self.current*0.001}A\n"
                 f"  pos: {self.pos} rad\n"
                 f"  effort: {self.effort}, {self.effort*0.001}N/m\n"
