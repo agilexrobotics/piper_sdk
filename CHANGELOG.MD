@@ -1,4 +1,22 @@
 
+Version 0.2.19
+=============
+
+Features
+--------
+
+None
+
+Bug Fixes
+---------
+
+Fixed abnormal current feedback values.
+
+Miscellaneous
+---------
+
+None
+
 Version 0.2.18
 =============
 
