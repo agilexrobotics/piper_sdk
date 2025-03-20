@@ -19,6 +19,8 @@ from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
 from ..monitor import *
+from ..version import PiperSDKVersion
+from .interface_version import InterfaceVersion
 
 class C_PiperInterface_V2():
     '''
@@ -492,21 +494,17 @@ class C_PiperInterface_V2():
         """获取实例，简化调用"""
         return cls(can_name, judge_flag, can_auto_init)
     
-    def ConnectPort(self, can_init=False):
-        '''
-        连接端口开启线程处理数据
-        
-        开启读取can端口读取线程
-        发送一次查询关节电机最大角度速度指令
-        和一次查询关节电机最大加速度限制指令
-        '''
+    def ConnectPort(self, 
+                    can_init :bool = False, 
+                    piper_init :bool = True, 
+                    start_thread :bool = True):
         '''
         Starts a thread to process data from the connected CAN port.
-
-        This function does the following:
-            Starts a thread to read data from the CAN port.
-            Sends a query for the joint motor's maximum angle and speed.
-            Sends a query for the joint motor's maximum acceleration limit.
+        
+        Args:
+            can_init(bool): can port init flag, Behind you using DisconnectPort(), you should set it True.
+            piper_init(bool): Execute the robot arm initialization function
+            start_thread(bool): Start the reading thread
         '''
         if(can_init or not self.__connected):
             self.__arm_can.Init()
@@ -537,16 +535,16 @@ class C_PiperInterface_V2():
                     break
                 self.__can_monitor_stop_event.wait(0.01)
         try:
-            if not self.__can_deal_th or not self.__can_deal_th.is_alive():
-                self.__can_deal_th = threading.Thread(target=ReadCan, daemon=True)
-                self.__can_deal_th.start()
-            if not self.__can_monitor_th or not self.__can_monitor_th.is_alive():
-                self.__can_monitor_th = threading.Thread(target=CanMonitor, daemon=True)
-                self.__can_monitor_th.start()
-            self.__fps_counter.start()
-            self.SearchAllMotorMaxAngleSpd()
-            self.SearchAllMotorMaxAccLimit()
-            self.SearchPiperFirmwareVersion()
+            if start_thread:
+                if not self.__can_deal_th or not self.__can_deal_th.is_alive():
+                    self.__can_deal_th = threading.Thread(target=ReadCan, daemon=True)
+                    self.__can_deal_th.start()
+                if not self.__can_monitor_th or not self.__can_monitor_th.is_alive():
+                    self.__can_monitor_th = threading.Thread(target=CanMonitor, daemon=True)
+                    self.__can_monitor_th.start()
+                self.__fps_counter.start()
+            if piper_init:
+                self.PiperInit()
         except Exception as e:
             print(f"[ERROR] 线程启动失败: {e}")
             self.__connected = False  # 回滚状态
@@ -579,6 +577,16 @@ class C_PiperInterface_V2():
         except Exception as e:
             print(f"[ERROR] 关闭 CAN 端口时发生异常: {e}")
     
+    def PiperInit(self):
+        '''
+        发送查询关节电机最大角度速度指令
+        发送查询关节电机最大加速度限制指令
+        发送查询机械臂固件指令
+        '''
+        self.SearchAllMotorMaxAngleSpd()
+        self.SearchAllMotorMaxAccLimit()
+        self.SearchPiperFirmwareVersion()
+
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
         '''can协议解析函数
 
@@ -627,6 +635,21 @@ class C_PiperInterface_V2():
     #     '''
     #     pass
     # 获取反馈值------------------------------------------------------------------------------------------------------
+    def GetCurrentInterfaceVersion(self):
+        return InterfaceVersion.INTERFACE_V2
+    
+    def GetCurrentSDKVersion(self):
+        '''
+        return piper_sdk current version
+        '''
+        return PiperSDKVersion.PIPER_SDK_CURRENT_VERSION
+    
+    def GetCurrentProtocolVersion(self):
+        '''
+        return piper_sdk current prptocol version
+        '''
+        return self.__parser.GetParserProtocolVersion()
+    
     def GetCanFps(self):
         '''
         获取机械臂can模块帧率

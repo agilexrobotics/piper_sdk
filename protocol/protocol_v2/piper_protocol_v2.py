@@ -39,12 +39,12 @@ class C_PiperParserV2(C_PiperParserBase):
 
     def GetParserProtocolVersion(self):
         '''
-        获取当前协议版本,当前为V1
+        获取当前协议版本,当前为V2
         '''
         '''
-        Get the current protocol version, currently V1.
+        Get the current protocol version, currently V2.
         '''
-        return self.ProtocolVersion.ARM_PROROCOL_V1
+        return self.ProtocolVersion.ARM_PROROCOL_V2
 
     def DecodeMessage(self, rx_can_frame: Optional[can.Message], msg:PiperMessage):
         '''解码消息,将can数据帧转为设定的类型
@@ -123,37 +123,37 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_1.can_id = can_id
             msg.arm_high_spd_feedback_1.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_1.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_1.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_1.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_2.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_2.can_id = can_id
             msg.arm_high_spd_feedback_2.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_2.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_2.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_2.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_3.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_3.can_id = can_id
             msg.arm_high_spd_feedback_3.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_3.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_3.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_3.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_4.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_4.can_id = can_id
             msg.arm_high_spd_feedback_4.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_4.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_4.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_4.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_5.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_5.can_id = can_id
             msg.arm_high_spd_feedback_5.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_5.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_5.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_5.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_6.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_high_spd_feedback_6.can_id = can_id
             msg.arm_high_spd_feedback_6.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
-            msg.arm_high_spd_feedback_6.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_high_spd_feedback_6.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
             msg.arm_high_spd_feedback_6.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
             # print(msg.arm_high_spd_feedback_6)
         # 驱动器信息低速反馈,Low-Speed Driver Information Feedback
