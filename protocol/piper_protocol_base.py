@@ -24,8 +24,9 @@ class C_PiperParserBase(ABC):
         '''
         Protocol Version Enumeration, needs to be specified in the derived class.
         '''
-        ARM_PROTOCOL_UNKNOWN = auto()
         ARM_PROROCOL_V1 = auto()
+        ARM_PROROCOL_V2 = auto()
+        ARM_PROTOCOL_UNKNOWN = auto()
         def __str__(self):
             return f"{self.name} (0x{self.value:X})"
         def __repr__(self):

@@ -39,12 +39,12 @@ class C_PiperParserV2(C_PiperParserBase):
 
     def GetParserProtocolVersion(self):
         '''
-        获取当前协议版本,当前为V1
+        获取当前协议版本,当前为V2
         '''
         '''
-        Get the current protocol version, currently V1.
+        Get the current protocol version, currently V2.
         '''
-        return self.ProtocolVersion.ARM_PROROCOL_V1
+        return self.ProtocolVersion.ARM_PROROCOL_V2
 
     def DecodeMessage(self, rx_can_frame: Optional[can.Message], msg:PiperMessage):
         '''解码消息,将can数据帧转为设定的类型
