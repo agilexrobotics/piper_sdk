@@ -64,7 +64,7 @@ V1
 |`piper_init_default.py`|机械臂 设置全部关节限位、关节最大速度、关节加速度为默认值|
 |`piper_joint_ctrl.py`|机械臂关节控制|
 |`piper_master_config.py`|机械臂设置为主臂|
-|`piper_moveC.py`|机械臂设置为主臂|
+|`piper_moveC.py`|机械臂设置为圆弧运动|
 |`piper_read_arm_motor_max_acc_limit.py`|读取所有电机的最大加速度限制|
 |`piper_read_arm_motor_max_angle_spd.py`|读取机械臂的所有电机的最大加速度限制|
 |`piper_read_end_pose.py`|读取末端姿态|
