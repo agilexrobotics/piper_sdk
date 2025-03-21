@@ -13,12 +13,13 @@ from typing_extensions import (
 )
 from queue import Queue
 import threading
-
+import math
 from ..hardware_port.can_encapsulation import C_STD_CAN
 from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
 from ..monitor import *
+from ..piper_param import *
 from ..version import PiperSDKVersion
 from .interface_version import InterfaceVersion
 
@@ -358,7 +359,9 @@ class C_PiperInterface_V2():
                 can_name:str="can0", 
                 judge_flag=True,
                 can_auto_init=True,
-                dh_is_offset: int = 0):
+                dh_is_offset: int = 0,
+                start_sdk_joint_limit: bool = True,
+                start_sdk_gripper_limit: bool = True):
         """
         实现单例模式：
         - 相同 can_name & can_auto_init 参数，只会创建一个实例
@@ -375,7 +378,9 @@ class C_PiperInterface_V2():
                  can_name:str="can0",
                  judge_flag=True,
                  can_auto_init=True,
-                 dh_is_offset: int = 0) -> None:
+                 dh_is_offset: int = 0,
+                 start_sdk_joint_limit: bool = True, 
+                 start_sdk_gripper_limit: bool = True) -> None:
         if getattr(self, "_initialized", False):  
             return  # 避免重复初始化
         self.__can_channel_name:str
@@ -388,6 +393,9 @@ class C_PiperInterface_V2():
         self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
         self.__dh_is_offset = dh_is_offset
         self.__piper_fk = C_PiperForwardKinematics(self.__dh_is_offset)
+        self.__start_sdk_joint_limit = start_sdk_joint_limit
+        self.__start_sdk_gripper_limit = start_sdk_gripper_limit
+        self.__piper_param_mag = C_PiperParamManager()
         # protocol
         self.__parser: Type[C_PiperParserBase] = C_PiperParserV2()
         # thread
@@ -1062,6 +1070,22 @@ class C_PiperInterface_V2():
             else:
                 self.__is_ok = True
     
+    def __CalJointSDKLimit(self, joint_value, joint_num:str):
+        if(self.__start_sdk_joint_limit):
+            j_min, j_max = self.GetSDKJointLimitParam(joint_num)
+            j_min = round(math.degrees(j_min) * 1000)
+            j_max = round(math.degrees(j_max) * 1000)
+            return max(j_min, min(joint_value, j_max))
+        else: return joint_value
+
+    def __CalGripperSDKLimit(self, gripper_val:int):
+        if self.__start_sdk_gripper_limit:
+            g_min, g_max = self.GetSDKGripperRangeParam()
+            g_min = round(g_min *1000 * 1000)
+            g_max = round(g_max *1000 * 1000)
+            return max(g_min, min(gripper_val, g_max))
+        else: return gripper_val
+
     def __UpdateArmStatus(self, msg:PiperMessage):
         '''更新机械臂状态
 
@@ -1135,18 +1159,18 @@ class C_PiperInterface_V2():
             if(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
                 self.__fps_counter.increment("ArmJoint_12")
                 self.__arm_time_stamp.time_stamp_joint_12 = time.time_ns()
-                self.__arm_joint_msgs.joint_state.joint_1 = msg.arm_joint_feedback.joint_1
-                self.__arm_joint_msgs.joint_state.joint_2 = msg.arm_joint_feedback.joint_2
+                self.__arm_joint_msgs.joint_state.joint_1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
+                self.__arm_joint_msgs.joint_state.joint_2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_34):
                 self.__fps_counter.increment("ArmJoint_34")
                 self.__arm_time_stamp.time_stamp_joint_34 = time.time_ns()
-                self.__arm_joint_msgs.joint_state.joint_3 = msg.arm_joint_feedback.joint_3
-                self.__arm_joint_msgs.joint_state.joint_4 = msg.arm_joint_feedback.joint_4
+                self.__arm_joint_msgs.joint_state.joint_3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
+                self.__arm_joint_msgs.joint_state.joint_4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_56):
                 self.__fps_counter.increment("ArmJoint_56")
                 self.__arm_time_stamp.time_stamp_joint_56 = time.time_ns()
-                self.__arm_joint_msgs.joint_state.joint_5 = msg.arm_joint_feedback.joint_5
-                self.__arm_joint_msgs.joint_state.joint_6 = msg.arm_joint_feedback.joint_6
+                self.__arm_joint_msgs.joint_state.joint_5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
+                self.__arm_joint_msgs.joint_state.joint_6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
             else:
                 pass
             # 更新时间戳，取筛选ID的最新一个
@@ -1640,18 +1664,18 @@ class C_PiperInterface_V2():
             if(msg.type_ == ArmMsgType.PiperMsgJointCtrl_12):
                 self.__fps_counter.increment("ArmJointCtrl_12")
                 self.__arm_time_stamp.time_stamp_joint_ctrl_12 = time.time_ns()
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_1 = msg.arm_joint_ctrl.joint_1
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_2 = msg.arm_joint_ctrl.joint_2
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_1 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_1, "j1")
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_2 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_2, "j2")
             elif(msg.type_ == ArmMsgType.PiperMsgJointCtrl_34):
                 self.__fps_counter.increment("ArmJointCtrl_34")
                 self.__arm_time_stamp.time_stamp_joint_ctrl_34 = time.time_ns()
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_3 = msg.arm_joint_ctrl.joint_3
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_4 = msg.arm_joint_ctrl.joint_4
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_3 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_3, "j3")
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_4 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_4, "j4")
             elif(msg.type_ == ArmMsgType.PiperMsgJointCtrl_56):
                 self.__fps_counter.increment("ArmJointCtrl_56")
                 self.__arm_time_stamp.time_stamp_joint_ctrl_56 = time.time_ns()
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_5 = msg.arm_joint_ctrl.joint_5
-                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 = msg.arm_joint_ctrl.joint_6
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_5 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_5, "j5")
+                self.__arm_joint_ctrl_msgs.joint_ctrl.joint_6 = self.__CalJointSDKLimit(msg.arm_joint_ctrl.joint_6, "j6")
             else:
                 pass
             # 更新时间戳，取筛选ID的最新一个
@@ -2041,13 +2065,12 @@ class C_PiperInterface_V2():
             joint_5 (int): The angle of joint 5.in 0.001°
             joint_6 (int): The angle of joint 6.in 0.001°
         '''
-        if not self.__ValidateJointValue(joint_1, "1", -150 * 1000, 150 * 1000) or \
-        not self.__ValidateJointValue(joint_2, "2", 0, 180 * 1000) or \
-        not self.__ValidateJointValue(joint_3, "3", -170 * 1000, 0) or \
-        not self.__ValidateJointValue(joint_4, "4", -100 * 1000, 100 * 1000) or \
-        not self.__ValidateJointValue(joint_5, "5", -70 * 1000, 70 * 1000) or \
-        not self.__ValidateJointValue(joint_6, "6", -120 * 1000, 120 * 1000):
-            return
+        joint_1 = self.__CalJointSDKLimit(joint_1, "j1")
+        joint_2 = self.__CalJointSDKLimit(joint_2, "j2")
+        joint_3 = self.__CalJointSDKLimit(joint_3, "j3")
+        joint_4 = self.__CalJointSDKLimit(joint_4, "j4")
+        joint_5 = self.__CalJointSDKLimit(joint_5, "j5")
+        joint_6 = self.__CalJointSDKLimit(joint_6, "j6")
         self.__JointCtrl_12(joint_1, joint_2)
         self.__JointCtrl_34(joint_3, joint_4)
         self.__JointCtrl_56(joint_5, joint_6)
@@ -2915,3 +2938,21 @@ class C_PiperInterface_V2():
         msg = PiperMessage(type_=ArmMsgType.PiperMsgGripperTeachingPendantParamConfig, arm_gripper_teaching_param_config=gripper_teaching_pendant_param_config)
         self.__parser.EncodeMessage(msg, tx_can)
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+#----------------------------------------------------------------------------------
+    def GetSDKJointLimitParam(self,
+                           joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):
+        return self.__piper_param_mag.GetJointLimitParam(joint_name)
+    
+    def GetSDKGripperRangeParam(self):
+        return self.__piper_param_mag.GetGripperRangeParam()
+
+    def SetSDKJointLimitParam(self, 
+                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"],
+                            min_val: float, 
+                            max_val: float):
+        self.__piper_param_mag.SetJointLimitParam(joint_name, min_val, max_val)
+    
+    def SetSDKGripperRangeParam(self,
+                             min_val: float, 
+                             max_val: float):
+        self.__piper_param_mag.SetGripperRangeParam(min_val, max_val)
