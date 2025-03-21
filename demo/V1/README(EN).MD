@@ -64,7 +64,7 @@ V1
 | `piper_init_default.py` | Set default limits for all joints, maximum speeds, and accelerations |
 | `piper_joint_ctrl.py` | Control the robotic arm's joints |
 | `piper_master_config.py` | Set the robotic arm as the master arm |
-| `piper_moveC.py` | Set the robotic arm as the master arm |
+| `piper_moveC.py` | Set the robotic arm as the circle mode |
 | `piper_read_arm_motor_max_acc_limit.py` | Read the maximum acceleration limits of all motors |
 | `piper_read_arm_motor_max_angle_spd.py` | Read the maximum speed limits of all motors |
 | `piper_read_end_pose.py` | Read the end effector's pose |
