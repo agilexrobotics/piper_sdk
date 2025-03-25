@@ -194,35 +194,35 @@ class PiperMessage:
             return (f"Type: {self.type_}\n"f"Joint Feed: {self.arm_joint_feedback}\n")
         elif(self.type_ == ArmMsgType.PiperMsgGripperFeedBack):
             return (f"Type: {self.type_}\n"f"Gripper Feed: {self.gripper_feedback}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_1):
+        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_X_Y):
             return (f"Type: {self.type_}\n"f"End Pose Feed: {self.arm_end_pose}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_2):
+        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_Z_RX):
             return (f"Type: {self.type_}\n"f"End Pose Feed: {self.arm_end_pose}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_3):
+        elif(self.type_ == ArmMsgType.PiperMsgEndPoseFeedback_RY_RZ):
             return (f"Type: {self.type_}\n"f"End Pose Feed: {self.arm_end_pose}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_1):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR1):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_1}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_2):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR2):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_2}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_3):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR3):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_3}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_4):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR4):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_4}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_5):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR5):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_5}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_6):
+        elif(self.type_ == ArmMsgType.PiperMsgHighSpdFeed_MOTOR6):
             return (f"Type: {self.type_}\n"f"High Spd Feedback: {self.arm_high_spd_feedback_6}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_1):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR1):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_1}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_2):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR2):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_2}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_3):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR3):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_3}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_4):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR4):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_4}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_5):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR5):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_5}\n")
-        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_6):
+        elif(self.type_ == ArmMsgType.PiperMsgLowSpdFeed_MOTOR6):
             return (f"Type: {self.type_}\n"f"Low Spd Feedback: {self.arm_low_spd_feedback_6}\n")
         # 发送,transmit
         elif(self.type_ == ArmMsgType.PiperMsgMotionCtrl_1):

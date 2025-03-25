@@ -22,25 +22,25 @@ class ArmMessageMapping:
     id_to_type_mapping = {
         # feedback
         CanIDPiper.ARM_STATUS_FEEDBACK.value: ArmMsgType.PiperMsgStatusFeedback,
-        CanIDPiper.ARM_END_POSE_FEEDBACK_1.value: ArmMsgType.PiperMsgEndPoseFeedback_1,
-        CanIDPiper.ARM_END_POSE_FEEDBACK_2.value: ArmMsgType.PiperMsgEndPoseFeedback_2,
-        CanIDPiper.ARM_END_POSE_FEEDBACK_3.value: ArmMsgType.PiperMsgEndPoseFeedback_3,
+        CanIDPiper.ARM_END_POSE_FEEDBACK_X_Y.value: ArmMsgType.PiperMsgEndPoseFeedback_X_Y,
+        CanIDPiper.ARM_END_POSE_FEEDBACK_Z_RX.value: ArmMsgType.PiperMsgEndPoseFeedback_Z_RX,
+        CanIDPiper.ARM_END_POSE_FEEDBACK_RY_RZ.value: ArmMsgType.PiperMsgEndPoseFeedback_RY_RZ,
         CanIDPiper.ARM_JOINT_FEEDBACK_12.value: ArmMsgType.PiperMsgJointFeedBack_12,
         CanIDPiper.ARM_JOINT_FEEDBACK_34.value: ArmMsgType.PiperMsgJointFeedBack_34,
         CanIDPiper.ARM_JOINT_FEEDBACK_56.value: ArmMsgType.PiperMsgJointFeedBack_56,
         CanIDPiper.ARM_GRIPPER_FEEDBACK.value: ArmMsgType.PiperMsgGripperFeedBack,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_1.value: ArmMsgType.PiperMsgHighSpdFeed_1,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_2.value: ArmMsgType.PiperMsgHighSpdFeed_2,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_3.value: ArmMsgType.PiperMsgHighSpdFeed_3,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_4.value: ArmMsgType.PiperMsgHighSpdFeed_4,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_5.value: ArmMsgType.PiperMsgHighSpdFeed_5,
-        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_6.value: ArmMsgType.PiperMsgHighSpdFeed_6,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_1.value: ArmMsgType.PiperMsgLowSpdFeed_1,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_2.value: ArmMsgType.PiperMsgLowSpdFeed_2,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_3.value: ArmMsgType.PiperMsgLowSpdFeed_3,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_4.value: ArmMsgType.PiperMsgLowSpdFeed_4,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_5.value: ArmMsgType.PiperMsgLowSpdFeed_5,
-        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_6.value: ArmMsgType.PiperMsgLowSpdFeed_6,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR1.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR1,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR2.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR2,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR3.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR3,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR4.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR4,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR5.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR5,
+        CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_MOTOR6.value: ArmMsgType.PiperMsgHighSpdFeed_MOTOR6,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR1.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR1,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR2.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR2,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR3.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR3,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR4.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR4,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR5.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR5,
+        CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_MOTOR6.value: ArmMsgType.PiperMsgLowSpdFeed_MOTOR6,
         # transmit
         CanIDPiper.ARM_MOTION_CTRL_1.value: ArmMsgType.PiperMsgMotionCtrl_1,
         # CanIDPiper.ARM_STOP_CTRL.value: ArmMsgType.PiperMsgStopCtrl,
@@ -122,7 +122,7 @@ class ArmMessageMapping:
 # 测试代码
 # if __name__ == "__main__":
 #     # 根据 ID 查找类型
-#     print(ArmMessageMapping.get_mapping(can_id=0x2A2))  # 输出: PiperMsgEndPoseFeedback_1 (0x2)
+#     print(ArmMessageMapping.get_mapping(can_id=0x2A2))  # 输出: PiperMsgEndPoseFeedback_X_Y (0x2)
 
 #     # 根据类型查找 ID
 #     print(ArmMessageMapping.get_mapping(msg_type=ArmMsgType.PiperMsgJointFeedBack_56))  # 输出: 0x2A7
