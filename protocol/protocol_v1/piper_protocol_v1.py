@@ -366,10 +366,10 @@ class C_PiperParserV1(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.set_end_load,False) + \
                                 [0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgEndVelAccParamConfig):
-            tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_vel,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_vel,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_acc,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_acc,False)
+            tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_linear_vel,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_angular_vel,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_linear_acc,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_angular_acc,False)
         elif(msg_type_ == ArmMsgType.PiperMsgCrashProtectionRatingConfig):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_1_protection_level,False) + \
                                 self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_2_protection_level,False) + \

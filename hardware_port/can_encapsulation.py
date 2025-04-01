@@ -52,7 +52,7 @@ class C_STD_CAN():
         self.channel_name = channel_name
         self.bustype = bustype
         self.expected_bitrate = expected_bitrate
-        self.rx_message:Optional[Message]   #创建消息接收类
+        self.rx_message:Optional[Message] = Message()   #创建消息接收类
         self.callback_function = callback_function  #接收回调函数
         self.bus = None
         if(judge_flag):
@@ -129,7 +129,7 @@ class C_STD_CAN():
     def GetBirtrate(self):
         return self.expected_bitrate
 
-    def GetRxMessage(self):
+    def GetRxMessage(self) -> Message:
         return self.rx_message
 
     def ReadCanMessage(self):
@@ -266,13 +266,15 @@ class C_STD_CAN():
             print(f"Error while getting bitrate: {e}")
             return "Unknown"
 
-# 示例代码
+## 示例代码
 # if __name__ == "__main__":
 #     try:
 #         can_obj = C_STD_CAN(channel_name="can0")
 #         print("CAN bus initialized successfully.")
 #         print(can_obj.get_can_ports())
 #         print(can_obj.can_port_info("can0"))
+#         print(can_obj.ReadCanMessage())
+#         print(can_obj.GetRxMessage())
 #     except ValueError as e:
 #         print(e)
 #     except Exception as e:

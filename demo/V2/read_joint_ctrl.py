@@ -13,6 +13,6 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while True:
         import time
-        print(piper.GetArmHighSpdInfoMsgs())
-        time.sleep(0.5)
+        print(piper.GetArmJointCtrl())
+        time.sleep(0.005)
         pass

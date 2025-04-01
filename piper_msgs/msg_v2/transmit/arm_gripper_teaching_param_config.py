@@ -25,7 +25,7 @@ class ArmMsgGripperTeachingPendantParamConfig:
             无效值---0
             小夹爪为---70mm
             大夹爪为---100mm
-        Byte 2: 保留
+        Byte 2: 示教器摩擦系数设置, uint8, 范围[1, 10] ----- (基于V1.5-8版本及以后)
         Byte 3: 保留
         Byte 4: 保留
         Byte 5: 保留
@@ -52,7 +52,7 @@ class ArmMsgGripperTeachingPendantParamConfig:
         Byte 1	Max control stroke limit	uint8	- Invalid value: 0
                     - Small gripper: 70 mm
                     - Large gripper: 100 mm
-        Byte 2	Reserved	-	Reserved for future use.
+        Byte 2	Teaching pendant friction coefficient setting, `uint8`, range [1, 10].(Based on version V1.5-8 and later)
         Byte 3	Reserved	-	Reserved for future use.
         Byte 4	Reserved	-	Reserved for future use.
         Byte 5	Reserved	-	Reserved for future use.
@@ -61,18 +61,23 @@ class ArmMsgGripperTeachingPendantParamConfig:
     '''
     def __init__(self, 
                  teaching_range_per: int = 100, 
-                 max_range_config: Literal[0, 70, 100] = 0):
+                 max_range_config: Literal[0, 70, 100] = 0,
+                 teaching_friction: Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] = 1):
         if not (100 <= teaching_range_per <= 200):
             raise ValueError(f"'teaching_range_per' Value {teaching_range_per} out of range [100, 200]")
         if max_range_config not in [0, 70, 100]:
             raise ValueError(f"'max_range_config' Value {max_range_config} out of range [0,70,100]")
+        if teaching_friction not in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+            raise ValueError(f"'teaching_friction' Value {teaching_friction} out of range [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
         self.teaching_range_per = teaching_range_per
         self.max_range_config = max_range_config
+        self.teaching_friction = teaching_friction
 
     def __str__(self):
         return (f"ArmMsgGripperTeachingPendantParamConfig(\n"
                 f"  teaching_range_per: {self.teaching_range_per},\n"
                 f"  max_range_config: {self.max_range_config},\n"
+                f"  teaching_friction: {self.teaching_friction},\n"
                 f")")
 
     def __repr__(self):

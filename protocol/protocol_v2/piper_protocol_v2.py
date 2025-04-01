@@ -268,6 +268,7 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_gripper_teaching_param_feedback.teaching_range_per = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
             msg.arm_gripper_teaching_param_feedback.max_range_config = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_gripper_teaching_param_feedback.teaching_friction = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
         else:
             ret = False
         return ret
@@ -377,10 +378,10 @@ class C_PiperParserV2(C_PiperParserBase):
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.set_end_load,False) + \
                                 [0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgEndVelAccParamConfig):
-            tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_vel,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_vel,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_linear_acc,False) + \
-                                self.ConvertToList_16bit(msg.arm_end_vel_acc_config.end_max_angular_acc,False)
+            tx_can_frame.data = self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_linear_vel,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_angular_vel,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_linear_acc,False) + \
+                                self.ConvertToList_16bit(msg.arm_end_vel_acc_param_config.end_max_angular_acc,False)
         elif(msg_type_ == ArmMsgType.PiperMsgCrashProtectionRatingConfig):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_1_protection_level,False) + \
                                 self.ConvertToList_8bit(msg.arm_crash_protection_rating_config.joint_2_protection_level,False) + \
@@ -392,7 +393,8 @@ class C_PiperParserV2(C_PiperParserBase):
         elif(msg_type_ == ArmMsgType.PiperMsgGripperTeachingPendantParamConfig):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_gripper_teaching_param_config.teaching_range_per,False) + \
                                 self.ConvertToList_8bit(msg.arm_gripper_teaching_param_config.max_range_config,False) + \
-                                [0, 0, 0, 0, 0, 0]
+                                self.ConvertToList_8bit(msg.arm_gripper_teaching_param_config.teaching_friction,False) + \
+                                [0, 0, 0, 0, 0]
         # 机械臂MIT单独控制电机
         elif(msg_type_ == ArmMsgType.PiperMsgJointMitCtrl_1 or
              msg_type_ == ArmMsgType.PiperMsgJointMitCtrl_2 or

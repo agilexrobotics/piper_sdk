@@ -49,7 +49,7 @@ if __name__ == "__main__":
     enable_fun(piper=piper)
     # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
-    factor = 57324.840764 #1000*180/3.14
+    factor = 57295.7795 #1000*180/3.1415926
     # factor =1
     position = [0,0,0,0,0,0,0]
     count = 0
