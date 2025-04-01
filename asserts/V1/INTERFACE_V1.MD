@@ -123,7 +123,9 @@ ps：有些地方略写，代码中有详细的中文注释，本文这里只是
 |`__UpdatePiperFeedbackFK`|Getter Method|更新piper反馈信息正解数据|类内使用|None|None|
 |`__UpdatePiperCtrlFK`|Getter Method|更新piper控制信息正解数据|类内使用|None|None|
 |`MotionCtrl_1`|Ctrl Method|0x150,可以控制急停、轨迹传输及拖动示教模式。|类外调用|`emergency_stop (uint8)`,`track_ctrl (uint8)`, `grag_teach_ctrl (uint8)`|None|
-|`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`|None|
+|`EmergencyStop`|Ctrl Method|0x150,控制急停|类外调用|`emergency_stop (uint8)`|None|
+|`MotionCtrl_2`|Ctrl Method|0x151,可以设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`, `is_mit_mode(uint8)`|None|
+|`ModeCtrl`|Ctrl Method|0x151,设置控制模式、MOVE模式及运动速度。每次控制机械臂运动之前都要发送一次，否则机械臂可能动不起来|类外调用|`ctrl_mode (uint8)`,`move_mode (uint8)`, `move_spd_rate_ctrl (uint8)`,`is_mit_mode(uint8)`|None|
 |`EndPoseCtrl`|Ctrl Method|0x152,0x153,0x154,控制机械臂的末端位置和姿态。是下面三个函数的汇总,需要注意的是，该函数发送出去的x、y、z数值单位为0.001mm,rx、ry、rz数值单位为0.001度,假如需要机械臂向x轴方向运行0.3m，则发送的数据应为0.3\*100\*1000=30000|类外调用|`X (int)`, `Y (int)`, `Z (int)`, `RX (int)`, `RY (int)`, `RZ (int)`|None|
 |`__CartesianCtrl_XY`|Ctrl Method|控制机械臂笛卡尔坐标的XY轴运动。|类内调用(私有)|`X (int)`, `Y (int)`|None|
 |`__CartesianCtrl_ZRX`|Ctrl Method|控制机械臂笛卡尔坐标的Z轴和RX轴运动。|类内调用(私有)|`Z (int)`, `RX (int)`|None|

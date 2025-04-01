@@ -1,4 +1,25 @@
 
+Version 0.2.20
+=============
+
+Features
+--------
+
+- Added the teaching pendant friction coefficient parameter to the gripper/teaching pendant parameter feedback command (both feedback and sending) and adapted the protocol.
+- Added `ModeCtrl` and `EmergencyStop` functions to set modes and perform emergency stops (future updates will introduce dictionary-based parameter matching for all functions).
+- Renamed all data reading files in the demo to start with "read" for easier searching.
+- Initialized `rx_message` as an empty `Message()` in the `C_STD_CAN` encapsulation class.
+
+Bug Fixes
+---------
+
+- Fixed the issue where the gripper feedback timestamp was of type `int`. Now, a unified timestamp retrieval function is used.
+
+Miscellaneous
+---------
+
+None
+
 Version 0.2.19
 =============
 
