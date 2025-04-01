@@ -8,7 +8,11 @@ Features
 - Added the teaching pendant friction coefficient parameter to the gripper/teaching pendant parameter feedback command (both feedback and sending) and adapted the protocol.
 - Added `ModeCtrl` and `EmergencyStop` functions to set modes and perform emergency stops (future updates will introduce dictionary-based parameter matching for all functions).
 - Renamed all data reading files in the demo to start with "read" for easier searching.
-- Initialized `rx_message` as an empty `Message()` in the `C_STD_CAN` encapsulation class.
+- Initialized `rx_message` as an empty `Message()` in the `C_STD_CAN` encapsulation class
+- Added `piper_param_manager` file, which includes angle and gripper range limits, applying constraints to both feedback and control messages.
+  - If feedback or control messages exceed the set limits, the values will be clamped to the boundary values.
+  - To configure limit ranges, use the `SetSDKJointLimitParam` and `SetSDKGripperRangeParam` functions to set software constraints.
+    Refer to the `piper_sdk_param.py` file in the demo for examples.
 
 Bug Fixes
 ---------
