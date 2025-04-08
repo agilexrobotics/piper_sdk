@@ -51,8 +51,8 @@ class ArmMsgFeedbackCurrentMotorMaxAccLimit:
 
     def __str__(self):
         return (f"ArmMsgFeedbackCurrentMotorMaxAccLimit(\n"
-                f"  joint_motor_num: {self.joint_motor_num},\n"
-                f"  max_joint_acc: {self.max_joint_acc}, {self.max_joint_acc*0.001} rad/^2\n"
+                f"  joint_motor_num: {self.joint_motor_num}\n"
+                f"  max_joint_acc: {self.max_joint_acc}\n"
                 f")")
 
     def __repr__(self):

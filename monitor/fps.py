@@ -93,47 +93,47 @@ class C_FPSCounter:
                     self.prev_data[name] = self.fps_data[name]
             self.stop_event.wait(1)  # 用 wait() 代替 sleep()，更易控制
 
-def camera_simulation(fps_counter, name, interval, stop_after=None):
-    """
-    模拟相机帧生成并调用 increment
-    :param fps_counter: FPSCounter 实例
-    :param name: 相机变量名称
-    :param interval: 模拟帧生成的时间间隔
-    :param stop_after: 停止生成数据的时间（秒），为 None 时不停止
-    """
-    start_time = time.perf_counter()
-    while True:
-        if stop_after is not None and time.perf_counter() - start_time > stop_after:
-            print(f"{name} stopped generating data.")
-            break
-        fps_counter.increment(name)
-        time.sleep(interval)
+# def camera_simulation(fps_counter, name, interval, stop_after=None):
+#     """
+#     模拟相机帧生成并调用 increment
+#     :param fps_counter: FPSCounter 实例
+#     :param name: 相机变量名称
+#     :param interval: 模拟帧生成的时间间隔
+#     :param stop_after: 停止生成数据的时间（秒），为 None 时不停止
+#     """
+#     start_time = time.perf_counter()
+#     while True:
+#         if stop_after is not None and time.perf_counter() - start_time > stop_after:
+#             print(f"{name} stopped generating data.")
+#             break
+#         fps_counter.increment(name)
+#         time.sleep(interval)
 
 
-if __name__ == "__main__":
-    fps_counter = C_FPSCounter()
-    fps_counter.add_variable("camera1")
-    fps_counter.add_variable("camera2")
+# if __name__ == "__main__":
+#     fps_counter = C_FPSCounter()
+#     fps_counter.add_variable("camera1")
+#     fps_counter.add_variable("camera2")
 
-    fps_counter.start()
+#     fps_counter.start()
 
-    try:
-        # 创建线程模拟相机1和相机2的帧生成
-        camera1_thread = threading.Thread(target=camera_simulation, args=(fps_counter, "camera1", 0.01, 5), daemon=True)
-        camera2_thread = threading.Thread(target=camera_simulation, args=(fps_counter, "camera2", 0.01, None), daemon=True)
+#     try:
+#         # 创建线程模拟相机1和相机2的帧生成
+#         camera1_thread = threading.Thread(target=camera_simulation, args=(fps_counter, "camera1", 0.01, 5), daemon=True)
+#         camera2_thread = threading.Thread(target=camera_simulation, args=(fps_counter, "camera2", 0.01, None), daemon=True)
 
-        camera1_thread.start()
-        camera2_thread.start()
+#         camera1_thread.start()
+#         camera2_thread.start()
 
-        # 打印 FPS
-        while True:
-            print(f"FPS for camera1 (1s avg): {fps_counter.get_fps('camera1')}")
-            print(f"FPS for camera2 (1s avg): {fps_counter.get_fps('camera2')}")
-            print(f"Real-time FPS for camera1: {fps_counter.get_real_time_fps('camera1', window=1.0)}")
-            print(f"Real-time FPS for camera2: {fps_counter.get_real_time_fps('camera2', window=1.0)}")
-            print(f"Instant FPS for camera1: {fps_counter.get_instant_fps('camera1')}")
-            print(f"Instant FPS for camera2: {fps_counter.get_instant_fps('camera2')}")
-            time.sleep(0.01)
+#         # 打印 FPS
+#         while True:
+#             print(f"FPS for camera1 (1s avg): {fps_counter.get_fps('camera1')}")
+#             print(f"FPS for camera2 (1s avg): {fps_counter.get_fps('camera2')}")
+#             print(f"Real-time FPS for camera1: {fps_counter.get_real_time_fps('camera1', window=1.0)}")
+#             print(f"Real-time FPS for camera2: {fps_counter.get_real_time_fps('camera2', window=1.0)}")
+#             print(f"Instant FPS for camera1: {fps_counter.get_instant_fps('camera1')}")
+#             print(f"Instant FPS for camera2: {fps_counter.get_instant_fps('camera2')}")
+#             time.sleep(0.01)
 
-    finally:
-        fps_counter.stop()
+#     finally:
+#         fps_counter.stop()

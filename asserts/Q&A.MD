@@ -1,18 +1,16 @@
 # Q&A
 
-[EN](Q&A(EN).MD)
+## 1. First-time Use: Gripper/Teach Pendant Cannot Be Controlled and No Feedback
 
-## 一、 第一次使用夹爪/示教器无法控制以及无消息问题
+Note: **This feature is not available in the V1 version interface**
 
-注：**V1版本interface无此功能**
+> The gripper/teach pendant are end effectors, hereafter referred to as end effectors.
 
-> 夹爪/示教器都为末端执行器，下统称为末端执行器
+In the new version, the gripper needs to have its stroke range set at the factory. If this is not set, you will experience issues where the feedback value is always zero, and control is not possible.
 
-由于新版本夹爪出厂需要设定行程范围，如果没有设定，则会出现反馈值始终为零以及无法控制的问题
+The V2 version interface and above should be used to set this.
 
-这里使用V2版本及以上interface来设定
-
-1. 执行[piper_disable.py](../demo/V2/piper_disable.py)来失能机械臂，注意失能机械臂会令所有电机立刻失电
-2. 执行[V2_gripper_param_config.py](../demo/V2/V2_gripper_param_config.py)来设定末端执行器行程
-3. 然后执行[read_gripper_status.py](../demo/V2/read_gripper_status.py)查看末端执行器是否有数据
-4. 如果发现末端执行器反馈的行程数据在闭合时的数值偏大，可以使用[piper_gripper_zero_set.py](../demo/V2/piper_gripper_zero_set.py)来设定末端执行器零点
+1. Execute [piper_disable.py](../demo/V2/piper_disable.py) to disable the robotic arm. Note that disabling the arm will cut power to all motors immediately.
+2. Execute [V2_gripper_param_config.py](../demo/V2/V2_gripper_param_config.py) to set the stroke range for the end effector.
+3. Then, execute [read_gripper_status.py](../demo/V2/read_gripper_status.py) to check if the end effector provides any feedback.
+4. If you find that the stroke data for the end effector is too large when closed, you can use [piper_gripper_zero_set.py](../demo/V2/piper_gripper_zero_set.py) to set the end effector’s zero position

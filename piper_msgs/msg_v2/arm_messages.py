@@ -11,18 +11,18 @@ from typing import (
     Optional,
 )
 from .arm_msg_type import ArmMsgType
-from .feedback.arm_end_pose import ArmMsgEndPoseFeedBack
-from .feedback.arm_joint_feedback import ArmMsgJointFeedBack
-from .feedback.arm_status import ArmMsgStatus
-from .feedback.gripper_feedback import ArmMsgGripperFeedBack
+from .feedback.arm_feedback_end_pose import ArmMsgFeedBackEndPose
+from .feedback.arm_feedback_joint_states import ArmMsgFeedBackJointStates
+from .feedback.arm_feedback_status import ArmMsgFeedbackStatus
+from .feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
 from .feedback.arm_feedback_current_end_vel_acc_param import ArmMsgFeedbackCurrentEndVelAccParam
 from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd, ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
 from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit, ArmMsgFeedbackAllCurrentMotorMaxAccLimit
 from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc, ArmMsgFeedbackAllJointVelAcc
-from .feedback.arm_high_spd_feedback import ArmHighSpdFeedback
-from .feedback.arm_low_spd_feedback import ArmLowSpdFeedback
+from .feedback.arm_feedback_high_spd import ArmMsgFeedbackHighSpd
+from .feedback.arm_feedback_low_spd import ArmMsgFeedbackLowSpd
 #----------------------------------基于V1.5-2版本后---------------------------------------------#
-from .feedback.arm_gripper_teaching_param_feedback import ArmMsgGripperTeachingPendantParamFeedback
+from .feedback.arm_feedback_gripper_teaching_param import ArmMsgFeedbackGripperTeachingPendantParam
 #---------------------------------------------------------------------------------------------#
 
 from .transmit.arm_motion_ctrl_1 import ArmMsgMotionCtrl_1
@@ -40,7 +40,7 @@ from .transmit.arm_set_instruction_response import ArmMsgInstructionResponseConf
 from .transmit.arm_param_enquiry_and_config import ArmMsgParamEnquiryAndConfig
 from .transmit.arm_end_vel_acc_param_config import ArmMsgEndVelAccParamConfig
 from .transmit.arm_crash_protection_rating_config import ArmMsgCrashProtectionRatingConfig
-from .feedback.arm_crash_protection_rating_feedback import ArmMsgCrashProtectionRatingFeedback
+from .feedback.arm_feedback_crash_protection_rating import ArmMsgFeedbackCrashProtectionRating
 #----------------------------------基于V1.5-2版本后---------------------------------------------#
 from .transmit.arm_joint_mit_ctrl import ArmMsgJointMitCtrl
 from .transmit.arm_joint_mit_ctrl import ArmMsgAllJointMitCtrl
@@ -60,20 +60,20 @@ class PiperMessage:
     def __init__(self, 
                 #  反馈
                  type_: 'ArmMsgType' = None,
-                 arm_status_msgs: 'ArmMsgStatus' = None,
-                 arm_joint_feedback: 'ArmMsgJointFeedBack' = None,
-                 gripper_feedback: 'ArmMsgGripperFeedBack' = None,
-                 arm_end_pose: 'ArmMsgEndPoseFeedBack'=None,
+                 arm_status_msgs: 'ArmMsgFeedbackStatus' = None,
+                 arm_joint_feedback: 'ArmMsgFeedBackJointStates' = None,
+                 gripper_feedback: 'ArmMsgFeedBackGripper' = None,
+                 arm_end_pose: 'ArmMsgFeedBackEndPose'=None,
                  arm_feedback_current_motor_angle_limit_max_spd:'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd'=None,
                  arm_feedback_current_end_vel_acc_param:'ArmMsgFeedbackCurrentEndVelAccParam'=None,
                  arm_feedback_current_motor_max_acc_limit:'ArmMsgFeedbackCurrentMotorMaxAccLimit'=None,
-                 arm_crash_protection_rating_feedback:'ArmMsgCrashProtectionRatingFeedback'=None,
+                 arm_crash_protection_rating_feedback:'ArmMsgFeedbackCrashProtectionRating'=None,
                  #  arm_feedback_joint_vel_acc:'ArmMsgFeedbackJointVelAcc'=None
                 #  arm_feedback_all_current_motor_angle_limit_max_spd:'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd'=None,
                 #  arm_feedback_all_motor_max_acc_limit:'ArmMsgFeedbackAllCurrentMotorMaxAccLimit'=None,
-                 arm_high_spd_feedback:'ArmHighSpdFeedback'=None,
-                 arm_low_spd_feedback:'ArmLowSpdFeedback'=None,
-                 arm_gripper_teaching_param_feedback:'ArmMsgGripperTeachingPendantParamFeedback'=None,
+                 arm_high_spd_feedback:'ArmMsgFeedbackHighSpd'=None,
+                 arm_low_spd_feedback:'ArmMsgFeedbackLowSpd'=None,
+                 arm_gripper_teaching_param_feedback:'ArmMsgFeedbackGripperTeachingPendantParam'=None,
                 #  发送
                  arm_motion_ctrl_1: 'ArmMsgMotionCtrl_1'=None,
                  arm_motion_ctrl_2: 'ArmMsgMotionCtrl_2'=None,
@@ -97,30 +97,30 @@ class PiperMessage:
         # 初始化数据帧类型
         self.type_ = type_
         # 初始化机械臂状态消息
-        self.arm_status_msgs = arm_status_msgs if arm_status_msgs else ArmMsgStatus()
+        self.arm_status_msgs = arm_status_msgs if arm_status_msgs else ArmMsgFeedbackStatus()
         # 初始化机械臂关节反馈
-        self.arm_joint_feedback = arm_joint_feedback if arm_joint_feedback else ArmMsgJointFeedBack()
+        self.arm_joint_feedback = arm_joint_feedback if arm_joint_feedback else ArmMsgFeedBackJointStates()
         # 初始化夹爪反馈
-        self.gripper_feedback = gripper_feedback if gripper_feedback else ArmMsgGripperFeedBack()
+        self.gripper_feedback = gripper_feedback if gripper_feedback else ArmMsgFeedBackGripper()
         # 初始化末端姿态反馈
-        self.arm_end_pose = arm_end_pose if arm_end_pose else ArmMsgEndPoseFeedBack()
+        self.arm_end_pose = arm_end_pose if arm_end_pose else ArmMsgFeedBackEndPose()
         # 驱动器信息高速反馈
-        self.arm_high_spd_feedback_1 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
-        self.arm_high_spd_feedback_2 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
-        self.arm_high_spd_feedback_3 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
-        self.arm_high_spd_feedback_4 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
-        self.arm_high_spd_feedback_5 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
-        self.arm_high_spd_feedback_6 = arm_high_spd_feedback if arm_high_spd_feedback else ArmHighSpdFeedback()
+        self.arm_high_spd_feedback_1 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
+        self.arm_high_spd_feedback_2 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
+        self.arm_high_spd_feedback_3 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
+        self.arm_high_spd_feedback_4 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
+        self.arm_high_spd_feedback_5 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
+        self.arm_high_spd_feedback_6 = arm_high_spd_feedback if arm_high_spd_feedback else ArmMsgFeedbackHighSpd()
         # 驱动器信息低速反馈
-        self.arm_low_spd_feedback_1 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        self.arm_low_spd_feedback_2 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        self.arm_low_spd_feedback_3 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        self.arm_low_spd_feedback_4 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        self.arm_low_spd_feedback_5 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
-        self.arm_low_spd_feedback_6 = arm_low_spd_feedback if arm_low_spd_feedback else ArmLowSpdFeedback()
+        self.arm_low_spd_feedback_1 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
+        self.arm_low_spd_feedback_2 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
+        self.arm_low_spd_feedback_3 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
+        self.arm_low_spd_feedback_4 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
+        self.arm_low_spd_feedback_5 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
+        self.arm_low_spd_feedback_6 = arm_low_spd_feedback if arm_low_spd_feedback else ArmMsgFeedbackLowSpd()
         # 夹爪/示教器参数反馈指令
         self.arm_gripper_teaching_param_feedback = arm_gripper_teaching_param_feedback \
-            if arm_gripper_teaching_param_feedback else ArmMsgGripperTeachingPendantParamFeedback()
+            if arm_gripper_teaching_param_feedback else ArmMsgFeedbackGripperTeachingPendantParam()
         #-------------------------------发送-------------------------------------------
         self.arm_motion_ctrl_1 = arm_motion_ctrl_1 if arm_motion_ctrl_1 else ArmMsgMotionCtrl_1()
         self.arm_motion_ctrl_2 = arm_motion_ctrl_2 if arm_motion_ctrl_2 else ArmMsgMotionCtrl_2()
@@ -164,7 +164,7 @@ class PiperMessage:
             if arm_crash_protection_rating_config else ArmMsgCrashProtectionRatingConfig()
         # 碰撞防护等级设置反馈指令
         self.arm_crash_protection_rating_feedback = arm_crash_protection_rating_feedback \
-            if arm_crash_protection_rating_feedback else ArmMsgCrashProtectionRatingFeedback()
+            if arm_crash_protection_rating_feedback else ArmMsgFeedbackCrashProtectionRating()
         # 反馈当前电机最大加速度限制
         self.arm_feedback_current_motor_max_acc_limit = arm_feedback_current_motor_max_acc_limit \
             if arm_feedback_current_motor_max_acc_limit else ArmMsgFeedbackCurrentMotorMaxAccLimit()

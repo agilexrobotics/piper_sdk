@@ -7,20 +7,20 @@ from .can_id import CanIDPiper
 from .arm_msg_type import ArmMsgType
 from .arm_id_type_map import ArmMessageMapping
 # 导入 feedback 子模块的类
-from .feedback.arm_crash_protection_rating_feedback import ArmMsgCrashProtectionRatingFeedback
-from .feedback.arm_end_pose import ArmMsgEndPoseFeedBack
+from .feedback.arm_feedback_crash_protection_rating import ArmMsgFeedbackCrashProtectionRating
+from .feedback.arm_feedback_end_pose import ArmMsgFeedBackEndPose
 from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd, ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
 from .feedback.arm_feedback_current_end_vel_acc_param import ArmMsgFeedbackCurrentEndVelAccParam
 from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit, ArmMsgFeedbackAllCurrentMotorMaxAccLimit
 from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc, ArmMsgFeedbackAllJointVelAcc
 #----------------------------------基于V1.5-2版本后---------------------------------------------#
-from .feedback.arm_gripper_teaching_param_feedback import ArmMsgGripperTeachingPendantParamFeedback
+from .feedback.arm_feedback_gripper_teaching_param import ArmMsgFeedbackGripperTeachingPendantParam
 #---------------------------------------------------------------------------------------------#
-from .feedback.arm_high_spd_feedback import ArmHighSpdFeedback
-from .feedback.arm_joint_feedback import ArmMsgJointFeedBack
-from .feedback.arm_low_spd_feedback import ArmLowSpdFeedback
-from .feedback.arm_status import ArmMsgStatus
-from .feedback.gripper_feedback import ArmMsgGripperFeedBack
+from .feedback.arm_feedback_high_spd import ArmMsgFeedbackHighSpd
+from .feedback.arm_feedback_joint_states import ArmMsgFeedBackJointStates
+from .feedback.arm_feedback_low_spd import ArmMsgFeedbackLowSpd
+from .feedback.arm_feedback_status import ArmMsgFeedbackStatus
+from .feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
 
 # 导入 transmit 子模块（假设 transmit 中也有需要导出的类）
 from .transmit.arm_circular_pattern import ArmMsgCircularPatternCoordNumUpdateCtrl
@@ -50,11 +50,11 @@ __all__ = [
     # 反馈
     'PiperMessage',
     'CanIDPiper',
-    'ArmMsgEndPoseFeedBack',
-    'ArmMsgJointFeedBack',
+    'ArmMsgFeedBackEndPose',
+    'ArmMsgFeedBackJointStates',
     'ArmMsgType',
-    'ArmMsgStatus',
-    'ArmMsgGripperFeedBack',
+    'ArmMsgFeedbackStatus',
+    'ArmMsgFeedBackGripper',
     'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd',
     'ArmMsgFeedbackCurrentEndVelAccParam',
     'ArmMsgFeedbackCurrentMotorMaxAccLimit',
@@ -62,10 +62,10 @@ __all__ = [
     'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd',
     'ArmMsgFeedbackAllCurrentMotorMaxAccLimit',
     'ArmMsgFeedbackAllJointVelAcc',
-    'ArmMsgCrashProtectionRatingFeedback',
-    'ArmHighSpdFeedback',
-    'ArmLowSpdFeedback',
-    'ArmMsgGripperTeachingPendantParamFeedback',
+    'ArmMsgFeedbackCrashProtectionRating',
+    'ArmMsgFeedbackHighSpd',
+    'ArmMsgFeedbackLowSpd',
+    'ArmMsgFeedbackGripperTeachingPendantParam',
     # 发送
     'ArmMsgMotionCtrl_1',
     'ArmMsgMotionCtrl_2',

@@ -68,10 +68,10 @@ class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
 
     def __str__(self):
         return (f"ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd(\n"
-                f"  motor_num: {self.motor_num},\n"
-                f"  max_angle_limit: {self.max_angle_limit}, {self.max_angle_limit * 0.1:.1f},\n"
-                f"  min_angle_limit: {self.min_angle_limit}, {self.min_angle_limit * 0.1:.1f},\n"
-                f"  max_joint_spd: {self.max_joint_spd}, {self.max_joint_spd * 0.001:.3f}\n"
+                f"  motor_num: {self.motor_num}\n"
+                f"  max_angle_limit: {self.max_angle_limit}\n"
+                f"  min_angle_limit: {self.min_angle_limit}\n"
+                f"  max_joint_spd: {self.max_joint_spd}\n"
                 f")")
 
     def __repr__(self):

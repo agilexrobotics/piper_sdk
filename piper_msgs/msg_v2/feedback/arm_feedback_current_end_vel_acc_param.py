@@ -69,10 +69,10 @@ class ArmMsgFeedbackCurrentEndVelAccParam:
 
     def __str__(self):
         return (f"ArmMsgFeedbackCurrentEndVelAccParam(\n"
-                f"  end_max_linear_vel: {self.end_max_linear_vel}, {self.end_max_linear_vel*0.001:.3f}m/s\n"
-                f"  end_max_angular_vel: {self.end_max_angular_vel}, {self.end_max_angular_vel*0.001:.3f}rad/s,\n"
-                f"  end_max_linear_acc: {self.end_max_linear_acc }, {self.end_max_linear_acc*0.001:.3f}m/s^2,\n"
-                f"  end_max_angular_acc: {self.end_max_angular_acc}, {self.end_max_angular_acc*0.001:.3f}rad/s^2\n"
+                f"  end_max_linear_vel: {self.end_max_linear_vel}\n"
+                f"  end_max_angular_vel: {self.end_max_angular_vel}\n"
+                f"  end_max_linear_acc: {self.end_max_linear_acc }\n"
+                f"  end_max_angular_acc: {self.end_max_angular_acc}\n"
                 f")")
 
     def __repr__(self):

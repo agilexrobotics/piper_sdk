@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 #机械臂协议V1版本，为方便后续修改协议升级，继承自base
-
-from abc import ABC, abstractmethod
-import time
-from threading import Timer
-from enum import Enum, auto
 import can
-from can.message import Message
-
 from typing import (
     Optional,
 )
@@ -19,9 +12,6 @@ from ..piper_protocol_base import C_PiperParserBase
 from ...piper_msgs.msg_v1 import (
     ArmMsgType, 
     PiperMessage, 
-    ArmMsgStatus, 
-    ArmMsgJointFeedBack, 
-    ArmMsgGripperFeedBack, 
     CanIDPiper,
     ArmMessageMapping
 )

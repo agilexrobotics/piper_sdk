@@ -77,9 +77,9 @@ class ArmMsgFeedbackJointVelAcc:
     def __str__(self):
         return (f"ArmMsgFeedbackJointVelAcc(\n"
                 f"  can_id: {self.can_id},\n"
-                f"  end_linear_vel: {self.end_linear_vel},\n"
-                f"  end_angular_vel: {self.end_angular_vel },\n"
-                f"  end_linear_acc: {self.end_linear_acc },\n"
+                f"  end_linear_vel: {self.end_linear_vel}\n"
+                f"  end_angular_vel: {self.end_angular_vel }\n"
+                f"  end_linear_acc: {self.end_linear_acc }\n"
                 f"  end_angular_acc: {self.end_angular_acc}\n"
                 f")")
 

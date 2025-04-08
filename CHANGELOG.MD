@@ -5,7 +5,7 @@ Version 0.2.20
 Features
 --------
 
-- Added the teaching pendant friction coefficient parameter to the gripper/teaching pendant parameter feedback command (both feedback and sending) and adapted the protocol.
+- Added the teaching pendant friction coefficient parameter to the gripper/teaching pendant parameter feedback command (both feedback and sending) and adapted the protocol(1.5-8 frimware).
 - Added `ModeCtrl` and `EmergencyStop` functions to set modes and perform emergency stops (future updates will introduce dictionary-based parameter matching for all functions).
 - Renamed all data reading files in the demo to start with "read" for easier searching.
 - Initialized `rx_message` as an empty `Message()` in the `C_STD_CAN` encapsulation class
@@ -13,6 +13,21 @@ Features
   - If feedback or control messages exceed the set limits, the values will be clamped to the boundary values.
   - To configure limit ranges, use the `SetSDKJointLimitParam` and `SetSDKGripperRangeParam` functions to set software constraints.
     Refer to the `piper_sdk_param.py` file in the demo for examples.
+- Slightly reduced joint limits to prevent exceeding the robotic arm's angle limits when converting radians to degrees using math.degrees. The new limits are:
+
+  | joint_name |     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
+  |------------|----------------------|--------------------|--------------------|
+  | joint1     |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |      [0, 3.0]      |
+  | joint2     |   [0, 3.14]          |    [0, 180.0]      |      [0, 3.0]      |
+  | joint3     |   [-2.967, 0]        |    [-170, 0]       |      [0, 3.0]      |
+  | joint4     |   [-1.745, 1.745]    |    [-100.0, 100.0] |      [0, 3.0]      |
+  | joint5     |   [-1.22, 1.22]      |    [-70.0, 70.0]   |      [0, 3.0]      |
+  | joint6     |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
+
+  Note: The conversion factor from radians to degrees is 57.2957795 (180/3.1415926).
+  
+- Renamed the method for retrieving arm mode control command with ID=151 from `GetArmCtrlCode151` to `GetArmModeCtrl`.
+- Added `piper_set_load.py` demo for setting load conditions (no load/full load).
 
 Bug Fixes
 ---------
@@ -22,7 +37,11 @@ Bug Fixes
 Miscellaneous
 ---------
 
-None
+- Currently, messages in the range 0x481~0x486 have not been adapted for feedback. These messages provide feedback on the current end velocity/acceleration of each joint.
+- CPV mode has not been adapted.
+- Refactored the documentation structure:
+  - Most documents have been rewritten in English.
+  - Simplified the documentation, focusing only on interface usage.
 
 Version 0.2.19
 =============

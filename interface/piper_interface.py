@@ -46,7 +46,7 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float = 0
             self.Hz: float = 0
-            self.arm_status = ArmMsgStatus()
+            self.arm_status = ArmMsgFeedbackStatus()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -62,7 +62,7 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float=0
             self.Hz: float = 0
-            self.end_pose=ArmMsgEndPoseFeedBack()
+            self.end_pose=ArmMsgFeedBackEndPose()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -79,7 +79,7 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float=0
             self.Hz: float = 0
-            self.joint_state=ArmMsgJointFeedBack()
+            self.joint_state=ArmMsgFeedBackJointStates()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -96,7 +96,7 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float=0
             self.Hz: float = 0
-            self.gripper_state=ArmMsgGripperFeedBack()
+            self.gripper_state=ArmMsgFeedBackGripper()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -112,12 +112,12 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float=0
             self.Hz: float = 0
-            self.motor_1=ArmHighSpdFeedback()
-            self.motor_2=ArmHighSpdFeedback()
-            self.motor_3=ArmHighSpdFeedback()
-            self.motor_4=ArmHighSpdFeedback()
-            self.motor_5=ArmHighSpdFeedback()
-            self.motor_6=ArmHighSpdFeedback()
+            self.motor_1=ArmMsgFeedbackHighSpd()
+            self.motor_2=ArmMsgFeedbackHighSpd()
+            self.motor_3=ArmMsgFeedbackHighSpd()
+            self.motor_4=ArmMsgFeedbackHighSpd()
+            self.motor_5=ArmMsgFeedbackHighSpd()
+            self.motor_6=ArmMsgFeedbackHighSpd()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -138,12 +138,12 @@ class C_PiperInterface():
         def __init__(self):
             self.time_stamp: float=0
             self.Hz: float = 0
-            self.motor_1=ArmLowSpdFeedback()
-            self.motor_2=ArmLowSpdFeedback()
-            self.motor_3=ArmLowSpdFeedback()
-            self.motor_4=ArmLowSpdFeedback()
-            self.motor_5=ArmLowSpdFeedback()
-            self.motor_6=ArmLowSpdFeedback()
+            self.motor_1=ArmMsgFeedbackLowSpd()
+            self.motor_2=ArmMsgFeedbackLowSpd()
+            self.motor_3=ArmMsgFeedbackLowSpd()
+            self.motor_4=ArmMsgFeedbackLowSpd()
+            self.motor_5=ArmMsgFeedbackLowSpd()
+            self.motor_6=ArmMsgFeedbackLowSpd()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
@@ -195,7 +195,7 @@ class C_PiperInterface():
         '''
         def __init__(self):
             self.time_stamp: float=0
-            self.crash_protection_level_feedback=ArmMsgCrashProtectionRatingFeedback()
+            self.crash_protection_level_feedback=ArmMsgFeedbackCrashProtectionRating()
         def __str__(self):
             return (f"time stamp:{self.time_stamp}\n"
                     f"crash_protection_level_feedback:{self.crash_protection_level_feedback}\n")
@@ -265,6 +265,22 @@ class C_PiperInterface():
             return (f"time stamp:{self.time_stamp}\n"
                     f"Hz:{self.Hz}\n"
                     f"{self.ctrl_151}\n")
+    
+    class ArmModeCtrl():
+        '''
+        机械臂发送控制指令0x151的消息接收,由主臂发送
+        '''
+        '''
+        The control command message 0x151 is sent by the main arm for reception
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.mode_ctrl=ArmMsgMotionCtrl_2()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.mode_ctrl}\n")
     
     class AllCurrentMotorMaxAccLimit():
         '''
@@ -420,6 +436,7 @@ class C_PiperInterface():
         self.__fps_counter.add_variable("ArmJointCtrl_56")
         self.__fps_counter.add_variable("ArmGripperCtrl")
         self.__fps_counter.add_variable("ArmCtrlCode_151")
+        self.__fps_counter.add_variable("ArmModeCtrl")
         # 时间戳
         self.__arm_time_stamp = self.ArmTimeStamp()#时间戳
         # 机械臂反馈消息正解，包含每个关节的正解
@@ -470,6 +487,8 @@ class C_PiperInterface():
 
         self.__arm_ctrl_code_151_mtx = threading.Lock()
         self.__arm_ctrl_code_151 = self.ArmCtrlCode_151()
+        self.__arm_mode_ctrl_mtx = threading.Lock()
+        self.__arm_mode_ctrl = self.ArmModeCtrl()
         
         self.__arm_all_motor_max_acc_limit_mtx = threading.Lock()
         self.__arm_all_motor_max_acc_limit = self.AllCurrentMotorMaxAccLimit()
@@ -608,6 +627,7 @@ class C_PiperInterface():
             self.__UpdateArmJointCtrl(msg)
             self.__UpdateArmGripperCtrl(msg)
             self.__UpdateArmCtrlCode151(msg)
+            self.__UpdateArmModeCtrl(msg)
             self.__UpdatePiperFirmware(msg)
             self.__UpdatePiperFeedbackFK()
             self.__UpdatePiperCtrlFK()
@@ -651,10 +671,10 @@ class C_PiperInterface():
         return self.__fps_counter.get_real_time_fps("CanMonitor")
     
     def GetArmStatus(self):
-        '''获取机械臂状态,0x2A1,详见 ArmMsgStatus
+        '''获取机械臂状态,0x2A1,详见 ArmMsgFeedbackStatus
         '''
         '''Retrieves the current status of the robotic arm.
-        For detailed information, refer to the `ArmMsgStatus` class.
+        For detailed information, refer to the `ArmMsgFeedbackStatus` class.
         '''
         with self.__arm_status_mtx:
             self.__arm_status.Hz = self.__fps_counter.get_real_time_fps("ArmStatus")
@@ -770,6 +790,18 @@ class C_PiperInterface():
                                                                             self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_5'),
                                                                             self.__fps_counter.get_real_time_fps('ArmMotorDriverInfoLowSpd_6'))
             return self.__arm_motor_info_low_spd
+    
+    def GetArmEnableStatus(self)->list:
+        '''获取机械臂使能状态
+        '''
+        enable_list = []
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_1.foc_status.driver_enable_status)
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_2.foc_status.driver_enable_status)
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_3.foc_status.driver_enable_status)
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_4.foc_status.driver_enable_status)
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_5.foc_status.driver_enable_status)
+        enable_list.append(self.GetArmLowSpdInfoMsgs().motor_6.foc_status.driver_enable_status)
+        return enable_list
     
     def GetCurrentMotorAngleLimitMaxVel(self):
         '''获取电机角度限制/最大速度指令
@@ -931,15 +963,51 @@ class C_PiperInterface():
             return self.__arm_gripper_ctrl_msgs
     
     def GetArmCtrlCode151(self):
-        '''获取0x151控制指令,机械臂模式控制指令,详看 ArmMsgMotionCtrl_1 类
+        '''获取0x151控制指令,机械臂模式控制指令,详看 ArmMsgMotionCtrl_2 类
         '''
         '''Retrieves the 0x151 control command, which is the robotic arm mode control command.
 
-        For detailed information, refer to the `ArmMsgMotionCtrl_1` class.
+        For detailed information, refer to the `ArmMsgMotionCtrl_2` class.
         '''
         with self.__arm_ctrl_code_151_mtx:
             self.__arm_ctrl_code_151.Hz = self.__fps_counter.get_real_time_fps("ArmCtrlCode_151")
             return self.__arm_ctrl_code_151
+    
+    def GetArmModeCtrl(self):
+        '''获取0x151控制指令,机械臂模式控制指令
+
+        mode_ctrl:
+            ctrl_mode: 控制模式,0x00 待机模式,0x01 CAN指令控制模式,0x07 离线轨迹模式
+            move_mode: MOVE模式,0x00 MOVE P,0x01 MOVE J,0x02 MOVE L,0x03 MOVE C,0x04 MOVE M
+            move_spd_rate_ctrl: 运动速度百分比,0~100
+            mit_mode: mit模式,0x00 位置速度模式,0xAD MIT模式
+        '''
+        '''Retrieves the 0x151 control command, which is the robotic arm mode control command.
+
+        mode_ctrl:
+            ctrl_mode: Control mode
+                - 0x00: Standby mode
+                - 0x01: CAN command control mode
+                - 0x07: Offline trajectory mode
+            
+            move_mode: MOVE mode
+                - 0x00: MOVE P
+                - 0x01: MOVE J
+                - 0x02: MOVE L
+                - 0x03: MOVE C
+                - 0x04: MOVE M
+            
+            move_spd_rate_ctrl: Movement speed percentage (0~100)
+            
+            mit_mode: MIT mode
+                - 0x00: Position and speed mode
+                - 0xAD: MIT mode
+        
+        '''
+        with self.__arm_mode_ctrl_mtx:
+            self.__arm_mode_ctrl.Hz = self.__fps_counter.get_real_time_fps("ArmModeCtrl")
+            return self.__arm_mode_ctrl
+
     
     def GetAllMotorMaxAccLimit(self):
         '''获取所有电机的最大加速度限制,(m1-m6)
@@ -1659,6 +1727,34 @@ class C_PiperInterface():
             # print(self.__arm_ctrl_code_151)
             return self.__arm_ctrl_code_151
     
+    def __UpdateArmModeCtrl(self, msg:PiperMessage):
+        '''
+        更新主臂发送的模式控制指令
+
+        0x151
+        '''
+        '''Updates the mode control command 0x151 sent by the main arm.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self.__arm_mode_ctrl_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgMotionCtrl_2):
+                self.__fps_counter.increment("ArmModeCtrl")
+                self.__arm_mode_ctrl.time_stamp = self.__GetCurrentTime()
+                self.__arm_mode_ctrl.mode_ctrl.ctrl_mode = \
+                    msg.arm_motion_ctrl_2.ctrl_mode
+                self.__arm_mode_ctrl.mode_ctrl.move_mode = \
+                    msg.arm_motion_ctrl_2.move_mode
+                self.__arm_mode_ctrl.mode_ctrl.move_spd_rate_ctrl = \
+                    msg.arm_motion_ctrl_2.move_spd_rate_ctrl
+                self.__arm_mode_ctrl.mode_ctrl.mit_mode = \
+                    msg.arm_motion_ctrl_2.mit_mode
+                self.__arm_mode_ctrl.mode_ctrl.residence_time = \
+                    msg.arm_motion_ctrl_2.residence_time
+            # print(self.__arm_mode_ctrl)
+            return self.__arm_mode_ctrl
+    
     def __UpdatePiperFirmware(self, msg:PiperMessage):
         '''
         更新piper固件字符信息
@@ -1996,13 +2092,13 @@ class C_PiperInterface():
         CAN ID:
             0x155,0x156,0x157
         
-        |joint_name|     limit(rad)     |    limit(angle)    |
-        |----------|     ----------     |     ----------     |
+        |joint_name|     limit(rad)       |    limit(angle)    |
+        |----------|     ----------       |     ----------     |
         |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |
-        |joint2    |   [0, 3.14]        |    [0, 180.0]      |
-        |joint3    |   [-2.967, 0]      |    [-170, 0]       |
-        |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |
-        |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |
+        |joint2    |   [0, 3.14]          |    [0, 180.0]      |
+        |joint3    |   [-2.967, 0]        |    [-170, 0]       |
+        |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |
+        |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |
         |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |
         
         Args:
@@ -2019,13 +2115,13 @@ class C_PiperInterface():
         CAN ID:
             0x155,0x156,0x157
         
-        |joint_name|     limit(rad)     |    limit(angle)    |
-        |----------|     ----------     |     ----------     |
+        |joint_name|     limit(rad)       |    limit(angle)    |
+        |----------|     ----------       |     ----------     |
         |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |
-        |joint2    |   [0, 3.14]        |    [0, 180.0]      |
-        |joint3    |   [-2.967, 0]      |    [-170, 0]       |
-        |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |
-        |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |
+        |joint2    |   [0, 3.14]          |    [0, 180.0]      |
+        |joint3    |   [-2.967, 0]        |    [-170, 0]       |
+        |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |
+        |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |
         |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |
         
         Args:
@@ -2327,6 +2423,22 @@ class C_PiperInterface():
         self.__parser.EncodeMessage(msg, tx_can)
         # print(hex(tx_can.arbitration_id), tx_can.data)
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def EnablePiper(self)->bool:
+        '''
+        使能机械臂
+        '''
+        enable_list = self.GetArmEnableStatus()
+        self.EnableArm(7)
+        return all(enable_list)
+    
+    def DisablePiper(self)->bool:
+        '''
+        失能机械臂
+        '''
+        enable_list = self.GetArmEnableStatus()
+        self.DisableArm(7)
+        return any(enable_list)
 
     def SearchMotorMaxAngleSpdAccLimit(self, 
                                        motor_num: Literal[1, 2, 3, 4, 5, 6] = 1, 
@@ -2422,14 +2534,14 @@ class C_PiperInterface():
             min_angle_limit: 最小角度限制,单位 0.1°
             max_joint_spd: 最大关节速度,单位 0.001rad/s,范围[0,3000]
         
-        |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
-        |----------|     ----------     |     ----------     |     ----------     |
-        |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |      [0, 3.0]      |
-        |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
-        |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
-        |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
-        |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
-        |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
+        |joint_name|     limit(rad/s)   |
+        |----------|     ----------     |
+        |joint1    |      [0, 3.0]      |
+        |joint2    |      [0, 3.0]      |
+        |joint3    |      [0, 3.0]      |
+        |joint4    |      [0, 3.0]      |
+        |joint5    |      [0, 3.0]      |
+        |joint6    |      [0, 3.0]      |
         '''
         '''
         Sets the motor angle limit/maximum speed limit command 
@@ -2443,14 +2555,14 @@ class C_PiperInterface():
             min_angle_limit: Minimum angle limit, unit 0.1°.
             max_joint_spd: Maximum joint speed, unit 0.001 rad/s.Range [0,3000].
         
-        |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
-        |----------|     ----------     |     ----------     |     ----------     |
-        |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |      [0, 3.0]      |
-        |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
-        |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
-        |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
-        |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
-        |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
+        |joint_name|     limit(rad/s)   |
+        |----------|     ----------     |
+        |joint1    |      [0, 3.0]      |
+        |joint2    |      [0, 3.0]      |
+        |joint3    |      [0, 3.0]      |
+        |joint4    |      [0, 3.0]      |
+        |joint5    |      [0, 3.0]      |
+        |joint6    |      [0, 3.0]      |
         '''
         tx_can = Message()
         motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_joint_spd)
@@ -2594,11 +2706,12 @@ class C_PiperInterface():
                 设置末端 V/acc 参数为初始值--0x01
                 设置全部关节限位、关节最大速度、关节加速度为默认值--0x02
             data_feedback_0x48x: 0x48X报文反馈设置
-                无效--0x00
-                关闭周期反馈--0x01
-                开启周期反馈--0x02
+                无效--0x00;
+                开启周期反馈--0x01;
+                关闭周期反馈--0x02;
                 开启后周期上报 1~6 号关节当前末端速度/加速度
             end_load_param_setting_effective: 末端负载参数设置是否生效,有效值-0xAE
+
             set_end_load: 设置末端负载
                 0x00--空载
                 0x01--半载

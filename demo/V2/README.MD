@@ -1,109 +1,112 @@
-# Piper 机械臂sdk(V2)demo
-
-[EN](README(EN).MD)
+# Piper Robotic Arm SDK (V2) Demo
 
 ![ubuntu](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)
 
 Test:
 
-|PYTHON |STATE|
+| PYTHON | STATE |
 |---|---|
-|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+| ![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg) | ![Pass](https://img.shields.io/badge/Pass-blue.svg) |
 
-## 安装方法
+## Installation Instructions
 
-### 安装依赖
+### Install Dependencies
 
-注:python-can>=4.3.1
+Note: python-can >= 4.3.1
 
 ```shell
 pip3 install python-can
 ```
 
-注:piper_sdk>=0.1.9
+Note: piper_sdk >= 0.1.9
 
 ```shell
 pip3 install piper_sdk
 ```
 
-can模块激活说明[can README](./can_config.MD)
+Instructions for activating the CAN module [can README](../../asserts/can_config.MD)
 
-## demo说明
+## Demo Overview
 
 ```shell
 V2
-├── interface_disconnect.py
-├── motor_max_acc_limit_config.py
-├── piper_disable.py
-├── piper_enable.py
-├── piper_end_pose.py
-├── piper_gripper_ctrl.py
-├── piper_gripper_zero_set.py
-├── piper_init_default.py
-├── piper_joint_ctrl.py
-├── piper_master_config.py
-├── piper_moveC.py
-├── piper_multi_interface_instance.py
-├── piper_reset.py
+├── piper_ctrl_disable.py
+├── piper_ctrl_enable.py
+├── piper_ctrl_end_pose.py
+├── piper_ctrl_gripper.py
+├── piper_ctrl_joint.py
+├── piper_ctrl_master.py
+├── piper_ctrl_moveC.py
+├── piper_ctrl_reset.py
+├── piper_ctrl_stop.py
+├── piper_read_all_fps.py
+├── piper_read_arm_motor_max_acc_limit.py
+├── piper_read_arm_motor_max_angle_spd.py
+├── piper_read_crash_protectation.py
+├── piper_read_end_pose.py
+├── piper_read_firmware.py
+├── piper_read_fk.py
+├── piper_read_gripper_status.py
+├── piper_read_high_msg.py
+├── piper_read_joint_ctrl.py
+├── piper_read_joint_state.py
+├── piper_read_low_msg.py
+├── piper_read_status.py
+├── piper_read_version.py
+├── piper_set_gripper_zero.py
+├── piper_set_init_default.py
+├── piper_set_load.py
+├── piper_set_motor_max_acc_limit.py
+├── piper_set_sdk_param.py
+├── piper_set_slave.py
 ├── piper_set_mit.py
-├── piper_slave_config.py
-├── piper_status.py
-├── piper_stop.py
-├── read_all_fps.py
-├── read_arm_motor_max_acc_limit.py
-├── read_arm_motor_max_angle_spd.py
-├── read_crash_protectation.py
-├── read_end_pose.py
-├── read_fk.py
-├── read_gripper_status.py
-├── read_high_msg.py
-├── read_joint_ctrl.py
-├── read_joint_state.py
-├── read_low_msg.py
-├── read_piper_hardware.py
-├── read_version.py
-├── V2_gripper_param_config.py
-├── V2_installation_pos.py
-├── V2_joint_mit_ctrl.py
-├── V2_motor_max_spd_set.py
-└── V2_read_gripper_param_feedback.py
+├── piper_test_interface_disconnect.py
+├── piper_test_multi_interface_instance.py
+├── V2_piper_ctrl_joint_mit.py
+├── V2_piper_ctrl_motor_max_spd.py
+├── V2_piper_read_gripper_param_feedback.py
+├── V2_piper_set_gripper_param.py
+└── V2_piper_set_installation_pos.py
 ```
 
-|文件 |说明|
+| File | Description |
 |---|---|
+|[`piper_ctrl_disable.py`](./piper_ctrl_disable.py)|Disable the robotic arm.|
+|[`piper_ctrl_enable.py`](./piper_ctrl_enable.py)|Enable the robotic arm.|
+|[`piper_ctrl_end_pose.py`](./piper_ctrl_end_pose.py)|Control the end-effector of the robotic arm.|
+|[`piper_ctrl_gripper.py`](./piper_ctrl_gripper.py)|Control the robotic arm gripper.|
+|[`piper_ctrl_joint.py`](./piper_ctrl_joint.py)|Control the robotic arm joints.|
+|[`piper_ctrl_master.py`](./piper_ctrl_master.py)|Set the robotic arm as the master arm.|
+|[`piper_ctrl_moveC.py`](./piper_ctrl_moveC.py)|Set the robotic arm to circular motion mode.|
+|[`piper_ctrl_reset.py`](./piper_ctrl_reset.py)|Reset the robotic arm. This must be executed once after setting it to teaching mode.|
+|[`piper_ctrl_stop.py`](./piper_ctrl_stop.py)|Stop the robotic arm and allow it to descend slowly. After use, reset and re-enable twice before resuming normal control.|
+|[`piper_read_all_fps.py`](./piper_read_all_fps.py)|Read the frequency of specified robotic arm data.|
+|[`piper_read_arm_motor_max_acc_limit.py`](./piper_read_arm_motor_max_acc_limit.py)|Read the maximum acceleration limits of all motors.|
+|[`piper_read_arm_motor_max_angle_spd.py`](./piper_read_arm_motor_max_angle_spd.py)|Read the maximum angle and speed limits of all robotic arm motors.|
+|[`piper_read_crash_protectation.py`](./piper_read_crash_protectation.py)|Read the robotic arm's collision protection level.|
+|[`piper_read_end_pose.py`](./piper_read_end_pose.py)|Read the end-effector pose.|
+|[`piper_read_firmware.py`](./piper_read_firmware.py)|Read the main controller firmware version of the robotic arm.|
+|[`piper_read_fk.py`](./piper_read_fk.py)|Read the forward kinematics solution for each joint.|
+|[`piper_read_gripper_status.py`](./piper_read_gripper_status.py)|Read the status of the robotic arm gripper.|
+|[`piper_read_high_msg.py`](./piper_read_high_msg.py)|Read high-speed messages from the robotic arm.|
+|[`piper_read_joint_ctrl.py`](./piper_read_joint_ctrl.py)|Read and print joint control messages.|
+|[`piper_read_joint_state.py`](./piper_read_joint_state.py)|Read and print joint state messages.|
+|[`piper_read_low_msg.py`](./piper_read_low_msg.py)|Read low-speed messages from the robotic arm.|
+|[`piper_read_status.py`](./piper_read_status.py)|Read the current status of the robotic arm.|
+|[`piper_read_version.py`](./piper_read_version.py)|Read the software version of each module in the robotic arm SDK.|
+|[`piper_set_gripper_zero.py`](./piper_set_gripper_zero.py)|Set the zero position of the robotic arm gripper.|
+|[`piper_set_init_default.py`](./piper_set_init_default.py)|Set all joint limits, maximum joint speeds, and joint accelerations to default values.|
+|[`piper_set_load.py`](./piper_set_load.py)|Set the end load parameters for the robotic arm.|
+|[`piper_set_motor_max_acc_limit.py`](./piper_set_motor_max_acc_limit.py)|Set the maximum acceleration limit for individual joint motors.|
+|[`piper_set_sdk_param.py`](./piper_set_sdk_param.py)|Set SDK parameters for joint and gripper limits.|
+|[`piper_set_slave.py`](./piper_set_slave.py)|Set the robotic arm as the slave arm.|
+|[`piper_set_mit.py`](./piper_set_mit.py)|Set the robotic arm to MIT mode, which provides the fastest response.|
+|[`piper_test_interface_disconnect.py`](./piper_test_interface_disconnect.py)|Test the interface disconnect functionality.|
+|[`piper_test_multi_interface_instance.py`](./piper_test_multi_interface_instance.py)|Test multiple interface instances.|
+|[`V2_piper_ctrl_joint_mit.py`](./V2_piper_ctrl_joint_mit.py)|Control individual joints in MIT mode.|
+|[`V2_piper_ctrl_motor_max_spd.py`](./V2_piper_ctrl_motor_max_spd.py)|Set maximum speed limits for individual joint motors.|
+|[`V2_piper_read_gripper_param_feedback.py`](./V2_piper_read_gripper_param_feedback.py)|Read gripper parameter feedback.|
+|[`V2_piper_set_gripper_param.py`](./V2_piper_set_gripper_param.py)|Set gripper parameters.|
+|[`V2_piper_set_installation_pos.py`](./V2_piper_set_installation_pos.py)|Set the installation position to horizontal upright.|
 
-|`motor_max_acc_limit_config.py`|电机单独设定某个关节电机的最大加速度限制|
-|`piper_disable.py`|机械臂失能|
-|`piper_enable.py`|机械臂使能|
-|`piper_end_pose.py`|机械臂末端控制|
-|`piper_gripper_ctrl.py`|机械臂夹爪控制|
-|`piper_gripper_zero_set.py`|机械臂夹爪零点设定|
-|`piper_init_default.py`|机械臂 设置全部关节限位、关节最大速度、关节加速度为默认值|
-|`piper_joint_ctrl.py`|机械臂关节控制|
-|`piper_master_config.py`|机械臂设置为主臂|
-|`piper_moveC.py`|机械臂设置为圆弧运动|
-|`piper_reset.py`|机械臂重置，需要在设定为示教模式后执行一次|
-|`piper_set_mit.py`|设定机械臂为mit模式，这个模式下机械臂响应最快速|
-|`piper_slave_config.py`|机械臂设置为从臂|
-|`piper_stop.py`|机械臂停止缓慢下落，需要在使用后reset，并重新使能两次|
-|`read_all_fps.py`|机械臂读取指定数据的频率|
-|`read_arm_motor_max_acc_limit.py`|读取所有电机的最大加速度限制|
-|`read_arm_motor_max_angle_spd.py`|读取机械臂的所有电机的最大加速度限制|
-|`read_crash_protectation.py`|读取机械臂的碰撞保护等级|
-|`read_end_pose.py`|读取末端姿态|
-|`read_fk.py`|读取sdk内部通过dh参数解算的末端位姿|
-|`read_gripper_status.py`|机械臂夹爪状态读取|
-|`read_high_msg.py`|读取机械臂高速消息|
-|`read_joint_ctrl.py`|读取关节角的控制消息并打印|
-|`read_joint_state.py`|读取关节角消息并打印|
-|`read_low_msg.py`|读取机械臂低速消息|
-|`read_piper_hardware.py`|读取机械臂主控固件版本|
-|`read_status.py`|读取机械臂当前状态|
-|`read_version.py`|读取机械臂sdk软件各模块版本|
-|`V2_gripper_param_config.py`|V2版本夹爪参数设定|
-|`V2_installation_pos.py`|V2版本设定安装位置为水平正装|
-|`V2_joint_mit_ctrl.py`|V2版本sdk单独电机mit参数设定|
-|`V2_motor_max_spd_set.py`|V2版本sdk电机单独设定某个关节电机的最大速度限制|
-|`V2_read_gripper_param_feedback.py`|V2版本读取夹爪参数反馈|
-
-注意：如果是在机械臂处于主动臂模式下，发送设置为从动臂指令后需要重新启动机械臂，机械臂才会切换到从动臂模式
+**Note:** If the robotic arm is in master arm mode, after sending the command to set it to slave arm mode, the arm needs to be restarted for the change to take effect.

@@ -1,95 +1,122 @@
-# Agilex can模块配置说明
+# Agilex CAN Module Configuration Guide
 
-## 安装can工具
+## Install CAN Utilities
 
 ```shell
 sudo apt update && sudo apt install can-utils ethtool
 ```
 
-这两个工具用来配置can模块
+These two utilities are used to configure the CAN module.
 
-如果执行bash脚本出现`ip: command not found`
+If running a bash script results in `ip: command not found`,
+please install the `ip` command, usually with:
 
-请安装ip指令，一般是`sudo apt-get install iproute2`
+```shell
+sudo apt-get install iproute2
+```
 
-## 快速使用
+## Quick Usage
 
-### 使能can模块
+### Enable CAN Module
 
-首先需要设置好shell脚本参数
+First, set up the shell script parameters properly.
 
-#### 单条机械臂
+#### Single Robotic Arm
 
-##### pc只插入一个usb转can模块
+##### PC with only one USB-to-CAN module inserted
 
-- **此处使用`can_activate.sh`脚本**
+- **Use the `can_activate.sh` script in this case.**
 
-直接执行
+Simply execute:
 
 ```bash
 bash can_activate.sh can0 1000000
 ```
 
-##### pc插入多个usb转can模块
+##### PC with multiple USB-to-CAN modules inserted
 
-- **此处使用`can_activate.sh`脚本**
+- **Use the `can_activate.sh` script in this case.**
 
-拔掉所有can模块
+Unplug all CAN modules.
 
-只将连接到机械臂的can模块插入PC，执行
+Insert only the CAN module connected to the robotic arm into the PC, then execute:
 
 ```shell
 sudo ethtool -i can0 | grep bus
 ```
 
-并记录下`bus-info`的数值例如`1-2:1.0`
+Record the `bus-info` value, e.g., `1-2:1.0`.
 
-ps:**一般第一个插入的can模块会默认是can0，如果没有查询到can可以使用`bash find_all_can_port.sh`来查看刚才usb地址对应的can名称**
+**Note:** Usually, the first inserted CAN module defaults to `can0`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
 
-假设上面的操作记录的`bus-info`数值为`1-2:1.0`
-
-然后执行,查看can设备是否激活成功
+Assuming the recorded `bus-info` value is `1-2:1.0`, execute the following command to check if the CAN device is successfully activated:
 
 ```bash
 bash can_activate.sh can_piper 1000000 "1-2:1.0"
 ```
 
-ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_piper，波特率为1000000，并激活**
+**Note:** This means that the CAN device inserted into the USB port with hardware encoding `1-2:1.0` is renamed to `can_piper`, set to a baud rate of `1000000`, and activated.
 
-然后执行`ifconfig`查看是否有`can_piper`，如果有则can模块设置成功
+Then, run `ifconfig` to check if `can_piper` is listed. If it appears, the CAN module has been set up successfully.
 
-#### 想要同时激活多个can模块
+#### Enabling Multiple CAN Modules Simultaneously
 
-- **此处使用`can_config.sh`脚本**
+- **Use the `can_config.sh` script in this case.**
 
-在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量,现在假设为2
+In `can_config.sh`, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules to be activated. Assume this is set to `2`.
 
-然后can模块中的其中一个单独插入PC，执行
+First, insert one CAN module into the PC and execute:
 
 ```shell
 sudo ethtool -i can0 | grep bus
 ```
 
-并记录下`bus-info`的数值例如`1-2:1.0`
+Record the `bus-info` value, e.g., `1-2:1.0`.
 
-接着插入下一个can模块，注意不可以与上次can模块插入的usb口相同，然后执行
+Next, insert another CAN module (ensure it is plugged into a different USB port than the previous one), then execute:
 
 ```shell
 sudo ethtool -i can1 | grep bus
 ```
 
-ps:**一般第一个插入的can模块会默认是can0，第二个为can1，如果没有查询到can可以使用`bash find_all_can_port.sh`来查看刚才usb地址对应的can名称**
+**Note:** Typically, the first inserted CAN module will be `can0`, and the second will be `can1`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
 
-假设上面的操作记录的`bus-info`数值分别为`1-2:1.0`、`1-4:1.0`
+Assume the recorded `bus-info` values are `1-2:1.0` and `1-4:1.0`.
 
-则将下面的`USB_PORTS["1-9:1.0"]="can_left:1000000"`的中括号内部的双引号内部的参数换为`1-2:1.0`
+Modify the script accordingly:
 
-另一个同理
+Replace:
 
-`USB_PORTS["1-5:1.0"]="can_right:1000000"` -> `USB_PORTS["1-4:1.0"]="can_right:1000000"`
+```shell
+USB_PORTS["1-9:1.0"]="can_left:1000000"
+```
 
-ps:**此处的意思是，1-2:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_left，波特率为1000000，并激活**
+with:
 
-然后执行`bash can_config.sh`,查看终端输出是否激活成功
+```shell
+USB_PORTS["1-2:1.0"]="can_left:1000000"
+```
 
-然后执行`ifconfig`查看是不是有`can_left`和`can_right`，如果有则can模块设置成功
+Similarly, replace:
+
+```shell
+USB_PORTS["1-5:1.0"]="can_right:1000000"
+```
+
+with:
+
+```shell
+USB_PORTS["1-4:1.0"]="can_right:1000000"
+```
+
+**Note:** This means that the CAN device inserted into the USB port with hardware encoding `1-2:1.0` is renamed to `can_left`, set to a baud rate of `1000000`, and activated.
+
+Then, execute:
+
+```bash
+bash can_config.sh
+```
+
+Check the terminal output to verify if activation was successful.
+
+Finally, run `ifconfig` to check if `can_left` and `can_right` appear. If they do, the CAN modules have been successfully set up.

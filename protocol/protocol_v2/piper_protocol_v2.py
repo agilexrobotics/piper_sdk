@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 #机械臂协议V1版本，为方便后续修改协议升级，继承自base
-
-from abc import ABC, abstractmethod
-import time
-from threading import Timer
-from enum import Enum, auto
 import can
-from can.message import Message
-
 from typing import (
     Optional,
 )
@@ -20,9 +13,6 @@ from ..piper_protocol_base import C_PiperParserBase
 from ...piper_msgs.msg_v2 import (
     ArmMsgType, 
     PiperMessage, 
-    ArmMsgStatus, 
-    ArmMsgJointFeedBack, 
-    ArmMsgGripperFeedBack, 
     CanIDPiper,
     ArmMessageMapping
 )
@@ -268,6 +258,7 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.arm_gripper_teaching_param_feedback.teaching_range_per = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
             msg.arm_gripper_teaching_param_feedback.max_range_config = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            # (基于V1.5-8版本后)
             msg.arm_gripper_teaching_param_feedback.teaching_friction = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
         else:
             ret = False
