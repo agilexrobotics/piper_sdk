@@ -2,15 +2,15 @@
 
 [EN](README.MD)
 
-| | | |
+|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|
 |---|---|---|
-|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![Pass](https://img.shields.io/badge/Pass-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 Test:
 
-| | | |
+|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)|
 |---|---|---|
-|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+|![Pass](https://img.shields.io/badge/Pass-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 本SDK用于接收can数据帧，然后处理为自定义数据类型，没有包括数据偏移帧
 
