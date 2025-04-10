@@ -1,20 +1,16 @@
 # Piper 机械臂 SDK使用说明
 
-[EN](README(EN).MD)
+[EN](README.MD)
 
-|Ubuntu |STATE|
-|---|---|
-|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+| | | |
+|---|---|---|
+|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 Test:
 
-|PYTHON |STATE|
-|---|---|
-|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+| | | |
+|---|---|---|
+|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 本SDK用于接收can数据帧，然后处理为自定义数据类型，没有包括数据偏移帧
 
@@ -44,6 +40,8 @@ pip3 install python-can
 ```bash
 which pip3
 ```
+
+这里提供三种方法，任选其一即可
 
 #### 1.2.1 从pypi仓库安装
 
@@ -83,6 +81,8 @@ pip3 uninstall piper_sdk
 
 ### 1.5 更新 piper_sdk
 
+这里提供三种方法，任选其一即可
+
 ##### 1.5.1 从pypi仓库更新
 
 注意需要先卸载旧版本
@@ -108,7 +108,11 @@ pip3 install .
 pip3 install piper_sdk-X.X.X-py3-none-any.whl 
 ```
 
-### 1.2 安装can工具
+## 2 使用can模块
+
+注意此处的can模块仅支持机械臂自带的can模块，不支持其它can模块
+
+安装can工具
 
 ```shell
 sudo apt update && sudo apt install can-utils ethtool
@@ -117,10 +121,6 @@ sudo apt update && sudo apt install can-utils ethtool
 这两个工具用于配置 CAN 模块
 
 如果执行bash脚本出现`ip: command not found`，请安装ip指令，一般是`sudo apt-get install iproute2`
-
-## 2 快速使用
-
-注意此处的can模块仅支持机械臂自带的can模块，不支持其它can模块
 
 ### 2.1 寻找can模块
 

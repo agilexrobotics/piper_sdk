@@ -1,162 +1,265 @@
-# Piper SDK
+# Piper Robot Arm SDK User Manual
 
-|Ubuntu |STATE|
-|---|---|
-|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+[ZH](README(ZH).MD)
+
+| | | |
+|---|---|---|
+|![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
 Test:
 
-|PYTHON |STATE|
-|---|---|
-|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
-|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)|![Pass](https://img.shields.io/badge/Pass-blue.svg)|
+| | | |
+|---|---|---|
+|![python3.6](https://img.shields.io/badge/Python-3.6-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.8](https://img.shields.io/badge/Python-3.8-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|![python3.10](https://img.shields.io/badge/Python-3.10-blue.svg)![Pass](https://img.shields.io/badge/Pass-blue.svg)|
 
-This SDK is used to receive CAN data frames and then process them into custom data types, without including data offset frames.
+This SDK is used to receive CAN data frames and process them into custom data types, excluding data offset frames.
 
-|Description |doc|
+|Description | Documentation|
 |---|---|
-|Detailed description of the interface function.|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|Robotic Arm DEMO| [`piper_sdk/demo/V1`](./demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./demo/V2/README.MD) |
-|Master-slave configuration and data reading of dual arms| [double_piper](./asserts/double_piper.MD) |
-| Open-source UI using PyQt5 | [Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>) |
+|Detailed description of interface functions|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
+|Robot Arm DEMO|[piper_sdk/demo/V1](./piper_sdk/demo/V1/README.MD) <br> [piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
+|Master-slave configuration and data reading for dual arms|[double_piper](./asserts/double_piper.MD)|
+|Open-source UI using pyQT5|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## 1 Software Installation Instructions
+## 1 Software Installation Method
 
-### 1.1 Install dependencies
+### 1.1 Install Dependencies
 
-The python-can version should be higher than 3.3.4.
+Note: The python-can version should be above 3.3.4
 
 ```shell
 pip3 install python-can
 ```
 
+### 1.2 Install piper_sdk
+
+Note: Check if you are in a conda environment
+
+```bash
+which pip3
+```
+
+Three update methods are provided, choose one.
+
+#### 1.2.1 Install from pypi repository
+
 ```shell
 pip3 install piper_sdk
 ```
 
-View piper_sdk Details, Such as Installation Path, Version, etc.
+#### 1.2.2 Clone the github repository and install
+
+```shell
+git clone https://github.com/agilexrobotics/piper_sdk.git
+cd piper_sdk
+pip3 install .
+```
+
+#### 1.2.3 Install from GitHub release by downloading the whl file
+
+Note: Replace X with the release version you need
+
+```shell
+pip3 install piper_sdk-X.X.X-py3-none-any.whl
+```
+
+### 1.3 Check piper_sdk Details
 
 ```shell
 pip3 show piper_sdk
 ```
 
-0.0.x provides SDK support for robotic arm firmware versions prior to V1.5-2.
+0.0.x supports SDKs for robot arm firmware versions before V1.5-2
 
-To uninstall
+### 1.4 Uninstall piper_sdk
 
 ```shell
 pip3 uninstall piper_sdk
 ```
 
-### 1.2 Install can tools
+### 1.5 Update piper_sdk
+
+Three update methods are provided, choose one.
+
+##### 1.5.1 Update from pypi repository
+
+Note: Uninstall the old version first
 
 ```shell
+pip3 uninstall piper_sdk
+pip3 install piper_sdk
+```
+
+##### 1.5.2 Update from GitHub repository
+
+```shell
+git clone https://github.com/agilexrobotics/piper_sdk.git
+cd piper_sdk
+pip3 install .
+```
+
+#### 1.5.3 Update by downloading the whl file from GitHub release
+
+Note: Replace X with the release version you need
+
+```shell
+pip3 install piper_sdk-X.X.X-py3-none-any.whl
+```
+
+## 2 Use CAN Module
+
+Note: The CAN module here only supports the robot arm's built-in CAN module, and does not support other CAN modules.
+
+Install CAN tools
+
+```bash
 sudo apt update && sudo apt install can-utils ethtool
 ```
 
 These two tools are used to configure the CAN module.
 
-If you encounter the error `ip: command not found` while running the bash script, please install the `ip` command by running `sudo apt-get install iproute2`.
+If executing the bash script shows `ip: command not found`, install the `ip` command by running `sudo apt-get install iproute2`
 
-## 2 Quick Start
+### 2.1 Find CAN Modules
 
-### 2.1 Enable CAN module
+Run the following command:
 
-#### 2.1.1 Activate a single CAN module, **using the `can_activate.sh` script here**
+```bash
+bash find_all_can_port.sh
+```
 
-##### 1) PC with only one USB-to-CAN module inserted
+Enter the password, and if the CAN module is inserted into the computer and detected, it will output something like:
 
-Simply execute the script.
+```bash
+Both ethtool and can-utils are installed.
+Interface can0 is connected to USB port 3-1.4:1.0
+```
+
+If there are multiple modules, the output will look like this:
+
+```bash
+Both ethtool and can-utils are installed.
+Interface can0 is connected to USB port 3-1.4:1.0
+Interface can1 is connected to USB port 3-1.1:1.0
+```
+
+For each CAN module, there will be a corresponding output like `Interface can1 is connected to USB port 3-1.1:1.0`
+
+Where `can1` is the name of the CAN module detected by the system, and `3-1.1:1.0` is the USB port it is connected to.
+
+If the CAN module has already been activated with a different name, for example `can_piper`, the output will look like:
+
+```bash
+Both ethtool and can-utils are installed.
+Interface can_piper is connected to USB port 3-1.4:1.0
+Interface can0 is connected to USB port 3-1.1:1.0
+```
+
+If no CAN module is detected, only the following will be output:
+
+```bash
+Both ethtool and can-utils are installed.
+```
+
+### 2.2 Activate a Single CAN Module (use can_activate.sh script)
+
+There are two situations for activating a single CAN module: one is when only one CAN module is connected to the PC, and the other is when multiple CAN modules are inserted, but only one is activated.
+
+#### 2.2.1 PC has only one USB-to-CAN module connected
+
+Simply execute:
 
 ```bash
 bash can_activate.sh can0 1000000
 ```
 
-##### 2) PC is connected to multiple USB-to-CAN modules, but only one CAN module is activated at a time
+Here, `can0` can be replaced with any name, and `1000000` is the baud rate, which cannot be changed.
 
-Note: This is for scenarios where both the robotic arm and the chassis are used simultaneously.
+#### 2.2.2 PC has multiple USB-to-CAN modules connected, but only one module is activated at a time
 
-(1) Check the hardware address of the CAN module connected to the USB port.  
+Note: This case applies when using both the robot arm and the chassis.
 
-Unplug all CAN modules, then insert only the CAN module connected to the robotic arm into the PC and execute.
+(1) Find the USB hardware address of the CAN module. Unplug all CAN modules and plug in only the one connected to the robot arm, then execute:
 
 ```shell
-sudo ethtool -i can0 | grep bus
+bash find_all_can_port.sh
 ```
 
-And record the value of `bus-info`, for example, `1-2:1.0`.
+Record the USB port value, for example, 3-1.4:1.0.
 
-Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_piper`, with a baud rate of 1000000, and is activated.**
-
-(2) Activate the CAN device
-
-Assuming the `bus-info` value recorded from the previous operation is `1-2:1.0`, execute:
+(2) Activate the CAN device. Assuming the USB port value is 3-1.4:1.0, run:
 
 ```bash
-bash can_activate.sh can_piper 1000000 "1-2:1.0"
+bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
 ```
 
-Note: **This means that the CAN device connected to the USB port with hardware encoding `1-2:1.0` has been renamed to `can_piper`, set to a baud rate of 1,000,000, and activated.**
+Explanation: **3-1.4:1.0 is the hardware-encoded USB port, and the CAN device inserted there is renamed as can_piper, with a baud rate of 1000000 and activated.**
 
-(3) Check if activation was successful.
+(3) Check if activation was successful by running `ifconfig` to see if `can_piper` appears. If it does, the CAN module is configured successfully.
 
-Execute `ifconfig` to check if `can_piper` appears. If it does, the CAN module has been successfully configured.
+### 2.3 Activate Multiple CAN Modules Simultaneously (use can_config.sh script)
 
-#### 2.1.2 Activate multiple CAN modules simultaneously, **using the `can_config.sh` script here**
+First, determine how many official CAN modules are plugged into the PC (assumed here as 2).
 
-##### 1) Unplug and plug each CAN module one by one, and record the hardware address of each module corresponding to the USB port
+Note: **If 5 CAN modules are plugged in, all five must be listed in the configuration file; otherwise, an error will occur about the number of activated modules not matching the system's modules.**
 
-In the `can_config.sh` script, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules you want to activate. For this example, let's assume it is set to 2.
+#### 2.3.1 Record the USB port hardware address of each CAN module
 
-(1) Then, insert one of the CAN modules into the PC alone and execute.
+For each CAN module, unplug and reinsert it while recording the corresponding USB port address.
+
+In the `can_config.sh` file, the `EXPECTED_CAN_COUNT` parameter should be set to the desired number of activated CAN modules (assumed here as 2).
+
+(1) Plug in one CAN module and run:
 
 ```shell
-sudo ethtool -i can0 | grep bus
+bash find_all_can_port.sh
 ```
 
-and record the `bus-info` value, for example, `1-2:1.0`.
+Record the `USB port` value, for example, `3-1.4:1.0`
 
-(2) Next, insert the next CAN module, making sure that it **cannot** be inserted into the same USB port as the previous CAN module, and then execute.
+(2) Plug in the next CAN module. Ensure **it is not inserted into the same USB port as the previous one** and run:
 
 ```shell
-sudo ethtool -i can1 | grep bus
+bash find_all_can_port.sh
 ```
 
-Note: **Generally, the first inserted CAN module defaults to `can0`, and the second one to `can1`. If the CAN interfaces are not found, use `bash find_all_can_port.sh` to check the CAN names corresponding to the USB addresses.**
+Note: **If not previously activated, the first module will default to "can0," and the second will be "can1." If previously activated, the names will be the ones used before.**
 
-##### 2) Predefine the USB ports, target interface names, and their bitrates
+#### 2.3.2 Predefine USB ports, target interface names, and their bitrates
 
-Assuming the `bus-info` values recorded from the previous operation are `1-2:1.0` and `1-4:1.0`, the `USB_PORTS["1-9:1.0"]="can_left:1000000"` should be updated as follows:
+Assume the recorded `USB port` values are `3-1.4:1.0` and `3-1.1:1.0`. Replace the values inside the brackets in `USB_PORTS["1-9:1.0"]="can_left:1000000"` with `3-1.4:1.0` and `3-1.1:1.0`.
 
-`USB_PORTS["1-2:1.0"]="can_left:1000000"`
+The final result is:
 
-`USB_PORTS["1-4:1.0"]="can_right:1000000"`
+```shell
+USB_PORTS["3-1.4:1.0"]="can_left:1000000"
+USB_PORTS["3-1.1:1.0"]="can_right:1000000"
+```
 
-Note: **The CAN device inserted into the USB port with the hardware address `1-2:1.0` is renamed to `can_left`, with a baud rate of 1000000, and is activated.**
+Explanation: **3-1.4:1.0 is the hardware-encoded USB port, the CAN device inserted there is renamed to "can_left," with a baud rate of 1000000, and activated.**
 
-##### 3) Check the terminal output to see if activation was successful
+#### 2.3.3 Activate multiple CAN modules
 
-Execute `bash can_config.sh`.
+Run the script:
 
-##### 4) Check if the CAN module was successfully configured
+```bash
+bash can_config.sh
+```
 
-Execute `ifconfig` to check if `can_left` and `can_right` are listed. If they appear, it means the CAN modules have been successfully configured.
+#### 2.3.4 Check if multiple CAN modules were set up successfully
+
+Run `ifconfig` to check if `can_left` and `can_right` are present.
 
 ## Notes
 
-- The CAN device must be activated and the correct baud rate set before reading messages from or controlling the robotic arm.
-- The `C_PiperInterface` interface class can accept the activated CAN route name as a parameter when instantiated, which can be obtained using `ifconfig`.
-- Sometimes when sending CAN messages, the terminal may show `Message NOT sent`. This indicates that the CAN module is not properly connected to the device. First, check the connection between the module and the robotic arm, then power cycle the robotic arm (turn it off and on) before attempting to send the message again.
-- The SDK interface will check if the built-in CAN module is activated after creating an instance. If using another CAN device, you can set the second parameter to `False`, for example: `piper = C_PiperInterface_V2("can0", False)`.
-- **The MIT protocol for controlling individual joints of the robotic arm is an advanced feature. Be cautious when using it, as improper use of this protocol may damage the robotic arm!!!**
+- Ensure that CAN devices are activated and set to the correct baud rate before reading robot arm messages or controlling the robot arm.
+- The `C_PiperInterface` class can accept the activated CAN interface name during instantiation, which can be obtained from `ifconfig`.
+- If a message is not sent with the feedback "Message NOT sent," the CAN module might not be successfully connected. Check the connection and power cycle the robot arm before retrying.
+- The SDK's interface will check if the built-in CAN module is activated after creating the instance. For other CAN devices, set the second parameter to False, for example: `piper = C_PiperInterface_V2("can0", False)`.
+- **The MIT protocol for controlling individual joints is an advanced feature; misuse of this protocol can damage the robot arm!**
 
 ## Contact Us
 
-You can open an issue on GitHub.
-
-Alternatively, you can join our Discord at <https://discord.gg/wrKYTxwDBd>
+You can raise issues on GitHub or join our Discord community: <https://discord.gg/wrKYTxwDBd>
