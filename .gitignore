@@ -5,3 +5,6 @@ __pycache__
 *.7z
 *.zip
 *.tar
+piper_sdk.egg-info
+dist
+build

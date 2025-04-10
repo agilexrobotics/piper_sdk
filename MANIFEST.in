@@ -1,0 +1,8 @@
+include LICENSE
+include *.sh
+include *.MD
+include piper_sdk/*.MD
+include piper_sdk/*.sh
+include piper_sdk/LICENSE
+
+recursive-include piper_sdk/asserts *
