@@ -10,7 +10,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V1()
+    piper = C_PiperInterface_V2()
     piper.ConnectPort()
     time.sleep(0.1)
     while( not piper.EnablePiper()):

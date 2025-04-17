@@ -83,7 +83,7 @@ pip3 uninstall piper_sdk
 
 Three update methods are provided, choose one.
 
-##### 1.5.1 Update from pypi repository
+#### 1.5.1 Update from pypi repository
 
 Note: Uninstall the old version first
 
@@ -92,7 +92,7 @@ pip3 uninstall piper_sdk
 pip3 install piper_sdk
 ```
 
-##### 1.5.2 Update from GitHub repository
+#### 1.5.2 Update from GitHub repository
 
 ```shell
 git clone https://github.com/agilexrobotics/piper_sdk.git

@@ -32,9 +32,11 @@ class C_PiperInterface_V2():
         judge_flag(bool): Determines if the CAN port is functioning correctly.
                         When using a PCIe-to-CAN module, set to false.
         can_auto_init(bool): Determines if the CAN port is automatically initialized.
-        dh_is_offset([0,1] -> default 0): Does the j1-j2 offset by 2° in the DH parameters? 
+        dh_is_offset([0,1] -> default 0x01): Does the j1-j2 offset by 2° in the DH parameters? 
                     0 -> No offset
                     1 -> Offset applied
+        start_sdk_joint_limit(bool -> True):Whether to enable the software joint limit of SDK
+        start_sdk_gripper_limit(bool -> True):Whether to enable the software gripper limit of SDK
     '''
     class ArmStatus():
         '''
@@ -375,7 +377,7 @@ class C_PiperInterface_V2():
                 can_name:str="can0", 
                 judge_flag=True,
                 can_auto_init=True,
-                dh_is_offset: int = 0,
+                dh_is_offset: int = 0x01,
                 start_sdk_joint_limit: bool = True,
                 start_sdk_gripper_limit: bool = True):
         """
@@ -394,7 +396,7 @@ class C_PiperInterface_V2():
                  can_name:str="can0",
                  judge_flag=True,
                  can_auto_init=True,
-                 dh_is_offset: int = 0,
+                 dh_is_offset: int = 0x01,
                  start_sdk_joint_limit: bool = True, 
                  start_sdk_gripper_limit: bool = True) -> None:
         if getattr(self, "_initialized", False):  

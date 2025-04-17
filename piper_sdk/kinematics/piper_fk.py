@@ -4,7 +4,7 @@ from typing_extensions import (
 )
 
 class C_PiperForwardKinematics():
-    def __init__(self, dh_is_offset: Literal[0x00, 0x01] = 0x00):
+    def __init__(self, dh_is_offset: Literal[0x00, 0x01] = 0x01):
         self.RADIAN = 180 / math.pi
         self.PI = math.pi
         # Denavit-Hartenberg parameters for each link
