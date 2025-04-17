@@ -41,7 +41,7 @@ Note: Check if you are in a conda environment
 which pip3
 ```
 
-Three update methods are provided, choose one.
+Three methods are provided, choose one.
 
 #### 1.2.1 Install from pypi repository
 
@@ -81,7 +81,7 @@ pip3 uninstall piper_sdk
 
 ### 1.5 Update piper_sdk
 
-Three update methods are provided, choose one.
+Three methods are provided, choose one.
 
 #### 1.5.1 Update from pypi repository
 
