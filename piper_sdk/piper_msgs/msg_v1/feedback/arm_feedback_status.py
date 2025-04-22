@@ -196,12 +196,12 @@ class ArmMsgFeedbackStatus:
             self.joint_4_angle_limit = False
             self.joint_5_angle_limit = False
             self.joint_6_angle_limit = False
-            self.joint_1_communication_status = False
-            self.joint_2_communication_status = False
-            self.joint_3_communication_status = False
-            self.joint_4_communication_status = False
-            self.joint_5_communication_status = False
-            self.joint_6_communication_status = False
+            self.communication_status_joint_1 = False
+            self.communication_status_joint_2 = False
+            self.communication_status_joint_3 = False
+            self.communication_status_joint_4 = False
+            self.communication_status_joint_5 = False
+            self.communication_status_joint_6 = False
             
         def __str__(self):
             return (f" Joint 1 Angle Limit Status: {self.joint_1_angle_limit}\n"
@@ -210,12 +210,12 @@ class ArmMsgFeedbackStatus:
                     f" Joint 4 Angle Limit Status: {self.joint_4_angle_limit}\n"
                     f" Joint 5 Angle Limit Status: {self.joint_5_angle_limit}\n"
                     f" Joint 6 Angle Limit Status: {self.joint_6_angle_limit}\n"
-                    f" Joint 1 Communication Status: {self.joint_1_communication_status}\n"
-                    f" Joint 2 Communication Status: {self.joint_2_communication_status}\n"
-                    f" Joint 3 Communication Status: {self.joint_3_communication_status}\n"
-                    f" Joint 4 Communication Status: {self.joint_4_communication_status}\n"
-                    f" Joint 5 Communication Status: {self.joint_5_communication_status}\n"
-                    f" Joint 6 Communication Status: {self.joint_6_communication_status}\n")
+                    f" Joint 1 Communication Status: {self.communication_status_joint_1}\n"
+                    f" Joint 2 Communication Status: {self.communication_status_joint_2}\n"
+                    f" Joint 3 Communication Status: {self.communication_status_joint_3}\n"
+                    f" Joint 4 Communication Status: {self.communication_status_joint_4}\n"
+                    f" Joint 5 Communication Status: {self.communication_status_joint_5}\n"
+                    f" Joint 6 Communication Status: {self.communication_status_joint_6}\n")
 
     @property
     def err_code(self):
@@ -230,12 +230,12 @@ class ArmMsgFeedbackStatus:
         # example: 42 0A -> 0100 0010 0000 1010
         # bit:              7654 3210 7654 3210
         # info:              |angle  | |communication
-        self.err_status.joint_1_communication_status = bool(value & (1 << 0))
-        self.err_status.joint_2_communication_status = bool(value & (1 << 1))
-        self.err_status.joint_3_communication_status = bool(value & (1 << 2))
-        self.err_status.joint_4_communication_status = bool(value & (1 << 3))
-        self.err_status.joint_5_communication_status = bool(value & (1 << 4))
-        self.err_status.joint_6_communication_status = bool(value & (1 << 5))
+        self.err_status.communication_status_joint_1 = bool(value & (1 << 0))
+        self.err_status.communication_status_joint_2 = bool(value & (1 << 1))
+        self.err_status.communication_status_joint_3 = bool(value & (1 << 2))
+        self.err_status.communication_status_joint_4 = bool(value & (1 << 3))
+        self.err_status.communication_status_joint_5 = bool(value & (1 << 4))
+        self.err_status.communication_status_joint_6 = bool(value & (1 << 5))
         self.err_status.joint_1_angle_limit = bool(value & (1 << 8))
         self.err_status.joint_2_angle_limit = bool(value & (1 << 9))
         self.err_status.joint_3_angle_limit = bool(value & (1 << 10))

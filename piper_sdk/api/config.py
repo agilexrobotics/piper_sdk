@@ -2,6 +2,14 @@ from typing import Literal, Optional
 from .base import PiperBase
 
 class PiperConfig(PiperBase):
+    def __init__(self, 
+                 can_name: str = "can0", 
+                 judge_flag: bool = True, 
+                 can_auto_init: bool = True, 
+                 dh_is_offset: int = 0, 
+                 start_sdk_joint_limit: bool = True, 
+                 start_sdk_gripper_limit: bool = True) -> None:
+        super().__init__(can_name, judge_flag, can_auto_init, dh_is_offset, start_sdk_joint_limit, start_sdk_gripper_limit)
     def set_joint_limits(self,
                         joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"],
                         min_val: float,
