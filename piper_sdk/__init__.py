@@ -12,6 +12,7 @@ from .interface.piper_interface import C_PiperInterface
 from .interface.piper_interface_v1 import C_PiperInterface_V1
 from .interface.piper_interface_v2 import C_PiperInterface_V2
 from .version import PiperSDKVersion
+from .param_map import PiperParamMap
 
 __all__ = [
     'PiperRobot',
@@ -22,5 +23,6 @@ __all__ = [
     'C_PiperInterface',
     'C_PiperInterface_V1',
     'C_PiperInterface_V2',
-    'PiperSDKVersion'
+    'PiperSDKVersion',
+    'PiperParamMap'
 ]
