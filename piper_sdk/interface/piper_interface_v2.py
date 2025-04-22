@@ -35,8 +35,8 @@ class C_PiperInterface_V2():
         dh_is_offset([0,1] -> default 0x01): Does the j1-j2 offset by 2° in the DH parameters? 
                     0 -> No offset
                     1 -> Offset applied
-        start_sdk_joint_limit(bool -> True):Whether to enable the software joint limit of SDK
-        start_sdk_gripper_limit(bool -> True):Whether to enable the software gripper limit of SDK
+        start_sdk_joint_limit(bool -> False):Whether to enable the software joint limit of SDK
+        start_sdk_gripper_limit(bool -> False):Whether to enable the software gripper limit of SDK
     '''
     class ArmStatus():
         '''
@@ -378,8 +378,8 @@ class C_PiperInterface_V2():
                 judge_flag=True,
                 can_auto_init=True,
                 dh_is_offset: int = 0x01,
-                start_sdk_joint_limit: bool = True,
-                start_sdk_gripper_limit: bool = True):
+                start_sdk_joint_limit: bool = False,
+                start_sdk_gripper_limit: bool = False):
         """
         实现单例模式：
         - 相同 can_name & can_auto_init 参数，只会创建一个实例
@@ -397,8 +397,8 @@ class C_PiperInterface_V2():
                  judge_flag=True,
                  can_auto_init=True,
                  dh_is_offset: int = 0x01,
-                 start_sdk_joint_limit: bool = True, 
-                 start_sdk_gripper_limit: bool = True) -> None:
+                 start_sdk_joint_limit: bool = False, 
+                 start_sdk_gripper_limit: bool = False) -> None:
         if getattr(self, "_initialized", False):  
             return  # 避免重复初始化
         self.__can_channel_name:str
@@ -703,12 +703,12 @@ class C_PiperInterface_V2():
             return self.__arm_status
 
     def GetArmEndPoseMsgs(self):
-        '''获取机械臂末端位姿消息
+        '''获取机械臂末端位姿消息，欧拉角表示
         
         X,Y,Z单位0.001mm
         RX,RY,RZ单位0.001度
         '''
-        '''Retrieves the end effector pose message of the robotic arm.
+        '''Retrieves the end effector pose message of the robotic arm. Euler angle representation.
 
         This includes the following information:
             X, Y, Z position (in 0.001 mm)
@@ -2126,6 +2126,8 @@ class C_PiperInterface_V2():
         '''
         机械臂末端数值发送,发送前需要切换机械臂模式为末端控制模式
         
+        末端表示为欧拉角
+
         CAN ID:
             0x152,0x153,0x154
         
@@ -2140,6 +2142,8 @@ class C_PiperInterface_V2():
         '''
         Updates the joint control for the robotic arm.
         
+        The ends are expressed as Euler angles
+
         CAN ID:
             0x152,0x153,0x154
         
