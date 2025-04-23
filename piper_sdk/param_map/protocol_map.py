@@ -2,31 +2,6 @@
 # -*-coding:utf8-*-
 from enum import IntEnum, auto
 
-
-class PiperParamMap:
-    """参数映射类，提供对所有枚举的集中访问"""
-
-    EmergencyStopMode = EmergencyStopMode
-    TrackCtrlMode = TrackCtrlMode
-    GragTeachCtrlMode = GragTeachCtrlMode
-    CtrlMode = CtrlMode
-    MoveMode = MoveMode
-    MITMode = MITMode
-    InstallationPosition = InstallationPosition
-    InstructionNum = InstructionNum
-    GripperCode = GripperCode
-    SetZeroFlag = SetZeroFlag
-    MotorNum = MotorNum
-    EnableFlag = EnableFlag
-    SearchContent = SearchContent
-    InvalidValue = InvalidValue
-    ParamEnquiry = ParamEnquiry
-    ParamSetting = ParamSetting
-    DataFeedback = DataFeedback
-    EndLoadParamSetting = EndLoadParamSetting
-    SetEndLoad = SetEndLoad
-
-
 class EmergencyStopMode(IntEnum):
     """紧急停止模式"""
 
@@ -197,3 +172,26 @@ class SetEndLoad(IntEnum):
     LOAD_PARAM_1 = 0x01  # 负载参数1
     LOAD_PARAM_2 = 0x02  # 负载参数2
     ALL_LOAD_PARAM = 0x03  # 所有负载参数
+
+class PiperParamMap:
+    """参数映射类，提供对所有枚举的集中访问"""
+
+    EmergencyStopMode = EmergencyStopMode
+    TrackCtrlMode = TrackCtrlMode
+    GragTeachCtrlMode = GragTeachCtrlMode
+    CtrlMode = CtrlMode
+    MoveMode = MoveMode
+    MITMode = MITMode
+    InstallationPosition = InstallationPosition
+    InstructionNum = InstructionNum
+    GripperCode = GripperCode
+    SetZeroFlag = SetZeroFlag
+    MotorNum = MotorNum
+    EnableFlag = EnableFlag
+    SearchContent = SearchContent
+    InvalidValue = InvalidValue
+    ParamEnquiry = ParamEnquiry
+    ParamSetting = ParamSetting
+    DataFeedback = DataFeedback
+    EndLoadParamSetting = EndLoadParamSetting
+    SetEndLoad = SetEndLoad
