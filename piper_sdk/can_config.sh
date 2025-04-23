@@ -113,7 +113,13 @@ if [ "$EXPECTED_CAN_COUNT" -ne 1 ]; then
 fi
 
 # 获取当前系统中的 CAN 模块数量
-CURRENT_CAN_COUNT=$(ip link show type can | grep -c "link/can")
+CURRENT_CAN_COUNT=$(for iface in $(ip -br link show type can | awk '{print $1}'); do
+    BUS_INFO=$(ethtool -i "$iface" 2>/dev/null | grep "bus-info" | awk '{print $2}')
+    # 排除板载 mttcan 接口
+    if [[ "$BUS_INFO" != *"mttcan"* ]]; then
+        echo "$iface"
+    fi
+done | wc -l)
 
 # 检查当前系统中的 CAN 模块数量是否符合预期
 if [ "$CURRENT_CAN_COUNT" -ne "$EXPECTED_CAN_COUNT" ]; then
@@ -223,8 +229,13 @@ else
             echo "错误: 无法获取接口 $iface 的 bus-info 信息。"
             continue
         fi
-        
-        echo "接口 $iface 插入在 USB 端口 $BUS_INFO"
+       
+    	# 跳过板载 CAN 口（识别含有 mttcan 的 bus-info）
+        if [[ "$BUS_INFO" == *"mttcan"* ]]; then
+           echo "跳过板载接口 $iface（$BUS_INFO）"
+           continue
+        fi
+	echo "接口 $iface 插入在 USB 端口 $BUS_INFO"
 
         # 检查 bus-info 是否在预定义的 USB 端口列表中
         if [ -n "${USB_PORTS[$BUS_INFO]}" ];then
