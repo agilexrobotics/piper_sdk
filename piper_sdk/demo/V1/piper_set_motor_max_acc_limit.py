@@ -18,16 +18,22 @@ if __name__ == "__main__":
         pass
         time.sleep(0.01)
     # 3rad/s
+    print(1)
     piper.JointMaxAccConfig(1,500)
     time.sleep(0.5)
+    print(2)
     piper.JointMaxAccConfig(2,500)
     time.sleep(0.5)
+    print(3)
     piper.JointMaxAccConfig(3,500)
     time.sleep(0.5)
+    print(4)
     piper.JointMaxAccConfig(4,500)
     time.sleep(0.5)
+    print(5)
     piper.JointMaxAccConfig(5,500)
     time.sleep(0.5)
+    print(6)
     piper.JointMaxAccConfig(6,500)
     while True:
         piper.SearchAllMotorMaxAccLimit()
