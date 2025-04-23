@@ -17,6 +17,7 @@ except ImportError:
 parser = argparse.ArgumentParser(description="Piper Terminal Table Monitor")
 parser.add_argument("--can_port", type=str, default="can0", help="CAN port name")
 parser.add_argument("--hz", type=float, default=10, help="Refresh rate (Hz), range: 0.5 ~ 200")
+parser.add_argument("--req_flag", type=int, default=1, help=", 0 or 1")
 args = parser.parse_args()
 
 exit_flag = False
@@ -132,6 +133,7 @@ class ArmStatusTool():
 
 def display_table(can_port, refresh_interval):
     global exit_flag
+    global args
     listener_thread = threading.Thread(target=key_listener, daemon=True)
     listener_thread.start()
     last_time = 0
@@ -143,25 +145,26 @@ def display_table(can_port, refresh_interval):
 
     # 如果距离上一次执行已超过限制间隔，就执行操作
         if start_time - last_time >= limit_interval:
-            piper.SearchAllMotorMaxAngleSpd()
-            piper.SearchAllMotorMaxAccLimit()
-            piper.ArmParamEnquiryAndConfig(param_enquiry=0x02,
-                                           param_setting=0x00,
-                                           data_feedback_0x48x=0x00,
-                                           end_load_param_setting_effective=0x00,
-                                           set_end_load=0x03)
-            piper.ArmParamEnquiryAndConfig(param_enquiry=0x04,
-                                           param_setting=0x00,
-                                           data_feedback_0x48x=0x00,
-                                           end_load_param_setting_effective=0x00,
-                                           set_end_load=0x03)
-            piper.ArmParamEnquiryAndConfig(param_enquiry=0x01,
-                                           param_setting=0x00,
-                                           data_feedback_0x48x=0x00,
-                                           end_load_param_setting_effective=0x00,
-                                           set_end_load=0x03)
-            if(piper.GetPiperFirmwareVersion() == -0x4AF):
-                piper.SearchPiperFirmwareVersion()
+            if(args.req_flag == 1):
+                piper.SearchAllMotorMaxAngleSpd()
+                piper.SearchAllMotorMaxAccLimit()
+                piper.ArmParamEnquiryAndConfig(param_enquiry=0x02,
+                                            param_setting=0x00,
+                                            data_feedback_0x48x=0x00,
+                                            end_load_param_setting_effective=0x00,
+                                            set_end_load=0x03)
+                piper.ArmParamEnquiryAndConfig(param_enquiry=0x04,
+                                            param_setting=0x00,
+                                            data_feedback_0x48x=0x00,
+                                            end_load_param_setting_effective=0x00,
+                                            set_end_load=0x03)
+                piper.ArmParamEnquiryAndConfig(param_enquiry=0x01,
+                                            param_setting=0x00,
+                                            data_feedback_0x48x=0x00,
+                                            end_load_param_setting_effective=0x00,
+                                            set_end_load=0x03)
+                if(piper.GetPiperFirmwareVersion() == -0x4AF):
+                    piper.SearchPiperFirmwareVersion()
             last_time = start_time
         print(time.strftime("%a %b %d %H:%M:%S %Y"))
         # print(f"+{'-'*87}+")
@@ -413,8 +416,8 @@ def display_table(can_port, refresh_interval):
               f"{'Arm Status':<15}: {round(piper.GetArmStatus().Hz):<5}  {'End Pose':<15}: {round(piper.GetArmEndPoseMsgs().Hz):<5}\n"
               f"{'Gripper Msg':<15}: {round(piper.GetArmGripperMsgs().Hz):<5}  {'High Spd Info':<15}: {round(piper.GetArmHighSpdInfoMsgs().Hz):<5}\n"
               f"{'Low Spd Info':<15}: {round(piper.GetArmLowSpdInfoMsgs().Hz):<5}\n"
-              f"{'Joint Ctrl':<15}: {piper.GetArmJointCtrl().Hz:<5}  {'Gripper Ctrl':<15}: {piper.GetArmGripperCtrl().Hz:<5}\n"
-              f"{'Mode Ctrl':<15}: {piper.GetArmModeCtrl().Hz:<5}")
+              f"{'Joint Ctrl':<15}: {round(piper.GetArmJointCtrl().Hz):<5}  {'Gripper Ctrl':<15}: {round(piper.GetArmGripperCtrl().Hz):<5}\n"
+              f"{'Mode Ctrl':<15}: {round(piper.GetArmModeCtrl().Hz):<5}")
         print("=" * 103)
         print("Press 'q' to quit")
         time.sleep(refresh_interval)
