@@ -201,17 +201,17 @@ bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
 
 执行`ifconfig`查看是否有`can_piper`，如果有则can模块设置成功
 
-### 2.3 同时激活多个can模块，**此处使用`can_config.sh`脚本**
+### 2.3 同时激活多个can模块，**此处使用`can_muti_activate.sh`脚本**
 
 首先确定有多少个官方can模块被插入到电脑，这里假设是2
 
-注：**若当前电脑插入了5个can模块，则需要将这5个模块都填入下述的文件，否则脚本会给出激活的模块数量与系统模块数量不一致的错误**
+注：**若当前电脑插入了5个can模块，可以只激活指定的can模块**
 
 #### 2.3.1 记录每个can模块对应的usb口硬件地址
 
 逐个拔插can模块并一一记录每个模块对应的usb口硬件地址
 
-在`can_config.sh`中，`EXPECTED_CAN_COUNT`参数为想要激活的can模块数量，现在假设为2
+在`can_muti_activate.sh`中，`USB_PORTS`参数中元素的数量为预激活的can模块数量，现假设为2
 
 (1) 然后can模块中的其中一个单独插入PC，执行
 
@@ -227,6 +227,8 @@ bash find_all_can_port.sh
 bash find_all_can_port.sh
 ```
 
+记录下第二个can模块的`USB port`的数值，例如`3-1.1:1.0`
+
 注：**如果未曾激活过，则第一个插入的can模块会默认是can0，第二个为can1，若激活过，名字为之前激活过的名称**
 
 #### 2.3.2 预定义USB 端口、目标接口名称及其比特率
@@ -235,15 +237,16 @@ bash find_all_can_port.sh
 
 最终结果为：
 
-`USB_PORTS["3-1.4:1.0"]="can_left:1000000"`
-
-`USB_PORTS["3-1.1:1.0"]="can_right:1000000"`
+```bash
+USB_PORTS["3-1.4:1.0"]="can_left:1000000"
+USB_PORTS["3-1.1:1.0"]="can_right:1000000"
+```
 
 解释：**3-1.4:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_left，波特率为1000000，并激活**
 
 #### 2.3.3 激活多个can模块
 
-执行`bash can_config.sh`
+执行`bash can_muti_activate.sh`
 
 #### 2.3.4 查看多个can模块是否设置成功
 

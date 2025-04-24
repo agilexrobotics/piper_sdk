@@ -199,17 +199,17 @@ Explanation: **3-1.4:1.0 is the hardware-encoded USB port, and the CAN device in
 
 (3) Check if activation was successful by running `ifconfig` to see if `can_piper` appears. If it does, the CAN module is configured successfully.
 
-### 2.3 Activate Multiple CAN Modules Simultaneously (use can_config.sh script)
+### 2.3 Activate Multiple CAN Modules Simultaneously (use can_muti_activate.sh script)
 
 First, determine how many official CAN modules are plugged into the PC (assumed here as 2).
 
-Note: **If 5 CAN modules are plugged in, all five must be listed in the configuration file; otherwise, an error will occur about the number of activated modules not matching the system's modules.**
+Note: **If the current computer has 5 CAN modules inserted, you can only activate the specified CAN module**
 
 #### 2.3.1 Record the USB port hardware address of each CAN module
 
 For each CAN module, unplug and reinsert it while recording the corresponding USB port address.
 
-In the `can_config.sh` file, the `EXPECTED_CAN_COUNT` parameter should be set to the desired number of activated CAN modules (assumed here as 2).
+In the `can_muti_activate.sh` file, the `EXPECTED_CAN_COUNT` parameter should be set to the desired number of activated CAN modules (assumed here as 2).
 
 (1) Plug in one CAN module and run:
 
@@ -224,6 +224,8 @@ Record the `USB port` value, for example, `3-1.4:1.0`
 ```shell
 bash find_all_can_port.sh
 ```
+
+Record the value of the second CAN module's `USB port`, for example `3-1.1:1.0`
 
 Note: **If not previously activated, the first module will default to "can0," and the second will be "can1." If previously activated, the names will be the ones used before.**
 
@@ -245,7 +247,7 @@ Explanation: **3-1.4:1.0 is the hardware-encoded USB port, the CAN device insert
 Run the script:
 
 ```bash
-bash can_config.sh
+bash can_muti_activate.sh
 ```
 
 #### 2.3.4 Check if multiple CAN modules were set up successfully
