@@ -71,7 +71,6 @@ V2
 
 |文件 |说明|
 |---|---|
-
 |`motor_max_acc_limit_config.py`|电机单独设定某个关节电机的最大加速度限制|
 |`piper_disable.py`|机械臂失能|
 |`piper_enable.py`|机械臂使能|
