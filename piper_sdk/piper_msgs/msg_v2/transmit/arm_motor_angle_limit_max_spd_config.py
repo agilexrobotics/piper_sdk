@@ -18,13 +18,13 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         min_angle_limit: 最小角度限制,单位 0.1°,0x7FFF为设定无效数值
         max_joint_spd: 最大关节速度,单位 0.001rad/s,范围[0,3000],0x7FFF为设定无效数值
     
-    |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
-    |----------|     ----------     |     ----------     |     ----------     |
+    |joint_name|     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
+    |----------|     ----------       |     ----------     |     ----------     |
     |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |      [0, 3.0]      |
-    |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
-    |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
-    |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
-    |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
+    |joint2    |   [0, 3.14]          |    [0, 180.0]      |      [0, 3.0]      |
+    |joint3    |   [-2.967, 0]        |    [-170, 0]       |      [0, 3.0]      |
+    |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |      [0, 3.0]      |
+    |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |      [0, 3.0]      |
     |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
     
     位描述:
@@ -51,13 +51,13 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         min_angle_limit: Minimum angle limit, unit 0.1°,0x7FFF is defined as the invalid value.
         max_joint_spd: Maximum joint speed, unit 0.001 rad/s,Range [0, 3000],0x7FFF is defined as the invalid value.
 
-    |joint_name|     limit(rad)     |    limit(angle)    |     limit(rad/s)   |
-    |----------|     ----------     |     ----------     |     ----------     |
+    |joint_name|     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
+    |----------|     ----------       |     ----------     |     ----------     |
     |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |      [0, 3.0]      |
-    |joint2    |   [0, 3.14]        |    [0, 180.0]      |      [0, 3.0]      |
-    |joint3    |   [-2.967, 0]      |    [-170, 0]       |      [0, 3.0]      |
-    |joint4    |   [-1.745, 1.745]  |    [-100.0, 100.0] |      [0, 3.0]      |
-    |joint5    |   [-1.22, 1.22]    |    [-70.0, 70.0]   |      [0, 3.0]      |
+    |joint2    |   [0, 3.14]          |    [0, 180.0]      |      [0, 3.0]      |
+    |joint3    |   [-2.967, 0]        |    [-170, 0]       |      [0, 3.0]      |
+    |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |      [0, 3.0]      |
+    |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |      [0, 3.0]      |
     |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
     
     Bit Description:

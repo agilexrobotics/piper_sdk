@@ -14,5 +14,4 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while True:
         print(piper.GetArmEndPoseMsgs())
-        # print(piper.GetAllMotorMaxAccLimit())
         time.sleep(0.01)

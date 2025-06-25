@@ -35,7 +35,7 @@ Instructions for activating the CAN module [can README](../../asserts/can_config
 |[`piper_ctrl_end_pose.py`](./piper_ctrl_end_pose.py)|Control the end-effector of the robotic arm.|
 |[`piper_ctrl_gripper.py`](./piper_ctrl_gripper.py)|Control the robotic arm gripper.|
 |[`piper_ctrl_joint.py`](./piper_ctrl_joint.py)|Control the robotic arm joints.|
-|[`piper_ctr_moveC.py`](./piper_ctr_moveC.py)|Set the robotic arm to circular motion mode.|
+|[`piper_ctrl_moveC.py`](./piper_ctrl_moveC.py)|Set the robotic arm to circular motion mode.|
 |[`piper_ctrl_reset.py`](./piper_ctrl_reset.py)|Reset the robotic arm. This must be executed once after setting it to teaching mode.|
 |[`piper_ctrl_stop.py`](./piper_ctrl_stop.py)|Stop the robotic arm and allow it to descend slowly. After use, reset and re-enable twice before resuming normal control.|
 |[`piper_read_all_fps.py`](./piper_read_all_fps.py)|Read the frequency of specified robotic arm data.|

@@ -26,10 +26,8 @@ if __name__ == "__main__":
     count = 0
     while True:
         print(piper.GetArmEndPoseMsgs())
-        # print(piper.GetArmStatus())
         import time
         count  = count + 1
-        # print(count)
         if(count == 0):
             print("1-----------")
             position = [
@@ -70,7 +68,6 @@ if __name__ == "__main__":
         RZ = round(position[5]*factor)
         joint_6 = round(position[6]*factor)
         print(X,Y,Z,RX,RY,RZ)
-        # piper.MotionCtrl_1()
         piper.MotionCtrl_2(0x01, 0x02, 100, 0x00)
         piper.EndPoseCtrl(X,Y,Z,RX,RY,RZ)
         piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)

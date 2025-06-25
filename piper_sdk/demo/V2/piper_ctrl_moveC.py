@@ -15,7 +15,6 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    # piper.DisableArm(7)
     piper.GripperCtrl(0,1000,0x01, 0)
     # X:135.481
     piper.EndPoseCtrl(135481,9349,161129,178756,6035,-178440)

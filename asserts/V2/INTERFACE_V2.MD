@@ -21,6 +21,18 @@ Inner class identifies instances based on `can_port`, preventing the creation of
 
 ### Connection Methods
 
+#### get_connect_status
+
+```python
+def get_connect_status(self)
+```
+
+Get connection status
+
+Used to feedback whether the ConnectPort function has been called, You need to call ConnectPort again for the function feedback to become `True`
+
+`False` if DisconnectPort was called
+
 #### ConnectPort
 
 ```python
@@ -327,6 +339,8 @@ Manual unit conversion of data is required.
 def GetFK(mode: Literal["feedback", "control"] = "feedback")
 ```
 
+**Note: Normal data will be obtained only after the `EnableFkCal` function is called, otherwise all data will be 0**
+
 Returns the forward kinematics solution for each joint of the robotic arm.
 
 Parameters:
@@ -531,6 +545,30 @@ def isOk()
 Returns whether the CAN data reading thread is functioning normally.
 
 ### Configuration Methods
+
+#### EnableFkCal
+
+```python
+def EnableFkCal(self)
+```
+
+Enable forward kinematics calculations in SDK internal threads
+
+#### DisableFkCal
+
+```python
+def DisableFkCal(self)
+```
+
+Disable forward kinematics calculations in SDK internal threads
+
+#### isCalFk
+
+```python
+def isCalFk(self)
+```
+
+Whether the forward kinematics calculation is turned on, feedback `True` or `False`
 
 #### MasterSlaveConfig
 

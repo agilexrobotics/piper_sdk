@@ -1,3 +1,7 @@
+# CHANGELOG(EN)
+
+[Click to switch ZH](CHANGELOG(ZH).MD)
+=============
 
 Version 0.3.0
 =============
@@ -5,15 +9,27 @@ Version 0.3.0
 Features
 --------
 
-- Added the teaching pendant friction coefficient parameter to the gripper/teaching pendant parameter feedback command (both feedback and sending) and adapted the protocol(1.5-8 frimware).
-- Added `ModeCtrl` and `EmergencyStop` functions to set modes and perform emergency stops (future updates will introduce dictionary-based parameter matching for all functions).
-- Renamed all data reading files in the demo to start with "read" for easier searching.
-- Initialized `rx_message` as an empty `Message()` in the `C_STD_CAN` encapsulation class
-- Added `piper_param_manager` file, which includes angle and gripper range limits, applying constraints to both feedback and control messages.
-  - If feedback or control messages exceed the set limits, the values will be clamped to the boundary values.
-  - To configure limit ranges, use the `SetSDKJointLimitParam` and `SetSDKGripperRangeParam` functions to set software constraints.
-    Refer to the `piper_sdk_param.py` file in the demo for examples.
-- Slightly reduced joint limits to prevent exceeding the robotic arm's angle limits when converting radians to degrees using math.degrees. The new limits are:
+- Added interface parameters `start_sdk_joint_limit`, `start_sdk_gripper_limit`, the default parameter is `False`
+- Added `utils` path, which contains tools for fps calculation and quaternion Euler angle calculation (external rotation sxyz)
+  - Convert quaternion to Euler angle through `quat_convert_euler`
+  - Convert Euler angle to quaternion through `euler_convert_quat`
+- Added functions `EnableFkCal` and `DisableFkCal` to enable/disable sdk calculation fk. `isCalFk` is used to get whether to enable fk calculation, and then read it through `GetFK` function. After enabling fk calculation, the reading thread will occupy a high CPU, please enable it as needed
+- Added function `get_connect_status` to get the call status of `ConnectPort` function
+- Reduced the frequency (20hz) of `CanMonitor` thread enabled in the interface and the length of the queue for storing frame rate values ​​(5)
+- Added the friction coefficient parameter of the teach pendant in the gripper/teach pendant parameter feedback command (feedback and send)
+- Added `ModeCtrl` and `EmergencyStop` functions to set the mode and perform emergency stop (replace `MotionCtrl_1` and `MotionCtrl_2`)
+- Will get CAN_ID=0x151 - Renamed the function of the arm mode control command from `GetArmCtrlCode151` to `GetArmModeCtrl`
+- Added enum in the robot status feedback. When you use the `piper_read_status.py` in the demo to print the current status of the robot, you can see an explicit formatted string representing the current status of the robot (the actual variable value is still int)
+- Renamed the demo file to be standardized
+- Initialized `rx_message` to `Message()` type in the `C_STD_CAN` class
+- Modified the location of obtaining the timestamp of the feedback information, from obtaining the current system time from the interface to obtaining the timestamp in the decoding function to increase the accuracy of the data timestamp
+- Added the `piper_param_manager` file, which contains the angle and gripper range limits and applies constraints to feedback and control messages
+  - Use the parameters in the interface to turn on the sdk limit function: `piper = C_PiperInterface_V2("can0", start_sdk_joint_limit=True, start_sdk_gripper_limit=True)`
+  - If the feedback or control message exceeds the set limit, the value will be clamped within the boundary value
+  - Default limits already exist in the program. To customize the configuration limit range, use the `SetSDKJointLimitParam` and `SetSDKGripperRangeParam` functions to set software constraints
+
+  See the `piper_set_sdk_param.py` file in the demo for examples.
+- Slightly reduced the joint limits to prevent exceeding the angle limit of the robot when converting radians to degrees using math.degrees. The new limits are as follows:
 
   | joint_name |     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
   |------------|----------------------|--------------------|--------------------|
@@ -25,23 +41,22 @@ Features
   | joint6     |   [-2.09439, 2.09439]|    [-120.0, 120.0] |      [0, 3.0]      |
 
   Note: The conversion factor from radians to degrees is 57.2957795 (180/3.1415926).
-  
-- Renamed the method for retrieving arm mode control command with ID=151 from `GetArmCtrlCode151` to `GetArmModeCtrl`.
-- Added `piper_set_load.py` demo for setting load conditions (no load/full load).
+
+- Added `piper_set_load.py` demo for setting load conditions (empty/half/full)
+- Added `detect_arm.py` in the demo path to monitor various information of the robot arm in the terminal. Note that this file is not backward compatible
 
 Bug Fixes
 ---------
 
-- Fixed the issue where the gripper feedback timestamp was of type `int`. Now, a unified timestamp retrieval function is used.
+- Fixed the issue where the gripper feedback timestamp was of type `int`.
 
 Miscellaneous
 ---------
 
-- Currently, messages in the range 0x481~0x486 have not been adapted for feedback. These messages provide feedback on the current end velocity/acceleration of each joint.
-- CPV mode has not been adapted.
-- Refactored the documentation structure:
-  - Most documents have been rewritten in English.
-  - Simplified the documentation, focusing only on interface usage.
+- Modified the folder structure, put `fps.py` into the `utils` path, the `monitor` path will be deleted after the next version
+- Restructured the documentation:
+  - Most of the documentation has been rewritten in English
+  - Simplified the documentation to focus only on interface usage
 
 Version 0.2.19
 =============
@@ -107,7 +122,7 @@ Features
 - Modified the comments in the `SearchAllMotorMaxAngleSpd` and `SearchAllMotorMaxAccLimit` functions to include CAN ID descriptions.
 - Added a demo file to set and print the robotic arm's collision level `piper_read_crash_protectation.py`.
 - Modified the `arm_high_spd_feedback` to set the `motor_speed` unit to 0.001 rad/s and the `current` unit to 0.001 A.
-- Modified the shell script. Since the `sh` command does not support `==` for equality comparison, but `bash` does, changed it to use `=` for equality comparison. This allows the script to be used in `zsh`.
+- Modified the shell script. Since the `sh` command does not support `==` for equality comparison, but `bash` does, it is changed to use `=` for equality comparison so that it can be used by `zsh`
 
 Bug Fixes
 ---------
@@ -424,16 +439,16 @@ Version 0.0.12
 Features
 --------
 
-- Modified the CAN bus class to make the data reading section compatible with Ubuntu 18.04 and Python 3.6.
-- Updated the protocol_base to simplify the function that converts values to a list by using struct and ctypes.
-- Added singleton pattern support in the interface class.
-- Added thread protection to the `ConnectPort` function in the interface class.
-- Added a `DisconnectPort` function to the interface class to stop the data reading process.
-- Changed the `Update` function and some variables in the interface class to private.
-- Fixed erroneous comments to make them more readable.
-- Optimized the document structure and descriptions.
-- Added an interface to query the robotic arm's firmware.
-- Added all demos (e.g., moveC).
+- Modified the CAN bus class to make its data reading part compatible with Python 3.6 in Ubuntu 18.04
+- Updated protocol_base to simplify the function of converting values ​​to lists using struct and ctypes
+- Added singleton mode support in the interface class
+- Added thread protection to the `ConnectPort` function in the interface class
+- Added a `DisconnectPort` function to the interface class to stop the data reading process
+- Changed the `Update` function and some variables in the interface class to private variables
+- Fixed incorrect comments to make it more readable
+- Optimized the document structure and description
+- Added the interface `SearchPiperFirmwareVersion` for querying the robot firmware, and the acquisition function is `GetPiperFirmwareVersion`
+- Added many demos (such as moveC)
 
 Bug Fixes
 ---------

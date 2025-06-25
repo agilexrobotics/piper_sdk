@@ -13,5 +13,7 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface()
     piper.ConnectPort()
-    time.sleep(0.1)
-    print(piper.GetAllMotorAngleLimitMaxSpd())
+    while True:
+        piper.SearchAllMotorMaxAngleSpd()
+        print(piper.GetAllMotorAngleLimitMaxSpd())
+        time.sleep(0.01)

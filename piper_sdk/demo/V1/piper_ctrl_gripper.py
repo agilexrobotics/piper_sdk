@@ -14,6 +14,7 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
+    piper.GripperCtrl(0,1000,0x02, 0)
     piper.GripperCtrl(0,1000,0x01, 0)
     range = 0
     count = 0
@@ -21,7 +22,6 @@ if __name__ == "__main__":
         print(piper.GetArmGripperMsgs())
         import time
         count  = count + 1
-        # print(count)
         if(count == 0):
             print("1-----------")
             range = 0

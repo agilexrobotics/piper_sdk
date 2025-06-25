@@ -13,13 +13,13 @@ if __name__ == "__main__":
     while( not piper.EnablePiper()):
         time.sleep(0.01)
     piper.GripperCtrl(0,1000,0x02, 0)
+    piper.GripperCtrl(0,1000,0x01, 0)
     range = 0
     count = 0
     while True:
         print(piper.GetArmGripperMsgs())
         import time
         count  = count + 1
-        # print(count)
         if(count == 0):
             print("1-----------")
             range = 0
@@ -27,10 +27,10 @@ if __name__ == "__main__":
             print("2-----------")
             range = 50 * 1000 # 50mm
         elif(count == 600):
-            print("1-----------")
+            print("3-----------")
             range = 0
             count = 0
-        piper.GripperCtrl(abs(range), 1000, 0x03, 0)
+        piper.GripperCtrl(abs(range), 1000, 0x01, 0)
         
         time.sleep(0.005)
         pass

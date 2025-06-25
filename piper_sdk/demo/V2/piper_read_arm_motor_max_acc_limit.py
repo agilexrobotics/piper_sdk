@@ -14,12 +14,6 @@ if __name__ == "__main__":
     piper = C_PiperInterface_V2()
     piper.ConnectPort()
     while True:
-        # piper.SearchMotorMaxAngleSpdAccLimit(1,0x02)
-        # piper.SearchAllMotorMaxAngleSpd()
         piper.SearchAllMotorMaxAccLimit()
-        
-        # print(piper.GetCurrentMotorMaxAccLimit())
-        # print(piper.GetCurrentMotorAngleLimitMaxVel())
-        # print(piper.GetAllMotorAngleLimitMaxSpd())
         print(piper.GetAllMotorMaxAccLimit())
         time.sleep(0.01)
