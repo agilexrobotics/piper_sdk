@@ -11,5 +11,6 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
+    print(piper.GetArmEnableStatus())
     print("使能成功!!!!")
     pass

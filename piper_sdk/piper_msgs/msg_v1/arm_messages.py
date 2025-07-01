@@ -53,6 +53,7 @@ class PiperMessage:
     def __init__(self, 
                 ## feedback
                 type_: 'ArmMsgType' = None,
+                time_stamp: float = 0.0,
                 arm_status_msgs: 'ArmMsgFeedbackStatus' = None,
                 arm_joint_feedback: 'ArmMsgFeedBackJointStates' = None,
                 gripper_feedback: 'ArmMsgFeedBackGripper' = None,
@@ -86,6 +87,8 @@ class PiperMessage:
         #-------------------------------feedback-------------------------------------------
         # 初始化数据帧类型
         self.type_ = type_
+        # 时间戳
+        self.time_stamp = time_stamp
         # 初始化机械臂状态消息
         self.arm_status_msgs = arm_status_msgs if arm_status_msgs else ArmMsgFeedbackStatus()
         # 初始化机械臂关节反馈

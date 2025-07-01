@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # can总线读取二次封装
+# 反馈码为100开头，反馈码总长为000000
 import can
 from can.message import Message
 import time
@@ -16,6 +17,7 @@ from typing import (
     Union,
     cast,
 )
+from enum import IntEnum, auto
 
 class C_STD_CAN():
     '''
@@ -42,6 +44,41 @@ class C_STD_CAN():
         auto_init: Whether to automatically initialize the CAN bus (i.e., instantiate can.interface.Bus).
         callback_function: The callback function in ReadCanMessage, which should be passed as a function.
     '''
+    class CAN_STATUS(IntEnum):
+        # __del__
+        DEL_CAN_BUS_CONNECT_SHUT_DOWN = 100001
+        DEL_CAN_BUS_WAS_NOT_PROPERLY_INIT = auto()
+        DEL_SHUTTING_DOWN_CAN_BUS_ERR = auto()
+        INIT_CAN_BUS_IS_EXIST = auto()
+        INIT_CAN_BUS_OPENED_SUCCESS = auto()
+        INIT_CAN_BUS_OPENED_FAILED = auto()
+        CLOSE_CAN_BUS_CONNECT_SHUT_DOWN = auto()
+        CLOSE_CAN_BUS_WAS_NOT_PROPERLY_INIT = auto()
+        CLOSE_SHUTTING_DOWN_CAN_BUS_ERR = auto()
+        CLOSED_CAN_BUS_NOT_OPEN = auto()
+        JUDGE_PASS = auto()
+        READ_CAN_MSG_OK = auto()
+        READ_CAN_MSG_TIMEOUT = auto()
+        READ_CAN_MSG_FAILED = auto()
+        READ_CAN_BUS_NOT_OK = auto()
+        SEND_MESSAGE_SUCCESS = auto()
+        SEND_MESSAGE_FAILED = auto()
+        SEND_CAN_BUS_NOT_OK = auto()
+        BUS_STATE_ACTIVE = auto()
+        BUS_STATE_PASSIVE = auto()
+        BUS_STATE_ERROR = auto()
+        BUS_STATE_UNKNOWN = auto()
+        CHECK_CAN_EXIST = auto()
+        CHECK_CAN_UP = auto()
+        CHECK_CAN_NOT_UP = auto()
+        CAN_SOCKET_NOT_EXIST = auto()
+        CAN_BITRATE_SUCCESS= auto()
+        CAN_BITRATE_ERR= auto()
+        def __str__(self):
+            return f"{self.name} ({self.value})"
+        def __repr__(self):
+            return f"{self.name}: {self.value}"
+    
     def __init__(self, 
                  channel_name:str="can0", 
                  bustype="socketcan", 
@@ -59,15 +96,15 @@ class C_STD_CAN():
             self.JudgeCanInfo()
         if(auto_init):
             self.Init()#创建can总线交互
-        
+    
     def __del__(self):
         try:
             self.bus.shutdown()  # 关闭 CAN 总线
-            # print("CAN bus connection properly shut down.")
+            return self.CAN_STATUS.DEL_CAN_BUS_CONNECT_SHUT_DOWN
         except AttributeError:
-            print("CAN bus connection was not properly initialized.")
+            return self.CAN_STATUS.DEL_CAN_BUS_WAS_NOT_PROPERLY_INIT
         except Exception as e:
-            print(f"Error occurred while shutting down CAN bus: {e}")
+            return self.CAN_STATUS.DEL_SHUTTING_DOWN_CAN_BUS_ERR
     
     def Init(self):
         '''初始化can总线
@@ -75,13 +112,14 @@ class C_STD_CAN():
         '''Initialize the CAN bus.
         '''
         if self.bus is not None:
-            return
+            # return True
+            return self.CAN_STATUS.INIT_CAN_BUS_IS_EXIST
         try:
             self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)
-            print(self.channel_name,"bus opened successfully.")
+            return self.CAN_STATUS.INIT_CAN_BUS_OPENED_SUCCESS
         except can.CanError as e:
-            print(f"Failed to open CAN bus: {e}")
             self.bus = None
+            return self.CAN_STATUS.INIT_CAN_BUS_OPENED_FAILED
 
     def Close(self):
         '''关闭can总线
@@ -91,19 +129,16 @@ class C_STD_CAN():
         if self.bus is not None:
             try:
                 self.bus.shutdown()  # 关闭 CAN 总线
-                # print("CAN bus connection properly shut down.")
+                self.bus = None
+                # return True
+                return self.CAN_STATUS.CLOSE_CAN_BUS_CONNECT_SHUT_DOWN
             except AttributeError:
-                print("CAN bus connection was not properly initialized.")
-                return -1
+                return self.CAN_STATUS.CLOSE_CAN_BUS_WAS_NOT_PROPERLY_INIT
             except Exception as e:
-                print(f"Error occurred while shutting down CAN bus: {e}")
-                return -2
-            self.bus = None
-            # print("CAN bus closed successfully.")
-            return 1
+                return self.CAN_STATUS.CLOSE_SHUTTING_DOWN_CAN_BUS_ERR
+            # return 1
         else:
-            print("CAN bus was not open.")
-            return 0
+            return self.CAN_STATUS.CLOSED_CAN_BUS_NOT_OPEN
     
     def JudgeCanInfo(self):
         '''
@@ -113,32 +148,41 @@ class C_STD_CAN():
         Whether to check basic information during class initialization.
         '''
         # 检查 CAN 端口是否存在
-        if not self.is_can_socket_available(self.channel_name):
+        if self.is_can_socket_available(self.channel_name) is not self.CAN_STATUS.CHECK_CAN_EXIST:
             raise ValueError(f"CAN socket {self.channel_name} does not exist.")
-        print(self.channel_name, " is exist")
         # 检查 CAN 端口是否 UP
-        if not self.is_can_port_up(self.channel_name):
+        if self.is_can_port_up(self.channel_name) is not self.CAN_STATUS.CHECK_CAN_UP:
             raise RuntimeError(f"CAN port {self.channel_name} is not UP.")
-        print(self.channel_name, " is UP")
         # 检查 CAN 端口的比特率
         actual_bitrate = self.get_can_bitrate(self.channel_name)
         if self.expected_bitrate is not None and not (actual_bitrate == self.expected_bitrate):
             raise ValueError(f"CAN port {self.channel_name} bitrate is {actual_bitrate} bps, expected {self.expected_bitrate} bps.")
-        print(self.channel_name, " bitrate is ", self.expected_bitrate)
+        # return True
+        return self.CAN_STATUS.JUDGE_PASS
     
     def GetBirtrate(self):
         return self.expected_bitrate
 
     def GetRxMessage(self) -> Message:
         return self.rx_message
+    
+    def GetCanPortName(self):
+        return self.channel_name
 
     def ReadCanMessage(self):
-        if self.is_can_bus_ok():
-            self.rx_message = self.bus.recv()
-            if self.rx_message and self.callback_function:
-                self.callback_function(self.rx_message) #回调函数处理接收的原始数据
+        can_bus_status = self.is_can_bus_ok()
+        if(can_bus_status == self.CAN_STATUS.BUS_STATE_ACTIVE):
+            try:
+                self.rx_message = self.bus.recv(1)
+                if self.rx_message is None:
+                    return self.CAN_STATUS.READ_CAN_MSG_TIMEOUT
+                if self.rx_message and self.callback_function:
+                    self.callback_function(self.rx_message) #回调函数处理接收的原始数据
+                return self.CAN_STATUS.READ_CAN_MSG_OK
+            except Exception as e:
+                return self.CAN_STATUS.READ_CAN_MSG_FAILED
         else:
-            print("CAN bus is not OK, skipping message read")
+            return can_bus_status
 
     def SendCanMessage(self, arbitration_id, data):
         '''can transmit
@@ -153,15 +197,17 @@ class C_STD_CAN():
                               data=data, 
                               dlc=8,
                               is_extended_id=False)
-        if self.is_can_bus_ok():
+        if(self.is_can_bus_ok() == self.CAN_STATUS.BUS_STATE_ACTIVE):
             try:
                 self.bus.send(message)
-                # print(message)
-                # print(f"Message sent on {self.bus.channel_info}")
-            except can.CanError:
-                print(can.CanError,"Message NOT sent")
+                # return True
+                return self.CAN_STATUS.SEND_MESSAGE_SUCCESS
+            # except can.CanError:
+            #     return self.CAN_STATUS.SEND_MESSAGE_FAILED
+            except Exception as e:
+                return self.CAN_STATUS.SEND_MESSAGE_FAILED
         else:
-            print("CAN bus is not OK, cannot send message")
+            return self.CAN_STATUS.SEND_CAN_BUS_NOT_OK
 
     def is_can_bus_ok(self) -> bool:
         '''
@@ -174,17 +220,17 @@ class C_STD_CAN():
             bus_state = self.bus.state
         else: bus_state = None
         if bus_state == can.BusState.ACTIVE:
-            # print("CAN bus state: ACTIVE - Bus is functioning normally")
-            return True
+            # return True
+            return self.CAN_STATUS.BUS_STATE_ACTIVE
         elif bus_state == can.BusState.PASSIVE:
-            print("CAN bus state: PASSIVE - Warning level errors are occurring")
-            return False  # 可以根据需要调整
+            # return False
+            return self.CAN_STATUS.BUS_STATE_PASSIVE
         elif bus_state == can.BusState.ERROR:
-            print("CAN bus state: ERROR - Communication may be impaired")
-            return False
+            # return False
+            return self.CAN_STATUS.BUS_STATE_ERROR
         else:
-            print(f"Unknown CAN bus state: {bus_state}")
-            return False
+            # return False
+            return self.CAN_STATUS.BUS_STATE_UNKNOWN
     
     def is_can_socket_available(self, channel_name: str) -> bool:
         '''
@@ -196,9 +242,31 @@ class C_STD_CAN():
         try:
             with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
                 state = file.read().strip()
-                return state == "up"
+                # return True
+                return  self.CAN_STATUS.CHECK_CAN_EXIST
         except FileNotFoundError:
-            return False
+            # return False
+            return  self.CAN_STATUS.CAN_SOCKET_NOT_EXIST
+    
+    def is_can_port_up(self, channel_name: str) -> bool:
+        '''
+        检查 CAN 端口是否为 UP 状态。
+        '''
+        '''
+        Check if the CAN port is in the UP state.
+        '''
+        try:
+            with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
+                state = file.read().strip()
+                if(state == "up"):
+                    # return True
+                    return  self.CAN_STATUS.CHECK_CAN_UP
+                else: 
+                    # return False
+                    return  self.CAN_STATUS.CHECK_CAN_NOT_UP
+        except FileNotFoundError:
+            # return False
+            return  self.CAN_STATUS.CAN_SOCKET_NOT_EXIST
 
     def get_can_ports(self) -> list:
         '''
@@ -231,20 +299,6 @@ class C_STD_CAN():
         except FileNotFoundError:
             return f"CAN port {channel_name} not found."
 
-    def is_can_port_up(self, channel_name: str) -> bool:
-        '''
-        检查 CAN 端口是否为 UP 状态。
-        '''
-        '''
-        Check if the CAN port is in the UP state.
-        '''
-        try:
-            with open(f"/sys/class/net/{channel_name}/operstate", "r") as file:
-                state = file.read().strip()
-                return state == "up"
-        except FileNotFoundError:
-            return False
-
     def get_can_bitrate(self, channel_name: str) -> str:
         '''
         获取指定 CAN 端口的比特率。
@@ -261,21 +315,37 @@ class C_STD_CAN():
             for line in output.split('\n'):
                 if 'bitrate' in line:
                     return int(line.split('bitrate ')[1].split(' ')[0])
-            return "Unknown"
+            return self.CAN_STATUS.CAN_BITRATE_SUCCESS
         except Exception as e:
-            print(f"Error while getting bitrate: {e}")
-            return "Unknown"
+            return self.CAN_STATUS.CAN_BITRATE_ERR, e
 
 ## 示例代码
 # if __name__ == "__main__":
+#     can_name = "can0"
 #     try:
-#         can_obj = C_STD_CAN(channel_name="can0")
+#         can_obj = C_STD_CAN(channel_name=can_name)
 #         print("CAN bus initialized successfully.")
 #         print(can_obj.get_can_ports())
-#         print(can_obj.can_port_info("can0"))
+#         print(can_obj.can_port_info(can_name))
 #         print(can_obj.ReadCanMessage())
 #         print(can_obj.GetRxMessage())
+#         # print(can_obj.get_can_bitrate("can_name"))
+#         print(f"{can_obj.CAN_STATUS.SEND_CAN_BUS_NOT_OK}")
 #     except ValueError as e:
 #         print(e)
 #     except Exception as e:
 #         print(f"An unexpected error occurred: {e}")
+
+# if __name__ == "__main__":
+#     can_name = "vcan0"
+#     bus = C_STD_CAN(can_name, "socketcan", 1000000,False, True)
+#     while True:
+#         start_time = time.time()
+#         # piper.SearchPiperFirmwareVersion()
+#         bus.SendCanMessage(0x101, [0,0,0,0,0,0,0,0])
+#         end_time = time.time()
+#         cost_ms = (end_time - start_time) * 1000  # 转为毫秒
+#         if(cost_ms > 1):
+#             print(f"[MAX UPDATE] 最大执行耗时: {cost_ms:.3f} ms")
+#         time.sleep(0.001)
+#     bus.shutdown()

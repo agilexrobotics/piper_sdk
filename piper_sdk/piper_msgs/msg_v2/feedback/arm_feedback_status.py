@@ -1,5 +1,74 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
+from enum import IntEnum, auto, unique
+
+class _EnumBase(IntEnum):
+    def __str__(self):
+        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
+        return f"{self.name}(0x{self.value:X})"
+    def __repr__(self):
+        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
+        return f"{self.name}(0x{self.value:X})"
+    @classmethod
+    def match_value(cls, val):
+        if not isinstance(val, int):
+            raise ValueError(f"{cls.__name__}: input value must be an integer, got {type(val).__name__}")
+        try:
+            return cls(val)
+        except ValueError:
+            raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}")
+
+class ArmMsgFeedbackStatusEnum:
+    @unique
+    class CtrlMode(_EnumBase):
+        STANDBY = 0x00
+        CAN_CTRL = 0x01
+        TEACHING_MODE = 0x02
+        ETHERNET_CONTROL_MODE = 0x03
+        WIFI_CONTROL_MODE = 0x04
+        REMOTE_CONTROL_MODE = 0x05
+        LINKAGE_TEACHING_INPUT_MODE = 0x06
+        OFFLINE_TRAJECTORY_MODE = 0x07
+    @unique
+    class ArmStatus(_EnumBase):
+        NORMAL = 0x00
+        EMERGENCY_STOP = 0x01
+        NO_SOLUTION = 0x02
+        SINGULARITY_POINT = 0x03
+        TARGET_POS_EXCEEDS_LIMIT = 0x04
+        JOINT_COMMUNICATION_ERR = 0x05
+        JOINT_BRAKE_NOT_RELEASED = 0x06
+        COLLISION_OCCURRED = 0x07
+        OVERSPEED_DURING_TEACHING_DRAG = 0x08
+        JOINT_STATUS_ERR = 0x09
+        OTHER_ERR = 0x0A
+        TEACHING_RECORD = 0x0B
+        TEACHING_EXECUTION = 0x0C
+        TEACHING_PAUSE = 0x0D
+        MAIN_CONTROLLER_NTC_OVER_TEMPERATURE = 0x0E
+        RELEASE_RESISTOR_NTC_OVER_TEMPERATURE = 0x0F
+    @unique
+    class ModeFeed(_EnumBase):
+        MOVE_P = 0x00
+        MOVE_J = 0x01
+        MOVE_L = 0x02
+        MOVE_C = 0x03
+        MOVE_M = 0x04
+        MOVE_CPV = 0x05
+    @unique
+    class TeachingState(_EnumBase):
+        DISABLED = 0x00               # 关闭
+        START_RECORDING = 0x01        # 开始示教记录（进入拖动示教模式）
+        STOP_RECORDING = 0x02         # 结束示教记录（退出拖动示教模式）
+        EXECUTE_TRAJECTORY = 0x03     # 执行示教轨迹（拖动示教轨迹复现）
+        PAUSE_EXECUTION = 0x04        # 暂停执行
+        RESUME_EXECUTION = 0x05       # 继续执行（轨迹复现继续）
+        TERMINATE_EXECUTION = 0x06    # 终止执行
+        MOVE_TO_START = 0x07          # 运动到轨迹起点
+    @unique
+    class MotionStatus(_EnumBase):
+        REACH_TARGET_POS_SUCCESSFULLY = 0x00
+        REACH_TARGET_POS_FAILED = 0x01
 
 class ArmMsgFeedbackStatus:
     '''
@@ -53,6 +122,7 @@ class ArmMsgFeedbackStatus:
             0x02 MOVE L
             0x03 MOVE C
             0x04 MOVE M ---基于V1.5-2版本后
+            0x05 MOVE_CPV ---基于V1.6.5版本后
         Byte 3:示教状态,uint8 
             0x00 关闭
             0x01 开始示教记录（进入拖动示教模式）
@@ -137,6 +207,7 @@ class ArmMsgFeedbackStatus:
             0x02: MOVE L
             0x03: MOVE C
             0x04: MOVE M
+            0x05: MOVE_CPV
         Byte 3: Teaching status, uint8
             0x00: Off
             0x01: Start teaching record (enter drag teaching mode)
@@ -179,14 +250,69 @@ class ArmMsgFeedbackStatus:
                  motion_status: int = 0,
                  trajectory_num: int = 0,
                  err_code: int = 0):
-        self.ctrl_mode: int = ctrl_mode       #控制模式
-        self.arm_status: int = arm_status      #机械臂状态
-        self.mode_feed: int = mode_feed       #模式反馈
-        self.teach_status: int = teach_status    #示教状态
-        self.motion_status: int = motion_status   #运动状态
+        self._ctrl_mode:ArmMsgFeedbackStatusEnum.CtrlMode = ArmMsgFeedbackStatusEnum.CtrlMode.match_value(ctrl_mode)
+        self.ctrl_mode = self._ctrl_mode
+        self._arm_status:ArmMsgFeedbackStatusEnum.ArmStatus = ArmMsgFeedbackStatusEnum.ArmStatus.match_value(arm_status)
+        self.arm_status: int = self._arm_status      #机械臂状态
+        self._mode_feed:ArmMsgFeedbackStatusEnum.ModeFeed = ArmMsgFeedbackStatusEnum.ModeFeed.match_value(mode_feed)
+        self.mode_feed: int = self._mode_feed       #模式反馈
+        self._teach_status:ArmMsgFeedbackStatusEnum.TeachingState = ArmMsgFeedbackStatusEnum.TeachingState.match_value(teach_status)
+        self.teach_status: int = self._teach_status    #示教状态
+        self._motion_status:ArmMsgFeedbackStatusEnum.MotionStatus = ArmMsgFeedbackStatusEnum.MotionStatus.match_value(motion_status)
+        self.motion_status: int = self._motion_status   #运动状态
         self.trajectory_num: int = trajectory_num  #当前运行轨迹点序号
         self._err_code = err_code         #故障码
         self.err_status = self.ErrStatus()#故障码
+
+    @property
+    def ctrl_mode(self) -> ArmMsgFeedbackStatusEnum.CtrlMode:
+        return self._ctrl_mode
+    @ctrl_mode.setter
+    def ctrl_mode(self, value:int):
+        if isinstance(value, ArmMsgFeedbackStatusEnum.CtrlMode):
+            self._ctrl_mode = value
+        else:
+            self._ctrl_mode = ArmMsgFeedbackStatusEnum.CtrlMode.match_value(value)
+    
+    @property
+    def arm_status(self) -> ArmMsgFeedbackStatusEnum.ArmStatus:
+        return self._arm_status
+    @arm_status.setter
+    def arm_status(self, value:int):
+        if isinstance(value, ArmMsgFeedbackStatusEnum.ArmStatus):
+            self._arm_status = value
+        else:
+            self._arm_status = ArmMsgFeedbackStatusEnum.ArmStatus.match_value(value)
+    
+    @property
+    def mode_feed(self) -> ArmMsgFeedbackStatusEnum.ModeFeed:
+        return self._mode_feed
+    @mode_feed.setter
+    def mode_feed(self, value:int):
+        if isinstance(value, ArmMsgFeedbackStatusEnum.ModeFeed):
+            self._mode_feed = value
+        else:
+            self._mode_feed = ArmMsgFeedbackStatusEnum.ModeFeed.match_value(value)
+    
+    @property
+    def teach_status(self) -> ArmMsgFeedbackStatusEnum.TeachingState:
+        return self._teach_status
+    @teach_status.setter
+    def teach_status(self, value:int):
+        if isinstance(value, ArmMsgFeedbackStatusEnum.TeachingState):
+            self._teach_status = value
+        else:
+            self._teach_status = ArmMsgFeedbackStatusEnum.TeachingState.match_value(value)
+
+    @property
+    def motion_status(self) -> ArmMsgFeedbackStatusEnum.MotionStatus:
+        return self._motion_status
+    @motion_status.setter
+    def motion_status(self, value:int):
+        if isinstance(value, ArmMsgFeedbackStatusEnum.MotionStatus):
+            self._motion_status = value
+        else:
+            self._motion_status = ArmMsgFeedbackStatusEnum.MotionStatus.match_value(value)
 
     class ErrStatus:
         def __init__(self):

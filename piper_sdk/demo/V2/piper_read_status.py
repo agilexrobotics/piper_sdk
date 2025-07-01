@@ -9,10 +9,11 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2()
+    piper = C_PiperInterface_V2(logger_level=LogLevel.INFO)
     piper.ConnectPort()
     while True:
         import time
         print(piper.GetArmStatus())
-        time.sleep(0.005)
+        # piper.EnablePiper()
+        time.sleep(1)
         pass

@@ -1,7 +1,7 @@
 
 from .hardware_port.can_encapsulation import C_STD_CAN
 from .api import *
-from .monitor.fps import C_FPSCounter
+from .utils import *
 from .protocol.piper_protocol_base import C_PiperParserBase
 from .piper_msgs.msg_v1 import *
 from .protocol.protocol_v1 import *
@@ -13,11 +13,14 @@ from .interface.piper_interface_v1 import C_PiperInterface_V1
 from .interface.piper_interface_v2 import C_PiperInterface_V2
 from .version import PiperSDKVersion
 from .param_map import PiperParamMap
+from .api import Piper
 
 __all__ = [
-    'PiperRobot',
+    'Piper',
     'C_PiperParserBase',
     'C_FPSCounter',
+    'LogManager',
+    'LogLevel',
     'C_PiperForwardKinematics',
     'C_STD_CAN',
     'C_PiperInterface',

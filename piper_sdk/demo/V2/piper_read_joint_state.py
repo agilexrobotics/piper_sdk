@@ -9,7 +9,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2()
+    piper = C_PiperInterface_V2(logger_level=LogLevel.WARNING)
     piper.ConnectPort()
     while True:
         import time

@@ -12,7 +12,8 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface()
     piper.ConnectPort()
-    while( not piper.DisablePiper()):
+    while(piper.DisablePiper()):
         time.sleep(0.01)
+    print(piper.GetArmEnableStatus())
     print("失能成功!!!!")
     pass

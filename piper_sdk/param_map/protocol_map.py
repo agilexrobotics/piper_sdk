@@ -2,15 +2,29 @@
 # -*-coding:utf8-*-
 from enum import IntEnum, auto
 
-class EmergencyStopMode(IntEnum):
+class EnumBase(IntEnum):
+    def __str__(self):
+        return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
+    @classmethod
+    def match_value(cls, val):
+        if not isinstance(val, int):
+            raise ValueError(f"{cls.__name__}: input value must be an integer, got {type(val).__name__}")
+        try:
+            return cls(val)
+        except ValueError:
+            pass
+            # raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}")
+
+class EmergencyStopMode(EnumBase):
     """紧急停止模式"""
 
     NORMAL = 0x00  # 正常运行模式
     EMERGENCY_STOP = 0x01  # 急停模式
     CLEAR_STOP = 0x02  # 清除急停状态
 
-
-class TrackCtrlMode(IntEnum):
+class TrackCtrlMode(EnumBase):
     """轨迹控制模式"""
 
     IDLE = 0x00  # 停止/空闲
@@ -23,8 +37,7 @@ class TrackCtrlMode(IntEnum):
     RESUME_FROM_PAUSE = 0x07  # 从暂停点继续
     TRACK_STOP = 0x08  # 停止轨迹
 
-
-class GragTeachCtrlMode(IntEnum):
+class GragTeachCtrlMode(EnumBase):
     """拖动示教控制模式"""
 
     IDLE = 0x00  # 停止/空闲
@@ -36,8 +49,7 @@ class GragTeachCtrlMode(IntEnum):
     SWITCH_TO_PRE_POINT = 0x06  # 切换到上一个点
     SWITCH_TO_NEXT_POINT = 0x07  # 切换到下一个点
 
-
-class CtrlMode(IntEnum):
+class CtrlMode(EnumBase):
     """控制模式"""
 
     IDLE = 0x00  # 停止/空闲
@@ -46,8 +58,7 @@ class CtrlMode(IntEnum):
     CARTESIAN_CTRL = 0x04  # 笛卡尔空间控制
     EXTERNAL_FORCE_CTRL = 0x07  # 外部力控制
 
-
-class MoveMode(IntEnum):
+class MoveMode(EnumBase):
     """运动模式"""
 
     IDLE = 0x00  # 停止/空闲
@@ -56,16 +67,14 @@ class MoveMode(IntEnum):
     CARTESIAN_CIRCULAR = 0x03  # 笛卡尔空间圆弧
     CARTESIAN_CONTINOUS = 0x04  # 笛卡尔空间连续
 
-
-class MITMode(IntEnum):
+class MITMode(EnumBase):
     """MIT模式"""
 
     DISABLED = 0x00  # 禁用
     ENABLED = 0xAD  # 启用
     USER_DEFINED = 0xFF  # 用户自定义
 
-
-class InstallationPosition(IntEnum):
+class InstallationPosition(EnumBase):
     """安装位置"""
 
     DESKTOP = 0x00  # 桌面安装
@@ -73,8 +82,7 @@ class InstallationPosition(IntEnum):
     CEILING = 0x02  # 天花板安装
     ANGLE = 0x03  # 角度安装
 
-
-class InstructionNum(IntEnum):
+class InstructionNum(EnumBase):
     """指令点序号（圆弧轨迹）"""
 
     INVALID = 0x00  # 无效
@@ -82,8 +90,7 @@ class InstructionNum(IntEnum):
     MID_POINT = 0x02  # 中点
     END_POINT = 0x03  # 终点
 
-
-class GripperCode(IntEnum):
+class GripperCode(EnumBase):
     """夹爪控制代码"""
 
     NORMAL = 0x00  # 正常控制
@@ -91,15 +98,13 @@ class GripperCode(IntEnum):
     HOLD_POSITION = 0x02  # 保持位置
     OPEN_FULLY = 0x03  # 完全打开
 
-
-class SetZeroFlag(IntEnum):
+class SetZeroFlag(EnumBase):
     """设置零点标志"""
 
     DISABLE = 0x00  # 禁用
     ENABLE = 0xAE  # 启用
 
-
-class MotorNum(IntEnum):
+class MotorNum(EnumBase):
     """电机编号"""
 
     MOTOR_1 = 1  # 电机1
@@ -111,28 +116,24 @@ class MotorNum(IntEnum):
     GRIPPER = 7  # 夹爪
     ALL_MOTORS = 0xFF  # 所有电机
 
-
-class EnableFlag(IntEnum):
+class EnableFlag(EnumBase):
     """使能标志"""
 
     DISABLE = 0x01  # 禁用
     ENABLE = 0x02  # 使能
 
-
-class SearchContent(IntEnum):
+class SearchContent(EnumBase):
     """搜索内容"""
 
     ANGLE_LIMIT_MAX_SPEED = 0x01  # 角度限制/最大速度
     MAX_ACCELERATION = 0x02  # 最大加速度
 
-
-class InvalidValue(IntEnum):
+class InvalidValue(EnumBase):
     """无效值标志（V1.5-2版本后）"""
 
     INVALID = 0x7FFF  # 无效设定数值
 
-
-class ParamEnquiry(IntEnum):
+class ParamEnquiry(EnumBase):
     """参数查询"""
 
     IDLE = 0x00  # 空闲
@@ -141,31 +142,27 @@ class ParamEnquiry(IntEnum):
     CRASH_PROTECTION_PARAM = 0x03  # 碰撞保护参数
     GRIPPER_TEACHING_PARAM = 0x04  # 夹爪/示教参数
 
-
-class ParamSetting(IntEnum):
+class ParamSetting(EnumBase):
     """参数设置"""
 
     IDLE = 0x00  # 空闲
     END_VEL_ACC_PARAM = 0x01  # 末端速度/加速度参数初始值
     JOINT_LIMIT_PARAM = 0x02  # 所有关节限制及速度加速度默认值
 
-
-class DataFeedback(IntEnum):
+class DataFeedback(EnumBase):
     """数据反馈"""
 
     IDLE = 0x00  # 空闲
     ENABLE = 0x01  # 启用
     DISABLE = 0x02  # 禁用
 
-
-class EndLoadParamSetting(IntEnum):
+class EndLoadParamSetting(EnumBase):
     """末端负载参数设置"""
 
     DISABLE = 0x00  # 禁用
     ENABLE = 0xAE  # 启用
 
-
-class SetEndLoad(IntEnum):
+class SetEndLoad(EnumBase):
     """设置末端负载"""
 
     IDLE = 0x00  # 空闲

@@ -175,7 +175,9 @@ def display_table(can_port, refresh_interval):
               f"\n"
               f"Interface Ver: {piper.GetCurrentInterfaceVersion().value:<15}  Protocol Ver: {piper.GetCurrentProtocolVersion().value:<15}"
               )
-        print(f"+{'-'*107}+\n"
+        print(f"+{'-'*107}+")
+        print(f"PiperIsOk? {str(piper.isOk())}")
+        print(
               f"{'ArmStatus'} :\n"
               f"{'ctrl_mode':<15}{ArmStatusTool.CtrlMode.from_value(piper.GetArmStatus().arm_status.ctrl_mode)}\n"
               f"{'arm_status':<15}{ArmStatusTool.ArmStatus.from_value(piper.GetArmStatus().arm_status.arm_status)}\n"

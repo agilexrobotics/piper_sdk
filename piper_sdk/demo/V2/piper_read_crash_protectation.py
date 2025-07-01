@@ -15,8 +15,9 @@ if __name__ == "__main__":
     piper.ConnectPort()
     # piper.CrashProtectionConfig(1,1,1,1,1,1)
     piper.CrashProtectionConfig(0,0,0,0,0,0)
+    piper.ArmParamEnquiryAndConfig(0x02, 0x00, 0x00, 0x00, 0x03)
     while True:
-        piper.ArmParamEnquiryAndConfig(0x02, 0x00, 0x00, 0x00, 0x03)
+        # piper.ArmParamEnquiryAndConfig(0x02, 0x00, 0x00, 0x00, 0x03)
 
         print(piper.GetCrashProtectionLevelFeedback())
         time.sleep(0.01)

@@ -8,7 +8,7 @@ import time
 from piper_sdk import *
 
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2("can0")
+    piper = C_PiperInterface_V2("can0", judge_flag=False)
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)

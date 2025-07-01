@@ -12,9 +12,7 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface_V2()
     piper.ConnectPort()
-    time.sleep(0.1)
     while( not piper.EnablePiper()):
-        pass
         time.sleep(0.01)
     print("使能成功!!!!")
     pass

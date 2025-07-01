@@ -15,6 +15,7 @@ class ArmMsgFeedbackGripperTeachingPendantParam:
     Args:
         teaching_range_per: 示教器行程系数反馈,[100~200]
         max_range_config: 夹爪/示教器最大控制行程限制值反馈,[0,70,100]
+        teaching_friction: 示教器摩擦系数设置,范围[1, 10] ----- (基于V1.5-8版本及以后)
     
     位描述:
     
@@ -43,6 +44,7 @@ class ArmMsgFeedbackGripperTeachingPendantParam:
     Args:
         teaching_range_per: Teaching pendant stroke coefficient setting.[100~200]
         max_range_config: Maximum control stroke limit setting for the gripper/teaching pendant.[0,70,100]
+        teaching_friction: Teaching pendant friction coefficient setting,range [1, 10].(Based on version V1.5-8 and later)
 
     Bit Description:
     

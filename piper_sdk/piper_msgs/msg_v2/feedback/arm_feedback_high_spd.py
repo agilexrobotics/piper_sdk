@@ -73,8 +73,8 @@ class ArmMsgFeedbackHighSpd:
                  ):
         if can_id not in [0x000, 0x251, 0x252, 0x253, 0x254, 0x255, 0x256]:
             raise ValueError(f"'can_id' Value {can_id} out of range [0x000, 0x251, 0x252, 0x253, 0x254, 0x255, 0x256]")
-        self.COEFFICIENT_1_3 = 1.18125
-        self.COEFFICIENT_4_6 = 0.95844
+        self._COEFFICIENT_1_3 = 1.18125
+        self._COEFFICIENT_4_6 = 0.95844
         self.can_id = can_id
         self.motor_speed = motor_speed
         self.current = current
@@ -90,9 +90,9 @@ class ArmMsgFeedbackHighSpd:
         else:
             raise TypeError(f"current {current} is not 'int' or 'float'.")
         if(self.can_id in [0x251, 0x252, 0x253]):
-            self.effort = current_ * self.COEFFICIENT_1_3
+            self.effort = current_ * self._COEFFICIENT_1_3
         elif(self.can_id in [0x254, 0x255, 0x256]):
-            self.effort = current_ * self.COEFFICIENT_4_6
+            self.effort = current_ * self._COEFFICIENT_4_6
         return self.effort
 
     def __str__(self):

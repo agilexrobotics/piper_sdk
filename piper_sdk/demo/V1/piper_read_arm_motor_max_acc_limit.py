@@ -11,7 +11,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface()
+    piper = C_PiperInterface_V1()
     piper.ConnectPort()
     while True:
         # piper.SearchMotorMaxAngleSpdAccLimit(1,0x02)
