@@ -27,7 +27,7 @@ if __name__ == "__main__":
             range = 0
         elif(count == 300):
             print("2-----------")
-            range = 50 * 1000 # 50mm
+            range = 0.05 * 1000 * 1000 # 0.05m = 50mm
         elif(count == 600):
             print("1-----------")
             range = 0

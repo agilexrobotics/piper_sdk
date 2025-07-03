@@ -14,11 +14,12 @@ from typing_extensions import (
 from queue import Queue
 import threading
 import math
-from ..hardware_port.can_encapsulation import C_STD_CAN
+from ..hardware_port import *
 from ..protocol.protocol_v1 import C_PiperParserBase, C_PiperParserV1
 from ..piper_msgs.msg_v1 import *
 from ..kinematics import *
 from ..utils import *
+from ..utils import logger, global_area
 from ..piper_param import *
 from ..version import PiperSDKVersion
 from .interface_version import InterfaceVersion
@@ -313,6 +314,7 @@ class C_PiperInterface():
                     f"{self.all_motor_angle_limit_max_spd}\n")
     
     _instances = {}  # 存储不同参数的实例
+    _lock = threading.Lock()
 
     def __new__(cls, 
                 can_name:str="can0", 
@@ -321,17 +323,20 @@ class C_PiperInterface():
                 dh_is_offset: int = 0x01,
                 start_sdk_joint_limit: bool = False,
                 start_sdk_gripper_limit: bool = False,
-                ):
+                logger_level:LogLevel = LogLevel.WARNING,
+                log_to_file:bool = False,
+                log_file_path = None):
         """
         实现单例模式：
         - 相同 can_name & can_auto_init 参数，只会创建一个实例
         - 不同参数，允许创建新的实例
         """
         key = (can_name)  # 生成唯一 Key
-        if key not in cls._instances:
-            instance = super().__new__(cls)  # 创建新实例
-            instance._initialized = False  # 确保 init 只执行一次
-            cls._instances[key] = instance  # 存入缓存
+        with cls._lock:
+            if key not in cls._instances:
+                instance = super().__new__(cls)  # 创建新实例
+                instance._initialized = False  # 确保 init 只执行一次
+                cls._instances[key] = instance  # 存入缓存
         return cls._instances[key]
 
     def __init__(self,
@@ -341,22 +346,50 @@ class C_PiperInterface():
                 dh_is_offset: int = 0x01,
                 start_sdk_joint_limit: bool = False,
                 start_sdk_gripper_limit: bool = False,
-                ) -> None:
-        if getattr(self, "_initialized", False):  
+                logger_level:LogLevel = LogLevel.WARNING,
+                log_to_file:bool = False,
+                log_file_path = None) -> None:
+        if getattr(self, "_initialized", False):
             return  # 避免重复初始化
+        # log
+        LogManager.update_logger(global_area=global_area,
+                                 local_area="Interface", 
+                                 level=logger_level, 
+                                 log_to_file=log_to_file, 
+                                 log_file_path=log_file_path,
+                                 file_mode='a',
+                                 force_update=True)
+        self.logger = LogManager.get_logger(global_area, "Interface")
+        logging.getLogger("can").setLevel(logger_level)
+        self.logger.info("%s = %s", "can_name", can_name)
+        self.logger.info("%s = %s", "judge_flag", judge_flag)
+        self.logger.info("%s = %s", "can_auto_init", can_auto_init)
+        # self.logger.info("%s = %s", "reconnect_after_disconnection", reconnect_after_disconnection)
+        self.logger.info("%s = %s", "dh_is_offset", dh_is_offset)
+        self.logger.info("%s = %s", "start_sdk_joint_limit", start_sdk_joint_limit)
+        self.logger.info("%s = %s", "start_sdk_gripper_limit", start_sdk_gripper_limit)
+        self.logger.info("%s = %s", "logger_level", logger_level)
+        self.logger.info("%s = %s", "log_to_file", log_to_file)
+        self.logger.info("%s = %s", "log_file_path", LogManager.get_log_file_path(global_area))
         self.__can_channel_name:str
         if isinstance(can_name, str):
             self.__can_channel_name = can_name
         else:
-            raise IndexError("C_PiperBase input can name is not str type")
+            raise IndexError("C_PiperInterface_V1 input can name is not str type")
         self.__can_judge_flag = judge_flag
         self.__can_auto_init = can_auto_init
-        self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
+        try:
+            self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
+        except Exception as e:
+            self.logger.error(e)
+            raise ConnectionError("['%s' ERROR]" % can_name)
+            # self.logger.error("exit...")
+            # exit()
         self.__dh_is_offset = dh_is_offset
         self.__piper_fk = C_PiperForwardKinematics(self.__dh_is_offset)
         self.__start_sdk_joint_limit = start_sdk_joint_limit
         self.__start_sdk_gripper_limit = start_sdk_gripper_limit
-        self.__start_sdk_fk_cal = True
+        self.__start_sdk_fk_cal = False
         self.__piper_param_mag = C_PiperParamManager()
         # protocol
         self.__parser: Type[C_PiperParserBase] = C_PiperParserV1()
@@ -371,7 +404,7 @@ class C_PiperInterface():
         self.__fps_counter = C_FPSCounter()
         self.__fps_counter.set_cal_fps_time_interval(0.1)
         self.__fps_counter.add_variable("CanMonitor")
-        self.__q_can_fps = Queue(maxsize=20)
+        self.__q_can_fps = Queue(maxsize=5)
         self.__is_ok_mtx = threading.Lock()
         self.__is_ok = True
         self.__fps_counter.add_variable("ArmStatus")
@@ -489,21 +522,22 @@ class C_PiperInterface():
             self.__can_monitor_stop_event.clear()  # 允许线程运行
         # 读取can数据线程
         def ReadCan():
+            self.logger.info("[ReadCan] ReadCan Thread started")
             while not self.__read_can_stop_event.is_set():
                 try:
                     self.__arm_can.ReadCanMessage()
                 except can.CanOperationError:
-                    print("[ERROR] CAN 端口关闭，停止 ReadCan 线程")
+                    self.logger.error("[ReadCan] CAN is closed, stop ReadCan thread")
                     break
                 except Exception as e:
-                    print(f"[ERROR] ReadCan() 发生异常: {e}")
+                    self.logger.error("[ReadCan] 'error: %s'", e)
                     break
         def CanMonitor():
             while not self.__can_monitor_stop_event.is_set():
                 try:
                     self.__CanMonitor()
                 except Exception as e:
-                    print(f"[ERROR] CanMonitor() 发生异常: {e}")
+                    self.logger.error("CanMonitor() exception: %s", e)
                     break
                 self.__can_monitor_stop_event.wait(0.05)
         try:
@@ -518,7 +552,7 @@ class C_PiperInterface():
             if piper_init:
                 self.PiperInit()
         except Exception as e:
-            print(f"[ERROR] 线程启动失败: {e}")
+            self.logger.error("[ConnectPort] 'Thread start failed: %s'", e)
             self.__connected = False  # 回滚状态
             self.__read_can_stop_event.set()
             self.__can_monitor_stop_event.set()  # 确保线程不会意外运行
@@ -536,18 +570,18 @@ class C_PiperInterface():
         if hasattr(self, 'can_deal_th') and self.__can_deal_th.is_alive():
             self.__can_deal_th.join(timeout=thread_timeout)  # 加入超时，避免无限阻塞
             if self.__can_deal_th.is_alive():
-                print("[WARN] ReadCan 线程未能在超时时间内退出！")
+                self.logger.warning("[DisconnectPort] The [ReadCan] thread failed to exit within the timeout period")
 
         # if hasattr(self, 'can_monitor_th') and self.__can_monitor_th.is_alive():
         #     self.__can_monitor_th.join(timeout=thread_timeout)
         #     if self.__can_monitor_th.is_alive():
-        #         print("[WARN] CanMonitor 线程未能在超时时间内退出！")
+        #         self.logger.warning("The CanMonitor thread failed to exit within the timeout period")
 
         try:
             self.__arm_can.Close()  # 关闭 CAN 端口
-            print("[INFO] CAN 端口已断开")
+            self.logger.info("[DisconnectPort] CAN port is closed")
         except Exception as e:
-            print(f"[ERROR] 关闭 CAN 端口时发生异常: {e}")
+            self.logger.error("[DisconnectPort] 'An exception occurred while closing the CAN port: %s'", e)
     
     def PiperInit(self):
         '''
@@ -1786,8 +1820,9 @@ class C_PiperInterface():
         motion_ctrl_1 = ArmMsgMotionCtrl_1(emergency_stop, track_ctrl, grag_teach_ctrl)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_1, arm_motion_ctrl_1=motion_ctrl_1)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("0x150 send failed: SendCanMessage(%s)", feedback)
 
     def EmergencyStop(self, 
                     emergency_stop: Literal[0x00, 0x01, 0x02] = 0):
@@ -1871,11 +1906,11 @@ class C_PiperInterface():
         '''
         tx_can = Message()
         motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode)
-        # print(motion_ctrl_1)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_2)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("0x151 send failed: SendCanMessage(%s)", feedback)
     
     def ModeCtrl(self, 
                 ctrl_mode: Literal[0x00, 0x01] = 0x01, 
@@ -1927,7 +1962,7 @@ class C_PiperInterface():
     def __ValidateEndPoseValue(self, endpose_num:str, endpose_value):
         # 类型判断
         if not isinstance(endpose_value, int):
-            print(f"Error: EndPose_{endpose_num} value {endpose_value} is not an integer.")
+            self.logger.error(f"Error: EndPose_{endpose_num} value {endpose_value} is not an integer.")
             return False
         return True
     
@@ -1980,25 +2015,27 @@ class C_PiperInterface():
         cartesian_1 = ArmMsgMotionCtrlCartesian(X_axis=X, Y_axis=Y)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_1, arm_motion_ctrl_cartesian=cartesian_1)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("EndPoseXY send failed: SendCanMessage(%s)", feedback)
     
     def __CartesianCtrl_ZRX(self, Z:int, RX:int):
         tx_can = Message()
         cartesian_2 = ArmMsgMotionCtrlCartesian(Z_axis=Z, RX_axis=RX)
-        # print(cartesian_2)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_2, arm_motion_ctrl_cartesian=cartesian_2)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("EndPoseZRX send failed: SendCanMessage(%s)", feedback)
     
     def __CartesianCtrl_RYRZ(self, RY:int, RZ:int):
         tx_can = Message()
         cartesian_3 = ArmMsgMotionCtrlCartesian(RY_axis=RY, RZ_axis=RZ)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrlCartesian_3, arm_motion_ctrl_cartesian=cartesian_3)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("EndPoseRYRZ send failed: SendCanMessage(%s)", feedback)
     
     def JointCtrl(self, 
                   joint_1: int, 
@@ -2086,8 +2123,9 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_1=joint_1, joint_2=joint_2)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_12, arm_joint_ctrl=joint_ctrl)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("JointCtrl_J12 send failed: SendCanMessage(%s)", feedback)
     
     def __JointCtrl_34(self, joint_3: int, joint_4: int):
         '''
@@ -2112,8 +2150,9 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_3=joint_3, joint_4=joint_4)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_34, arm_joint_ctrl=joint_ctrl)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("JointCtrl_J34 send failed: SendCanMessage(%s)", feedback)
     
     def __JointCtrl_56(self, joint_5: int, joint_6: int):
         '''
@@ -2138,8 +2177,9 @@ class C_PiperInterface():
         joint_ctrl = ArmMsgJointCtrl(joint_5=joint_5, joint_6=joint_6)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointCtrl_56, arm_joint_ctrl=joint_ctrl)
         self.__parser.EncodeMessage(msg, tx_can)
-        #print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("JointCtrl_J56 send failed: SendCanMessage(%s)", feedback)
 
     def MoveCAxisUpdateCtrl(self, instruction_num: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
         '''
@@ -2172,8 +2212,9 @@ class C_PiperInterface():
         move_c = ArmMsgCircularPatternCoordNumUpdateCtrl(instruction_num)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgCircularPatternCoordNumUpdateCtrl, arm_circular_ctrl=move_c)
         self.__parser.EncodeMessage(msg, tx_can)
-        # print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("MoveCAxisUpdateCtrl send failed: SendCanMessage(%s)", feedback)
     
     def GripperCtrl(self, 
                     gripper_angle: int = 0, 
@@ -2220,8 +2261,9 @@ class C_PiperInterface():
         gripper_ctrl = ArmMsgGripperCtrl(gripper_angle, gripper_effort, gripper_code, set_zero)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgGripperCtrl, arm_gripper_ctrl=gripper_ctrl)
         self.__parser.EncodeMessage(msg, tx_can)
-        # print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("GripperCtrl send failed: SendCanMessage(%s)", feedback)
     
     def MasterSlaveConfig(self, linkage_config: int, feedback_offset: int, ctrl_offset: int, linkage_offset: int):
         '''
@@ -2276,8 +2318,9 @@ class C_PiperInterface():
         ms_config = ArmMsgMasterSlaveModeConfig(linkage_config, feedback_offset, ctrl_offset, linkage_offset)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMasterSlaveModeConfig, arm_ms_config=ms_config)
         self.__parser.EncodeMessage(msg, tx_can)
-        # print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("MasterSlaveConfig send failed: SendCanMessage(%s)", feedback)
 
     def DisableArm(self, 
                    motor_num: Literal[1, 2, 3, 4, 5, 6, 7, 0xFF] = 7, 
@@ -2309,8 +2352,9 @@ class C_PiperInterface():
         enable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotorEnableDisableConfig, arm_motor_enable=enable)
         self.__parser.EncodeMessage(msg, tx_can)
-        # print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("DisableArm send failed: SendCanMessage(%s)", feedback)
     
     def EnableArm(self, 
                   motor_num: Literal[1, 2, 3, 4, 5, 6, 7, 0xFF] = 7, 
@@ -2342,8 +2386,9 @@ class C_PiperInterface():
         disable = ArmMsgMotorEnableDisableConfig(motor_num, enable_flag)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotorEnableDisableConfig, arm_motor_enable=disable)
         self.__parser.EncodeMessage(msg, tx_can)
-        # print(hex(tx_can.arbitration_id), tx_can.data)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("EnableArm send failed: SendCanMessage(%s)", feedback)
     
     def EnablePiper(self)->bool:
         '''
@@ -2400,7 +2445,9 @@ class C_PiperInterface():
         search_motor = ArmMsgSearchMotorMaxAngleSpdAccLimit(motor_num, search_content)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgSearchMotorMaxAngleSpdAccLimit, arm_search_motor_max_angle_spd_acc_limit=search_motor)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("SearchMotorMaxAngleSpdAccLimit send failed: SendCanMessage(%s)", feedback)
 
     def SearchAllMotorMaxAngleSpd(self):
         '''查询全部电机的电机最大角度/最小角度/最大速度指令
@@ -2489,7 +2536,9 @@ class C_PiperInterface():
         motor_set = ArmMsgMotorAngleLimitMaxSpdSet(motor_num, max_angle_limit, min_angle_limit, max_joint_spd)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet, arm_motor_angle_limit_max_spd_set=motor_set)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("MotorAngleLimitMaxSpdSet send failed: SendCanMessage(%s)", feedback)
 
     def JointConfig(self, 
                     joint_num: Literal[1, 2, 3, 4, 5, 6, 7] = 7,
@@ -2533,7 +2582,9 @@ class C_PiperInterface():
         joint_config = ArmMsgJointConfig(joint_num, set_zero, acc_param_is_effective, max_joint_acc, clear_err)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgJointConfig,arm_joint_config=joint_config)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("JointConfig send failed: SendCanMessage(%s)", feedback)
     
     def JointMaxAccConfig(self, motor_num: Literal[1, 2, 3, 4, 5, 6] = 6, max_joint_acc: int = 500):
         '''
@@ -2601,7 +2652,9 @@ class C_PiperInterface():
         set_resp = ArmMsgInstructionResponseConfig(instruction_index, zero_config_success_flag)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgInstructionResponseConfig, arm_set_instruction_response=set_resp)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("SetInstructionResponse send failed: SendCanMessage(%s)", feedback)
     
     def ArmParamEnquiryAndConfig(self, 
                                  param_enquiry: Literal[0x00, 0x01, 0x02, 0x03] = 0x00, 
@@ -2677,7 +2730,9 @@ class C_PiperInterface():
                                                            set_end_load)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgParamEnquiryAndConfig, arm_param_enquiry_and_config=search_set_arm_param)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("ArmParamEnquiryAndConfig send failed: SendCanMessage(%s)", feedback)
     
     def EndSpdAndAccParamSet(self, 
                              end_max_linear_vel: int, 
@@ -2716,7 +2771,9 @@ class C_PiperInterface():
                                             end_max_angular_acc,)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgEndVelAccParamConfig, arm_end_vel_acc_param_config=end_set)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("EndSpdAndAccParamSet send failed: SendCanMessage(%s)", feedback)
 
     def CrashProtectionConfig(self, 
                               joint_1_protection_level:int, 
@@ -2771,7 +2828,9 @@ class C_PiperInterface():
                                                         joint_6_protection_level)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgCrashProtectionRatingConfig, arm_crash_protection_rating_config=crash_config)
         self.__parser.EncodeMessage(msg, tx_can)
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("CrashProtectionConfig send failed: SendCanMessage(%s)", feedback)
 
     def SearchPiperFirmwareVersion(self):
         '''
@@ -2789,9 +2848,11 @@ class C_PiperInterface():
         tx_can = Message()
         tx_can.arbitration_id = 0x4AF
         tx_can.data = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("SearchPiperFirmwareVersion send failed: SendCanMessage(%s)", feedback)
         self.__firmware_data = bytearray()
-
+    
 #----------------------------------------------------------------------------------
     def GetSDKJointLimitParam(self,
                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):
