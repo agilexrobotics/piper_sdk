@@ -2102,7 +2102,7 @@ class C_PiperInterface_V2():
     def __ValidateEndPoseValue(self, endpose_num:str, endpose_value):
         # 类型判断
         if not isinstance(endpose_value, int):
-            self,logger.error(f"Error: EndPose_{endpose_num} value {endpose_value} is not an integer.")
+            self.logger.error(f"Error: EndPose_{endpose_num} value {endpose_value} is not an integer.")
             return False
         return True
     
