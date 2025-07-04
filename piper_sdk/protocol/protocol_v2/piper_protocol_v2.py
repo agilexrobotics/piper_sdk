@@ -117,7 +117,6 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.gripper_feedback.grippers_angle = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
             msg.gripper_feedback.grippers_effort = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6))
             msg.gripper_feedback.status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,6,7),False)
-            # print(rx_can_frame)
         # 驱动器信息高速反馈,High-Speed Driver Information Feedback
         elif(can_id == CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_1.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)

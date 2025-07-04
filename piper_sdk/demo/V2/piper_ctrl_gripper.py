@@ -25,11 +25,12 @@ if __name__ == "__main__":
             range = 0
         elif(count == 300):
             print("2-----------")
-            range = 50 * 1000 # 50mm
+            range = 0.05 * 1000 * 1000 # 0.05m = 50mm
         elif(count == 600):
             print("3-----------")
             range = 0
             count = 0
+        range = round(range)
         piper.GripperCtrl(abs(range), 1000, 0x01, 0)
         
         time.sleep(0.005)

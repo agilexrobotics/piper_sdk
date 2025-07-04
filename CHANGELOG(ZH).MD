@@ -3,6 +3,32 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.3.1
+=============
+
+特性
+--------
+
+- 增加can封装文件`can_encapsulation.py`与sdk版本对应的修订版本`can_encapsulation_v0_3_1.py`，类内部增加了enum来作为can函数执行后的状态反馈，并为此修改了`hardware_port`的`__init__.py`以及interface中导入`C_STD_CAN`的方式
+- 增加log管理(piper_sdk/utils/logger_mag.py)并增加固定log路径存储log文件(piper_sdk/log)
+- 增加ArmMsgFeedbackStatusEnum类在init.py中的导入
+- 增加interface中new方法的线程锁保护
+- 增加了interface中有关log的形参`logger_level`、`log_to_file`、`log_file_path`
+- 增加interface创建can bus失败的意外处理(raise直接报错)
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- 在demo路径下增加 `detect_arm.md` 来说明 `detect_arm.py` 的使用
+- 修改LISENSE版权所有为Agilex
+- 增加arm_feedback_status文件中的版本注释说明
+- 删除piper_protocol_v2文件中的打印行
+- 增加夹爪demo中有关单位的说明
+
 Version 0.3.0
 =============
 

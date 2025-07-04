@@ -122,6 +122,7 @@ class ArmMsgFeedbackStatus:
             0x02 MOVE L
             0x03 MOVE C
             0x04 MOVE M ---基于V1.5-2版本后
+            0x05 MOVE_CPV ---基于V1.6.5版本后
         Byte 3:示教状态,uint8 
             0x00 关闭
             0x01 开始示教记录（进入拖动示教模式）
@@ -206,6 +207,7 @@ class ArmMsgFeedbackStatus:
             0x02: MOVE L
             0x03: MOVE C
             0x04: MOVE M
+            0x05: MOVE_CPV
         Byte 3: Teaching status, uint8
             0x00: Off
             0x01: Start teaching record (enter drag teaching mode)

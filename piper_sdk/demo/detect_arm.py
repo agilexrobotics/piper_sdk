@@ -1,5 +1,6 @@
 # terminal_monitor.py
-
+# python3 piper_sdk/demo/detect_arm.py --can_port can0 --hz 10 --req_flag 0
+# python3 piper_sdk/demo/detect_arm.py --can_port can0 --hz 10 --req_flag 1
 import time
 import argparse
 from enum import Enum, auto

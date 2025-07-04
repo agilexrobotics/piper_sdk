@@ -9,6 +9,8 @@ import struct
 from typing_extensions import (
     Literal,
 )
+from ..utils import *
+from ..utils import logger, global_area
 
 class C_PiperParserBase(ABC):
     '''
@@ -34,6 +36,7 @@ class C_PiperParserBase(ABC):
     
     def __init__(self) -> None:
         super().__init__()
+        self.logger = LogManager.get_logger(global_area, f"ParserBase<{id(self)}>")
     
     @abstractmethod
     def DecodeMessage(self):
@@ -84,7 +87,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 255):
-            print("Error ConvertToNegative_8bit:  Input value exceeds the range [0, 255].")
+            self.logger.error("Error ConvertToNegative_8bit:  Input value exceeds the range [0, 255].")
         # 转换成 8 位无符号整数
         value &= 0xFF  # 将 value 转换成 8 位无符号整数
         if signed:
@@ -92,7 +95,7 @@ class C_PiperParserBase(ABC):
                 value -= 0x100  # 如果符号位为 1，表示负数，需要减去 2^8
         return value
 
-    def ConvertToNegative_int8_t(value: int) -> int:
+    def ConvertToNegative_int8_t(self, value: int) -> int:
         '''
         将输入的整数转换为8位有符号整数。
         输入 value 范围:[0,255]
@@ -105,14 +108,14 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 255):
-            print("Error ConvertToNegative_int8_t: Input value exceeds the range [0, 255].")
+            self.logger.error("Error ConvertToNegative_int8_t: Input value exceeds the range [0, 255].")
         # 转换成 8 位无符号整数
         value &= 0xFF  # 将 value 转换成 8 位无符号整数
         if value & 0x80:  # 检查符号位
             value -= 0x100  # 如果符号位为 1，表示负数，需要减去 2^8
         return value
 
-    def ConvertToNegative_uint8_t(value: int) -> int:
+    def ConvertToNegative_uint8_t(self, value: int) -> int:
         '''
         将输入的整数转换为8位无符号整数。
         输入 value 范围:[0,255]
@@ -125,7 +128,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 255):
-            print("Error ConvertToNegative_uint8_t: Input value exceeds the range [0, 255].")
+            self.logger.error("Error ConvertToNegative_uint8_t: Input value exceeds the range [0, 255].")
         # 转换成 8 位无符号整数
         value &= 0xFF  # 将 value 转换成 8 位无符号整数
         return value
@@ -145,7 +148,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 65535):
-            print("Error ConvertToNegative_16bit: Input value exceeds the range [0, 65535].")
+            self.logger.error("Error ConvertToNegative_16bit: Input value exceeds the range [0, 65535].")
         # 转换成 16 位无符号整数
         value &= 0xFFFF  # 将 value 转换成 16 位无符号整数
         if signed:
@@ -153,7 +156,7 @@ class C_PiperParserBase(ABC):
                 value -= 0x10000  # 如果符号位为 1，表示负数，需要减去 2^16
         return value
     
-    def ConvertToNegative_int16_t(value: int) -> int:
+    def ConvertToNegative_int16_t(self, value: int) -> int:
         '''
         将输入的整数转换为16位有符号整数。
         输入 value 范围:[0,65535]
@@ -166,14 +169,14 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 65535):
-            print("Error ConvertToNegative_int16_t: Input value exceeds the range [0, 65535].")
+            self.logger.error("Error ConvertToNegative_int16_t: Input value exceeds the range [0, 65535].")
         # 转换成 8 位无符号整数
         value &= 0xFFFF  # 将 value 转换成 8 位无符号整数
         if value & 0x8000:  # 检查符号位
             value -= 0x10000  # 如果符号位为 1，表示负数，需要减去 2^8
         return value
 
-    def ConvertToNegative_uint16_t(value: int) -> int:
+    def ConvertToNegative_uint16_t(self, value: int) -> int:
         '''
         将输入的整数转换为16位无符号整数。
         输入 value 范围:[0,65535]
@@ -186,7 +189,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 65535):
-            print("Error ConvertToNegative_uint16_t: Input value exceeds the range [0, 65535].")
+            self.logger.error("Error ConvertToNegative_uint16_t: Input value exceeds the range [0, 65535].")
         # 转换成 8 位无符号整数
         value &= 0xFFFF  # 将 value 转换成 8 位无符号整数
         return value
@@ -206,7 +209,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 4294967295):
-            print("Error ConvertToNegative_32bit: Input value exceeds the range [0, 4294967295].")
+            self.logger.error("Error ConvertToNegative_32bit: Input value exceeds the range [0, 4294967295].")
         # 转换成 32 位无符号整数
         value &= 0xFFFFFFFF  # 将 value 转换成 32 位无符号整数
         if signed:
@@ -214,7 +217,7 @@ class C_PiperParserBase(ABC):
                 value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^32
         return value
     
-    def ConvertToNegative_int32_t(value: int) -> int:
+    def ConvertToNegative_int32_t(self, value: int) -> int:
         '''
         将输入的整数转换为32位有符号整数。
         输入 value 范围:[0,4294967295]
@@ -227,14 +230,14 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 4294967295):
-            print("Error ConvertToNegative_32bit: Input value exceeds the range [0, 4294967295].")
+            self.logger.error("Error ConvertToNegative_int32_t: Input value exceeds the range [0, 4294967295].")
         # 转换成 8 位无符号整数
         value &= 0xFFFFFFFF  # 将 value 转换成 8 位无符号整数
         if value & 0x80000000:  # 检查符号位
             value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^8
         return value
 
-    def ConvertToNegative_uint32_t(value: int) -> int:
+    def ConvertToNegative_uint32_t(self, value: int) -> int:
         '''
         将输入的整数转换为32位无符号整数。
         输入 value 范围:[0,4294967295]
@@ -247,7 +250,7 @@ class C_PiperParserBase(ABC):
         '''
         # 范围检查
         if not (0 <= value <= 4294967295):
-            print("Error ConvertToNegative_32bit: Input value exceeds the range [0, 4294967295].")
+            self.logger.error("Error ConvertToNegative_uint32_t: Input value exceeds the range [0, 4294967295].")
         # 转换成 8 位无符号整数
         value &= 0xFFFFFFFF  # 将 value 转换成 8 位无符号整数
         return value

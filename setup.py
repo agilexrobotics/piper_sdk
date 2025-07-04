@@ -6,7 +6,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 setup(
     name='piper_sdk',
-    version='0.3.0',
+    version='0.3.1',
     setup_requires=['setuptools>=40.0'],
     long_description=open(os.path.join(here, 'DESCRIPTION.MD'), encoding='utf-8').read(),
     long_description_content_type='text/markdown',
@@ -22,7 +22,7 @@ setup(
         'python-can>=3.3.4',
     ],
     entry_points={},
-    author='RosenYin',
+    author='Agilex Robotice Co., Ltd.',
     author_email='',
     description='A sdk to control Agilex piper arm',
     platforms=['Linux'],
