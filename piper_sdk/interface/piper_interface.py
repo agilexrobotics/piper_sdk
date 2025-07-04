@@ -2193,7 +2193,7 @@ class C_PiperInterface():
                 0x03 终点
         首先使用 EndPoseCtrl 确定起点,piper.MoveCAxisUpdateCtrl(0x01)
         然后使用 EndPoseCtrl 确定中点,piper.MoveCAxisUpdateCtrl(0x02)
-        最后使用 EndPoseCtrl 确定中点,piper.MoveCAxisUpdateCtrl(0x03)
+        最后使用 EndPoseCtrl 确定终点,piper.MoveCAxisUpdateCtrl(0x03)
         '''
         '''
         MoveC Mode Coordinate Point Update Command.Before sending, switch the robotic arm mode to MoveC control mode
