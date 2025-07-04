@@ -30,6 +30,7 @@ if __name__ == "__main__":
             print("3-----------")
             range = 0
             count = 0
+        range = round(range)
         piper.GripperCtrl(abs(range), 1000, 0x01, 0)
         
         time.sleep(0.005)
