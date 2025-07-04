@@ -276,7 +276,10 @@ if __name__ == "__main__":
     #           1 -> new
     #   start_sdk_joint_limit(bool -> False): Whether to enable SDK joint angle limit, which will limit both feedback and control messages
     #   start_sdk_gripper_limit(bool -> False): Whether to enable SDK gripper position limit, which will limit both feedback and control messages
-    piper = C_PiperInterface_V1(can_name="can0",
+    #   logger_level(LogLevel -> default LogLevel.WARNING): Set the log level
+    #   log_to_file(bool -> default False): Whether to enable the log writing function, True to enable, default to disable
+    #   log_file_path(str -> default False): Set the path to write the log file, the default is the log folder under the sdk path
+    piper = C_PiperInterface(can_name="can0",
                                 judge_flag=False,
                                 can_auto_init=True,
                                 dh_is_offset=1,

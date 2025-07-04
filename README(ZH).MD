@@ -271,6 +271,9 @@ if __name__ == "__main__":
     #             1 -> new
     # start_sdk_joint_limit(bool -> default False):是否开启SDK的关节角度限位，会对反馈消息和控制消息都做限制
     # start_sdk_gripper_limit(bool -> default False):是否开启SDK的夹爪位置限位，会对反馈消息和控制消息都做限制
+    # logger_level(LogLevel -> default LogLevel.WARNING):设定log的日志等级
+    # log_to_file(bool -> default False):是否打开log写入文件功能，True则打开，默认关闭
+    # log_file_path(str -> default False):设定log写入文件的路径，默认在sdk路径下的log文件夹
     piper = C_PiperInterface(can_name="can0",
                             judge_flag=False,
                             can_auto_init=True,
