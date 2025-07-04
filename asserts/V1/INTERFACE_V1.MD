@@ -18,6 +18,9 @@ Inner class identifies instances based on `can_port`, preventing the creation of
   - 1: Offset applied
 - `start_sdk_joint_limit` (bool, default=True): Enable SDK joint limits
 - `start_sdk_gripper_limit` (bool, default=True): Enable SDK gripper limits
+- `logger_level` (LogLevel, default=LogLevel.WARNING): Set the log level
+- `log_to_file` (bool, default=False): Whether to enable the log writing function, True to enable, default to disable
+- `log_file_path` (str, default=None): Set the path to write the log file, the default is the log folder under the sdk path
 
 ### Connection Methods
 
