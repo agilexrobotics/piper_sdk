@@ -4,10 +4,6 @@
 # V2版本sdk
 # 单独设定某个电机的最大速度
 # 注意这个指令是通过协议直接写入到驱动flash中，不可实时更新，如果需要动态调整速度，请使用位置速度模式中的速度百分比
-
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
@@ -24,3 +20,4 @@ if __name__ == "__main__":
         piper.SearchAllMotorMaxAngleSpd()
         print(piper.GetAllMotorAngleLimitMaxSpd())
         time.sleep(0.01)
+    
