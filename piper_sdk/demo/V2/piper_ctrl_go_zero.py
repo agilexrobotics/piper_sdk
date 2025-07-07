@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
@@ -25,4 +22,4 @@ if __name__ == "__main__":
     piper.ModeCtrl(0x01, 0x01, 30, 0x00)
     piper.JointCtrl(joint_0, joint_1, joint_2, joint_3, joint_4, joint_5)
     piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
-    pass
+    

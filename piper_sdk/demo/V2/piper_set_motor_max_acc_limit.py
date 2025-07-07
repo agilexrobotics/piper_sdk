@@ -4,10 +4,6 @@
 # V2版本sdk
 # 单独设定某个电机的最大加速度
 # 注意这个指令是通过协议直接写入到驱动flash中，不可实时更新
-
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
@@ -26,3 +22,4 @@ if __name__ == "__main__":
         piper.SearchAllMotorMaxAccLimit()
         print(piper.GetAllMotorMaxAccLimit())
         time.sleep(0.1)
+    

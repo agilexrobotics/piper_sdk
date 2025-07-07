@@ -3,10 +3,6 @@
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
 # V2版本sdk
 # 单独设定某个电机的mit控制
-
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
