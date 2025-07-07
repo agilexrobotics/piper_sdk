@@ -5,5 +5,5 @@ import time
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2(can_name="can0", logger_level=LogLevel.DEBUG)
+    piper = C_PiperInterface_V2(can_name="can0", logger_level=LogLevel.DEBUG,log_to_file=True)
     piper.ConnectPort()

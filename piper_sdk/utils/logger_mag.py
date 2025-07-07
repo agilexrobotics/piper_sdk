@@ -51,7 +51,8 @@ class LogManager:
                 now_str = datetime.datetime.now().strftime("%Y%m%d_%H%M")
                 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 log_dir = os.path.join(base_dir, 'log', now_str)
-                os.makedirs(log_dir, exist_ok=True)
+                if(log_to_file):
+                    os.makedirs(log_dir, exist_ok=True)
                 log_file_path = os.path.join(log_dir, f'{log_file_name}.log')
             
             logger = logging.getLogger(global_area)
@@ -133,6 +134,7 @@ class LogManager:
             # 文件 handler 逻辑处理
             skip = False
             if log_to_file:
+                os.makedirs(os.path.dirname(instance["log_file_path"]), exist_ok=True)
                 if log_file_name is not None:
                     instance["log_file_name"] = log_file_name
                 if log_file_path is not None:

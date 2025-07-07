@@ -584,7 +584,6 @@ class C_PiperInterface_V2():
                 except Exception as e:
                     self.logger.error("[ReadCan] 'error: %s'", e)
                     break
-                self.logger.debug("[ReadCan] Thread exiting")
         #--------------------------------------------------------------------------
         def CanMonitor():
             self.logger.info("[ReadCan] CanMonitor Thread started")
