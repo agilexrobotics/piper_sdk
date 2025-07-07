@@ -3,18 +3,19 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
-Version 0.3.1
+Version 0.3.2
 =============
 
 Features
 --------
 
-- Added can encapsulation file `can_encapsulation.py` and revised version `can_encapsulation_v0_3_1.py` corresponding to the sdk version, added enum inside the class as the status feedback after the can function is executed, and modified `__init__.py` of `hardware_port` and the way to import `C_STD_CAN` in the interface for this purpose
+- Added can encapsulation file `can_encapsulation.py` and revised version `can_encapsulation_v0_3_2.py` corresponding to the sdk version, added enum inside the class as the status feedback after the can function is executed, and modified `__init__.py` of `hardware_port` and the way to import `C_STD_CAN` in the interface for this purpose
 - Added log management (piper_sdk/utils/logger_mag.py) and added a fixed log path to store log files (piper_sdk/log)
 - Added the import of ArmMsgFeedbackStatusEnum class in init.py
 - Added thread lock protection for the new method in the interface
 - Added the formal parameters `logger_level`, `log_to_file`, `log_file_path` related to log in the interface
 - Added unexpected handling of interface failure to create can bus (raise directly reports an error)
+- Added demo of `piper_set_log_level.py`
 
 Bug Fixes
 ---------
@@ -29,6 +30,9 @@ Miscellaneous
 - Added version comments in the arm_feedback_status file
 - Deleted the print line in the piper_protocol_v2 file
 - Added instructions for units in the gripper demo
+
+Version 0.3.1 -- Yank
+=============
 
 Version 0.3.0
 =============

@@ -279,7 +279,10 @@ if __name__ == "__main__":
                             can_auto_init=True,
                             dh_is_offset=1,
                             start_sdk_joint_limit=False,
-                            start_sdk_gripper_limit=False)
+                            start_sdk_gripper_limit=False,
+                            logger_level=LogLevel.WARNING,
+                            log_to_file=False,
+                            log_file_path=None)
     # 开启can收发线程
     piper.ConnectPort()
     # 循环打印消息，注意所有的消息第一帧都是默认数值，比如关节角消息第一帧的消息内容默认为0

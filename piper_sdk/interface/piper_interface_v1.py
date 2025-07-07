@@ -359,7 +359,8 @@ class C_PiperInterface_V1():
                                  log_file_path=log_file_path,
                                  file_mode='a',
                                  force_update=True)
-        self.logger = LogManager.get_logger(global_area, "InterfaceV1")
+        self.__local_area = self._instances
+        self.logger = LogManager.get_logger(global_area, self.__local_area)
         logging.getLogger("can").setLevel(logger_level)
         self.logger.info("%s = %s", "can_name", can_name)
         self.logger.info("%s = %s", "judge_flag", judge_flag)

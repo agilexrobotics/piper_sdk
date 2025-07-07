@@ -284,7 +284,10 @@ if __name__ == "__main__":
                                 can_auto_init=True,
                                 dh_is_offset=1,
                                 start_sdk_joint_limit=False,
-                                start_sdk_gripper_limit=False)
+                                start_sdk_gripper_limit=False,
+                                logger_level=LogLevel.WARNING,
+                                log_to_file=False,
+                                log_file_path=None)
     # Enable can send and receive threads
     piper.ConnectPort()
     # Loop and print messages. Note that the first frame of all messages is the default value. For example, the message content of the first frame of the joint angle message defaults to 0
