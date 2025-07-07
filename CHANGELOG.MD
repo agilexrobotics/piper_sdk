@@ -3,6 +3,30 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.3.2
+=============
+
+Features
+--------
+None
+
+Bug Fixes
+---------
+None
+
+Miscellaneous
+---------
+
+- Interface modified the import of hardware to import all in init instead of importing the specified class from the file;
+- Interface added thread lock when creating an instance;
+- Interface added error feedback when creating the C_STD_CAN class failed;
+- Interface put the calculation of the fps count of the can bus at the beginning of the ReadCan thread loop;
+- Interface optimized the judgment logic of executing the PiperInit function;
+- SDK param modified demo to add the setting of formal parameters;
+- Modified the import range of hardware to * instead of the specified C_STD_CAN;
+- Optimized the init.py of msg v1 to be the same as v2;
+- Added some comments
+
 Version 0.3.0
 =============
 

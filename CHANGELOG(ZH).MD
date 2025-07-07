@@ -3,6 +3,30 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.3.2
+=============
+
+特性
+--------
+无
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- interface修改导入hardware的导入为导入init中的全部而不是从文件中导入指定的类；
+- interface增加创建实例时的线程锁；
+- interface增加创建C_STD_CAN类失败时的错误反馈；
+- interface将计算can总线的fps计数放在ReadCan线程循环开始；
+- interface优化执行PiperInit函数的判断逻辑；
+- sdk param修改demo增加形参的设定；
+- 修改hardware的导入范围到*而不是指定的C_STD_CAN；
+- 优化msg v1的init.py与v2结构相同；
+- 增加部分注释
+
 Version 0.3.0
 =============
 
