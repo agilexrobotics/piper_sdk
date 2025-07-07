@@ -1,5 +1,5 @@
 
-from .hardware_port.can_encapsulation import C_STD_CAN
+from .hardware_port import *
 from .utils import *
 from .protocol.piper_protocol_base import C_PiperParserBase
 from .piper_msgs.msg_v1 import *
