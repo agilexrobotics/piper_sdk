@@ -14,7 +14,7 @@ from typing_extensions import (
 from queue import Queue
 import threading
 import math
-from ..hardware_port.can_encapsulation import C_STD_CAN
+from ..hardware_port import *
 from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
@@ -329,6 +329,7 @@ class C_PiperInterface_V2():
                     f"{self.all_motor_angle_limit_max_spd}\n")
     
     _instances = {}  # 存储不同参数的实例
+    _lock = threading.Lock()
 
     def __new__(cls, 
                 can_name:str="can0", 
@@ -344,10 +345,11 @@ class C_PiperInterface_V2():
         - 不同参数，允许创建新的实例
         """
         key = (can_name)  # 生成唯一 Key
-        if key not in cls._instances:
-            instance = super().__new__(cls)  # 创建新实例
-            instance._initialized = False  # 确保 init 只执行一次
-            cls._instances[key] = instance  # 存入缓存
+        with cls._lock:
+            if key not in cls._instances:
+                instance = super().__new__(cls)  # 创建新实例
+                instance._initialized = False  # 确保 init 只执行一次
+                cls._instances[key] = instance  # 存入缓存
         return cls._instances[key]
 
     def __init__(self,
@@ -364,10 +366,15 @@ class C_PiperInterface_V2():
         if isinstance(can_name, str):
             self.__can_channel_name = can_name
         else:
-            raise IndexError("C_PiperBase input can name is not str type")
+            raise IndexError("C_PiperInterface_V2 input can name is not str type")
         self.__can_judge_flag = judge_flag
         self.__can_auto_init = can_auto_init
-        self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
+        # self.__reconnect_after_disconnection = reconnect_after_disconnection
+        try:
+            self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
+        except Exception as e:
+            raise ConnectionError("['%s' ERROR]" % can_name)
+            # exit()
         self.__dh_is_offset = dh_is_offset
         self.__piper_fk = C_PiperForwardKinematics(self.__dh_is_offset)
         self.__start_sdk_joint_limit = start_sdk_joint_limit
@@ -506,9 +513,10 @@ class C_PiperInterface_V2():
             self.__connected = True
             self.__read_can_stop_event.clear()
             self.__can_monitor_stop_event.clear()  # 允许线程运行
-        # 读取can数据线程
+        # 读取can数据线程----------------------------------------------------------
         def ReadCan():
             while not self.__read_can_stop_event.is_set():
+                self.__fps_counter.increment("CanMonitor")
                 try:
                     self.__arm_can.ReadCanMessage()
                 except can.CanOperationError:
@@ -534,7 +542,7 @@ class C_PiperInterface_V2():
                     self.__can_monitor_th = threading.Thread(target=CanMonitor, daemon=True)
                     self.__can_monitor_th.start()
                 self.__fps_counter.start()
-            if piper_init:
+            if piper_init and self.__arm_can is not None:
                 self.PiperInit()
         except Exception as e:
             print(f"[ERROR] 线程启动失败: {e}")
@@ -603,7 +611,7 @@ class C_PiperInterface_V2():
         msg = PiperMessage()
         receive_flag = self.__parser.DecodeMessage(rx_message, msg)
         if(receive_flag):
-            self.__fps_counter.increment("CanMonitor")
+            ## self.__fps_counter.increment("CanMonitor")
             self.__UpdateArmStatus(msg)
             self.__UpdateArmEndPoseState(msg)
             self.__UpdateArmJointState(msg)
@@ -1971,7 +1979,6 @@ class C_PiperInterface_V2():
         '''
         tx_can = Message()
         motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode, residence_time, installation_pos)
-        # print(motion_ctrl_1)
         msg = PiperMessage(type_=ArmMsgType.PiperMsgMotionCtrl_2, arm_motion_ctrl_2=motion_ctrl_2)
         self.__parser.EncodeMessage(msg, tx_can)
         #print(hex(tx_can.arbitration_id), tx_can.data)

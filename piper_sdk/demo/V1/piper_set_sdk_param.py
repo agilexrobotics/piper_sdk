@@ -8,7 +8,9 @@ import time
 from piper_sdk import *
 
 if __name__ == "__main__":
-    piper = C_PiperInterface("can0")
+    piper = C_PiperInterface("can0",
+                             start_sdk_joint_limit=True,
+                             start_sdk_gripper_limit=True)
     piper.ConnectPort()
     print(piper.GetSDKJointLimitParam('j6'))
     print(piper.GetSDKGripperRangeParam())
