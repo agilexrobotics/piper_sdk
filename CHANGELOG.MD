@@ -3,18 +3,16 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
-Version 0.3.2
+Version 0.4.0
 =============
 
 Features
 --------
 
-- Added can encapsulation file `can_encapsulation.py` and revised version `can_encapsulation_v0_3_2.py` corresponding to the sdk version, added enum inside the class as the status feedback after the can function is executed, and modified `__init__.py` of `hardware_port` and the way to import `C_STD_CAN` in the interface for this purpose
-- Added log management (piper_sdk/utils/logger_mag.py) and added a fixed log path to store log files (piper_sdk/log)
+- Added can encapsulation file `can_encapsulation.py` and revised version `can_encapsulation_v0_4_0.py` corresponding to the sdk version, added enum inside the class as the status feedback after the can function is executed, and modified `__init__.py` of `hardware_port` and the way to import `C_STD_CAN` in the interface for this purpose
 - Added the import of ArmMsgFeedbackStatusEnum class in init.py
-- Added thread lock protection for the new method in the interface
+- Added log management (piper_sdk/utils/logger_mag.py) and added a fixed log path to store log files (piper_sdk/log)
 - Added the formal parameters `logger_level`, `log_to_file`, `log_file_path` related to log in the interface
-- Added unexpected handling of interface failure to create can bus (raise directly reports an error)
 - Added demo of `piper_set_log_level.py`
 
 Bug Fixes
@@ -25,14 +23,31 @@ None
 Miscellaneous
 ---------
 
-- Added `detect_arm.md` to the demo path to explain the use of `detect_arm.py`
-- Changed the copyright of LISENSE to Agilex
-- Added version comments in the arm_feedback_status file
-- Deleted the print line in the piper_protocol_v2 file
-- Added instructions for units in the gripper demo
+- setup.py modified author to Agilex
 
-Version 0.3.1 -- Yank
+Version 0.3.2
 =============
+
+Features
+--------
+None
+
+Bug Fixes
+---------
+None
+
+Miscellaneous
+---------
+
+- Interface modified the import of hardware to import all in init instead of importing the specified class from the file;
+- Interface added thread lock when creating an instance;
+- Interface added error feedback when creating the C_STD_CAN class failed;
+- Interface put the calculation of the fps count of the can bus at the beginning of the ReadCan thread loop;
+- Interface optimized the judgment logic of executing the PiperInit function;
+- SDK param modified demo to add the setting of formal parameters;
+- Modified the import range of hardware to * instead of the specified C_STD_CAN;
+- Optimized the init.py of msg v1 to be the same as v2;
+- Added some comments
 
 Version 0.3.0
 =============

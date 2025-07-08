@@ -25,4 +25,5 @@ __all__ = [
     'PiperSDKVersion',
     'quat_convert_euler',
     'euler_convert_quat',
+    'ArmMsgFeedbackStatusEnum',
 ]

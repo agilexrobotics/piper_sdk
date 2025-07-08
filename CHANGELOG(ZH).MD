@@ -3,18 +3,16 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
-Version 0.3.2
+Version 0.4.0
 =============
 
 特性
 --------
 
-- 增加can封装文件`can_encapsulation.py`与sdk版本对应的修订版本`can_encapsulation_v0_3_2.py`，类内部增加了enum来作为can函数执行后的状态反馈，并为此修改了`hardware_port`的`__init__.py`以及interface中导入`C_STD_CAN`的方式
-- 增加log管理(piper_sdk/utils/logger_mag.py)并增加固定log路径存储log文件(piper_sdk/log)
+- 增加can封装文件`can_encapsulation.py`与sdk版本对应的修订版本`can_encapsulation_v0_4_0.py`，类内部增加了enum来作为can函数执行后的状态反馈，并为此修改了`hardware_port`的`__init__.py`以及interface中导入`C_STD_CAN`的方式
 - 增加ArmMsgFeedbackStatusEnum类在init.py中的导入
-- 增加interface中new方法的线程锁保护
+- 增加log管理(piper_sdk/utils/logger_mag.py)并增加固定log路径存储log文件(piper_sdk/log)
 - 增加了interface中有关log的形参`logger_level`、`log_to_file`、`log_file_path`
-- 增加interface创建can bus失败的意外处理(raise直接报错)
 - 增加`piper_set_log_level.py`的demo
 
 Bug修复
@@ -24,14 +22,31 @@ Bug修复
 其它
 ---------
 
-- 在demo路径下增加 `detect_arm.md` 来说明 `detect_arm.py` 的使用
-- 修改LISENSE版权所有为Agilex
-- 增加arm_feedback_status文件中的版本注释说明
-- 删除piper_protocol_v2文件中的打印行
-- 增加夹爪demo中有关单位的说明
+- setup.py修改作者为Agilex
 
-Version 0.3.1 -- Yank
+Version 0.3.2
 =============
+
+特性
+--------
+无
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- interface修改导入hardware的导入为导入init中的全部而不是从文件中导入指定的类；
+- interface增加创建实例时的线程锁；
+- interface增加创建C_STD_CAN类失败时的错误反馈；
+- interface将计算can总线的fps计数放在ReadCan线程循环开始；
+- interface优化执行PiperInit函数的判断逻辑；
+- sdk param修改demo增加形参的设定；
+- 修改hardware的导入范围到*而不是指定的C_STD_CAN；
+- 优化msg v1的init.py与v2结构相同；
+- 增加部分注释
 
 Version 0.3.0
 =============
