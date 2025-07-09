@@ -39,8 +39,8 @@ class Piper():
         self.__can_validation: bool = True
         self.__can_auto_init: bool = True
         self.__dh_is_offset: int = 1
-        self.__start_sdk_joint_limit: bool = False
-        self.__start_sdk_gripper_limit: bool = False
+        self.__start_soft_joint_limit: bool = False
+        self.__start_soft_gripper_limit: bool = False
         self.__log_level = LogLevel.WARNING
         self.__high_follow_mode = 0
 
@@ -58,8 +58,8 @@ class Piper():
             judge_flag=self.__can_validation,
             can_auto_init=self.__can_auto_init,
             dh_is_offset=self.__dh_is_offset,
-            start_sdk_joint_limit=self.__start_sdk_joint_limit,
-            start_sdk_gripper_limit=self.__start_sdk_gripper_limit,
+            start_sdk_joint_limit=self.__start_soft_joint_limit,
+            start_sdk_gripper_limit=self.__start_soft_gripper_limit,
             logger_level=self.__log_level
         )
         return self._interface
@@ -73,41 +73,32 @@ class Piper():
     def get_can_validation_status(self):
         return self.__can_validation
     
-    def init_can_auto_init_on(self):
-        self.__can_auto_init: bool = True
+    # def init_can_auto_init_on(self):
+    #     self.__can_auto_init: bool = True
     
-    def init_can_auto_init_off(self):
-        self.__can_auto_init: bool = False
+    # def init_can_auto_init_off(self):
+    #     self.__can_auto_init: bool = False
     
-    def get_can_auto_init_status(self):
-        return self.__can_auto_init
+    # def get_can_auto_init_status(self):
+    #     return self.__can_auto_init
     
-    def init_dh_offset_on(self):
-        self.__dh_is_offset: int = 1
+    def init_soft_joint_limit_on(self):
+        self.__start_soft_joint_limit: bool = True
     
-    def init_dh_offset_off(self):
-        self.__dh_is_offset: int = 0
-    
-    def get_dh_offset_status(self):
-        return self.__dh_is_offset
-    
-    def init_sdk_joint_limit_on(self):
-        self.__start_sdk_joint_limit: bool = True
-    
-    def init_sdk_joint_limit_off(self):
-        self.__start_sdk_joint_limit: bool = False
-    
-    def get_sdk_joint_limit_status(self):
-        return self.__start_sdk_joint_limit
-    
-    def init_sdk_gripper_limit_on(self):
-        self.__start_sdk_gripper_limit: bool = True
-    
-    def init_sdk_gripper_limit_off(self):
-        self.__start_sdk_gripper_limit: bool = False
-    
-    def get_sdk_gripper_limit_status(self):
-        return self.__start_sdk_gripper_limit
+    def init_soft_joint_limit_off(self):
+        self.__start_soft_joint_limit: bool = False
+
+    def get_soft_joint_limit_status(self):
+        return self.__start_soft_joint_limit
+
+    def init_soft_gripper_limit_on(self):
+        self.__start_soft_gripper_limit: bool = True
+
+    def init_soft_gripper_limit_off(self):
+        self.__start_soft_gripper_limit: bool = False
+
+    def get_soft_gripper_limit_status(self):
+        return self.__start_soft_gripper_limit
     
     def init_log_level(self, log_level:LogLevel = LogLevel.WARNING):
         self.__log_level = log_level
@@ -131,29 +122,29 @@ class Piper():
         return self._interface.get_connect_status()
 
     def enable_arm(self):
-        self.enable_ctrl()
+        self.enable_ctrl_output()
         return self._interface.EnablePiper()
 
     def disable_arm(self):
-        self.disable_ctrl()
+        self.disable_ctrl_output()
         status = self._interface.DisablePiper()
         self._interface.EmergencyStop(0x02)
         return status
 
-    def enable_ctrl(self):
+    def enable_ctrl_output(self):
         self.__is_enable_ctrl = True
         return self.__is_enable_ctrl
 
-    def disable_ctrl(self):
+    def disable_ctrl_output(self):
         self.__is_enable_ctrl = False
         return self.__is_enable_ctrl    
     
-    def get_enable_ctrl_status(self):
+    def get_ctrl_output_status(self):
         return self.__is_enable_ctrl
 
     def move_to_home(self):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             # 若打开读取线程
             if self._interface.get_connect_status():
                 enable_list = self._interface.GetArmEnableStatus()
@@ -213,7 +204,7 @@ class Piper():
                     joint_states: Tuple[float, float, float, float, float, float], 
                     v:int):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             # 若打开读取线程
             if self._interface.get_connect_status():
                 enable_list = self._interface.GetArmEnableStatus()
@@ -299,7 +290,7 @@ class Piper():
                         yaw: float,
                         v:int):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             # 若打开读取线程
             if self._interface.get_connect_status():
                 enable_list = self._interface.GetArmEnableStatus()
@@ -324,7 +315,7 @@ class Piper():
                         qw: float,
                         v:int):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             roll, pitch, yaw = quat_convert_euler(qx, qy, qz, qw)
             # 若打开读取线程
             if self._interface.get_connect_status():
@@ -369,7 +360,7 @@ class Piper():
                         yaw: float,
                         v:int):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             # 若打开读取线程
             if self._interface.get_connect_status():
                 enable_list = self._interface.GetArmEnableStatus()
@@ -394,7 +385,7 @@ class Piper():
                         qw: float,
                         v:int):
         # 只有在开启控制时才会下发控制指令
-        if self.get_enable_ctrl_status():
+        if self.get_ctrl_output_status():
             roll, pitch, yaw = quat_convert_euler(qx, qy, qz, qw)
             # 若打开读取线程
             if self._interface.get_connect_status():
