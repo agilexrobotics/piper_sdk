@@ -14,7 +14,7 @@ from typing_extensions import (
 from queue import Queue
 import threading
 import math
-from ..hardware_port.can_encapsulation import C_STD_CAN
+from ..hardware_port import *
 from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
@@ -3152,6 +3152,50 @@ class C_PiperInterface_V2():
         feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
         if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("GripperTeachingPendantParamConfig send failed: SendCanMessage(%s)", feedback)
+    
+    def ReqMasterArmMoveToHome(self, mode:Literal[0, 1, 2]):
+        '''
+        请求主臂回零指令(基于V1.7-4版本后)
+        
+        CAN ID:
+            0x191
+        
+        Args:
+            mode: 请求回零模式
+
+                0: 恢复主从臂模式
+
+                1: 主臂回零
+
+                2: 主从臂一起回零
+        '''
+        '''
+        Request Master Arm Move to Home Command (Based on version V1.7-4 and later)
+
+        CAN ID:
+            0x191
+        
+        Args:
+            mode (int): Request return-to-zero mode.
+
+                0: Restore master-slave arm mode.
+
+                1: Master arm return-to-zero.
+
+                2: Master and slave arms return-to-zero together.
+        '''
+        tx_can = Message()
+        tx_can.arbitration_id = 0x191
+        if mode == 0:
+            # 恢复主从臂模式
+            tx_can.data = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+        elif mode == 1:
+            # 主臂回零
+            tx_can.data = [0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
+        elif mode == 2:
+            # 主从臂一起回零
+            tx_can.data = [0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
+        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 #----------------------------------------------------------------------------------
     def GetSDKJointLimitParam(self,
                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):

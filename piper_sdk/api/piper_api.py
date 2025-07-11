@@ -175,7 +175,7 @@ class Piper():
             )
             return result, tmp.time_stamp, tmp.Hz
         else: 
-            self.logger.warn("[get_joint_states] Read thread not opened")
+            self.logger.warning("[get_joint_states] Read thread not opened")
             return (0.0,) * 6, 0.0, 0.0
     
     def __move_j(self,

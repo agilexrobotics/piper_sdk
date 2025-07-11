@@ -11,7 +11,7 @@ USB_ADDRESS="${3}"
 echo "-------------------START-----------------------"
 # Check if ethtool is installed.
 if ! dpkg -l | grep -q "ethtool"; then
-    echo "\e[31mError: ethtool not detected in the system.\e[0m"
+    echo "Error: ethtool not detected in the system."
     echo "Please use the following command to install ethtool:"
     echo "sudo apt update && sudo apt install ethtool"
     exit 1
@@ -19,7 +19,7 @@ fi
 
 # Check if can-utils is installed.
 if ! dpkg -l | grep -q "can-utils"; then
-    echo "\e[31mError: can-utils not detected in the system.\e[0m"
+    echo "Error: can-utils not detected in the system."
     echo "Please use the following command to install ethtool:"
     echo "sudo apt update && sudo apt install can-utils"
     exit 1
@@ -45,8 +45,8 @@ if [ "$CURRENT_CAN_COUNT" -ne "1" ]; then
             
             echo "Interface $iface is inserted into USB port $BUS_INFO"
         done
-        echo -e " \e[31m Error: The number of CAN modules detected by the system ($CURRENT_CAN_COUNT) does not match the expected number (1). \e[0m"
-        echo -e " \e[31m Please add the USB hardware address parameter, such as: \e[0m"
+        echo -e " Error: The number of CAN modules detected by the system ($CURRENT_CAN_COUNT) does not match the expected number (1). "
+        echo -e " Please add the USB hardware address parameter, such as: "
         echo -e " bash can_activate.sh can0 1000000 1-2:1.0"
         echo "-------------------ERROR-----------------------"
         exit 1
