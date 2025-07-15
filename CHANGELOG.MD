@@ -6,18 +6,18 @@
 Version 0.3.3
 =============
 
-特性
+Features
 --------
 
 - Modify the maximum torque of mit mode to 8 N.m
 
-Bug修复
+Bug Fixes
 ---------
-无
+None
 
-其它
+Miscellaneous
 ---------
-无
+None
 
 Version 0.3.2
 =============
