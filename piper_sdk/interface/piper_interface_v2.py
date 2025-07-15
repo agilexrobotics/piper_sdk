@@ -2938,7 +2938,7 @@ class C_PiperInterface_V2():
                             v_min:float=-45.0,    v_max:float=45.0, 
                             kp_min:float=0.0,   kp_max:float=500.0, 
                             kd_min:float=-5.0,   kd_max:float=5.0,
-                            t_min:float=-18.0,    t_max:float=18.0):
+                            t_min:float=-8.0,    t_max:float=8.0):
         '''
         机械臂关节1~6MIT控制指令
         

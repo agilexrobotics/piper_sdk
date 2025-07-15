@@ -3,6 +3,22 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.3.3
+=============
+
+特性
+--------
+
+- Modify the maximum torque of mit mode to 8 N.m
+
+Bug修复
+---------
+无
+
+其它
+---------
+无
+
 Version 0.3.2
 =============
 
