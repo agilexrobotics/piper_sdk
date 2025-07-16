@@ -15,7 +15,7 @@ from queue import Queue
 import threading
 import math
 from ..hardware_port import *
-from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
+from ..protocol.protocol_v2 import C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
 from ..utils import *
@@ -415,7 +415,7 @@ class C_PiperInterface_V2():
         self.__start_sdk_fk_cal = start_sdk_fk_cal
         self.__piper_param_mag = C_PiperParamManager()
         # protocol
-        self.__parser: Type[C_PiperParserBase] = C_PiperParserV2()
+        self.__parser: Type[C_PiperParserV2] = C_PiperParserV2()
         # thread
         self.__read_can_stop_event = threading.Event()  # 控制 ReadCan 线程
         self.__can_monitor_stop_event = threading.Event()  # 控制 CanMonitor 线程
