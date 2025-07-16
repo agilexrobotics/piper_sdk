@@ -4,6 +4,6 @@ from .piper_interface_v2 import *
 
 __all__ = [
     'C_PiperInterface',
-    'C_PiperInterfaceV2'
+    'C_PiperInterface_V2'
 ]
 
