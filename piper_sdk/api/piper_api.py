@@ -177,6 +177,18 @@ class Piper():
         else: 
             self.logger.warning("[get_joint_states] Read thread not opened")
             return (0.0,) * 6, 0.0, 0.0
+        
+    def get_gripper_states(self) -> Tuple[Tuple[float, float], float, float]:
+        if self._interface.get_connect_status():
+            tmp = self._interface.GetArmGripperMsgs()
+            result = (
+                round(tmp.gripper_state.grippers_angle / 1e6, 6),
+                round(tmp.gripper_state.grippers_effort / 1000, 6),
+            )
+            return result, tmp.time_stamp, tmp.Hz
+        else:
+            self.logger.warning("[get_gripper_states] Read thread not opened")
+            return (0.0) * 2, 0.0, 0.0
     
     def __move_j(self,
                     joint_states: Tuple[float, float, float, float, float, float], 
@@ -235,7 +247,7 @@ class Piper():
             )
             return result, tmp.time_stamp, tmp.Hz
         else: 
-            self.logger.warn("[get_end_pose_euler] Read thread not opened")
+            self.logger.warning("[get_end_pose_euler] Read thread not opened")
             return (0.0,) * 6
     
     def get_end_pose_quat(self) -> Tuple[float, float, float, float, float, float, float]:
@@ -258,7 +270,7 @@ class Piper():
             )
             return result, tmp.time_stamp, tmp.Hz
         else: 
-            self.logger.warn("[get_end_pose_euler] Read thread not opened")
+            self.logger.warning("[get_end_pose_euler] Read thread not opened")
             return (0.0,) * 7
 
     def __move_p(self,
@@ -418,6 +430,7 @@ class Piper():
     def move_gripper(self, gripper_val:float, effort:float = None):
         self.__gripper_val = gripper_val
         if effort is None:
-            self._interface.GripperCtrl(self.__gripper_val, self.__effort, self.__enable_code, 0)
-        else: self._interface.GripperCtrl(self.__gripper_val, effort, self.__enable_code, 0)
+            self._interface.GripperCtrl(round(self.__gripper_val * 1e6), round(self.__effort * 1000), self.__enable_code, 0)
+        else:
+            self._interface.GripperCtrl(round(self.__gripper_val * 1e6), round(effort * 1000), self.__enable_code, 0)
     
