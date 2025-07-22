@@ -24,4 +24,4 @@ if __name__ == "__main__":
         print(f"gripper_ctrl: {piper.GetArmGripperCtrl().Hz}")
         print(f"mode_ctrl: {piper.GetArmModeCtrl().Hz}")
         time.sleep(0.01)
-        pass
+    

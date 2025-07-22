@@ -3,10 +3,6 @@
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
 # piper机械臂圆弧模式demo
 # 注意机械臂工作空间内不要有障碍
-
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
@@ -27,4 +23,4 @@ if __name__ == "__main__":
     piper.MoveCAxisUpdateCtrl(0x03)
     time.sleep(0.001)
     piper.MotionCtrl_2(0x01, 0x03, 30, 0x00)
-    pass
+    

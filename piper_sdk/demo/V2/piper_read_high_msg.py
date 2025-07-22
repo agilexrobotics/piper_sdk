@@ -12,4 +12,4 @@ if __name__ == "__main__":
     while True:
         print(piper.GetArmHighSpdInfoMsgs())
         time.sleep(0.1)
-        pass
+    

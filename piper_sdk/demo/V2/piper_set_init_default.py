@@ -3,10 +3,6 @@
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
 # V2版本sdk
 # 机械臂 设置全部关节限位、关节最大速度、关节加速度为默认值： 0x02
-
-from typing import (
-    Optional,
-)
 import time
 from piper_sdk import *
 
@@ -18,3 +14,4 @@ if __name__ == "__main__":
         piper.SearchAllMotorMaxAngleSpd()
         print(piper.GetAllMotorAngleLimitMaxSpd())
         time.sleep(0.01)
+    

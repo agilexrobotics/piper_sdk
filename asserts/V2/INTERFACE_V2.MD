@@ -18,6 +18,23 @@ Inner class identifies instances based on `can_port`, preventing the creation of
   - 1: Offset applied
 - `start_sdk_joint_limit` (bool, default=True): Enable SDK joint limits
 - `start_sdk_gripper_limit` (bool, default=True): Enable SDK gripper limits
+- `logger_level` (LogLevel, default=LogLevel.WARNING): Set the log level
+- `log_to_file` (bool, default=False): Whether to enable the log writing function, True to enable, default to disable
+- `log_file_path` (str, default=None): Set the path to write the log file, the default is the log folder under the sdk path
+
+Note:
+
+- The LogLevel definition is as follows：
+
+  ```python
+  class LogLevel(IntEnum):
+      DEBUG = logging.DEBUG
+      INFO = logging.INFO
+      WARNING = logging.WARNING
+      ERROR = logging.ERROR
+      CRITICAL = logging.CRITICAL
+      SILENT = 100
+  ```
 
 ### Connection Methods
 
@@ -195,7 +212,7 @@ Gripper control command (CAN ID: 0x159)
 
 Parameters:
 
-- `gripper_angle`: Gripper angle (0.001°)
+- `gripper_angle`: Gripper range, expressed as an integer, unit 0.001mm
 - `gripper_effort`: Gripper torque (0.001 N/m, range 0-5000 corresponds to 0-5 N/m)
 - `gripper_code`:
   - 0x00: Disable
@@ -789,7 +806,25 @@ Parameters:
 - `vel_ref`: Motor velocity ([-45.0, 45.0])
 - `kp`: Proportional gain ([0.0, 500.0], reference: 10)
 - `kd`: Derivative gain ([-5.0, 5.0], reference: 0.8)
-- `t_ref`: Target torque ([-18.0, 18.0])
+- `t_ref`: Target torque ([-8.0, 8.0])
+
+#### ReqMasterArmMoveToHome
+
+```python
+def ReqMasterArmMoveToHome(self, mode:Literal[0, 1, 2])
+```
+
+Request Master Arm Move to Home Command (Based on version V1.7-4 and later)
+
+CAN ID:
+    0x191
+
+Parameters:
+
+- `mode` (int): Request return-to-zero mode.
+  - 0: Restore master-slave arm mode.
+  - 1: Master arm return-to-zero.
+  - 2: Master and slave arms return-to-zero together.
 
 ### SDK Parameter Methods
 

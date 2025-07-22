@@ -3,6 +3,56 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.4.0
+=============
+
+Features
+--------
+
+- Delete V1 version code
+- Added the 191 return to zero instruction, which requires the robot firmware version to be 1.7-4 or above, and is defined as follows:
+
+  ```python
+  def ReqMasterArmMoveToHome(self, mode:Literal[0, 1, 2])
+  '''
+  mode (int): Request return-to-zero mode.
+
+              0: Restore master-slave arm mode.
+
+              1: Master arm return-to-zero.
+
+              2: Master and slave arms return-to-zero together.
+  '''
+  ```
+
+- Add can encapsulation file `can_encapsulation.py` and the revised version `can_encapsulation_v0_4_0.py` corresponding to the sdk version, add enum inside the class as the status feedback after the can function is executed, and modify the `__init__.py` of `hardware_port` and the way to import `C_STD_CAN` in the interface for this purpose
+- Add the import of  `ArmMsgFeedbackStatusEnum` class in `__init__.py`
+- Add log management (`piper_sdk/utils/logger_mag.py`) and add a fixed log path to store log files (`piper_sdk/log`)
+- Add the formal parameters `logger_level`, `log_to_file`, `log_file_path` related to log in the interface
+- Add the demo of `piper_set_log_level.py`
+- The LogLevel definition is as follows:
+
+  ```python
+  class LogLevel(IntEnum):
+      DEBUG = logging.DEBUG
+      INFO = logging.INFO
+      WARNING = logging.WARNING
+      ERROR = logging.ERROR
+      CRITICAL = logging.CRITICAL
+      SILENT = 100
+  ```
+
+Bug fix
+---------
+None
+
+Others
+---------
+
+- setup.py changed the author to Agilex
+- Modified the function comments of the gripper, changed the angle to distance
+- Modified the movec function comments, changed the typo "midpoint" to "end point"
+
 Version 0.3.3
 =============
 

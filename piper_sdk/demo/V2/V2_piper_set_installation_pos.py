@@ -6,8 +6,6 @@
 # 如需设定为侧装左/右
 # MotionCtrl_2(0x01,0x01,0,0,0,0x02)
 # MotionCtrl_2(0x01,0x01,0,0,0,0x03)
-
-import time
 from piper_sdk import *
 
 if __name__ == "__main__":
