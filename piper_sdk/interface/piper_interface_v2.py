@@ -15,7 +15,7 @@ from queue import Queue
 import threading
 import math
 from ..hardware_port import *
-from ..protocol.protocol_v2 import C_PiperParserBase, C_PiperParserV2
+from ..protocol.protocol_v2 import C_PiperParserV2
 from ..piper_msgs.msg_v2 import *
 from ..kinematics import *
 from ..utils import *
@@ -413,7 +413,7 @@ class C_PiperInterface_V2():
         self.__start_sdk_fk_cal = False
         self.__piper_param_mag = C_PiperParamManager()
         # protocol
-        self.__parser: Type[C_PiperParserBase] = C_PiperParserV2()
+        self.__parser: Type[C_PiperParserV2] = C_PiperParserV2()
         # thread
         self.__read_can_stop_event = threading.Event()  # 控制 ReadCan 线程
         self.__can_monitor_stop_event = threading.Event()  # 控制 CanMonitor 线程
@@ -819,8 +819,8 @@ class C_PiperInterface_V2():
         '''获取机械臂夹爪消息
 
         gripper_state:
-            grippers_angle: 夹爪范围，以整数表示，单位0.001mm
-            grippers_effort: 夹爪扭矩，以整数表示，单位0.001N/m
+            grippers_angle: 夹爪范围, 以整数表示, 单位0.001mm
+            grippers_effort: 夹爪扭矩, 以整数表示, 单位0.001N/m
             status_code: 夹爪状态码，以整数表示
         '''
         '''Retrieves the gripper status message of the robotic arm.
@@ -1043,7 +1043,7 @@ class C_PiperInterface_V2():
         self.gripper_ctrl
         
         Args:
-            grippers_angle: int32, 单位 0.001°, 夹爪角度,以整数表示。
+            grippers_angle: int32, 夹爪范围, 以整数表示, 单位0.001mm
             grippers_effort: uint16, 单位 0.001N/m, 夹爪扭矩,以整数表示。
             status_code: uint8
                 0x00失能;
@@ -1057,7 +1057,7 @@ class C_PiperInterface_V2():
         ''' Retrieves the gripper control message using the 0x159 command.
 
         Args:
-            grippers_angle (int): The gripper angle, in 0.001° (integer representation).
+            grippers_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
             grippers_effort (int): The gripper torque, in 0.001 N/m (integer representation).
             status_code (int): The gripper status code for enabling/disabling/clearing errors.
                 0x00: Disabled;
@@ -2375,7 +2375,7 @@ class C_PiperInterface_V2():
             0x159
         
         Args:
-            gripper_angle (int): 夹爪角度,单位 0.001°
+            gripper_angle (int):  夹爪范围, 以整数表示, 单位0.001mm
             gripper_effort (int): 夹爪力矩,单位 0.001N/m,范围0-5000,对应0-5N/m
             gripper_code (int): 
                 0x00失能;
@@ -2393,7 +2393,7 @@ class C_PiperInterface_V2():
             0x159
         
         Args:
-            gripper_angle (int): The gripper angle, in 0.001°.
+            gripper_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
             gripper_effort (int): The gripper torque, in 0.001 N/m.Range 0-5000,corresponse 0-5N/m
             gripper_code (int): The gripper enable/disable/clear error command.
                 0x00: Disable
@@ -3039,7 +3039,7 @@ class C_PiperInterface_V2():
                             v_min:float=-45.0,    v_max:float=45.0, 
                             kp_min:float=0.0,   kp_max:float=500.0, 
                             kd_min:float=-5.0,   kd_max:float=5.0,
-                            t_min:float=-18.0,    t_max:float=18.0):
+                            t_min:float=-8.0,    t_max:float=8.0):
         '''
         机械臂关节1~6MIT控制指令
         
@@ -3159,6 +3159,50 @@ class C_PiperInterface_V2():
         feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
         if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("GripperTeachingPendantParamConfig send failed: SendCanMessage(%s)", feedback)
+    
+    def ReqMasterArmMoveToHome(self, mode:Literal[0, 1, 2]):
+        '''
+        请求主臂回零指令(基于V1.7-4版本后)
+        
+        CAN ID:
+            0x191
+        
+        Args:
+            mode: 请求回零模式
+
+                0: 恢复主从臂模式
+
+                1: 主臂回零
+
+                2: 主从臂一起回零
+        '''
+        '''
+        Request Master Arm Move to Home Command (Based on version V1.7-4 and later)
+
+        CAN ID:
+            0x191
+        
+        Args:
+            mode (int): Request return-to-zero mode.
+
+                0: Restore master-slave arm mode.
+
+                1: Master arm return-to-zero.
+
+                2: Master and slave arms return-to-zero together.
+        '''
+        tx_can = Message()
+        tx_can.arbitration_id = 0x191
+        if mode == 0:
+            # 恢复主从臂模式
+            tx_can.data = [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+        elif mode == 1:
+            # 主臂回零
+            tx_can.data = [0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
+        elif mode == 2:
+            # 主从臂一起回零
+            tx_can.data = [0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
+        self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
 #----------------------------------------------------------------------------------
     def GetSDKJointLimitParam(self,
                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):

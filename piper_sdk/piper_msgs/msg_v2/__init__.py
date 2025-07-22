@@ -19,7 +19,7 @@ from .feedback.arm_feedback_gripper_teaching_param import ArmMsgFeedbackGripperT
 from .feedback.arm_feedback_high_spd import ArmMsgFeedbackHighSpd
 from .feedback.arm_feedback_joint_states import ArmMsgFeedBackJointStates
 from .feedback.arm_feedback_low_spd import ArmMsgFeedbackLowSpd
-from .feedback.arm_feedback_status import ArmMsgFeedbackStatus
+from .feedback.arm_feedback_status import ArmMsgFeedbackStatus, ArmMsgFeedbackStatusEnum
 from .feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
 
 # 导入 transmit 子模块（假设 transmit 中也有需要导出的类）
@@ -54,6 +54,7 @@ __all__ = [
     'ArmMsgFeedBackJointStates',
     'ArmMsgType',
     'ArmMsgFeedbackStatus',
+    'ArmMsgFeedbackStatusEnum',
     'ArmMsgFeedBackGripper',
     'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd',
     'ArmMsgFeedbackCurrentEndVelAccParam',

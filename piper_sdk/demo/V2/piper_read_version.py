@@ -8,7 +8,7 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface_V2()
     piper.ConnectPort(piper_init=True, start_thread=True)
-    time.sleep(0.025) # 需要时间去读取固件反馈帧，否则会反馈-0x4AF,如果不需要读取固件版本，可以不设置延时
+    time.sleep(0.1) # 需要时间去读取固件反馈帧，否则会反馈-0x4AF,如果不需要读取固件版本，可以不设置延时
     print(f'=====>> Piper Current Interface Version is {piper.GetCurrentInterfaceVersion()} <<=====')
     print(f'=====>> Piper Current Interface Version is {piper.GetCurrentInterfaceVersion().value} <<=====')
     print(f'=====>> Piper Current Protocol Version is {piper.GetCurrentProtocolVersion()} <<=====')

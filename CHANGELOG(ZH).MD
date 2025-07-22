@@ -9,11 +9,38 @@ Version 0.4.0
 特性
 --------
 
+- 删除V1版本代码
+- 增加了有关191回零指令，该指令需要机械臂固件版本在1.7-4及以上，定义如下：
+
+  ```python
+  def ReqMasterArmMoveToHome(self, mode:Literal[0, 1, 2])
+  '''
+  mode: 请求回零模式
+
+        0: 恢复主从臂模式
+
+        1: 主臂回零
+
+        2: 主从臂一起回零
+  '''
+  ```
+
 - 增加can封装文件`can_encapsulation.py`与sdk版本对应的修订版本`can_encapsulation_v0_4_0.py`，类内部增加了enum来作为can函数执行后的状态反馈，并为此修改了`hardware_port`的`__init__.py`以及interface中导入`C_STD_CAN`的方式
-- 增加ArmMsgFeedbackStatusEnum类在init.py中的导入
-- 增加log管理(piper_sdk/utils/logger_mag.py)并增加固定log路径存储log文件(piper_sdk/log)
+- 增加`ArmMsgFeedbackStatusEnum`类在`__init__.py`中的导入
+- 增加log管理(`piper_sdk/utils/logger_mag.py`)并增加固定log路径存储log文件(`piper_sdk/log`)
 - 增加了interface中有关log的形参`logger_level`、`log_to_file`、`log_file_path`
 - 增加`piper_set_log_level.py`的demo
+- 有关LogLevel定义如下：
+
+  ```python
+  class LogLevel(IntEnum):
+      DEBUG = logging.DEBUG
+      INFO = logging.INFO
+      WARNING = logging.WARNING
+      ERROR = logging.ERROR
+      CRITICAL = logging.CRITICAL
+      SILENT = 100
+  ```
 
 Bug修复
 ---------
@@ -23,6 +50,24 @@ Bug修复
 ---------
 
 - setup.py修改作者为Agilex
+- 修改夹爪有关函数注释，将角度改为距离
+- 修改movec函数注释，修改错别字“中点”为“终点”
+
+Version 0.3.3
+=============
+
+特性
+--------
+
+- 修改mit模式的最大力矩大小为 8 N.m
+
+Bug修复
+---------
+无
+
+其它
+---------
+无
 
 Version 0.3.2
 =============

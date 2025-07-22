@@ -16,14 +16,16 @@ This SDK is used to receive CAN data frames and process them into custom data ty
 
 |Description | Documentation|
 |---|---|
-|Detailed description of interface functions|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|Robot Arm DEMO|[piper_sdk/demo/V1](./piper_sdk/demo/V1/README.MD) <br> [piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
+|Detailed description of interface functions|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
+|Robot Arm DEMO|[piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
 |Master-slave configuration and data reading for dual arms|[double_piper](./asserts/double_piper.MD)|
 |Open-source UI using pyQT5|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## 1 Software Installation Method
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">1 Software Installation Method</summary>
+  <div>
 
 ### 1.1 Install Dependencies
 
@@ -108,7 +110,12 @@ Note: Replace X with the release version you need
 pip3 install piper_sdk-X.X.X-py3-none-any.whl
 ```
 
-## 2 Use CAN Module
+</div>
+</details>
+
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">2 Use CAN Module</summary>
+  <div>
 
 Note: The CAN module here only supports the robot arm's built-in CAN module, and does not support other CAN modules.
 
@@ -254,7 +261,12 @@ bash can_muti_activate.sh
 
 Run `ifconfig` to check if `can_left` and `can_right` are present.
 
-## 3 Simple start
+</div>
+</details>
+
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">3 Simple start</summary>
+  <div>
 
 Start with the simplest way to read the joint angle of the robot arm
 
@@ -277,6 +289,13 @@ if __name__ == "__main__":
     #   start_sdk_joint_limit(bool -> False): Whether to enable SDK joint angle limit, which will limit both feedback and control messages
     #   start_sdk_gripper_limit(bool -> False): Whether to enable SDK gripper position limit, which will limit both feedback and control messages
     #   logger_level(LogLevel -> default LogLevel.WARNING): Set the log level
+    #         The following parameters are optional: 
+    #               LogLevel.DEBUG
+    #               LogLevel.INFO
+    #               LogLevel.WARNING
+    #               LogLevel.ERROR
+    #               LogLevel.CRITICAL
+    #               LogLevel.SILENT
     #   log_to_file(bool -> default False): Whether to enable the log writing function, True to enable, default to disable
     #   log_file_path(str -> default False): Set the path to write the log file, the default is the log folder under the sdk path
     piper = C_PiperInterface(can_name="can0",
@@ -308,6 +327,9 @@ if __name__ == "__main__":
     time.sleep(0.025) # It takes time to read the firmware feedback frame, otherwise -0x4AF will be fed back
     print(piper.GetPiperFirmwareVersion())
 ```
+
+</div>
+</details>
 
 ## Notes
 

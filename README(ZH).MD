@@ -16,14 +16,16 @@ Test:
 
 |说明 |文档|
 |---|---|
-|接口函数的详细说明|[Interface_V1 README](./asserts/V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|机械臂DEMO|[`piper_sdk/demo/V1`](./piper_sdk/demo/V1/README.MD) <br> [`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
+|接口函数的详细说明|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
+|机械臂DEMO|[`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
 |双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
 |使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
-## 1 软件安装方法
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">1 软件安装方法</summary>
+  <div>
 
 ### 1.1 安装依赖
 
@@ -108,7 +110,12 @@ pip3 install .
 pip3 install piper_sdk-X.X.X-py3-none-any.whl 
 ```
 
-## 2 使用can模块
+</div>
+</details>
+
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">2 使用can模块</summary>
+  <div>
 
 注意此处的can模块仅支持机械臂自带的can模块，不支持其它can模块
 
@@ -252,7 +259,12 @@ USB_PORTS["3-1.1:1.0"]="can_right:1000000"
 
 执行`ifconfig`查看是不是有`can_left`和`can_right`
 
-## 3 简单开始
+</div>
+</details>
+
+<details open>
+  <summary style="font-size: 1.5em; font-weight: bold;">3 简单开始</summary>
+  <div>
 
 从一个最简单的读取机械臂关节角开始
 
@@ -272,6 +284,13 @@ if __name__ == "__main__":
     # start_sdk_joint_limit(bool -> default False):是否开启SDK的关节角度限位，会对反馈消息和控制消息都做限制
     # start_sdk_gripper_limit(bool -> default False):是否开启SDK的夹爪位置限位，会对反馈消息和控制消息都做限制
     # logger_level(LogLevel -> default LogLevel.WARNING):设定log的日志等级
+    #         参数有如下可选: 
+    #               LogLevel.DEBUG
+    #               LogLevel.INFO
+    #               LogLevel.WARNING
+    #               LogLevel.ERROR
+    #               LogLevel.CRITICAL
+    #               LogLevel.SILENT
     # log_to_file(bool -> default False):是否打开log写入文件功能，True则打开，默认关闭
     # log_file_path(str -> default False):设定log写入文件的路径，默认在sdk路径下的log文件夹
     piper = C_PiperInterface(can_name="can0",
@@ -300,9 +319,12 @@ from piper_sdk import *
 if __name__ == "__main__":
     piper = C_PiperInterface("can0")
     piper.ConnectPort()
-    time.sleep(0.025) # 需要时间去读取固件反馈帧，否则会反馈-0x4AF
+    time.sleep(0.03) # 需要时间去读取固件反馈帧，否则会反馈-0x4AF
     print(piper.GetPiperFirmwareVersion())
 ```
+
+</div>
+</details>
 
 ## 注意事项
 

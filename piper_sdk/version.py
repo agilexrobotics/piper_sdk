@@ -8,7 +8,9 @@ class PiperSDKVersion(Enum):
     PIPER_SDK_VERSION_0_2_20 = '0.2.20'
     PIPER_SDK_VERSION_0_3_0 = '0.3.0'
     PIPER_SDK_VERSION_0_3_2 = '0.3.2'
-    PIPER_SDK_CURRENT_VERSION = PIPER_SDK_VERSION_0_3_2
+    PIPER_SDK_VERSION_0_3_3 = '0.3.3'
+    PIPER_SDK_VERSION_0_4_0 = '0.4.0'
+    PIPER_SDK_CURRENT_VERSION = PIPER_SDK_VERSION_0_4_0
     PIPER_SDK_VERSION_UNKNOWN = 'unknown'
     def __str__(self):
         return f"{self.name} ({self.value})"
