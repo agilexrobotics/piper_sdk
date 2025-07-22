@@ -24,7 +24,7 @@ Test:
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">1 软件安装方法</summary>
+  <summary><h2 style="display:inline">1 软件安装方法</h2></summary>
   <div>
 
 ### 1.1 安装依赖
@@ -114,7 +114,7 @@ pip3 install piper_sdk-X.X.X-py3-none-any.whl
 </details>
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">2 使用can模块</summary>
+  <summary><h2 style="display:inline">2 使用can模块</h2></summary>
   <div>
 
 注意此处的can模块仅支持机械臂自带的can模块，不支持其它can模块
@@ -263,7 +263,7 @@ USB_PORTS["3-1.1:1.0"]="can_right:1000000"
 </details>
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">3 简单开始</summary>
+  <summary><h2 style="display:inline">3 简单开始</h2></summary>
   <div>
 
 从一个最简单的读取机械臂关节角开始

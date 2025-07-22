@@ -24,7 +24,7 @@ This SDK is used to receive CAN data frames and process them into custom data ty
 |Q&A|[Q&A](./asserts/Q&A.MD)|
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">1 Software Installation Method</summary>
+  <summary><h2 style="display:inline">1 Software Installation Method</h2></summary>
   <div>
 
 ### 1.1 Install Dependencies
@@ -114,7 +114,7 @@ pip3 install piper_sdk-X.X.X-py3-none-any.whl
 </details>
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">2 Use CAN Module</summary>
+  <summary><h2 style="display:inline">2 Use CAN Module</h2></summary>
   <div>
 
 Note: The CAN module here only supports the robot arm's built-in CAN module, and does not support other CAN modules.
@@ -265,7 +265,7 @@ Run `ifconfig` to check if `can_left` and `can_right` are present.
 </details>
 
 <details open>
-  <summary style="font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em;">3 Simple start</summary>
+  <summary><h2 style="display:inline">3 Simple start</h2></summary>
   <div>
 
 Start with the simplest way to read the joint angle of the robot arm
