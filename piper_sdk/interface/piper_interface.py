@@ -1057,7 +1057,7 @@ class C_PiperInterface():
         ''' Retrieves the gripper control message using the 0x159 command.
 
         Args:
-            grippers_angle (int): The gripper angle, in 0.001° (integer representation).
+            grippers_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
             grippers_effort (int): The gripper torque, in 0.001 N/m (integer representation).
             status_code (int): The gripper status code for enabling/disabling/clearing errors.
                 0x00: Disabled;
@@ -2393,7 +2393,7 @@ class C_PiperInterface():
             0x159
         
         Args:
-            gripper_angle (int): The gripper angle, in 0.001°.
+            gripper_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
             gripper_effort (int): The gripper torque, in 0.001 N/m.Range 0-5000,corresponse 0-5N/m
             gripper_code (int): The gripper enable/disable/clear error command.
                 0x00: Disable
