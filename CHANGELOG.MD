@@ -18,7 +18,7 @@ None
 Miscellaneous
 ---------
 
-- Modify the note about `Message NOT sent` in README to the note about log printing
+- Modify the note about `Message NOT sent` in README to the prompt of log printing; modify the instructions about updating piper_sdk.
 
 Version 0.4.0
 =============
