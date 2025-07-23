@@ -722,6 +722,9 @@ class C_PiperInterface_V2():
     # 获取反馈值------------------------------------------------------------------------------------------------------
     def __GetCurrentTime(self):
         return time.time_ns() / 1e9
+    
+    def GetCanName(self):
+        return self.__can_channel_name
 
     def GetCurrentInterfaceVersion(self):
         return InterfaceVersion.INTERFACE_V2

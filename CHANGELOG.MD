@@ -3,6 +3,23 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.4.1
+=============
+
+Features
+--------
+
+- `Interface` adds `GetCanName` function to get the can port name currently read by `interface`
+
+Bug Fixes
+---------
+None
+
+Miscellaneous
+---------
+
+- Modify the note about `Message NOT sent` in README to the note about log printing
+
 Version 0.4.0
 =============
 
@@ -46,7 +63,7 @@ Bug fix
 ---------
 None
 
-Others
+Miscellaneous
 ---------
 
 - setup.py changed the author to Agilex

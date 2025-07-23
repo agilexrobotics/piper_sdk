@@ -3,6 +3,23 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.4.1
+=============
+
+特性
+--------
+
+- `interface`增加`GetCanName`函数，来获取当前`interface`读取的can端口名称
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- 修改README中有注意事项有关`Message NOT sent`的说明，改为log打印的提示说明；修改有关更新piper_sdk的说明
+
 Version 0.4.0
 =============
 

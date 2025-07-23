@@ -87,7 +87,13 @@ pip3 uninstall piper_sdk
 
 #### 1.5.1 从pypi仓库更新
 
-注意需要先卸载旧版本
+可以使用`--upgrade`来更新
+
+```shell
+pip3 install --upgrade piper_sdk
+```
+
+可以先卸载旧版本然后重新安装，注意存储库有可能未同步，这里默认是官方源
 
 ```shell
 pip3 uninstall piper_sdk
@@ -330,7 +336,7 @@ if __name__ == "__main__":
 
 - 需要先激活can设备，并且设置正确的波特率，才可以读取机械臂消息或者控制机械臂
 - C_PiperInterface 接口类在实例化时可传入激活的can路由名称，这个名称可以通过`ifconfig`得到
-- 有时执行can发送，终端反馈`Message NOT sent`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
+- 执行can发送，终端反馈`SendCanMessage(SEND_MESSAGE_FAILED (100017))`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
 - sdk的interface在创建实例后会检测是否激活自带的can模块，如果是其它can设备，可以将第二个形参设定为False，如：`piper = C_PiperInterface_V2("can0",False)`
 - **机械臂的mit协议控制单关节电机为高级功能,使用时需注意,此协议的使用不当会导致机械臂损坏！！！**
 

@@ -290,6 +290,14 @@ Query Piper robotic arm firmware version (CAN ID: 0x4AF)
 
 ### Get Methods
 
+#### GetCanName
+
+```python
+def GetCanName()
+```
+
+Get the can port name currently read by current interface.
+
 #### GetCurrentInterfaceVersion
 
 ```python

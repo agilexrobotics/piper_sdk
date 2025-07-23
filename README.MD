@@ -87,7 +87,13 @@ Three methods are provided, choose one.
 
 #### 1.5.1 Update from pypi repository
 
-Note: Uninstall the old version first
+You can use `--upgrade` to update
+
+```shell
+pip3 install --upgrade piper_sdk
+```
+
+You can uninstall the old version and then reinstall it. Note that the repository may not be synchronized. The default here is the official source
 
 ```shell
 pip3 uninstall piper_sdk
@@ -335,7 +341,7 @@ if __name__ == "__main__":
 
 - Ensure that CAN devices are activated and set to the correct baud rate before reading robot arm messages or controlling the robot arm.
 - The `C_PiperInterface` class can accept the activated CAN interface name during instantiation, which can be obtained from `ifconfig`.
-- If a message is not sent with the feedback "Message NOT sent," the CAN module might not be successfully connected. Check the connection and power cycle the robot arm before retrying.
+- If a message is not sent with the feedback `SendCanMessage(SEND_MESSAGE_FAILED (100017))` the CAN module might not be successfully connected. Check the connection and power cycle the robot arm before retrying.
 - The SDK's interface will check if the built-in CAN module is activated after creating the instance. For other CAN devices, set the second parameter to False, for example: `piper = C_PiperInterface_V2("can0", False)`.
 - **The MIT protocol for controlling individual joints is an advanced feature; misuse of this protocol can damage the robot arm!**
 
