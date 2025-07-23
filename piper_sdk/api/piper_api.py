@@ -238,9 +238,9 @@ class Piper():
         if self._interface.get_connect_status():
             tmp = self._interface.GetArmEndPoseMsgs()
             result = (
-                round(tmp.end_pose.X_axis / 1000, 6),
-                round(tmp.end_pose.Y_axis / 1000, 6),
-                round(tmp.end_pose.Z_axis / 1000, 6),
+                round(tmp.end_pose.X_axis / 1e6, 6),
+                round(tmp.end_pose.Y_axis / 1e6, 6),
+                round(tmp.end_pose.Z_axis / 1e6, 6),
                 round(math.radians(tmp.end_pose.RX_axis / 1000), 6),
                 round(math.radians(tmp.end_pose.RY_axis / 1000), 6),
                 round(math.radians(tmp.end_pose.RZ_axis / 1000), 6),
@@ -260,9 +260,9 @@ class Piper():
             )
             # quat = [round(q, 8) for q in quat]
             result = (
-                round(tmp.end_pose.X_axis / 1000, 6),
-                round(tmp.end_pose.Y_axis / 1000, 6),
-                round(tmp.end_pose.Z_axis / 1000, 6),
+                round(tmp.end_pose.X_axis / 1e6, 6),
+                round(tmp.end_pose.Y_axis / 1e6, 6),
+                round(tmp.end_pose.Z_axis / 1e6, 6),
                 quat[0],
                 quat[1],
                 quat[2],
