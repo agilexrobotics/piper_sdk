@@ -3,6 +3,83 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.4.2
+=============
+
+Features
+--------
+
+- Assign a new function to the parameter `can_auto_init` of `interface`. When this parameter is set to `False`, you need to execute the `CreateCanBus` function to initialize can before you can execute `ConnectPort`.
+- `interface` adds the following functions:
+  - `CreateCanBus`:
+
+    ```python
+    def CreateCanBus(self, 
+                    can_name:str, 
+                    bustype="socketcan", 
+                    expected_bitrate:int=1000000,
+                    judge_flag:bool=False)
+    '''
+    Create can related interfaces
+
+        Args:
+            can_name: The name of the CAN port.
+            bustype: The type of CAN bus, default is socket CAN.
+            expected_bitrate: The expected bitrate for the CAN bus.
+            judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
+    '''
+    ```
+  
+  - `GetMotorStates`
+
+    ```python
+    def GetMotorStates(self)
+    '''Get the robot arm motor status message.
+
+    This includes the following information:
+        Speed (rotation speed)
+        Current
+        Position
+    '''
+    ```
+
+  - `GetDriverStates`
+
+    ```python
+    def GetDriverStates(self)
+    '''Get the robot drive status message.
+
+    This includes the following information:
+        Voltage
+        Driver temperature
+        Motor temperature
+        Driver status
+        Bus current
+    '''
+    ```
+
+  - `ResetPiper`
+
+    ```python
+    def ResetPiper(self)
+    '''
+    Robotic Arm Reset.
+        
+    The robot will immediately lose power and fall down, clearing all errors and internal flags.
+
+    CAN ID:
+        0x150
+    '''
+    ```
+
+Bug fix
+---------
+None
+
+Miscellaneous
+---------
+None
+
 Version 0.4.1
 =============
 

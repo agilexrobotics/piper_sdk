@@ -3,6 +3,75 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.4.2
+=============
+
+特性
+--------
+
+- 为`interface`的形参`can_auto_init`赋予新功能，当该参数被设置为`False`时，需要先执行`CreateCanBus`函数初始化can，然后才能够执行`ConnectPort`
+- `interface`增加如下函数：
+  - `CreateCanBus`:
+
+    ```python
+    def CreateCanBus(self, 
+                    can_name:str, 
+                    bustype="socketcan", 
+                    expected_bitrate:int=1000000,
+                    judge_flag:bool=False)
+    '''
+    创建can有关的接口
+        
+        Args:
+            can_name: can的端口名称
+            bustype: can总线类型,默认为socket can
+            expected_bitrate: 预期can总线的波特率
+            judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
+    '''
+    ```
+  
+  - `GetMotorStates`
+
+    ```python
+    def GetMotorStates(self)
+    '''获取机械臂电机状态消息
+        
+    包括转速,电流,位置消息
+    '''
+    ```
+
+  - `GetDriverStates`
+
+    ```python
+    def GetDriverStates(self)
+    '''获取机械臂驱动器状态消息
+        
+    包括电压,驱动器温度,电机温度,驱动器状态,母线电流消息
+    '''
+    ```
+
+  - `ResetPiper`
+
+    ```python
+    def ResetPiper(self)
+    '''
+    机械臂重置
+
+    机械臂会立刻失电落下，清除所有错误和内部标志位
+    
+    CAN ID:
+        0x150
+    '''
+    ```
+
+Bug修复
+---------
+无
+
+其它
+---------
+无
+
 Version 0.4.1
 =============
 

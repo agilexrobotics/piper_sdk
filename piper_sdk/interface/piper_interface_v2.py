@@ -400,10 +400,13 @@ class C_PiperInterface_V2():
         self.__can_auto_init = can_auto_init
         # self.__reconnect_after_disconnection = reconnect_after_disconnection
         try:
-            self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
+            if(can_auto_init):
+                self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, True, self.ParseCANFrame)
+            else:
+                self.__arm_can=None
         except Exception as e:
             self.logger.error(e)
-            raise ConnectionError("['%s' ERROR]" % can_name)
+            raise ConnectionError("['%s' Interface __init__ ERROR]" % can_name)
             # self.logger.error("exit...")
             # exit()
         self.__dh_is_offset = dh_is_offset
@@ -523,6 +526,36 @@ class C_PiperInterface_V2():
     def get_connect_status(self):
         return self.__connected
 
+    def CreateCanBus(self, 
+                    can_name:str, 
+                    bustype="socketcan", 
+                    expected_bitrate:int=1000000,
+                    judge_flag:bool=False):
+        '''
+        创建can有关的接口
+        
+        Args:
+            can_name: can的端口名称
+            bustype: can总线类型,默认为socket can
+            expected_bitrate: 预期can总线的波特率
+            judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
+        '''
+        '''
+        Create can related interfaces
+
+        Args:
+            can_name: The name of the CAN port.
+            bustype: The type of CAN bus, default is socket CAN.
+            expected_bitrate: The expected bitrate for the CAN bus.
+            judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
+        '''
+        try:
+            self.__arm_can=C_STD_CAN(can_name, bustype, expected_bitrate, judge_flag, False, self.ParseCANFrame)
+            self.__arm_can.Init()
+        except Exception as e:
+            self.logger.error(e)
+            raise ConnectionError("['%s' CreateCanBus ERROR]" % can_name)
+
     def ConnectPort(self, 
                     can_init :bool = False, 
                     piper_init :bool = True, 
@@ -535,6 +568,11 @@ class C_PiperInterface_V2():
             piper_init(bool): Execute the robot arm initialization function
             start_thread(bool): Start the reading thread
         '''
+        # if(not self.__can_auto_init and self.__arm_can is None):
+        if(self.__arm_can is None):
+            raise ValueError("Interface 'can_auto_init' is False and '__arm_can' is None!! \n" \
+            "['%s' ConnectPort ERROR] When 'can_auto_init' is False, execute 'CreateCanBus' to initialize " \
+            "'__arm_can' first and then execute 'ConnectPort'" % self.__can_channel_name)
         if(can_init or not self.__connected):
             self.logger.info("[ConnectPort] Start Can Init")
             init_status = None
@@ -853,6 +891,20 @@ class C_PiperInterface_V2():
                                                                             self.__fps_counter.get_fps('ArmMotorDriverInfoHighSpd_6'))
             return self.__arm_motor_info_high_spd
     
+    def GetMotorStates(self):
+        '''获取机械臂电机状态消息
+        
+        包括转速,电流,位置消息
+        '''
+        '''Get the robot arm motor status message.
+
+        This includes the following information:
+            Speed (rotation speed)
+            Current
+            Position
+        '''
+        return self.GetArmHighSpdInfoMsgs()
+    
     def GetArmLowSpdInfoMsgs(self):
         '''获取机械臂低速反馈消息
         
@@ -876,6 +928,22 @@ class C_PiperInterface_V2():
                                                                             self.__fps_counter.get_fps('ArmMotorDriverInfoLowSpd_6'))
             return self.__arm_motor_info_low_spd
     
+    def GetDriverStates(self):
+        '''获取机械臂驱动器状态消息
+        
+        包括电压,驱动器温度,电机温度,驱动器状态,母线电流消息
+        '''
+        '''Get the robot drive status message.
+
+        This includes the following information:
+            Voltage
+            Driver temperature
+            Motor temperature
+            Driver status
+            Bus current
+        '''
+        return self.GetArmLowSpdInfoMsgs()
+
     def GetArmEnableStatus(self)->list:
         '''获取机械臂使能状态
         '''
@@ -1961,7 +2029,7 @@ class C_PiperInterface_V2():
             self.logger.error("0x150 send failed: SendCanMessage(%s)", feedback)
 
     def EmergencyStop(self, 
-                        emergency_stop: Literal[0x00, 0x01, 0x02] = 0):
+                        emergency_stop: Literal[0x00, 0x01, 0x02] = 0x01):
             '''
             机械臂紧急停止以及重置
             
@@ -1972,7 +2040,6 @@ class C_PiperInterface_V2():
                 emergency_stop: 快速急停 uint8 
                     0x00 无效
                     0x01 快速急停
-                    0x02 恢复
             '''
             '''
             Sends the robotic arm motion control command (0x150).
@@ -1981,9 +2048,27 @@ class C_PiperInterface_V2():
                 emergency_stop (int): The emergency stop command.
                     0x00: Invalid
                     0x01: Emergency stop
-                    0x02: Resume
             '''
             self.MotionCtrl_1(emergency_stop, 0x00, 0x00)
+    
+    def ResetPiper(self):
+        '''
+        机械臂重置
+
+        机械臂会立刻失电落下，清除所有错误和内部标志位
+        
+        CAN ID:
+            0x150
+        '''
+        '''
+        Robotic Arm Reset.
+        
+        The robot will immediately lose power and fall down, clearing all errors and internal flags.
+
+        CAN ID:
+            0x150
+        '''
+        self.MotionCtrl_1(0x02, 0x00, 0x00)
 
     def MotionCtrl_2(self, 
                      ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
