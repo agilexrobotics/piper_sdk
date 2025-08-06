@@ -28,7 +28,7 @@ class C_STD_CAN():
         bustype: can总线类型,默认为socket can
         expected_bitrate: 预期can总线的波特率
         judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
-        auto_init: 是否自动初始化can,也就是实例化can.interface.Bus
+        auto_init: 是否自动初始化can,也就是实例化can.ThreadSafeBus
         callback_function: ReadCanMessage中的回调函数,应传入函数
     '''
     '''
@@ -41,7 +41,7 @@ class C_STD_CAN():
         bustype: The type of CAN bus, default is socket CAN.
         expected_bitrate: The expected bitrate for the CAN bus.
         judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
-        auto_init: Whether to automatically initialize the CAN bus (i.e., instantiate can.interface.Bus).
+        auto_init: Whether to automatically initialize the CAN bus (i.e., instantiate can.ThreadSafeBus).
         callback_function: The callback function in ReadCanMessage, which should be passed as a function.
     '''
     class CAN_STATUS(IntEnum):
@@ -115,7 +115,7 @@ class C_STD_CAN():
             # return True
             return self.CAN_STATUS.INIT_CAN_BUS_IS_EXIST
         try:
-            self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)
+            self.bus = can.ThreadSafeBus(channel=self.channel_name, bustype=self.bustype)
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_SUCCESS
         except can.CanError as e:
             self.bus = None
