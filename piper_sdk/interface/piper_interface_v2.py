@@ -594,7 +594,7 @@ class C_PiperInterface_V2():
         def ReadCan():
             self.logger.info("[ReadCan] ReadCan Thread started")
             while not self.__read_can_stop_event.is_set():
-                self.__fps_counter.increment("CanMonitor")
+                # self.__fps_counter.increment("CanMonitor")
                 # if(self.__arm_can is None):
                 #     try:
                 #         self.logger.debug("[ReadCan] __arm_can create")
@@ -722,7 +722,7 @@ class C_PiperInterface_V2():
         msg = PiperMessage()
         receive_flag = self.__parser.DecodeMessage(rx_message, msg)
         if(receive_flag):
-            ## self.__fps_counter.increment("CanMonitor")
+            self.__fps_counter.increment("CanMonitor")
             self.__UpdateArmStatus(msg)
             self.__UpdateArmEndPoseState(msg)
             self.__UpdateArmJointState(msg)
@@ -1195,7 +1195,6 @@ class C_PiperInterface_V2():
             self.__arm_mode_ctrl.Hz = self.__fps_counter.get_fps("ArmModeCtrl")
             return self.__arm_mode_ctrl
 
-    
     def GetAllMotorMaxAccLimit(self):
         '''获取所有电机的最大加速度限制,(m1-m6)
         

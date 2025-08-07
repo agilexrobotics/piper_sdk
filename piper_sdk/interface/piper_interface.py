@@ -406,7 +406,7 @@ class C_PiperInterface():
                 self.__arm_can=None
         except Exception as e:
             self.logger.error(e)
-            raise ConnectionError("['%s' ERROR]" % can_name)
+            raise ConnectionError("['%s' Interface __init__ ERROR]" % can_name)
             # self.logger.error("exit...")
             # exit()
         self.__dh_is_offset = dh_is_offset
@@ -549,8 +549,12 @@ class C_PiperInterface():
             expected_bitrate: The expected bitrate for the CAN bus.
             judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
         '''
-        self.__arm_can=C_STD_CAN(can_name, bustype, expected_bitrate, judge_flag, False, self.ParseCANFrame)
-        return self.__arm_can.Init()
+        try:
+            self.__arm_can=C_STD_CAN(can_name, bustype, expected_bitrate, judge_flag, False, self.ParseCANFrame)
+            self.__arm_can.Init()
+        except Exception as e:
+            self.logger.error(e)
+            raise ConnectionError("['%s' CreateCanBus ERROR]" % can_name)
 
     def ConnectPort(self, 
                     can_init :bool = False, 
@@ -564,7 +568,8 @@ class C_PiperInterface():
             piper_init(bool): Execute the robot arm initialization function
             start_thread(bool): Start the reading thread
         '''
-        if(not self.__can_auto_init and self.__arm_can is None):
+        # if(not self.__can_auto_init and self.__arm_can is None):
+        if(self.__arm_can is None):
             raise ValueError("Interface 'can_auto_init' is False and '__arm_can' is None!! \n" \
             "['%s' ConnectPort ERROR] When 'can_auto_init' is False, execute 'CreateCanBus' to initialize " \
             "'__arm_can' first and then execute 'ConnectPort'" % self.__can_channel_name)
@@ -589,7 +594,7 @@ class C_PiperInterface():
         def ReadCan():
             self.logger.info("[ReadCan] ReadCan Thread started")
             while not self.__read_can_stop_event.is_set():
-                self.__fps_counter.increment("CanMonitor")
+                # self.__fps_counter.increment("CanMonitor")
                 # if(self.__arm_can is None):
                 #     try:
                 #         self.logger.debug("[ReadCan] __arm_can create")
@@ -717,7 +722,7 @@ class C_PiperInterface():
         msg = PiperMessage()
         receive_flag = self.__parser.DecodeMessage(rx_message, msg)
         if(receive_flag):
-            ## self.__fps_counter.increment("CanMonitor")
+            self.__fps_counter.increment("CanMonitor")
             self.__UpdateArmStatus(msg)
             self.__UpdateArmEndPoseState(msg)
             self.__UpdateArmJointState(msg)
@@ -1190,7 +1195,6 @@ class C_PiperInterface():
             self.__arm_mode_ctrl.Hz = self.__fps_counter.get_fps("ArmModeCtrl")
             return self.__arm_mode_ctrl
 
-    
     def GetAllMotorMaxAccLimit(self):
         '''获取所有电机的最大加速度限制,(m1-m6)
         
