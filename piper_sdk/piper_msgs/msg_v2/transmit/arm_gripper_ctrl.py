@@ -26,7 +26,7 @@ class ArmMsgGripperCtrl:
     
     位描述:
     
-        Byte 0 grippers_angle: int32, 单位 0.001°, 夹爪角度,以整数表示。
+        Byte 0 grippers_angle: int32, 单位 0.001mm, 夹爪行程,以整数表示。
         Byte 1
         Byte 2
         Byte 3
@@ -50,7 +50,7 @@ class ArmMsgGripperCtrl:
         0x159
 
     Args:
-        grippers_angle: Gripper stroke, represented as an integer, unit: 0.001°.
+        grippers_angle: Gripper Stroke, represented as an integer, unit: 0.001mm.
         grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000,corresponse 0-5N/m
         status_code: 
             0x00: Disable;
