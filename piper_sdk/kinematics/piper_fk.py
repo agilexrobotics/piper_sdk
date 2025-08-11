@@ -27,6 +27,7 @@ class C_PiperForwardKinematics():
     def __MatrixToeula(self, T):
         '''
         Convert a transformation matrix to Euler angles (roll, pitch, yaw).
+        
         T: 4x4 transformation matrix
         '''
         Pos = [0.0] * 6
@@ -54,11 +55,16 @@ class C_PiperForwardKinematics():
 
     def __MatMultiply(self, matrix1, matrix2, m, l, n):
         '''
-        Multiply two matrices
-        matrix1: first matrix
-        matrix2: second matrix
-        m: number of rows in matrix1
+        Multiply two matrices.
+
+        matrix1: first matrix.
+
+        matrix2: second matrix.
+
+        m: number of rows in matrix1.
+
         l: number of columns in matrix1 (rows in matrix2)
+
         n: number of columns in matrix2
         '''
         matrixOut = [0.0] * (m * n)
@@ -72,11 +78,15 @@ class C_PiperForwardKinematics():
     
     def __LinkTransformtion(self, alpha, a, theta, d):
         '''
-        Compute the transformation matrix for a single link using the Denavit-Hartenberg parameters
-        alpha: link twist
-        a: link length
-        theta: joint angle
-        d: link offset
+        Compute the transformation matrix for a single link using the Denavit-Hartenberg parameters.
+
+        alpha: link twist, unit radian.
+
+        a: link length, unit mm.
+
+        theta: joint pos, unit radian.
+
+        d: link offset, unit mm.
         '''
         # Precompute trigonometric functions for efficiency
         calpha = math.cos(alpha)
@@ -110,8 +120,15 @@ class C_PiperForwardKinematics():
     def CalFK(self, cur_j):
         '''
         Calculate Forward Kinematics for a given joint configuration
-        cur_j: list of joint angles
+
+        cur_j: list of joint pos, unit radian.
+        
         Returns the positions and Euler angles for each link
+
+            'xyz': unit mm; 
+            'rpy': unit radian.
+        
+        return: [x, y, z, r, p, y]
         '''
         # Initialize transformation matrices
         _Rt = [[0.0] * 16 for _ in range(6)]
