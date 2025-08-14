@@ -32,6 +32,7 @@ __all__ = [
     'ArmMsgFeedbackHighSpd',
     'ArmMsgFeedbackLowSpd',
     'ArmMsgFeedbackGripperTeachingPendantParam',
+    'ArmMsgFeedbackInstructionResponse',
     # 发送
     'ArmMsgMotionCtrl_1',
     'ArmMsgMotionCtrl_2',
@@ -44,7 +45,6 @@ __all__ = [
     'ArmMsgSearchMotorMaxAngleSpdAccLimit',
     'ArmMsgMotorAngleLimitMaxSpdSet',
     'ArmMsgJointConfig',
-    'ArmMsgInstructionResponseConfig',
     'ArmMsgParamEnquiryAndConfig',
     'ArmMsgEndVelAccParamConfig',
     'ArmMsgCrashProtectionRatingConfig',

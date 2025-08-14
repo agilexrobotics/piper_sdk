@@ -289,6 +289,12 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.arm_gripper_teaching_param_feedback.max_range_config = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
             # (基于V1.5-8版本后)
             msg.arm_gripper_teaching_param_feedback.teaching_friction = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+        # 设置指令应答, 0x476
+        elif(can_id == CanIDPiper.ARM_INSTRUCTION_RESPONSE_FEEDBACK.value):
+            msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_instruction_response_feedback.instruction_index = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_instruction_response_feedback.zero_config_success_flag = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
         else:
             ret = False
         return ret
@@ -386,10 +392,6 @@ class C_PiperParserV2(C_PiperParserBase):
                                 self.ConvertToList_16bit(msg.arm_joint_config.max_joint_acc,False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_config.clear_joint_err,False) + \
                                 [0, 0]
-        elif(msg_type_ == ArmMsgType.PiperMsgInstructionResponseConfig):
-            tx_can_frame.data = self.ConvertToList_8bit(msg.arm_set_instruction_response.instruction_index,False) + \
-                                self.ConvertToList_8bit(msg.arm_set_instruction_response.zero_config_success_flag,False) + \
-                                [0, 0, 0, 0, 0, 0]
         elif(msg_type_ == ArmMsgType.PiperMsgParamEnquiryAndConfig):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_enquiry,False) + \
                                 self.ConvertToList_8bit(msg.arm_param_enquiry_and_config.param_setting,False) + \

@@ -79,7 +79,6 @@ class ArmMessageMapping:
         CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_ANGLE_LIMIT_MAX_SPD.value: ArmMsgType.PiperMsgFeedbackCurrentMotorAngleLimitMaxSpd,
         CanIDPiper.ARM_MOTOR_ANGLE_LIMIT_MAX_SPD_SET.value: ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet,
         CanIDPiper.ARM_JOINT_CONFIG.value: ArmMsgType.PiperMsgJointConfig,
-        CanIDPiper.ARM_INSTRUCTION_RESPONSE_CONFIG.value: ArmMsgType.PiperMsgInstructionResponseConfig,
         CanIDPiper.ARM_PARAM_ENQUIRY_AND_CONFIG.value: ArmMsgType.PiperMsgParamEnquiryAndConfig,
         CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value: ArmMsgType.PiperMsgFeedbackCurrentEndVelAccParam,
         CanIDPiper.ARM_END_VEL_ACC_PARAM_CONFIG.value: ArmMsgType.PiperMsgEndVelAccParamConfig,
@@ -99,6 +98,7 @@ class ArmMessageMapping:
         CanIDPiper.ARM_LIGHT_CTRL.value: ArmMsgType.PiperMsgLightCtrl,
         CanIDPiper.ARM_CAN_UPDATE_SILENT_MODE_CONFIG.value: ArmMsgType.PiperMsgCanUpdateSilentModeConfig,
         CanIDPiper.ARM_FIRMWARE_READ.value: ArmMsgType.PiperMsgFirmwareRead,
+        CanIDPiper.ARM_INSTRUCTION_RESPONSE_FEEDBACK.value: ArmMsgType.PiperMsgInstructionResponse,
     }
 
     type_to_id_mapping = {v: k for k, v in id_to_type_mapping.items()}

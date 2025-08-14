@@ -2881,45 +2881,6 @@ class C_PiperInterface():
         '''
         self.JointConfig(motor_num, 0, 0xAE, max_joint_acc, 0)
     
-    def SetInstructionResponse(self, instruction_index: int, zero_config_success_flag: Literal[0, 1] = 0):
-        '''
-        设置指令应答
-        
-        CAN ID:
-            0x476
-        
-        Args:
-            instruction_index: 应答指令索引
-                取设置指令 id 最后一个字节
-                例如,应答 0x471 设置指令时此位填充0x71
-            zero_config_success_flag: 零点是否设置成功
-                零点成功设置-0x01
-                设置失败/未设置-0x00
-                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
-        '''
-        '''
-        Sets the response for the instruction.
-        
-        CAN ID: 0x476
-        
-        Args:
-            instruction_index (int): The response instruction index.
-                This is derived from the last byte of the set instruction ID.
-                For example, when responding to the 0x471 set instruction, this would be 0x71.
-            
-            zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
-                0x01: Zero point successfully set.
-                0x00: Zero point set failed/not set.
-                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
-        '''
-        tx_can = Message()
-        set_resp = ArmMsgInstructionResponseConfig(instruction_index, zero_config_success_flag)
-        msg = PiperMessage(type_=ArmMsgType.PiperMsgInstructionResponseConfig, arm_set_instruction_response=set_resp)
-        self.__parser.EncodeMessage(msg, tx_can)
-        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
-            self.logger.error("SetInstructionResponse send failed: SendCanMessage(%s)", feedback)
-    
     def ArmParamEnquiryAndConfig(self, 
                                  param_enquiry: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00, 
                                  param_setting: Literal[0x00, 0x01, 0x02] = 0x00, 

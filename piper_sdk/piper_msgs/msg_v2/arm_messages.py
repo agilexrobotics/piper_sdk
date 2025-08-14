@@ -45,6 +45,7 @@ class PiperMessage:
                  arm_high_spd_feedback:'ArmMsgFeedbackHighSpd'=None,
                  arm_low_spd_feedback:'ArmMsgFeedbackLowSpd'=None,
                  arm_gripper_teaching_param_feedback:'ArmMsgFeedbackGripperTeachingPendantParam'=None,
+                 arm_instruction_response_feedback:'ArmMsgFeedbackInstructionResponse'=None,
                 #  发送
                  arm_motion_ctrl_1: 'ArmMsgMotionCtrl_1'=None,
                  arm_motion_ctrl_2: 'ArmMsgMotionCtrl_2'=None,
@@ -58,7 +59,6 @@ class PiperMessage:
                  arm_search_motor_max_angle_spd_acc_limit:'ArmMsgSearchMotorMaxAngleSpdAccLimit'=None,
                  arm_motor_angle_limit_max_spd_set:'ArmMsgMotorAngleLimitMaxSpdSet'=None,
                  arm_joint_config:'ArmMsgJointConfig'=None,
-                 arm_set_instruction_response:'ArmMsgInstructionResponseConfig'=None,
                  arm_param_enquiry_and_config:'ArmMsgParamEnquiryAndConfig'=None,
                  arm_end_vel_acc_param_config:'ArmMsgEndVelAccParamConfig'=None,
                  arm_crash_protection_rating_config:'ArmMsgCrashProtectionRatingConfig'=None,
@@ -94,6 +94,9 @@ class PiperMessage:
         # 夹爪/示教器参数反馈指令
         self.arm_gripper_teaching_param_feedback = arm_gripper_teaching_param_feedback \
             if arm_gripper_teaching_param_feedback else ArmMsgFeedbackGripperTeachingPendantParam()
+        # 设置指令应答反馈
+        self.arm_instruction_response_feedback = arm_instruction_response_feedback \
+            if arm_instruction_response_feedback else ArmMsgFeedbackInstructionResponse()
         #-------------------------------发送-------------------------------------------
         self.arm_motion_ctrl_1 = arm_motion_ctrl_1 if arm_motion_ctrl_1 else ArmMsgMotionCtrl_1()
         self.arm_motion_ctrl_2 = arm_motion_ctrl_2 if arm_motion_ctrl_2 else ArmMsgMotionCtrl_2()
@@ -120,9 +123,6 @@ class PiperMessage:
         # 关节设置指令
         self.arm_joint_config = arm_joint_config \
             if arm_joint_config else ArmMsgJointConfig()
-        # 设置指令应答
-        self.arm_set_instruction_response = arm_set_instruction_response \
-            if arm_set_instruction_response else ArmMsgInstructionResponseConfig()
         # 机械臂参数查询与设置指令
         self.arm_param_enquiry_and_config = arm_param_enquiry_and_config \
             if arm_param_enquiry_and_config else ArmMsgParamEnquiryAndConfig()

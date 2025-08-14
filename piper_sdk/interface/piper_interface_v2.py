@@ -171,6 +171,20 @@ class C_PiperInterface_V2():
             return (f"time stamp:{self.time_stamp}\n"
                     f"current_motor_angle_limit_max_vel:{self.current_motor_angle_limit_max_vel}\n")
 
+    class InstructionResponse():
+        '''
+        设置指令应答
+        '''
+        '''
+        Sets the response for the instruction.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.instruction_response=ArmMsgFeedbackInstructionResponse()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.instruction_response}\n")
+
     class CurrentEndVelAndAccParam():
         '''
         当前末端速度/加速度参数
@@ -488,6 +502,9 @@ class C_PiperInterface_V2():
         self.__feedback_current_motor_angle_limit_max_vel_mtx = threading.Lock()
         self.__feedback_current_motor_angle_limit_max_vel = self.ArmMotorAngleLimitAndMaxVel()
 
+        self.__feedback_instruction_response_mtx = threading.Lock()
+        self.__feedback_instruction_response = self.InstructionResponse()
+
         self.__feedback_current_end_vel_acc_param_mtx = threading.Lock()
         self.__feedback_current_end_vel_acc_param = self.CurrentEndVelAndAccParam()
 
@@ -737,6 +754,7 @@ class C_PiperInterface_V2():
             self.__UpdateCurrentMotorMaxAccLimit(msg)
             self.__UpdateAllCurrentMotorAngleLimitMaxVel(msg)
             self.__UpdateAllCurrentMotorMaxAccLimit(msg)
+            self.__updateInstructionResponse(msg)
             # 更新主臂发送消息
             self.__UpdateArmJointCtrl(msg)
             self.__UpdateArmGripperCtrl(msg)
@@ -987,6 +1005,51 @@ class C_PiperInterface_V2():
         '''
         with self.__feedback_current_motor_angle_limit_max_vel_mtx:
             return self.__feedback_current_motor_angle_limit_max_vel
+
+    def GetInstructionResponse(self):
+        '''
+        设置指令应答
+        
+        CAN ID:
+            0x476
+        
+        Args:
+            instruction_index: 应答指令索引
+                取设置指令 id 最后一个字节
+                例如,应答 0x471 设置指令时此位填充0x71
+            zero_config_success_flag: 零点是否设置成功
+                零点成功设置-0x01
+                设置失败/未设置-0x00
+                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
+        '''
+        '''
+        Sets the response for the instruction.
+        
+        CAN ID: 0x476
+        
+        Args:
+            instruction_index (int): The response instruction index.
+                This is derived from the last byte of the set instruction ID.
+                For example, when responding to the 0x471 set instruction, this would be 0x71.
+            
+            zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
+                0x01: Zero point successfully set.
+                0x00: Zero point set failed/not set.
+                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
+        '''
+        with self.__feedback_instruction_response_mtx:
+            return self.__feedback_instruction_response
+        
+    def ClearInstructionResponse(self):
+        '''
+        清除SDK保存的设置指令应答信息
+        '''
+        '''
+        Clear saved SDK command responses.
+        '''
+        self.__feedback_instruction_response.time_stamp = 0
+        self.__feedback_instruction_response.instruction_response.instruction_index = 0
+        self.__feedback_instruction_response.instruction_response.zero_config_success_flag = 0
     
     def GetCurrentEndVelAndAccParam(self):
         '''获取末端速度/加速度参数
@@ -1955,6 +2018,18 @@ class C_PiperInterface_V2():
         with self.__piper_ctrl_fk_mtx:
             self.__link_ctrl_fk = self.__piper_fk.CalFK(joint_states)
     
+    def __updateInstructionResponse(self, msg:PiperMessage):
+        '''
+        '''
+        with self.__feedback_instruction_response_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgInstructionResponse):
+                self.__feedback_instruction_response.time_stamp = msg.time_stamp
+                self.__feedback_instruction_response.instruction_response.instruction_index = \
+                    msg.arm_instruction_response_feedback.instruction_index
+                self.__feedback_instruction_response.instruction_response.zero_config_success_flag = \
+                    msg.arm_instruction_response_feedback.zero_config_success_flag
+            return self.__feedback_instruction_response
+
     # 控制发送函数------------------------------------------------------------------------------------------------------
     def MotionCtrl_1(self, 
                     emergency_stop: Literal[0x00, 0x01, 0x02] = 0, 
@@ -2880,45 +2955,6 @@ class C_PiperInterface_V2():
             max_joint_acc: Maximum speed setting for joint motor, unit: 0.01 rad/s^2
         '''
         self.JointConfig(motor_num, 0, 0xAE, max_joint_acc, 0)
-    
-    def SetInstructionResponse(self, instruction_index: int, zero_config_success_flag: Literal[0, 1] = 0):
-        '''
-        设置指令应答
-        
-        CAN ID:
-            0x476
-        
-        Args:
-            instruction_index: 应答指令索引
-                取设置指令 id 最后一个字节
-                例如,应答 0x471 设置指令时此位填充0x71
-            zero_config_success_flag: 零点是否设置成功
-                零点成功设置-0x01
-                设置失败/未设置-0x00
-                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
-        '''
-        '''
-        Sets the response for the instruction.
-        
-        CAN ID: 0x476
-        
-        Args:
-            instruction_index (int): The response instruction index.
-                This is derived from the last byte of the set instruction ID.
-                For example, when responding to the 0x471 set instruction, this would be 0x71.
-            
-            zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
-                0x01: Zero point successfully set.
-                0x00: Zero point set failed/not set.
-                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
-        '''
-        tx_can = Message()
-        set_resp = ArmMsgInstructionResponseConfig(instruction_index, zero_config_success_flag)
-        msg = PiperMessage(type_=ArmMsgType.PiperMsgInstructionResponseConfig, arm_set_instruction_response=set_resp)
-        self.__parser.EncodeMessage(msg, tx_can)
-        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
-            self.logger.error("SetInstructionResponse send failed: SendCanMessage(%s)", feedback)
     
     def ArmParamEnquiryAndConfig(self, 
                                  param_enquiry: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00, 
