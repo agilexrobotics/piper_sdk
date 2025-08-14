@@ -37,8 +37,8 @@ if __name__ == "__main__":
         
         # 单电机设置
         elif mode == 0:
-            print("\nStep 2: 输入需要设置零点的电机序号(1~7): ")
-            print("Step 2: Enter motor number to set zero (1~7): ")
+            print("\nStep 2: 输入需要设置零点的电机序号(1~7), 7代表所有电机: ")
+            print("Step 2: Enter motor number to set zero (1~7), 7 represents all motors: ")
             motor_num = input("> ")
             if motor_num == 'q':
                 mode = -1
@@ -53,10 +53,7 @@ if __name__ == "__main__":
                 print("Tip: 请输入整数")
                 print("Tip: Please enter an integer")
                 continue
-            if motor_num == 7:
-                piper.GripperCtrl()
-            else:
-                piper.DisableArm(motor_num)
+            piper.DisableArm(motor_num)
             print(f"\nInfo: 第{motor_num}号电机失能成功，请手动纠正电机的零点位置")
             print(f"Info: Motor {motor_num} disabled successfully. Please manually adjust to zero position")
             
@@ -65,26 +62,22 @@ if __name__ == "__main__":
             if input("(按回车继续/Press Enter) ") == 'q':
                 mode = -1
                 continue
-            if motor_num == 7:
-                piper.GripperCtrl(set_zero=0xAE)
-                piper.GripperCtrl(0, 1000, 0x01)
-            else:
-                piper.JointConfig(motor_num, 0xAE)
-                piper.EnableArm(motor_num)
+            piper.JointConfig(motor_num, 0xAE)
+            piper.EnableArm(motor_num)
             print(f"\nInfo: 第{motor_num}号电机零点设置成功")
             print(f"Info: Motor {motor_num} zero position set successfully")
         
         # 顺序设置
         elif mode == 1:
-            print("\nStep 2: 输入从第几号电机开始设置(1~7): ")
-            print("Step 2: Enter starting motor number (1~7): ")
+            print("\nStep 2: 输入从第几号电机开始设置(1~6): ")
+            print("Step 2: Enter starting motor number (1~6): ")
             motor_num = input("> ")
             if motor_num == 'q':
                 mode = -1
                 continue
             try:
                 motor_num = int(motor_num)
-                if motor_num < 1 or motor_num > 7:
+                if motor_num < 1 or motor_num > 6:
                     print("Tip: 输入超出范围")
                     print("Tip: Input out of range")
                     continue
@@ -92,11 +85,8 @@ if __name__ == "__main__":
                 print("Tip: 请输入整数")
                 print("Tip: Please enter an integer")
                 continue
-            for i in range(motor_num, 8):
-                if i == 7:
-                    piper.GripperCtrl()
-                else:
-                    piper.DisableArm(i)
+            for i in range(motor_num, 7):
+                piper.DisableArm(i)
                 print(f"\nInfo: 第{i}号电机失能成功，请手动纠正电机的零点位置")
                 print(f"Info: Motor {i} disabled successfully. Please manually adjust to zero position")
                 
@@ -105,11 +95,7 @@ if __name__ == "__main__":
                 if input("(按回车继续/Press Enter) ") == 'q':
                     mode = -1
                     break
-                if i == 7:
-                    piper.GripperCtrl(set_zero=0xAE)
-                    piper.GripperCtrl(0, 1000, 0x01)
-                else:
-                    piper.JointConfig(i, 0xAE)
-                    piper.EnableArm(i)
+                piper.JointConfig(i, 0xAE)
+                piper.EnableArm(i)
                 print(f"\nInfo: 第{i}号电机零点设置成功")
                 print(f"Info: Motor {i} zero position set successfully")
