@@ -21,7 +21,6 @@ from .arm_motor_angle_limit_max_spd_config import ArmMsgMotorAngleLimitMaxSpdSet
 from .arm_motor_enable_disable import ArmMsgMotorEnableDisableConfig
 from .arm_param_enquiry_and_config import ArmMsgParamEnquiryAndConfig
 from .arm_search_motor_max_angle_spd_acc_limit import ArmMsgSearchMotorMaxAngleSpdAccLimit
-from .arm_set_instruction_response import ArmMsgInstructionResponseConfig
 
 __all__ = [
     # 发送
@@ -36,7 +35,6 @@ __all__ = [
     'ArmMsgSearchMotorMaxAngleSpdAccLimit',
     'ArmMsgMotorAngleLimitMaxSpdSet',
     'ArmMsgJointConfig',
-    'ArmMsgInstructionResponseConfig',
     'ArmMsgParamEnquiryAndConfig',
     'ArmMsgEndVelAccParamConfig',
     'ArmMsgCrashProtectionRatingConfig',

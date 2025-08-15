@@ -74,7 +74,6 @@ class ArmMsgType(Enum):
     PiperMsgFeedbackCurrentMotorAngleLimitMaxSpd=auto()
     PiperMsgMotorAngleLimitMaxSpdSet=auto()#电机角度限制/最大速度设置指令
     PiperMsgJointConfig=auto()
-    PiperMsgInstructionResponseConfig=auto()
     PiperMsgParamEnquiryAndConfig=auto()
     PiperMsgFeedbackCurrentEndVelAccParam=auto()
     PiperMsgEndVelAccParamConfig=auto()
@@ -94,6 +93,7 @@ class ArmMsgType(Enum):
     PiperMsgLightCtrl=auto()
     PiperMsgCanUpdateSilentModeConfig=auto()
     PiperMsgFirmwareRead=auto()
+    PiperMsgInstructionResponse=auto()
     def __str__(self):
         return f"{self.name} (0x{self.value:X})"
     def __repr__(self):

@@ -66,7 +66,7 @@ class CanIDPiper(Enum):
     ARM_FEEDBACK_CURRENT_MOTOR_ANGLE_LIMIT_MAX_SPD = 0x473 #反馈当前电机最大角度限制,最小角度限制,最大关节速度
     ARM_MOTOR_ANGLE_LIMIT_MAX_SPD_SET = 0x474      #电机角度限制/最大速度设置指令
     ARM_JOINT_CONFIG = 0x475            #关节设置指令
-    ARM_INSTRUCTION_RESPONSE_CONFIG=0x476#设置指令应答
+    ARM_INSTRUCTION_RESPONSE_FEEDBACK=0x476#设置指令应答
     ARM_PARAM_ENQUIRY_AND_CONFIG = 0x477#机械臂参数查询与设置指令
     ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM = 0x478    #反馈当前末端速度/加速度参数
     ARM_END_VEL_ACC_PARAM_CONFIG = 0x479      #末端速度/加速度参数设置指令
