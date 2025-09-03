@@ -17,7 +17,6 @@ if __name__ == "__main__":
     while( not piper.EnablePiper()):
         time.sleep(0.01)
     piper.ModeCtrl(0x01, 0x01, 30, 0x00)
-    piper.JointCtrl(0, 0, 0, 0, 0, 0)
     piper.GripperCtrl(0, 1000, 0x01, 0)
     mode = -1
     while True:
