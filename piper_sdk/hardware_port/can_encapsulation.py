@@ -77,7 +77,7 @@ class C_STD_CAN():
         if self.bus is not None:
             return
         try:
-            self.bus = can.ThreadSafeBus(channel=self.channel_name, bustype=self.bustype)
+            self.bus = can.ThreadSafeBus(channel=self.channel_name, interface=self.bustype)
             print(self.channel_name,"bus opened successfully.")
         except can.CanError as e:
             print(f"Failed to open CAN bus: {e}")
