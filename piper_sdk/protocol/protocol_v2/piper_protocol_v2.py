@@ -222,6 +222,12 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.arm_feedback_current_motor_angle_limit_max_spd.max_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,1,3))
             msg.arm_feedback_current_motor_angle_limit_max_spd.min_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,3,5))
             msg.arm_feedback_current_motor_angle_limit_max_spd.max_joint_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
+        # 设置指令应答，0x476
+        elif(can_id == CanIDPiper.ARM_FEEDBACK_RESP_SET_INSTRUCTION.value):
+            msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_resp_set_instruction.instruction_index = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_feedback_resp_set_instruction.is_set_zero_successfully = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.time_stamp = can_time_now

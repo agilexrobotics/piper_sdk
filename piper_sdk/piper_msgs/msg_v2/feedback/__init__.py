@@ -13,6 +13,7 @@ from .arm_feedback_joint_states import ArmMsgFeedBackJointStates
 from .arm_feedback_low_spd import ArmMsgFeedbackLowSpd
 from .arm_feedback_status import ArmMsgFeedbackStatus, ArmMsgFeedbackStatusEnum
 from .arm_feedback_gripper import ArmMsgFeedBackGripper
+from .arm_feedback_set_instruction_response import ArmMsgFeedbackRespSetInstruction
 
 __all__ = [
     # 反馈
@@ -32,4 +33,5 @@ __all__ = [
     'ArmMsgFeedbackHighSpd',
     'ArmMsgFeedbackLowSpd',
     'ArmMsgFeedbackGripperTeachingPendantParam',
+    'ArmMsgFeedbackRespSetInstruction'
 ]
