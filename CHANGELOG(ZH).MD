@@ -3,6 +3,32 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.4.3
+=============
+
+特性
+--------
+无
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- 🌈 style(arm_gripper_ctrl,arm_feedback_gripper): 将msg类中夹爪角度，修改为夹爪行程，单位改为mm而不是°
+- 🌈 style(kinematics/piper_fk.py): 为正解函数形参增加单位说明注释
+  - 增加C_PiperForwardKinematics.CalFk函数中有关形参单位注释以及return数据的单位注释
+- 🧪 test(demo/V2/piper_ctrl_reset.py): 去掉reset的demo中的模式设定
+- 🧪 test(demo/V2): 增加工具坐标系TCP偏移&设定电机零点demo
+  - demo/V2/piper_read_tcp_pose.py 用来计算piper官方夹爪的末端
+  - demo/V2/piper_set_joint_zero.py 用来设定piper机械臂的零点
+- 🦄 refactor(piper_msgs/msg_v2): 修改msg的init结构以及导入类的方式
+  - 在piper_msgs/msg_v2/feedback中init增加路径下所有类的导入，piper_msgs/msg_v2/transmit模块同理；
+  - 修改piper_msgs/msg_v2/init.py，令其从feedback和transmit子模块导入所需的类；
+  - 修改piper_msgs/msg_v2/arm_messages.py导入类的来源为feedback和transmit子模块
+
 Version 0.4.2
 =============
 
