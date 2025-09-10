@@ -12,6 +12,8 @@ if __name__ == "__main__":
     while( not piper.EnablePiper()):
         time.sleep(0.01)
     piper.GripperCtrl(0,1000,0x01, 0)
+    # 切换至MOVEC模式
+    piper.MotionCtrl_2(0x01, 0x03, 30, 0x00)
     # X:135.481
     piper.EndPoseCtrl(135481,9349,161129,178756,6035,-178440)
     piper.MoveCAxisUpdateCtrl(0x01)
