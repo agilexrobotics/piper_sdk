@@ -3,6 +3,24 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.4.2
+=============
+
+特性
+--------
+无
+
+Bug修复
+---------
+
+- 修补由于arm status由于某位可能会接收到预定义之外的数据导致程序报错推出，现增加了枚举的UNKNOWN(0xFF)属性，当接收到预期外的数据时，将变量赋值为UNKNOWN(0xFF)
+- 修复当单独链接can模块而没有链接臂时，GetCanFps获取的数据依旧有数值的bug
+- 修复`demo/V2/piper_ctrl_moveC.py`文件中解决回零后第一次moveC不了的问题
+
+其它
+---------
+无
+
 Version 0.4.1
 =============
 
