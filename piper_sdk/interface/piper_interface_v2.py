@@ -343,6 +343,20 @@ class C_PiperInterface_V2():
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.all_motor_angle_limit_max_spd}\n")
     
+    class ArmRespSetInstruction():
+        '''
+        设置指令应答
+        '''
+        '''
+        Sets the response for the instruction.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.instruction_response=ArmMsgFeedbackRespSetInstruction()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.instruction_response}\n")
+
     _instances = {}  # 存储不同参数的实例
     _lock = threading.Lock()
 
@@ -533,6 +547,10 @@ class C_PiperInterface_V2():
         
         self.__arm_all_motor_angle_limit_max_spd_mtx = threading.Lock()
         self.__arm_all_motor_angle_limit_max_spd = self.AllCurrentMotorAngleLimitMaxSpd()
+
+        self.__feedback_instruction_response_mtx = threading.Lock()
+        self.__feedback_instruction_response = self.ArmRespSetInstruction()
+
         self._initialized = True  # 标记已初始化
     
     @classmethod
@@ -553,7 +571,7 @@ class C_PiperInterface_V2():
         
         Args:
             can_name: can的端口名称
-            bustype: can总线类型,默认为socket can
+            bustype: can总线类型,默认为socketcan,如果是串口can模块需要改为slcan
             expected_bitrate: 预期can总线的波特率
             judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
         '''
@@ -562,7 +580,7 @@ class C_PiperInterface_V2():
 
         Args:
             can_name: The name of the CAN port.
-            bustype: The type of CAN bus, default is socket CAN.
+            bustype: CAN bus type, the default is socketcan, if it is a serial port CAN module, it needs to be changed to slcan.
             expected_bitrate: The expected bitrate for the CAN bus.
             judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
         '''
@@ -761,6 +779,7 @@ class C_PiperInterface_V2():
             self.__UpdateArmCtrlCode151(msg)
             self.__UpdateArmModeCtrl(msg)
             self.__UpdatePiperFirmware(msg)
+            self.__UpdateRespSetInstruction(msg)
             if self.__start_sdk_fk_cal:
                 self.__UpdatePiperFeedbackFK()
                 self.__UpdatePiperCtrlFK()
@@ -1314,6 +1333,40 @@ class C_PiperInterface_V2():
             firmware_version = self.__firmware_data[version_start:version_end].decode('utf-8', errors='ignore')
             return firmware_version  # 返回找到的固件版本字符串
     
+    def GetRespInstruction(self):
+        '''
+        设置指令应答反馈
+        
+        CAN ID:
+            0x476
+        
+        Args:
+            instruction_index: 应答指令索引
+                取设置指令 id 最后一个字节
+                例如,应答 0x471 设置指令时此位填充0x71
+            zero_config_success_flag: 零点是否设置成功
+                零点成功设置-0x01
+                设置失败/未设置-0x00
+                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
+        '''
+        '''
+        Sets the response for the instruction.
+        
+        CAN ID: 0x476
+        
+        Args:
+            instruction_index (int): The response instruction index.
+                This is derived from the last byte of the set instruction ID.
+                For example, when responding to the 0x471 set instruction, this would be 0x71.
+            
+            zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
+                0x01: Zero point successfully set.
+                0x00: Zero point set failed/not set.
+                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
+        '''
+        with self.__feedback_instruction_response_mtx:
+            return self.__feedback_instruction_response
+
     def isOk(self):
         '''
         反馈can数据读取线程是否正常
@@ -2018,18 +2071,17 @@ class C_PiperInterface_V2():
         with self.__piper_ctrl_fk_mtx:
             self.__link_ctrl_fk = self.__piper_fk.CalFK(joint_states)
     
-    def __updateInstructionResponse(self, msg:PiperMessage):
+    def __UpdateRespSetInstruction(self, msg:PiperMessage):
         '''
         '''
         with self.__feedback_instruction_response_mtx:
-            if(msg.type_ == ArmMsgType.PiperMsgInstructionResponse):
+            if(msg.type_ == ArmMsgType.PiperMsgFeedbackRespSetInstruction):
                 self.__feedback_instruction_response.time_stamp = msg.time_stamp
                 self.__feedback_instruction_response.instruction_response.instruction_index = \
-                    msg.arm_instruction_response_feedback.instruction_index
-                self.__feedback_instruction_response.instruction_response.zero_config_success_flag = \
-                    msg.arm_instruction_response_feedback.zero_config_success_flag
+                    msg.arm_feedback_resp_set_instruction.instruction_index
+                self.__feedback_instruction_response.instruction_response.is_set_zero_successfully = \
+                    msg.arm_feedback_resp_set_instruction.is_set_zero_successfully
             return self.__feedback_instruction_response
-
     # 控制发送函数------------------------------------------------------------------------------------------------------
     def MotionCtrl_1(self, 
                     emergency_stop: Literal[0x00, 0x01, 0x02] = 0, 
@@ -2956,6 +3008,15 @@ class C_PiperInterface_V2():
         '''
         self.JointConfig(motor_num, 0, 0xAE, max_joint_acc, 0)
     
+    def SetInstructionResponse(self, instruction_index: int=0, zero_config_success_flag: Literal[0, 1] = 0):
+        '''
+        该函数已被弃用(自0.4.2版本起)
+        '''
+        '''
+        This function has been deprecated (since version 0.4.2)
+        '''
+        self.logger.warning("The SetInstructionResponse function has been deprecated (since version 0.4.2)")
+    
     def ArmParamEnquiryAndConfig(self, 
                                  param_enquiry: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00, 
                                  param_setting: Literal[0x00, 0x01, 0x02] = 0x00, 
@@ -3326,6 +3387,21 @@ class C_PiperInterface_V2():
             # 主从臂一起回零
             tx_can.data = [0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def ClearRespSetInstruction(self):
+        '''
+        清除SDK保存的设置指令应答信息
+
+        将指令应答相关的参数设置为-1
+        '''
+        '''
+        Clear saved SDK command responses.
+
+        Set the command response related parameters to -1.
+        '''
+        self.__feedback_instruction_response.time_stamp = 0
+        self.__feedback_instruction_response.instruction_response.instruction_index = -1
+        self.__feedback_instruction_response.instruction_response.is_set_zero_successfully = -1
 #----------------------------------------------------------------------------------
     def GetSDKJointLimitParam(self,
                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):

@@ -74,6 +74,8 @@ class ArmMsgType(Enum):
     PiperMsgFeedbackCurrentMotorAngleLimitMaxSpd=auto()
     PiperMsgMotorAngleLimitMaxSpdSet=auto()#电机角度限制/最大速度设置指令
     PiperMsgJointConfig=auto()
+    PiperMsgInstructionResponseConfig=auto()
+    PiperMsgFeedbackRespSetInstruction=auto()
     PiperMsgParamEnquiryAndConfig=auto()
     PiperMsgFeedbackCurrentEndVelAccParam=auto()
     PiperMsgEndVelAccParamConfig=auto()

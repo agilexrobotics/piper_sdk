@@ -79,6 +79,8 @@ class ArmMessageMapping:
         CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_ANGLE_LIMIT_MAX_SPD.value: ArmMsgType.PiperMsgFeedbackCurrentMotorAngleLimitMaxSpd,
         CanIDPiper.ARM_MOTOR_ANGLE_LIMIT_MAX_SPD_SET.value: ArmMsgType.PiperMsgMotorAngleLimitMaxSpdSet,
         CanIDPiper.ARM_JOINT_CONFIG.value: ArmMsgType.PiperMsgJointConfig,
+        CanIDPiper.ARM_INSTRUCTION_RESPONSE_CONFIG.value: ArmMsgType.PiperMsgInstructionResponseConfig,
+        CanIDPiper.ARM_FEEDBACK_RESP_SET_INSTRUCTION.value: ArmMsgType.PiperMsgFeedbackRespSetInstruction,
         CanIDPiper.ARM_PARAM_ENQUIRY_AND_CONFIG.value: ArmMsgType.PiperMsgParamEnquiryAndConfig,
         CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value: ArmMsgType.PiperMsgFeedbackCurrentEndVelAccParam,
         CanIDPiper.ARM_END_VEL_ACC_PARAM_CONFIG.value: ArmMsgType.PiperMsgEndVelAccParamConfig,
