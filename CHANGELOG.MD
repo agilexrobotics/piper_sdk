@@ -3,6 +3,24 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.4.2
+=============
+
+Features
+--------
+None
+
+Bug Fixes
+---------
+
+- Fixed an issue where the program would fail due to an arm status bit potentially receiving unexpected data. We've added an enumeration attribute, UNKNOWN (0xFF). When unexpected data is received, the variable is assigned the value UNKNOWN (0xFF).
+- Fixed a bug where GetCanFps would still retrieve values ​​when the CAN module was connected alone without the arm.
+- Fixed an issue in `demo/V2/piper_ctrl_moveC.py` that prevented the first MoveC after returning to zero.
+
+Miscellaneous
+---------
+None
+
 Version 0.4.1
 =============
 
