@@ -15,8 +15,7 @@ if __name__ == "__main__":
     piper.EnableArm()
     while True:
         print("------------")
-        # print(piper.GetRespInstruction())
-        piper.SetInstructionResponse()
+        print(piper.GetRespInstruction())
         print("------------")
         if piper.GetRespInstruction().instruction_response.instruction_index == 0x71:
             # 捕获到设置指令0x471的应答时，等待3s后清除SDK保存的应答信息
