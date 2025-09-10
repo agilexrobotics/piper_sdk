@@ -403,7 +403,7 @@ class C_PiperInterface_V2():
             self.__arm_can=C_STD_CAN(can_name, "socketcan", 1000000, judge_flag, can_auto_init, self.ParseCANFrame)
         except Exception as e:
             self.logger.error(e)
-            raise ConnectionError("['%s' ERROR]" % can_name)
+            raise ConnectionError("['%s' Interface __init__ ERROR]" % can_name)
             # self.logger.error("exit...")
             # exit()
         self.__dh_is_offset = dh_is_offset
@@ -556,7 +556,7 @@ class C_PiperInterface_V2():
         def ReadCan():
             self.logger.info("[ReadCan] ReadCan Thread started")
             while not self.__read_can_stop_event.is_set():
-                self.__fps_counter.increment("CanMonitor")
+                # self.__fps_counter.increment("CanMonitor")
                 # if(self.__arm_can is None):
                 #     try:
                 #         self.logger.debug("[ReadCan] __arm_can create")
@@ -684,7 +684,7 @@ class C_PiperInterface_V2():
         msg = PiperMessage()
         receive_flag = self.__parser.DecodeMessage(rx_message, msg)
         if(receive_flag):
-            ## self.__fps_counter.increment("CanMonitor")
+            self.__fps_counter.increment("CanMonitor")
             self.__UpdateArmStatus(msg)
             self.__UpdateArmEndPoseState(msg)
             self.__UpdateArmJointState(msg)
