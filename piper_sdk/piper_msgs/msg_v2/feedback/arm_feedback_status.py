@@ -16,7 +16,10 @@ class _EnumBase(IntEnum):
         try:
             return cls(val)
         except ValueError:
-            raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}")
+            if hasattr(cls, "UNKNOWN"):
+                return cls.UNKNOWN
+            else:
+                raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}, and no UNKNOWN defined")
 
 class ArmMsgFeedbackStatusEnum:
     @unique
@@ -29,6 +32,7 @@ class ArmMsgFeedbackStatusEnum:
         REMOTE_CONTROL_MODE = 0x05
         LINKAGE_TEACHING_INPUT_MODE = 0x06
         OFFLINE_TRAJECTORY_MODE = 0x07
+        UNKNOWN = 0xFF
     @unique
     class ArmStatus(_EnumBase):
         NORMAL = 0x00
@@ -47,6 +51,7 @@ class ArmMsgFeedbackStatusEnum:
         TEACHING_PAUSE = 0x0D
         MAIN_CONTROLLER_NTC_OVER_TEMPERATURE = 0x0E
         RELEASE_RESISTOR_NTC_OVER_TEMPERATURE = 0x0F
+        UNKNOWN = 0xFF
     @unique
     class ModeFeed(_EnumBase):
         MOVE_P = 0x00
@@ -55,6 +60,7 @@ class ArmMsgFeedbackStatusEnum:
         MOVE_C = 0x03
         MOVE_M = 0x04
         MOVE_CPV = 0x05
+        UNKNOWN = 0xFF
     @unique
     class TeachingState(_EnumBase):
         DISABLED = 0x00               # 关闭
@@ -65,10 +71,12 @@ class ArmMsgFeedbackStatusEnum:
         RESUME_EXECUTION = 0x05       # 继续执行（轨迹复现继续）
         TERMINATE_EXECUTION = 0x06    # 终止执行
         MOVE_TO_START = 0x07          # 运动到轨迹起点
+        UNKNOWN = 0xFF
     @unique
     class MotionStatus(_EnumBase):
         REACH_TARGET_POS_SUCCESSFULLY = 0x00
         REACH_TARGET_POS_FAILED = 0x01
+        UNKNOWN = 0xFF
 
 class ArmMsgFeedbackStatus:
     '''
