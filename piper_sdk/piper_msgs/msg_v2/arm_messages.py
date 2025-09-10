@@ -11,41 +11,11 @@ from typing import (
     Optional,
 )
 from .arm_msg_type import ArmMsgType
-from .feedback.arm_feedback_end_pose import ArmMsgFeedBackEndPose
-from .feedback.arm_feedback_joint_states import ArmMsgFeedBackJointStates
-from .feedback.arm_feedback_status import ArmMsgFeedbackStatus
-from .feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
-from .feedback.arm_feedback_current_end_vel_acc_param import ArmMsgFeedbackCurrentEndVelAccParam
-from .feedback.arm_feedback_current_motor_angle_limit_max_spd import ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd, ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
-from .feedback.arm_feedback_current_motor_max_acc_limit import ArmMsgFeedbackCurrentMotorMaxAccLimit, ArmMsgFeedbackAllCurrentMotorMaxAccLimit
-from .feedback.arm_feedback_joint_vel_acc import ArmMsgFeedbackJointVelAcc, ArmMsgFeedbackAllJointVelAcc
-from .feedback.arm_feedback_high_spd import ArmMsgFeedbackHighSpd
-from .feedback.arm_feedback_low_spd import ArmMsgFeedbackLowSpd
-#----------------------------------基于V1.5-2版本后---------------------------------------------#
-from .feedback.arm_feedback_gripper_teaching_param import ArmMsgFeedbackGripperTeachingPendantParam
-#---------------------------------------------------------------------------------------------#
+# 导入 feedback 子模块的类
+from .feedback import *
+# 导入 transmit 子模块的类
+from .transmit import *
 
-from .transmit.arm_motion_ctrl_1 import ArmMsgMotionCtrl_1
-from .transmit.arm_motion_ctrl_2 import ArmMsgMotionCtrl_2
-from .transmit.arm_motion_ctrl_cartesian import ArmMsgMotionCtrlCartesian
-from .transmit.arm_joint_ctrl import ArmMsgJointCtrl
-from .transmit.arm_circular_pattern import ArmMsgCircularPatternCoordNumUpdateCtrl
-from .transmit.arm_gripper_ctrl import ArmMsgGripperCtrl
-from .transmit.arm_master_slave_config import ArmMsgMasterSlaveModeConfig
-from .transmit.arm_motor_enable_disable import ArmMsgMotorEnableDisableConfig
-from .transmit.arm_search_motor_max_angle_spd_acc_limit import ArmMsgSearchMotorMaxAngleSpdAccLimit
-from .transmit.arm_motor_angle_limit_max_spd_config import ArmMsgMotorAngleLimitMaxSpdSet
-from .transmit.arm_joint_config import ArmMsgJointConfig
-from .transmit.arm_set_instruction_response import ArmMsgInstructionResponseConfig
-from .transmit.arm_param_enquiry_and_config import ArmMsgParamEnquiryAndConfig
-from .transmit.arm_end_vel_acc_param_config import ArmMsgEndVelAccParamConfig
-from .transmit.arm_crash_protection_rating_config import ArmMsgCrashProtectionRatingConfig
-from .feedback.arm_feedback_crash_protection_rating import ArmMsgFeedbackCrashProtectionRating
-#----------------------------------基于V1.5-2版本后---------------------------------------------#
-from .transmit.arm_joint_mit_ctrl import ArmMsgJointMitCtrl
-from .transmit.arm_joint_mit_ctrl import ArmMsgAllJointMitCtrl
-from .transmit.arm_gripper_teaching_param_config import ArmMsgGripperTeachingPendantParamConfig
-#---------------------------------------------------------------------------------------------#
 class PiperMessage:
     '''
     msg_v2
@@ -59,40 +29,40 @@ class PiperMessage:
     '''
     def __init__(self, 
                 #  反馈
-                 type_: 'ArmMsgType' = None,
+                 type_: ArmMsgType = None,
                  time_stamp: float = 0.0,
-                 arm_status_msgs: 'ArmMsgFeedbackStatus' = None,
-                 arm_joint_feedback: 'ArmMsgFeedBackJointStates' = None,
-                 gripper_feedback: 'ArmMsgFeedBackGripper' = None,
-                 arm_end_pose: 'ArmMsgFeedBackEndPose'=None,
-                 arm_feedback_current_motor_angle_limit_max_spd:'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd'=None,
-                 arm_feedback_current_end_vel_acc_param:'ArmMsgFeedbackCurrentEndVelAccParam'=None,
-                 arm_feedback_current_motor_max_acc_limit:'ArmMsgFeedbackCurrentMotorMaxAccLimit'=None,
-                 arm_crash_protection_rating_feedback:'ArmMsgFeedbackCrashProtectionRating'=None,
-                 #  arm_feedback_joint_vel_acc:'ArmMsgFeedbackJointVelAcc'=None
-                #  arm_feedback_all_current_motor_angle_limit_max_spd:'ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd'=None,
-                #  arm_feedback_all_motor_max_acc_limit:'ArmMsgFeedbackAllCurrentMotorMaxAccLimit'=None,
-                 arm_high_spd_feedback:'ArmMsgFeedbackHighSpd'=None,
-                 arm_low_spd_feedback:'ArmMsgFeedbackLowSpd'=None,
-                 arm_gripper_teaching_param_feedback:'ArmMsgFeedbackGripperTeachingPendantParam'=None,
+                 arm_status_msgs: ArmMsgFeedbackStatus = None,
+                 arm_joint_feedback: ArmMsgFeedBackJointStates = None,
+                 gripper_feedback: ArmMsgFeedBackGripper = None,
+                 arm_end_pose: ArmMsgFeedBackEndPose=None,
+                 arm_feedback_current_motor_angle_limit_max_spd:ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd=None,
+                 arm_feedback_current_end_vel_acc_param:ArmMsgFeedbackCurrentEndVelAccParam=None,
+                 arm_feedback_current_motor_max_acc_limit:ArmMsgFeedbackCurrentMotorMaxAccLimit=None,
+                 arm_crash_protection_rating_feedback:ArmMsgFeedbackCrashProtectionRating=None,
+                 # arm_feedback_joint_vel_acc:ArmMsgFeedbackJointVelAcc=None
+                 # arm_feedback_all_current_motor_angle_limit_max_spd:ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd=None,
+                 # arm_feedback_all_motor_max_acc_limit:ArmMsgFeedbackAllCurrentMotorMaxAccLimit=None,
+                 arm_high_spd_feedback:ArmMsgFeedbackHighSpd=None,
+                 arm_low_spd_feedback:ArmMsgFeedbackLowSpd=None,
+                 arm_gripper_teaching_param_feedback:ArmMsgFeedbackGripperTeachingPendantParam=None,
                 #  发送
-                 arm_motion_ctrl_1: 'ArmMsgMotionCtrl_1'=None,
-                 arm_motion_ctrl_2: 'ArmMsgMotionCtrl_2'=None,
-                 arm_motion_ctrl_cartesian: 'ArmMsgMotionCtrlCartesian'=None,
-                 arm_joint_ctrl: 'ArmMsgJointCtrl'=None,
-                 arm_circular_ctrl: 'ArmMsgCircularPatternCoordNumUpdateCtrl'=None,
-                 arm_gripper_ctrl: 'ArmMsgGripperCtrl'=None,
-                 arm_joint_mit_ctrl: 'ArmMsgJointMitCtrl'=None,
-                 arm_ms_config: 'ArmMsgMasterSlaveModeConfig'=None,
-                 arm_motor_enable: 'ArmMsgMotorEnableDisableConfig'=None,
-                 arm_search_motor_max_angle_spd_acc_limit:'ArmMsgSearchMotorMaxAngleSpdAccLimit'=None,
-                 arm_motor_angle_limit_max_spd_set:'ArmMsgMotorAngleLimitMaxSpdSet'=None,
-                 arm_joint_config:'ArmMsgJointConfig'=None,
-                 arm_set_instruction_response:'ArmMsgInstructionResponseConfig'=None,
-                 arm_param_enquiry_and_config:'ArmMsgParamEnquiryAndConfig'=None,
-                 arm_end_vel_acc_param_config:'ArmMsgEndVelAccParamConfig'=None,
-                 arm_crash_protection_rating_config:'ArmMsgCrashProtectionRatingConfig'=None,
-                 arm_gripper_teaching_param_config:'ArmMsgGripperTeachingPendantParamConfig'=None
+                 arm_motion_ctrl_1: ArmMsgMotionCtrl_1=None,
+                 arm_motion_ctrl_2: ArmMsgMotionCtrl_2=None,
+                 arm_motion_ctrl_cartesian: ArmMsgMotionCtrlCartesian=None,
+                 arm_joint_ctrl: ArmMsgJointCtrl=None,
+                 arm_circular_ctrl: ArmMsgCircularPatternCoordNumUpdateCtrl=None,
+                 arm_gripper_ctrl: ArmMsgGripperCtrl=None,
+                 arm_joint_mit_ctrl: ArmMsgJointMitCtrl=None,
+                 arm_ms_config: ArmMsgMasterSlaveModeConfig=None,
+                 arm_motor_enable: ArmMsgMotorEnableDisableConfig=None,
+                 arm_search_motor_max_angle_spd_acc_limit:ArmMsgSearchMotorMaxAngleSpdAccLimit=None,
+                 arm_motor_angle_limit_max_spd_set:ArmMsgMotorAngleLimitMaxSpdSet=None,
+                 arm_joint_config:ArmMsgJointConfig=None,
+                 arm_set_instruction_response:ArmMsgInstructionResponseConfig=None,
+                 arm_param_enquiry_and_config:ArmMsgParamEnquiryAndConfig=None,
+                 arm_end_vel_acc_param_config:ArmMsgEndVelAccParamConfig=None,
+                 arm_crash_protection_rating_config:ArmMsgCrashProtectionRatingConfig=None,
+                 arm_gripper_teaching_param_config:ArmMsgGripperTeachingPendantParamConfig=None
                  ):
         #-------------------------------反馈-------------------------------------------
         # 初始化数据帧类型
