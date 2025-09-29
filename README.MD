@@ -321,6 +321,18 @@ if __name__ == "__main__":
         time.sleep(0.005)# 200hz
 ```
 
+Note that reading joint feedback requires the robot to be in slave mode. If it is in master mode, the robot will not respond.
+
+You can use the following code to switch to slave mode.
+
+```python
+from piper_sdk import *
+if __name__ == "__main__":
+    piper = C_PiperInterface()
+    piper.ConnectPort()
+    piper.MasterSlaveConfig(0xFC, 0, 0, 0)
+```
+
 Read the robot firmware version
 
 ```python
