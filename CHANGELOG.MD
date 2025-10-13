@@ -3,6 +3,35 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.4.3
+=============
+
+Features
+--------
+None
+
+Bug Fixes
+---------
+None
+
+Miscellaneous
+---------
+
+- 🌈 style(arm_gripper_ctrl, arm_feedback_gripper): Modifies the gripper angle in the msg class to gripper travel, and changes the unit to mm instead of degrees.
+- 🌈 style(kinematics/piper_fk.py): Adds unit annotations to the parameters of the forward function.
+  - Adds unit annotations to the parameters and return data in the C_PiperForwardKinematics.CalFk function.
+- 🧪 test(demo/V2/piper_ctrl_reset.py): Removes the mode setting in the reset demo.
+- 🧪 test(demo/V2): Adds a tool coordinate system TCP offset and motor zero point setting demo.
+  - demo/V2/piper_read_tcp_pose.py calculates the end point of the official Piper gripper.
+  - demo/V2/piper_set_joint_zero.py sets the zero point of the Piper arm.
+- 🦄 Refactor (piper_msgs/msg_v2): Modify the msg init structure and class import method.
+  - In piper_msgs/msg_v2/feedback, add an import path for all classes in the init module. Similarly, in piper_msgs/msg_v2/transmit.
+  - Modify piper_msgs/msg_v2/init.py to import required classes from the feedback and transmit submodules.
+  - Modify piper_msgs/msg_v2/arm_messages.py to import classes from the feedback and transmit submodules.
+- 📃 docs(readme): Added switching slave ARM example code to the readme;增加Jetson相关问题解决到Q&A中 
+- 📃 docs(Q&A): Added Jetson related problem solving to Q&A
+- 📃 docs(interface): Optimizing function annotations
+
 Version 0.4.2
 =============
 

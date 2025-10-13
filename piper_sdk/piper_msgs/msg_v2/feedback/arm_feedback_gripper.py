@@ -11,7 +11,7 @@ class ArmMsgFeedBackGripper:
         0x2A8
     
     Args:
-        grippers_angle: 夹爪角度，以整数表示。
+        grippers_angle: 夹爪行程，以整数表示。
         grippers_effort: 夹爪扭矩，以整数表示。
         status_code: 夹爪状态码，以整数表示。
     
@@ -43,7 +43,7 @@ class ArmMsgFeedBackGripper:
         0x2A8
     
     Args:
-        grippers_angle: The angle of the gripper, represented as an integer.
+        grippers_angle: The stroke of the gripper, represented as an integer.
         grippers_effort: The torque of the gripper, represented as an integer.
         status_code: The status code of the gripper, represented as an integer.
     

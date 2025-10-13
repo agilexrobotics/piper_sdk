@@ -316,12 +316,23 @@ if __name__ == "__main__":
         time.sleep(0.005)# 200hz
 ```
 
+注意，读取关节反馈需要机械臂处在从臂模式下，如果为主臂模式，机械臂是不会反馈该消息的
+
+您可以使用以下代码切换到从臂
+
+```python
+from piper_sdk import *
+if __name__ == "__main__":
+    piper = C_PiperInterface()
+    piper.ConnectPort()
+    piper.MasterSlaveConfig(0xFC, 0, 0, 0)
+```
+
 读取机械臂固件版本
 
 ```python
 import time
 from piper_sdk import *
-
 if __name__ == "__main__":
     piper = C_PiperInterface("can0")
     piper.ConnectPort()
