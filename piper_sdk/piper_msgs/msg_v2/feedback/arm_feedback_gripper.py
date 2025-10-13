@@ -43,7 +43,7 @@ class ArmMsgFeedBackGripper:
         0x2A8
     
     Args:
-        grippers_angle: The angle of the gripper, represented as an integer.
+        grippers_angle: The stroke of the gripper, represented as an integer.
         grippers_effort: The torque of the gripper, represented as an integer.
         status_code: The status code of the gripper, represented as an integer.
     

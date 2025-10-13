@@ -63,7 +63,7 @@ class ArmMsgGripperCtrl:
 
     Bit Description:
 
-        Byte 0-3 grippers_angle: int32, unit: 0.001°, represents the gripper angle.
+        Byte 0-3 grippers_angle: int32, unit: 0.001°, represents the gripper stroke.
         Byte 4-5 grippers_effort: uint16, unit: 0.001N·m, represents the gripper torque.
         Byte 6 status_code: uint8, gripper status code for enable/disable/clear error.
             0x00: Disable;

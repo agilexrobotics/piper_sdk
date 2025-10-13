@@ -517,10 +517,19 @@ class C_PiperInterface_V2():
     
     @classmethod
     def get_instance(cls, can_name="can0", judge_flag=True, can_auto_init=True):
-        """获取实例，简化调用"""
+        '''Get a class instance object
+
+        Returns:
+            cls: The instance object of the current class
+        '''
         return cls(can_name, judge_flag, can_auto_init)
     
     def get_connect_status(self):
+        '''Get connect status
+
+        Returns:
+            bool: The return value. True for success, False otherwise.
+        '''
         return self.__connected
 
     def ConnectPort(self, 
@@ -625,7 +634,10 @@ class C_PiperInterface_V2():
     
     def DisconnectPort(self, thread_timeout=0.1):
         '''
-        断开端口但不阻塞主线程
+        Disconnect the port without blocking the main thread
+        
+        Args:
+            thread_timeout(float): Same as threading.Thread.join(timeout=thread_timeout)
         '''
         with self.__lock:
             if not self.__connected:
@@ -660,14 +672,33 @@ class C_PiperInterface_V2():
         self.SearchPiperFirmwareVersion()
 
     def EnableFkCal(self):
+        '''
+        Enable fk calculation
+
+        Returns
+        -------
+            bool: The state of the fk cal flag
+        '''
         self.__start_sdk_fk_cal = True
         return self.__start_sdk_fk_cal
 
     def DisableFkCal(self):
+        '''
+        Disable fk calculation
+
+        Returns
+        -------
+            bool: The state of the fk cal flag
+        '''
         self.__start_sdk_fk_cal = False
         return self.__start_sdk_fk_cal
     
     def isCalFk(self):
+        '''
+        Returns
+        -------
+            bool: The state of the fk cal flag
+        '''
         return self.__start_sdk_fk_cal
 
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
@@ -724,53 +755,133 @@ class C_PiperInterface_V2():
         return time.time_ns() / 1e9
     
     def GetCanName(self):
+        '''
+        Returns
+        -------
+        can_name : str
+            The CAN port name read in the current class
+        '''
         return self.__can_channel_name
 
     def GetCurrentInterfaceVersion(self):
+        '''
+        Returns
+        -------
+            current interface version
+        '''
         return InterfaceVersion.INTERFACE_V2
     
     def GetCurrentSDKVersion(self):
         '''
-        return piper_sdk current version
+        Returns
+        -------
+            piper_sdk current version
         '''
         return PiperSDKVersion.PIPER_SDK_CURRENT_VERSION
     
     def GetCurrentProtocolVersion(self):
         '''
-        return piper_sdk current prptocol version
+        Returns
+        -------
+            return piper_sdk current prptocol version
         '''
         return self.__parser.GetParserProtocolVersion()
     
     def GetCanFps(self):
         '''
-        获取机械臂can模块帧率
-        '''
-        '''
         Get the frame rate of the robotic arm CAN module
+
+        Returns
+        -------
+            float
         '''
         return self.__fps_counter.get_fps("CanMonitor")
     
     def GetArmStatus(self):
-        '''获取机械臂状态,0x2A1,详见 ArmMsgFeedbackStatus
         '''
-        '''Retrieves the current status of the robotic arm.
-        For detailed information, refer to the `ArmMsgFeedbackStatus` class.
+        Retrieves the current status of the robotic arm.
+
+        CAN ID:
+            0x2A1
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        arm_status : ArmMsgFeedbackStatus
+            机械臂状态
+
+            - ctrl_mode (int): 控制模式
+                * 0x00 待机模式
+                * 0x01 CAN指令控制模式
+                * 0x02 示教模式
+            - arm_status (int): 机械臂状态
+                * 0x00 正常
+                * 0x01 急停
+                * 0x02 无解
+                * 0x03 奇异点
+                * 0x04 目标角度超过限
+                * 0x05 关节通信异常
+                * 0x06 关节抱闸未打开
+                * 0x07 机械臂发生碰撞
+                * 0x08 拖动示教时超速
+                * 0x09 关节状态异常
+                * 0x0A 其它异常
+                * 0x0B 示教记录
+                * 0x0C 示教执行
+                * 0x0D 示教暂停
+                * 0x0E 主控NTC过温
+                * 0x0F 释放电阻NTC过温
+            - mode_feed (int): 模式反馈
+                * 0x00 MOVE P
+                * 0x01 MOVE J
+                * 0x02 MOVE L
+                * 0x03 MOVE C
+                * 0x04 MOVE M ---基于V1.5-2版本后
+                * 0x05 MOVE_CPV ---基于V1.6.5版本后
+            - teach_status (int): 示教状态
+            - motion_status (int): 运动状态
+                * 0x00 到达指定点位
+                * 0x01 未到达指定点位
+            - trajectory_num (int): 当前运行轨迹点序号
+            - err_status (int): 故障状态
+            {
+                * joint_1_angle_limit (bool): 1号关节角度是否超限位, True为超限
+                * joint_2_angle_limit (bool): 2号关节角度是否超限位, True为超限
+                * joint_3_angle_limit (bool): 3号关节角度是否超限位, True为超限
+                * joint_4_angle_limit (bool): 4号关节角度是否超限位, True为超限
+                * joint_5_angle_limit (bool): 5号关节角度是否超限位, True为超限
+                * joint_6_angle_limit (bool): 6号关节角度是否超限位, True为超限
+                * communication_status_joint_1 (bool): 1号关节通信是否异常, True为通信异常
+                * communication_status_joint_2 (bool): 2号关节通信是否异常, True为通信异常
+                * communication_status_joint_3 (bool): 3号关节通信是否异常, True为通信异常
+                * communication_status_joint_4 (bool): 4号关节通信是否异常, True为通信异常
+                * communication_status_joint_5 (bool): 5号关节通信是否异常, True为通信异常
+                * communication_status_joint_6 (bool): 6号关节通信是否异常, True为通信异常
+            }
         '''
         with self.__arm_status_mtx:
             self.__arm_status.Hz = self.__fps_counter.get_fps("ArmStatus")
             return self.__arm_status
 
     def GetArmEndPoseMsgs(self):
-        '''获取机械臂末端位姿消息，欧拉角表示
-        
-        X,Y,Z单位0.001mm
-        RX,RY,RZ单位0.001度
         '''
-        '''Retrieves the end effector pose message of the robotic arm. Euler angle representation.
+        Retrieves the end effector pose message of the robotic arm. Euler angle representation.
 
-        This includes the following information:
-            X, Y, Z position (in 0.001 mm)
-            RX, RY, RZ orientation (in 0.001 degrees)
+        Returns
+        -------
+        time_stamp : float
+        Hz : float
+        end_pose : ArmMsgFeedBackEndPose
+
+            - X_axis (int): X position, (in 0.001 mm)
+            - Y_axis (int): Y position, (in 0.001 mm)
+            - Z_axis (int): Z position, (in 0.001 mm)
+            - RX_axis (int): RX orientation, (in 0.001 degrees)
+            - RY_axis (int): RY orientation, (in 0.001 degrees)
+            - RZ_axis (int): RZ orientation, (in 0.001 degrees)
         '''
         with self.__arm_end_pose_mtx:
             self.__arm_end_pose.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_fps('ArmEndPose_XY'),
@@ -779,9 +890,21 @@ class C_PiperInterface_V2():
             return self.__arm_end_pose
 
     def GetArmJointMsgs(self):
-        '''获取机械臂关节消息,单位0.001度
         '''
-        '''Retrieves the joint status message of the robotic arm.(in 0.001 degrees)
+        Retrieves the joint status message of the robotic arm.(in 0.001 degrees)
+
+        Returns
+        -------
+        time_stamp : float
+        Hz : float
+        joint_state : ArmMsgFeedBackJointStates
+
+            - joint_1 (int): Feedback angle of joint 1, (in 0.001 degrees).
+            - joint_2 (int): Feedback angle of joint 2, (in 0.001 degrees).
+            - joint_3 (int): Feedback angle of joint 3, (in 0.001 degrees).
+            - joint_4 (int): Feedback angle of joint 4, (in 0.001 degrees).
+            - joint_5 (int): Feedback angle of joint 5, (in 0.001 degrees).
+            - joint_6 (int): Feedback angle of joint 6, (in 0.001 degrees).
         '''
         with self.__arm_joint_msgs_mtx:
             self.__arm_joint_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_fps('ArmJoint_12'),
@@ -790,11 +913,11 @@ class C_PiperInterface_V2():
             return self.__arm_joint_msgs
     
     def GetFK(self, mode:Literal["feedback", "control"]="feedback"):
-        '''获取机械臂每个关节的正向运动学解。XYZ 的单位为毫米 (mm),RX、RY、RZ 的单位为度 
+        '''获取机械臂每个关节的正向运动学解。XYZ 的单位为毫米 (mm),RX、RY、RZ 的单位为度
         返回一个包含 6 个浮点数的列表，表示 1-6 号关节相对于 base_link 的位姿
 
         Args:
-            mode (str): "feedback" 获取反馈数据，"control" 获取控制数据  
+            mode (str): "feedback" 获取反馈数据，"control" 获取控制数据
 
         Returns:
             list: 一个包含 6 个浮点数的列表，表示 1-6 号关节的位姿
@@ -803,7 +926,7 @@ class C_PiperInterface_V2():
         Returns a list containing 6 floating-point numbers, representing the pose of joints 1-6 relative to the base_link.
 
         Args:
-            mode (str): "feedback" to retrieve feedback data, "control" to retrieve control data  
+            mode (str): "feedback" to retrieve feedback data, "control" to retrieve control data
 
         Returns:
             list: A list containing 6 floating-point numbers, representing the pose of joints 1-6
@@ -819,30 +942,52 @@ class C_PiperInterface_V2():
             raise ValueError("Invalid mode! Use 'feedback' or 'control'.")
     
     def GetArmGripperMsgs(self):
-        '''获取机械臂夹爪消息
-
-        gripper_state:
-            grippers_angle: 夹爪范围, 以整数表示, 单位0.001mm
-            grippers_effort: 夹爪扭矩, 以整数表示, 单位0.001N/m
-            status_code: 夹爪状态码，以整数表示
         '''
-        '''Retrieves the gripper status message of the robotic arm.
+        Retrieves the gripper status message of the robotic arm.
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        gripper_state : ArmMsgFeedBackGripper
+
+            - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
+            - grippers_effort (int): The torque of the gripper (in 0.001 N·m).
+            - foc_status (int):  The status code of the gripper.
+            {
+                * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+                * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+                * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+                * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+                * sensor_status (bool): Sensor status (False: Normal, True: Abnormal)
+                * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+                * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+                * homing_status (bool): Zeroing status (False: Not zeroed, True: Zeroed or previously zeroed)
+            }
         '''
         with self.__arm_gripper_msgs_mtx:
             self.__arm_gripper_msgs.Hz = self.__fps_counter.get_fps('ArmGripper')
             return self.__arm_gripper_msgs
     
     def GetArmHighSpdInfoMsgs(self):
-        '''获取机械臂高速反馈消息
-        
-        包括转速,电流,位置消息
         '''
-        '''Retrieves the high-speed feedback message of the robotic arm.
+        Retrieves the high-speed feedback message of the robotic arm.
 
-        This includes the following information:
-            Speed (rotation speed)
-            Current
-            Position
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        motor_x : ArmMsgFeedbackHighSpd
+
+            - can_id (int): Current CAN ID, used to represent the joint number.
+            - motor_speed (int): Motor Speed (in 0.001rad/s).
+            - current (int): Motor  (in 0.001A).
+            - pos (int): Motor Position (rad).
+            - effort (int): Torque converted using a fixed coefficient, (in 0.001 N/m).
         '''
         with self.__arm_motor_info_high_spd_mtx:
             self.__arm_motor_info_high_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_fps('ArmMotorDriverInfoHighSpd_1'),
@@ -854,18 +999,33 @@ class C_PiperInterface_V2():
             return self.__arm_motor_info_high_spd
     
     def GetArmLowSpdInfoMsgs(self):
-        '''获取机械臂低速反馈消息
-        
-        包括电压,驱动器温度,电机温度,驱动器状态,母线电流消息
         '''
-        '''Retrieves the low-speed feedback message of the robotic arm.
+        Retrieves the low-speed feedback message of the robotic arm.
 
-        This includes the following information:
-            Voltage
-            Driver temperature
-            Motor temperature
-            Driver status
-            Bus current
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        motor_x : ArmMsgFeedbackLowSpd
+
+            - can_id (int): CAN ID, representing the current motor number.
+            - vol (int): Current driver voltage (in 0.1V).
+            - foc_temp (int): Driver temperature (in 1℃).
+            - motor_temp (int): Motor temperature (in 1℃).
+            - foc_status (int): Driver status.
+            {
+                * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+                * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+                * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+                * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+                * collision_status (bool): Collision protection status (False: Normal, True: Trigger protection)
+                * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+                * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+                * stall_status (bool): Stalling protection status (False: Normal, True: Trigger protection)
+            }
+            - bus_current (int): Current driver current (in 0.001A).
         '''
         with self.__arm_motor_info_low_spd_mtx:
             self.__arm_motor_info_low_spd.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_fps('ArmMotorDriverInfoLowSpd_1'),
@@ -877,7 +1037,12 @@ class C_PiperInterface_V2():
             return self.__arm_motor_info_low_spd
     
     def GetArmEnableStatus(self)->list:
-        '''获取机械臂使能状态
+        '''
+        Get the robot arm enable status
+
+        Returns
+        -------
+            list : bool
         '''
         enable_list = []
         enable_list.append(self.GetArmLowSpdInfoMsgs().motor_1.foc_status.driver_enable_status)
@@ -901,6 +1066,17 @@ class C_PiperInterface_V2():
         
         CAN ID:
             0x473
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        current_motor_angle_limit_max_vel : ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
+
+            - motor_num (int): 关节电机序号
+            - max_angle_limit (int): 最大角度限制, 单位 0.1度
+            - min_angle_limit (int): 最小角度限制, 单位 0.1度
+            - max_joint_spd (int): 最大关节速度, 单位 0.001rad/s
         '''
         '''Retrieves the motor angle limit/maximum speed command.
 
@@ -933,6 +1109,17 @@ class C_PiperInterface_V2():
 
         CAN ID:
             0x478
+        
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        current_end_vel_acc_param : ArmMsgFeedbackCurrentEndVelAccParam
+
+            - end_max_linear_vel (int): 末端最大线速度, 单位 0.001m/s
+            - end_max_angular_vel (int): 末端最大角速度, 单位 0.001rad/s
+            - end_max_linear_acc (int): 末端最大线加速度, 单位 0.001m/s^2
+            - end_max_angular_acc (int): 末端最大角加速度, 单位 0.001rad/s^2
         '''
         '''Retrieves the end effector velocity and acceleration parameters.
 
@@ -966,6 +1153,18 @@ class C_PiperInterface_V2():
         
         CAN ID:
             0x47B
+        
+        Returns
+        -------
+        time_stamp : float
+        crash_protection_level_feedback : ArmMsgFeedbackCrashProtectionRating
+
+            - joint_1_protection_level (int): 1号关节碰撞防护等级
+            - joint_2_protection_level (int): 2号关节碰撞防护等级
+            - joint_3_protection_level (int): 3号关节碰撞防护等级
+            - joint_4_protection_level (int): 4号关节碰撞防护等级
+            - joint_5_protection_level (int): 5号关节碰撞防护等级
+            - joint_6_protection_level (int): 6号关节碰撞防护等级
         '''
         '''Retrieves the collision protection level feedback.
 
@@ -998,6 +1197,19 @@ class C_PiperInterface_V2():
         
         CAN ID:
             0x47E
+        
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        arm_gripper_teaching_param_feedback : ArmMsgFeedbackGripperTeachingPendantParam
+
+            - teaching_range_per (int): 示教器行程系数反馈,仅适用于设置主从臂的主臂，用于放大控制行程给从臂,范围[100~200]
+            - max_range_config (int): 夹爪/示教器最大控制行程限制值反馈,(0,70,100)
+                无效值---0
+                小夹爪为---70mm
+                大夹爪为---100mm
+            - teaching_friction (int): 示教器摩擦系数设置,范围[1, 10]
         '''
         '''Gripper/Teaching Pendant Parameter Feedback Command
         This includes the following information:
@@ -1017,6 +1229,15 @@ class C_PiperInterface_V2():
         '''获取当前电机最大加速度限制
         
         当前电机序号,当前电机的最大关节加速度
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        current_motor_max_acc_limit : ArmMsgFeedbackCurrentMotorMaxAccLimit
+
+            - joint_motor_num (int): 关节电机序号
+            - max_joint_acc (int): 最大关节加速度, 单位 0.001rad/^2
         '''
         '''Retrieves the current motor's maximum acceleration limit.
 
@@ -1028,11 +1249,21 @@ class C_PiperInterface_V2():
             return self.__feedback_current_motor_max_acc_limit
     
     def GetArmJointCtrl(self):
-        '''获取0x155,0x156,0x157控制指令,是关节控制指令,单位0.001度
         '''
-        '''Retrieves the 0x155, 0x156, and 0x157 control commands, which are joint control commands.
+        Retrieves the 0x155, 0x156, and 0x157 control commands, which are joint control commands.(in 0.001 degrees)
 
-        The units for these commands are 0.001 degrees.
+        Returns
+        -------
+        time_stamp : float
+        Hz : float
+        joint_ctrl : ArmMsgFeedBackJointStates
+
+            - joint_1 (int): Feedback angle of joint 1, in 0.001 degrees.
+            - joint_2 (int): Feedback angle of joint 2, in 0.001 degrees.
+            - joint_3 (int): Feedback angle of joint 3, in 0.001 degrees.
+            - joint_4 (int): Feedback angle of joint 4, in 0.001 degrees.
+            - joint_5 (int): Feedback angle of joint 5, in 0.001 degrees.
+            - joint_6 (int): Feedback angle of joint 6, in 0.001 degrees.
         '''
         with self.__arm_joint_ctrl_msgs_mtx:
             self.__arm_joint_ctrl_msgs.Hz = self.__fps_counter.cal_average(self.__fps_counter.get_fps('ArmJointCtrl_12'),
@@ -1041,33 +1272,25 @@ class C_PiperInterface_V2():
             return self.__arm_joint_ctrl_msgs
     
     def GetArmGripperCtrl(self):
-        '''获取夹爪控制消息,0x159指令
-        
-        self.gripper_ctrl
-        
-        Args:
-            grippers_angle: int32, 夹爪范围, 以整数表示, 单位0.001mm
-            grippers_effort: uint16, 单位 0.001N/m, 夹爪扭矩,以整数表示。
-            status_code: uint8
-                0x00失能;
-                0x01使能;
-                0x02失能清除错误;
-                0x03使能清除错误.
-            set_zero: uint8, 设定当前位置为0点.
-                0x00无效值;
-                0xAE设置零点
         '''
-        ''' Retrieves the gripper control message using the 0x159 command.
+        Retrieves the gripper control message using the 0x159 command.
 
-        Args:
-            grippers_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
-            grippers_effort (int): The gripper torque, in 0.001 N/m (integer representation).
-            status_code (int): The gripper status code for enabling/disabling/clearing errors.
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        gripper_ctrl : ArmMsgGripperCtrl
+
+            - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
+            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000 (corresponse 0-5N/m)
+            - status_code (int): 
                 0x00: Disabled;
                 0x01: Enabled;
                 0x03: Enable and clear errors;
                 0x02: Disable and clear errors.
-            set_zero (int): Set the current position as the zero point.
+            - set_zero (int): Set the current position as the zero point.
                 0x00: Invalid;
                 0xAE: Set zero.
         '''
@@ -1076,52 +1299,86 @@ class C_PiperInterface_V2():
             return self.__arm_gripper_ctrl_msgs
     
     def GetArmCtrlCode151(self):
-        '''获取0x151控制指令,机械臂模式控制指令,详看 ArmMsgMotionCtrl_2 类
         '''
-        '''Retrieves the 0x151 control command, which is the robotic arm mode control command.
+        Retrieves the 0x151 control command, which is the robotic arm mode control command.
 
-        For detailed information, refer to the `ArmMsgMotionCtrl_2` class.
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        ctrl_151 : ArmMsgMotionCtrl_2
+
+            - ctrl_mode (int): Control mode.
+                * 0x00: Standby mode.
+                * 0x01: CAN command control mode.
+                * 0x03: Ethernet control mode.
+                * 0x04: Wi-Fi control mode.
+                * 0x07: Offline trajectory mode.
+            - move_mode (int): MOVE mode.
+                * 0x00: MOVE P (Position).
+                * 0x01: MOVE J (Joint).
+                * 0x02: MOVE L (Linear).
+                * 0x03: MOVE C (Circular).
+                * 0x04: MOVE M (MIT)
+            - move_spd_rate_ctrl (int): Movement speed as a percentage.Range: 0~100.
+            - mit_mode (int): MIT mode.
+                * 0x00: Position-speed mode.
+                * 0xAD: MIT mode.
+                * 0xFF: Invalid.
+            - residence_time (int): Hold time at offline trajectory points.
+                Range: 0~255, unit: seconds.
+            - installation_pos (int): Installation Position - Note: Wiring should face 
+            {
+                * 0x00: Invalid value
+                * 0x01: Horizontal upright
+                * 0x02: Left-side mount
+                * 0x03: Right-side mount
+            }
         '''
         with self.__arm_ctrl_code_151_mtx:
             self.__arm_ctrl_code_151.Hz = self.__fps_counter.get_fps("ArmCtrlCode_151")
             return self.__arm_ctrl_code_151
     
     def GetArmModeCtrl(self):
-        '''获取0x151控制指令,机械臂模式控制指令
-
-        mode_ctrl:
-            ctrl_mode: 控制模式,0x00 待机模式,0x01 CAN指令控制模式,0x07 离线轨迹模式
-            move_mode: MOVE模式,0x00 MOVE P,0x01 MOVE J,0x02 MOVE L,0x03 MOVE C,0x04 MOVE M
-            move_spd_rate_ctrl: 运动速度百分比,0~100
-            mit_mode: mit模式,0x00 位置速度模式,0xAD MIT模式
-            installation_pos: 安装位置,0x00 无效值,0x01 水平正装,0x02 侧装左,0x03 侧装右
         '''
-        '''Retrieves the 0x151 control command, which is the robotic arm mode control command.
+        Retrieves the 0x151 control command, which is the robotic arm mode control command.
 
-        mode_ctrl:
-            ctrl_mode: Control mode
-                - 0x00: Standby mode
-                - 0x01: CAN command control mode
-                - 0x07: Offline trajectory mode
-            
-            move_mode: MOVE mode
-                - 0x00: MOVE P
-                - 0x01: MOVE J
-                - 0x02: MOVE L
-                - 0x03: MOVE C
-                - 0x04: MOVE M
-            
-            move_spd_rate_ctrl: Movement speed percentage (0~100)
-            
-            mit_mode: MIT mode
-                - 0x00: Position and speed mode
-                - 0xAD: MIT mode
-            installation_pos: Installation position
-                - 0x00: Invalid value
-                - 0x01: Horizontal installation (positive)
-                - 0x02: Side installation (left)
-                - 0x03: Side installation (right)
-        
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        ctrl_151 : ArmMsgMotionCtrl_2
+
+            - ctrl_mode (int): Control mode.
+                * 0x00: Standby mode.
+                * 0x01: CAN command control mode.
+                * 0x03: Ethernet control mode.
+                * 0x04: Wi-Fi control mode.
+                * 0x07: Offline trajectory mode.
+            - move_mode (int): MOVE mode.
+                * 0x00: MOVE P (Position).
+                * 0x01: MOVE J (Joint).
+                * 0x02: MOVE L (Linear).
+                * 0x03: MOVE C (Circular).
+                * 0x04: MOVE M (MIT)
+            - move_spd_rate_ctrl (int): Movement speed as a percentage.Range: 0~100.
+            - mit_mode (int): MIT mode.
+                * 0x00: Position-speed mode.
+                * 0xAD: MIT mode.
+                * 0xFF: Invalid.
+            - residence_time (int): Hold time at offline trajectory points.
+                Range: 0~255, unit: seconds.
+            - installation_pos (int): Installation Position - Note: Wiring should face 
+            {
+                * 0x00: Invalid value
+                * 0x01: Horizontal upright
+                * 0x02: Left-side mount
+                * 0x03: Right-side mount
+            }
         '''
         with self.__arm_mode_ctrl_mtx:
             self.__arm_mode_ctrl.Hz = self.__fps_counter.get_fps("ArmModeCtrl")
@@ -1133,7 +1390,18 @@ class C_PiperInterface_V2():
         
         此为应答式消息,意为需要发送请求指令该数据才会有数值
         
-        已经在 ConnectPort 中调用了请求指令 self.SearchAllMotorMaxAccLimit()
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        
+        all_motor_max_acc_limit : ArmMsgFeedbackAllCurrentMotorMaxAccLimit
+
+            - motor (ArmMsgFeedbackCurrentMotorMaxAccLimit): 当前电机最大加速度限制
+            {
+                * joint_motor_num (int): 关节电机序号
+                * max_joint_acc (int): 最大关节加速度, 单位 0.001rad/^2
+            }
         '''
         '''Retrieves the maximum acceleration limits for all motors (m1-m6).
 
@@ -1147,8 +1415,21 @@ class C_PiperInterface_V2():
         '''获取所有电机的最大限制角度/最小限制角度/最大速度,(m1-m6)
         
         此为应答式消息,意为需要发送请求指令该数据才会有数值
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
         
-        已经在 ConnectPort 中调用了请求指令 self.SearchAllMotorMaxAngleSpd()
+        all_motor_angle_limit_max_spd : ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
+
+            - motor (ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd): 当前电机限制角度/最大速度
+            {
+                * motor_num (int): 关节电机序号
+                * max_angle_limit (int): 最大角度限制, 单位 0.1度
+                * min_angle_limit (int): 最小角度限制, 单位 0.1度
+                * max_joint_spd (int): 最大关节速度, 单位 0.001rad/s
+            }
         '''
         '''Retrieves the maximum limit angle, minimum limit angle, and maximum speed for all motors (m1-m6).
 
@@ -1186,10 +1467,12 @@ class C_PiperInterface_V2():
     
     def isOk(self):
         '''
-        反馈can数据读取线程是否正常
-        '''
-        '''
         Feedback on whether the CAN data reading thread is functioning normally
+
+        Returns
+        -------
+        bool: 
+            True is normal
         '''
         with self.__is_ok_mtx:
             return self.__is_ok
