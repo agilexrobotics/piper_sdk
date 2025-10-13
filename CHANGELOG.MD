@@ -28,6 +28,9 @@ Miscellaneous
   - In piper_msgs/msg_v2/feedback, add an import path for all classes in the init module. Similarly, in piper_msgs/msg_v2/transmit.
   - Modify piper_msgs/msg_v2/init.py to import required classes from the feedback and transmit submodules.
   - Modify piper_msgs/msg_v2/arm_messages.py to import classes from the feedback and transmit submodules.
+- 📃 docs(readme): Added switching slave ARM example code to the readme;增加Jetson相关问题解决到Q&A中 
+- 📃 docs(Q&A): Added Jetson related problem solving to Q&A
+- 📃 docs(interface): Optimizing function annotations
 
 Version 0.4.2
 =============
