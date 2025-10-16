@@ -27,7 +27,8 @@ Bug Fixes
 
 Miscellaneous
 ---------
-None
+
+- 📃 docs(INTERFACE_V2.MD): Add Get class function comments and new function descriptions
 
 Version 0.4.3
 =============
