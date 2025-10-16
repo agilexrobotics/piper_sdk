@@ -3,6 +3,26 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.5.0
+=============
+
+特性
+--------
+
+- ✨ feat(interface): 增加异常数据过滤功能，包括夹爪行程、关节角、末端数据
+  - 默认开启异常数据过滤,使用`DisableFilterAbnormalData`函数关闭该功能;使用`EnableFilterAbnormalData`函数打开该功能;`isFilterAbnormalData`函数获取过滤异常数据功能的打开状态,return为`True`为开启了异常数据过滤功能;
+  - 夹爪行程过滤条件为150mm*1000;
+  - 关节角过滤条件为300度*1000;
+  - 末端数据xyz过滤条件为1m\*1000\*1000,rpy过滤条件为361度*1000。
+
+Bug修复
+---------
+无
+
+其它
+---------
+无
+
 Version 0.4.3
 =============
 

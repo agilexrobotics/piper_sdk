@@ -411,6 +411,7 @@ class C_PiperInterface():
         self.__start_sdk_joint_limit = start_sdk_joint_limit
         self.__start_sdk_gripper_limit = start_sdk_gripper_limit
         self.__start_sdk_fk_cal = False
+        self.__abnormal_data_filter = True
         self.__piper_param_mag = C_PiperParamManager()
         # protocol
         self.__parser: Type[C_PiperParserV2] = C_PiperParserV2()
@@ -700,6 +701,37 @@ class C_PiperInterface():
             bool: The state of the fk cal flag
         '''
         return self.__start_sdk_fk_cal
+
+    def EnableFilterAbnormalData(self):
+        '''
+        Enable filter abnormal data,joint data or end pose data
+
+        Returns
+        -------
+            bool: Enable abnormal data filtering
+        '''
+        self.__abnormal_data_filter = True
+        return self.__abnormal_data_filter
+
+    def DisableFilterAbnormalData(self):
+        '''
+        Disable filter abnormal data,joint data or end pose data
+
+        Returns
+        -------
+            bool: Disable abnormal data filtering
+        '''
+        self.__abnormal_data_filter = False
+        return self.__abnormal_data_filter
+
+        
+    def isFilterAbnormalData(self):
+        '''
+        Returns
+        -------
+            bool: Whether to filter abnormal data, True to enable filtering
+        '''
+        return self.__abnormal_data_filter
 
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
         '''can协议解析函数
@@ -1548,16 +1580,31 @@ class C_PiperInterface():
         '''
         with self.__arm_end_pose_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_1):
+                if self.isFilterAbnormalData():
+                    # 1m * 1000 * 1000
+                    if abs(msg.arm_end_pose.X_axis) > 1e6 or abs(msg.arm_end_pose.Y_axis) > 1e6:
+                        return
                 self.__fps_counter.increment("ArmEndPose_XY")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.X_axis = msg.arm_end_pose.X_axis
                 self.__arm_end_pose.end_pose.Y_axis = msg.arm_end_pose.Y_axis
             elif(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_2):
+                if self.isFilterAbnormalData():
+                    # 1m * 1000 * 1000
+                    if abs(msg.arm_end_pose.Z_axis) > 1e6:
+                        return
+                    # 361 degree * 1000
+                    if abs(msg.arm_end_pose.RX_axis) > 361000:
+                        return
                 self.__fps_counter.increment("ArmEndPose_ZRX")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.Z_axis = msg.arm_end_pose.Z_axis
                 self.__arm_end_pose.end_pose.RX_axis = msg.arm_end_pose.RX_axis
             elif(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_3):
+                if self.isFilterAbnormalData():
+                    # 361 degree * 1000
+                    if abs(msg.arm_end_pose.RY_axis) > 361000 or abs(msg.arm_end_pose.RZ_axis) > 361000:
+                        return
                 self.__fps_counter.increment("ArmEndPose_RYRZ")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.RY_axis = msg.arm_end_pose.RY_axis
@@ -1577,20 +1624,36 @@ class C_PiperInterface():
         '''
         with self.__arm_joint_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
+                _joint1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
+                _joint2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
+                if self.isFilterAbnormalData():
+                # 300 degree * 1000
+                    if abs(_joint1) > 3000000 or abs(_joint2) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_12")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
-                self.__arm_joint_msgs.joint_state.joint_2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
+                self.__arm_joint_msgs.joint_state.joint_1 = _joint1
+                self.__arm_joint_msgs.joint_state.joint_2 = _joint2
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_34):
+                _joint3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
+                _joint4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
+                if self.isFilterAbnormalData():
+                    if abs(_joint3) > 3000000 or abs(_joint4) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_34")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
-                self.__arm_joint_msgs.joint_state.joint_4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
+                self.__arm_joint_msgs.joint_state.joint_3 = _joint3
+                self.__arm_joint_msgs.joint_state.joint_4 = _joint4
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_56):
+                _joint5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
+                _joint6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
+                if self.isFilterAbnormalData():
+                    if abs(_joint5) > 3000000 or abs(_joint6) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_56")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
-                self.__arm_joint_msgs.joint_state.joint_6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
+                self.__arm_joint_msgs.joint_state.joint_5 = _joint5
+                self.__arm_joint_msgs.joint_state.joint_6 = _joint6
             return self.__arm_joint_msgs
 
     def __UpdateArmGripperState(self, msg:PiperMessage):
@@ -1606,6 +1669,11 @@ class C_PiperInterface():
         '''
         with self.__arm_gripper_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgGripperFeedBack):
+                gripper_val = self.__CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)
+                if self.isFilterAbnormalData():
+                    # 150mm * 1000
+                    if abs(gripper_val) > 150000:
+                        return
                 self.__fps_counter.increment("ArmGripper")
                 self.__arm_gripper_msgs.time_stamp = msg.time_stamp
                 self.__arm_gripper_msgs.gripper_state.grippers_angle = self.__CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)

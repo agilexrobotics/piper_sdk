@@ -3,6 +3,26 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.5.0
+=============
+
+Features
+--------
+
+- ✨ feat(interface): Added abnormal data filtering for gripper travel, joint angle, and end-point data.
+  - Abnormal data filtering is enabled by default. Use the `DisableFilterAbnormalData` function to disable it; use the `EnableFilterAbnormalData` function to enable it. The `isFilterAbnormalData` function returns True to indicate that the abnormal data filtering function is enabled.
+  - The gripper travel filter is set to 150mm*1000;
+  - The joint angle filter is set to 300 degrees*1000;
+  - The end-point data xyz filter is set to 1m\*1000\*1000, and the rpy filter is set to 361 degrees*1000.
+
+Bug Fixes
+---------
+None
+
+Miscellaneous
+---------
+None
+
 Version 0.4.3
 =============
 
