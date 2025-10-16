@@ -724,7 +724,6 @@ class C_PiperInterface():
         self.__abnormal_data_filter = False
         return self.__abnormal_data_filter
 
-        
     def isFilterAbnormalData(self):
         '''
         Returns
@@ -786,6 +785,15 @@ class C_PiperInterface():
     def __GetCurrentTime(self):
         return time.time_ns() / 1e9
     
+    def GetCanBus(self):
+        '''
+        Returns
+        -------
+        self.__arm_can : C_STD_CAN
+            can encapsulation class, which contains some socketcan related functions
+        '''
+        return self.__arm_can
+
     def GetCanName(self):
         '''
         Returns

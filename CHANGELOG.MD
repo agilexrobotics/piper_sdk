@@ -14,6 +14,7 @@ Features
   - The gripper travel filter is set to 150mm*1000;
   - The joint angle filter is set to 300 degrees*1000;
   - The end-point data xyz filter is set to 1m\*1000\*1000, and the rpy filter is set to 361 degrees*1000.
+- ✨ feat(interface): Add the get function `GetCanBus` of the can class
 
 Bug Fixes
 ---------

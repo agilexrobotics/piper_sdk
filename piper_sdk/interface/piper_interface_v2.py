@@ -785,6 +785,15 @@ class C_PiperInterface_V2():
     def __GetCurrentTime(self):
         return time.time_ns() / 1e9
     
+    def GetCanBus(self):
+        '''
+        Returns
+        -------
+        self.__arm_can : C_STD_CAN
+            can encapsulation class, which contains some socketcan related functions
+        '''
+        return self.__arm_can
+
     def GetCanName(self):
         '''
         Returns
