@@ -290,6 +290,14 @@ Query Piper robotic arm firmware version (CAN ID: 0x4AF)
 
 ### Get Methods
 
+#### GetCanBus
+
+```python
+def GetCanBus()
+```
+
+Return can encapsulation class, which contains some socketcan related functions
+
 #### GetCanName
 
 ```python
@@ -334,6 +342,70 @@ Returns the frame rate of the robotic arm CAN module.
 
 ```python
 def GetArmStatus()
+'''
+Retrieves the current status of the robotic arm.
+
+CAN ID:
+  0x2A1
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+arm_status : ArmMsgFeedbackStatus
+  机械臂状态
+
+  - ctrl_mode (int): Control Mode
+      * 0x00 Standby mode
+      * 0x01 CAN command control mode
+      * 0x02 Teaching mode
+  - arm_status (int): Robotic arm status
+      * 0x00 normal
+      * 0x01 Emergency Stop
+      * 0x02 No solution
+      * 0x03 singularity
+      * 0x04 Target angle exceeds limit
+      * 0x05 Abnormal joint communication
+      * 0x06 Joint brake is not open
+      * 0x07 The robotic arm collided
+      * 0x08 Overspeed during drag teaching
+      * 0x09 Abnormal joint condition
+      * 0x0A Other abnormalities
+      * 0x0B Teaching records
+      * 0x0C Teaching execution
+      * 0x0D Teaching pause
+      * 0x0E Main control NTC overtemperature
+      * 0x0F Release resistor NTC overtemperature
+  - mode_feed (int): Mode Feedback
+      * 0x00 MOVE P
+      * 0x01 MOVE J
+      * 0x02 MOVE L
+      * 0x03 MOVE C
+      * 0x04 MOVE M ---Based on V1.5-2 version
+      * 0x05 MOVE_CPV ---Based on V1.6.5
+  - teach_status (int): Teaching status
+  - motion_status (int): Movement status
+      * 0x00 Arrive at the designated point
+      * 0x01 Did not reach the designated point
+  - trajectory_num (int): Current running track point number
+  - err_status (int): Fault status
+  {
+      * joint_1_angle_limit (bool): Whether the angle of joint 1 exceeds the limit, True means it exceeds the limit
+      * joint_2_angle_limit (bool): Whether the angle of joint 2 exceeds the limit, True means it exceeds the limit
+      * joint_3_angle_limit (bool): Whether the angle of joint 3 exceeds the limit, True means it exceeds the limit
+      * joint_4_angle_limit (bool): Whether the angle of joint 4 exceeds the limit, True means it exceeds the limit
+      * joint_5_angle_limit (bool): Whether the angle of joint 5 exceeds the limit, True means it exceeds the limit
+      * joint_6_angle_limit (bool): Whether the angle of joint 6 exceeds the limit, True means it exceeds the limit
+      * communication_status_joint_1 (bool): Is the communication of joint 1 abnormal. True means communication abnormal
+      * communication_status_joint_2 (bool): Is the communication of joint 2 abnormal. True means communication abnormal
+      * communication_status_joint_3 (bool): Is the communication of joint 3 abnormal. True means communication abnormal
+      * communication_status_joint_4 (bool): Is the communication of joint 4 abnormal. True means communication abnormal
+      * communication_status_joint_5 (bool): Is the communication of joint 5 abnormal. True means communication abnormal
+      * communication_status_joint_6 (bool): Is the communication of joint 6 abnormal. True means communication abnormal
+  }
+'''
 ```
 
 Returns the current status of the robotic arm (CAN ID: 0x2A1)
@@ -342,6 +414,22 @@ Returns the current status of the robotic arm (CAN ID: 0x2A1)
 
 ```python
 def GetArmEndPoseMsgs()
+'''
+Retrieves the end effector pose message of the robotic arm. Euler angle representation.
+
+Returns
+-------
+time_stamp : float
+Hz : float
+end_pose : ArmMsgFeedBackEndPose
+
+  - X_axis (int): X position, (in 0.001 mm)
+  - Y_axis (int): Y position, (in 0.001 mm)
+  - Z_axis (int): Z position, (in 0.001 mm)
+  - RX_axis (int): RX orientation, (in 0.001 degrees)
+  - RY_axis (int): RY orientation, (in 0.001 degrees)
+  - RZ_axis (int): RZ orientation, (in 0.001 degrees)
+'''
 ```
 
 Returns the end effector pose (position -> in 0.001 mm and orientation -> in 0.001 degrees)
@@ -352,6 +440,22 @@ Manual unit conversion of data is required.
 
 ```python
 def GetArmJointMsgs()
+'''
+Retrieves the joint status message of the robotic arm.(in 0.001 degrees)
+
+Returns
+-------
+time_stamp : float
+Hz : float
+joint_state : ArmMsgFeedBackJointStates
+
+  - joint_1 (int): Feedback angle of joint 1, (in 0.001 degrees).
+  - joint_2 (int): Feedback angle of joint 2, (in 0.001 degrees).
+  - joint_3 (int): Feedback angle of joint 3, (in 0.001 degrees).
+  - joint_4 (int): Feedback angle of joint 4, (in 0.001 degrees).
+  - joint_5 (int): Feedback angle of joint 5, (in 0.001 degrees).
+  - joint_6 (int): Feedback angle of joint 6, (in 0.001 degrees).
+'''
 ```
 
 Returns the joint angles (in 0.001 degrees)
@@ -389,6 +493,31 @@ Manual unit conversion of data is required.
 
 ```python
 def GetArmGripperMsgs()
+'''
+Retrieves the gripper status message of the robotic arm.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+gripper_state : ArmMsgFeedBackGripper
+
+  - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
+  - grippers_effort (int): The torque of the gripper (in 0.001 N·m).
+  - foc_status (int):  The status code of the gripper.
+  {
+      * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+      * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+      * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+      * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+      * sensor_status (bool): Sensor status (False: Normal, True: Abnormal)
+      * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+      * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+      * homing_status (bool): Zeroing status (False: Not zeroed, True: Zeroed or previously zeroed)
+  }
+'''
 ```
 
 Retrieve the robotic arm gripper status message.
@@ -406,6 +535,23 @@ Manual unit conversion of data is required.
 
 ```python
 def GetArmHighSpdInfoMsgs()
+'''
+Retrieves the high-speed feedback message of the robotic arm.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+motor_x : ArmMsgFeedbackHighSpd
+
+  - can_id (int): Current CAN ID, used to represent the joint number.
+  - motor_speed (int): Motor Speed (in 0.001rad/s).
+  - current (int): Motor  (in 0.001A).
+  - pos (int): Motor Position (rad).
+  - effort (int): Torque converted using a fixed coefficient, (in 0.001 N/m).
+'''
 ```
 
 Returns high-speed feedback including:
@@ -420,6 +566,34 @@ Manual unit conversion of data is required.
 
 ```python
 def GetArmLowSpdInfoMsgs()
+'''
+Retrieves the low-speed feedback message of the robotic arm.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+motor_x : ArmMsgFeedbackLowSpd
+
+  - can_id (int): CAN ID, representing the current motor number.
+  - vol (int): Current driver voltage (in 0.1V).
+  - foc_temp (int): Driver temperature (in 1℃).
+  - motor_temp (int): Motor temperature (in 1℃).
+  - foc_status (int): Driver status.
+  {
+      * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+      * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+      * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+      * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+      * collision_status (bool): Collision protection status (False: Normal, True: Trigger protection)
+      * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+      * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+      * stall_status (bool): Stalling protection status (False: Normal, True: Trigger protection)
+  }
+  - bus_current (int): Current driver current (in 0.001A).
+'''
 ```
 
 Returns low-speed feedback including:
@@ -432,10 +606,51 @@ Returns low-speed feedback including:
 
 Manual unit conversion of data is required.
 
+#### GetArmEnableStatus
+
+```python
+def GetArmEnableStatus(self)->list:
+'''
+Get the robot arm enable status
+
+Returns
+-------
+  list : bool
+'''
+```
+
+Feedback the enable status of the six motors, return a list of length 6, variable type is bool, when True, it means the specified motor is enabled.
+
 #### GetCurrentMotorAngleLimitMaxVel
 
 ```python
 def GetCurrentMotorAngleLimitMaxVel()
+'''Retrieves the motor angle limit/maximum speed command.
+
+This includes the following information:
+  Maximum angle limit
+  Minimum angle limit
+  Maximum joint speed
+This is the feedback message after actively sending a command.
+Corresponds to the query for motor angle/maximum speed/maximum acceleration limit command 0x472,
+with Byte 1 = 0x01
+
+ArmParamEnquiryAndConfig(param_enquiry=0x01)
+
+CAN ID:
+  0x473
+
+Returns
+-------
+time_stamp : float
+  time stamp
+current_motor_angle_limit_max_vel : ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
+
+  - motor_num (int): Joint motor serial number
+  - max_angle_limit (int): Maximum angle limit, unit 0.1 degree
+  - min_angle_limit (int): Minimum angle limit, unit 0.1 degree
+  - max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+'''
 ```
 
 Returns the motor angle limit/maximum speed command (CAN ID: 0x473)
@@ -452,6 +667,33 @@ This is the feedback message after sending the query command (0x472 Byte 1 = 0x0
 
 ```python
 def GetCurrentEndVelAndAccParam()
+'''Retrieves the end effector velocity and acceleration parameters.
+
+This includes the following information:
+  End effector linear velocity
+  End effector angular velocity
+  End effector linear acceleration
+  End effector angular acceleration
+This is the feedback message after actively sending a command.
+Corresponds to the robotic arm parameter query and setting command 0x477,
+with Byte 0 = 0x01
+
+ArmParamEnquiryAndConfig(param_enquiry=0x01)
+
+CAN ID:
+  0x478
+
+Returns
+-------
+time_stamp : float
+  time stamp
+current_end_vel_acc_param : ArmMsgFeedbackCurrentEndVelAccParam
+
+  - end_max_linear_vel (int): Maximum linear velocity at the end, unit 0.001m/s
+  - end_max_angular_vel (int): Maximum angular velocity at the end, unit 0.001rad/s
+  - end_max_linear_acc (int): Maximum linear acceleration at the end, unit 0.001m/s^2
+  - end_max_angular_acc (int): Maximum angular acceleration at the end, unit 0.001rad/s^2
+'''
 ```
 
 Returns the end effector velocity and acceleration parameters (CAN ID: 0x478)
@@ -469,6 +711,33 @@ This is the feedback message after sending the query command (0x477 Byte 0 = 0x0
 
 ```python
 def GetCrashProtectionLevelFeedback()
+'''Retrieves the collision protection level feedback.
+
+This includes the following information:
+  Collision level for joints 1-6 (values range from 0 to 8).
+      0: No collision detection.
+      1-8: Detection levels, where the threshold for collision detection increases progressively.
+This is the feedback message after actively sending a command.
+Corresponds to the robotic arm parameter query and setting command 0x477,
+with Byte 0 = 0x02
+
+ArmParamEnquiryAndConfig(param_enquiry=0x02)
+
+CAN ID:
+  0x47B
+
+Returns
+-------
+time_stamp : float
+crash_protection_level_feedback : ArmMsgFeedbackCrashProtectionRating
+
+  - joint_1_protection_level (int): No. 1 joint collision protection level
+  - joint_2_protection_level (int): No. 2 joint collision protection level
+  - joint_3_protection_level (int): No. 3 joint collision protection level
+  - joint_4_protection_level (int): No. 4 joint collision protection level
+  - joint_5_protection_level (int): No. 5 joint collision protection level
+  - joint_6_protection_level (int): No. 6 joint collision protection level
+'''
 ```
 
 Returns the collision protection level feedback (CAN ID: 0x47B)
@@ -484,6 +753,31 @@ This is the feedback message after sending the query command (0x477 Byte 0 = 0x0
 
 ```python
 def GetGripperTeachingPendantParamFeedback()
+'''Gripper/Teaching Pendant Parameter Feedback Command
+This includes the following information:
+  Teaching pendant travel coefficient
+  Maximum control travel limit values for gripper/teaching pendant
+This is the feedback message after actively sending a command.
+Corresponds to robotic arm parameter query and setting command 0x477, Byte 0 = 0x04
+ArmParamEnquiryAndConfig(param_enquiry=0x04)
+
+CAN ID:
+  0x47E
+
+Returns
+-------
+time_stamp : float
+  time stamp
+arm_gripper_teaching_param_feedback : ArmMsgFeedbackGripperTeachingPendantParam
+
+  - teaching_range_per (int): 
+    The stroke coefficient feedback of the teaching pendant is only applicable to the master arm when setting the master-slave arm. It is used to amplify the control stroke to the slave arm. The range is [100~200]
+  - max_range_config (int): Gripper/teach pendant maximum control stroke limit value feedback, (0,70,100)
+      Invalid value --- 0
+      Small jaw: 70mm
+      Large jaw: 100mm
+  - teaching_friction (int): Teaching pendant friction coefficient setting, range [1, 10]
+'''
 ```
 
 Returns the gripper/teaching pendant parameter feedback (CAN ID: 0x47E)
@@ -499,6 +793,21 @@ This is the feedback message after sending the query command (0x477 Byte 0 = 0x0
 
 ```python
 def GetCurrentMotorMaxAccLimit()
+'''Retrieves the current motor's maximum acceleration limit.
+
+This includes the following information:
+  Current motor number
+  The maximum joint acceleration of the current motor
+
+Returns
+-------
+time_stamp : float
+  time stamp
+current_motor_max_acc_limit : ArmMsgFeedbackCurrentMotorMaxAccLimit
+
+  - joint_motor_num (int): Joint motor serial number
+  - max_joint_acc (int): Maximum joint acceleration, unit 0.001rad/^2
+'''
 ```
 
 Returns the current motor's maximum acceleration limit
@@ -512,6 +821,22 @@ This includes:
 
 ```python
 def GetArmJointCtrl()
+'''
+Retrieves the 0x155, 0x156, and 0x157 control commands, which are joint control commands.(in 0.001 degrees)
+
+Returns
+-------
+time_stamp : float
+Hz : float
+joint_ctrl : ArmMsgFeedBackJointStates
+
+  - joint_1 (int): Feedback angle of joint 1, in 0.001 degrees.
+  - joint_2 (int): Feedback angle of joint 2, in 0.001 degrees.
+  - joint_3 (int): Feedback angle of joint 3, in 0.001 degrees.
+  - joint_4 (int): Feedback angle of joint 4, in 0.001 degrees.
+  - joint_5 (int): Feedback angle of joint 5, in 0.001 degrees.
+  - joint_6 (int): Feedback angle of joint 6, in 0.001 degrees.
+'''
 ```
 
 Returns the joint control commands (CAN ID: 0x155, 0x156, 0x157)
@@ -522,6 +847,28 @@ Units are in 0.001 degrees
 
 ```python
 def GetArmGripperCtrl()
+'''
+Retrieves the gripper control message using the 0x159 command.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+gripper_ctrl : ArmMsgGripperCtrl
+
+  - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
+  - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000 (corresponse 0-5N/m)
+  - status_code (int): 
+      0x00: Disabled;
+      0x01: Enabled;
+      0x03: Enable and clear errors;
+      0x02: Disable and clear errors.
+  - set_zero (int): Set the current position as the zero point.
+      0x00: Invalid;
+      0xAE: Set zero.
+'''
 ```
 
 Returns the gripper control command (CAN ID: 0x159)
@@ -530,6 +877,44 @@ Returns the gripper control command (CAN ID: 0x159)
 
 ```python
 def GetArmModeCtrl()
+'''
+Retrieves the 0x151 control command, which is the robotic arm mode control command.
+
+Returns
+-------
+time_stamp : float
+    time stamp
+Hz : float
+    msg fps
+ctrl_151 : ArmMsgMotionCtrl_2
+
+  - ctrl_mode (int): Control mode.
+      * 0x00: Standby mode.
+      * 0x01: CAN command control mode.
+      * 0x03: Ethernet control mode.
+      * 0x04: Wi-Fi control mode.
+      * 0x07: Offline trajectory mode.
+  - move_mode (int): MOVE mode.
+      * 0x00: MOVE P (Position).
+      * 0x01: MOVE J (Joint).
+      * 0x02: MOVE L (Linear).
+      * 0x03: MOVE C (Circular).
+      * 0x04: MOVE M (MIT)
+  - move_spd_rate_ctrl (int): Movement speed as a percentage.Range: 0~100.
+  - mit_mode (int): MIT mode.
+      * 0x00: Position-speed mode.
+      * 0xAD: MIT mode.
+      * 0xFF: Invalid.
+  - residence_time (int): Hold time at offline trajectory points.
+      Range: 0~255, unit: seconds.
+  - installation_pos (int): Installation Position - Note: Wiring should face 
+  {
+      * 0x00: Invalid value
+      * 0x01: Horizontal upright
+      * 0x02: Left-side mount
+      * 0x03: Right-side mount
+  }
+'''
 ```
 
 Returns the robotic arm mode control command (CAN ID: 0x151)
@@ -538,6 +923,24 @@ Returns the robotic arm mode control command (CAN ID: 0x151)
 
 ```python
 def GetAllMotorMaxAccLimit()
+'''Retrieves the maximum acceleration limits for all motors (m1-m6).
+
+This is a response message, meaning the data will only be available after sending a request command.
+The request command `self.SearchAllMotorMaxAccLimit()` has already been called in the `ConnectPort`.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+
+all_motor_max_acc_limit : ArmMsgFeedbackAllCurrentMotorMaxAccLimit
+
+  - motor (ArmMsgFeedbackCurrentMotorMaxAccLimit): Current motor maximum acceleration limit
+  {
+      * joint_motor_num (int): Joint motor serial number
+      * max_joint_acc (int): Maximum joint acceleration, unit 0.001rad/^2
+  }
+'''
 ```
 
 Returns the maximum acceleration limits for all motors
@@ -546,6 +949,26 @@ Returns the maximum acceleration limits for all motors
 
 ```python
 def GetAllMotorAngleLimitMaxSpd()
+'''Retrieves the maximum limit angle, minimum limit angle, and maximum speed for all motors (m1-m6).
+
+This is a response message, meaning the data will only be available after sending a request command.
+The request command `self.SearchAllMotorMaxAngleSpd()` has already been called in the `ConnectPort`.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+
+all_motor_angle_limit_max_spd : ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
+
+  - motor (ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd): Current motor limit angle/maximum speed
+  {
+      * motor_num (int): Joint motor serial number
+      * max_angle_limit (int): Maximum angle limit, unit 0.1 degree
+      * min_angle_limit (int): Minimum angle limit, unit 0.1 degree
+      * max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+  }
+'''
 ```
 
 Returns the maximum limit angle, minimum limit angle, and maximum speed for all motors (m1-m6)
@@ -561,10 +984,43 @@ Returns the Piper software firmware version
 Success: Returns the corresponding string
 Failure: Returns -0x4AF
 
+#### GetRespInstruction
+
+```python
+def GetPiperFirmwareVersion()
+'''
+Sets the response for the instruction.
+
+CAN ID: 0x476
+
+Returns
+-------
+time_stamp : float
+    time stamp
+
+instruction_index (int): The response instruction index.
+    This is derived from the last byte of the set instruction ID.
+    For example, when responding to the 0x471 set instruction, this would be 0x71.
+
+zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
+    - 0x01: Zero point successfully set.
+    - 0x00: Zero point set failed/not set.
+    - This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
+'''
+```
+
 #### isOk
 
 ```python
 def isOk()
+'''
+Feedback on whether the CAN data reading thread is functioning normally
+
+Returns
+-------
+bool: 
+  True is normal
+'''
 ```
 
 Returns whether the CAN data reading thread is functioning normally.
@@ -594,6 +1050,37 @@ def isCalFk(self)
 ```
 
 Whether the forward kinematics calculation is turned on, feedback `True` or `False`
+
+#### EnableFilterAbnormalData
+
+```python
+def EnableFilterAbnormalData(self)
+```
+
+Enable filter abnormal data,joint data or end pose data
+
+- The gripper travel filter is set to 150mm*1000;
+- The joint angle filter is set to 300 degrees*1000;
+- The end-point data xyz filter is set to 1m\*1000\*1000, and the rpy filter is set to 361 degrees*1000.
+
+#### DisableFilterAbnormalData
+
+```python
+def DisableFilterAbnormalData(self)
+```
+
+Disable filter abnormal data,joint data or end pose data
+
+#### isFilterAbnormalData
+
+```python
+def isFilterAbnormalData(self)
+'''
+Returns
+-------
+    bool: Whether to filter abnormal data, True to enable filtering
+'''
+```
 
 #### MasterSlaveConfig
 
@@ -791,6 +1278,20 @@ Parameters:
 - `teaching_range_per`: Teaching pendant travel range coefficient (100-200)
 - `max_range_config`: Maximum control travel limit (0, 70, or 100)
 - `teaching_friction`: Teaching friction parameter
+
+#### ClearRespSetInstruction
+
+```python
+def GripperTeachingPendantParamConfig()
+'''
+Clear the SDK saved command response information.
+
+Reset the command response to:
+time_stamp = 0;
+instruction_response.instruction_index = -1;
+instruction_response.is_set_zero_successfully = -1
+'''
+```
 
 ### MIT Mode Control
 
