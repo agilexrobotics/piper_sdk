@@ -18,7 +18,12 @@ Version 0.5.0
 
 Bug修复
 ---------
-无
+
+- 🐞 fix(msg,procotol,interface): 增加指令应答反馈功能，弃用之前版本的设定指令应答函数
+  - 由于协议理解错误，之前版本的指令应答是发送的功能，但是其实该协议为反馈消息;
+  - 本次更新增加了指令应答反馈的获取功能 `GetRespInstruction`, 以及清除暂存的指令应答消息 `ClearRespSetInstruction`,该函数会将指令应答反馈消息中的时间戳变量置0,将其它消息置-1
+  - 增加demo `piper_read_resp_instruction.py`
+  - `SetInstructionResponse`函数弃用，调用该函数会报warning
 
 其它
 ---------

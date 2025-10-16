@@ -18,7 +18,12 @@ Features
 
 Bug Fixes
 ---------
-None
+
+- 🐞 fix(msg, protocol, interface): Added command response feedback functionality, deprecating the previous version's set command response function.
+  - Due to a protocol misunderstanding, the previous version's command response function was a send function, but the protocol actually uses a feedback message.
+  - This update adds `GetRespInstruction`, a function for getting command response feedback, and `ClearRespSetInstruction`, a function for clearing stored command response messages. This function sets the timestamp variable in the command response feedback message to 0 and all other messages to -1.
+  - Added the demo `piper_read_resp_instruction.py`.
+  - The `SetInstructionResponse` function has been deprecated; calling it will generate a warning.
 
 Miscellaneous
 ---------
