@@ -215,6 +215,12 @@ class C_PiperParserV2(C_PiperParserBase):
             msg.arm_low_spd_feedback_6.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
             msg.arm_low_spd_feedback_6.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
             msg.arm_low_spd_feedback_6.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        # 设置指令应答，0x476
+        elif(can_id == CanIDPiper.ARM_FEEDBACK_RESP_SET_INSTRUCTION.value):
+            msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_resp_set_instruction.instruction_index = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_feedback_resp_set_instruction.is_set_zero_successfully = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
         elif(can_id == CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_ANGLE_LIMIT_MAX_SPD.value):
             msg.type_ = ArmMessageMapping.get_mapping(can_id=can_id)
             msg.time_stamp = can_time_now

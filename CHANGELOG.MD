@@ -3,6 +3,33 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.5.0
+=============
+
+Features
+--------
+
+- ✨ feat(interface): Added abnormal data filtering for gripper travel, joint angle, and end-point data.
+  - Abnormal data filtering is enabled by default. Use the `DisableFilterAbnormalData` function to disable it; use the `EnableFilterAbnormalData` function to enable it. The `isFilterAbnormalData` function returns True to indicate that the abnormal data filtering function is enabled.
+  - The gripper travel filter is set to 150mm*1000;
+  - The joint angle filter is set to 300 degrees*1000;
+  - The end-point data xyz filter is set to 1m\*1000\*1000, and the rpy filter is set to 361 degrees*1000.
+- ✨ feat(interface): Add the get function `GetCanBus` of the can class
+
+Bug Fixes
+---------
+
+- 🐞 fix(msg, protocol, interface): Added command response feedback functionality, deprecating the previous version's set command response function.
+  - Due to a protocol misunderstanding, the previous version's command response function was a send function, but the protocol actually uses a feedback message.
+  - This update adds `GetRespInstruction`, a function for getting command response feedback, and `ClearRespSetInstruction`, a function for clearing stored command response messages. This function sets the timestamp variable in the command response feedback message to 0 and all other messages to -1.
+  - Added the demo `piper_read_resp_instruction.py`.
+  - The `SetInstructionResponse` function has been deprecated; calling it will generate a warning.
+
+Miscellaneous
+---------
+
+- 📃 docs(INTERFACE_V2.MD): Add Get class function comments and new function descriptions
+
 Version 0.4.3
 =============
 

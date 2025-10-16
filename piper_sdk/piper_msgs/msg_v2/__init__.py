@@ -32,6 +32,7 @@ __all__ = [
     'ArmMsgFeedbackHighSpd',
     'ArmMsgFeedbackLowSpd',
     'ArmMsgFeedbackGripperTeachingPendantParam',
+    'ArmMsgFeedbackRespSetInstruction',
     # 发送
     'ArmMsgMotionCtrl_1',
     'ArmMsgMotionCtrl_2',

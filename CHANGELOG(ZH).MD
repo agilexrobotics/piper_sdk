@@ -3,6 +3,33 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.5.0
+=============
+
+特性
+--------
+
+- ✨ feat(interface): 增加异常数据过滤功能，包括夹爪行程、关节角、末端数据
+  - 默认开启异常数据过滤,使用`DisableFilterAbnormalData`函数关闭该功能;使用`EnableFilterAbnormalData`函数打开该功能;`isFilterAbnormalData`函数获取过滤异常数据功能的打开状态,return为`True`为开启了异常数据过滤功能;
+  - 夹爪行程过滤条件为150mm*1000;
+  - 关节角过滤条件为300度*1000;
+  - 末端数据xyz过滤条件为1m\*1000\*1000,rpy过滤条件为361度*1000。
+- ✨ feat(interface): 增加can类的获取函数`GetCanBus`
+
+Bug修复
+---------
+
+- 🐞 fix(msg,procotol,interface): 增加指令应答反馈功能，弃用之前版本的设定指令应答函数
+  - 由于协议理解错误，之前版本的指令应答是发送的功能，但是其实该协议为反馈消息;
+  - 本次更新增加了指令应答反馈的获取功能 `GetRespInstruction`, 以及清除暂存的指令应答消息 `ClearRespSetInstruction`,该函数会将指令应答反馈消息中的时间戳变量置0,将其它消息置-1
+  - 增加demo `piper_read_resp_instruction.py`
+  - `SetInstructionResponse`函数弃用，调用该函数会报warning
+
+其它
+---------
+
+- 📃 docs(INTERFACE_V2.MD): 增加Get类函数注释，增加新增函数说明
+
 Version 0.4.3
 =============
 

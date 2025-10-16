@@ -329,6 +329,20 @@ class C_PiperInterface_V2():
             return (f"time stamp:{self.time_stamp}\n"
                     f"{self.all_motor_angle_limit_max_spd}\n")
     
+    class ArmRespSetInstruction():
+        '''
+        设置指令应答
+        '''
+        '''
+        Sets the response for the instruction.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.instruction_response=ArmMsgFeedbackRespSetInstruction()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"{self.instruction_response}\n")
+
     _instances = {}  # 存储不同参数的实例
     _lock = threading.Lock()
 
@@ -411,6 +425,7 @@ class C_PiperInterface_V2():
         self.__start_sdk_joint_limit = start_sdk_joint_limit
         self.__start_sdk_gripper_limit = start_sdk_gripper_limit
         self.__start_sdk_fk_cal = False
+        self.__abnormal_data_filter = True
         self.__piper_param_mag = C_PiperParamManager()
         # protocol
         self.__parser: Type[C_PiperParserV2] = C_PiperParserV2()
@@ -513,6 +528,10 @@ class C_PiperInterface_V2():
         
         self.__arm_all_motor_angle_limit_max_spd_mtx = threading.Lock()
         self.__arm_all_motor_angle_limit_max_spd = self.AllCurrentMotorAngleLimitMaxSpd()
+
+        self.__feedback_instruction_response_mtx = threading.Lock()
+        self.__feedback_instruction_response = self.ArmRespSetInstruction()
+
         self._initialized = True  # 标记已初始化
     
     @classmethod
@@ -701,6 +720,36 @@ class C_PiperInterface_V2():
         '''
         return self.__start_sdk_fk_cal
 
+    def EnableFilterAbnormalData(self):
+        '''
+        Enable filter abnormal data,joint data or end pose data
+
+        Returns
+        -------
+            bool: Enable abnormal data filtering
+        '''
+        self.__abnormal_data_filter = True
+        return self.__abnormal_data_filter
+
+    def DisableFilterAbnormalData(self):
+        '''
+        Disable filter abnormal data,joint data or end pose data
+
+        Returns
+        -------
+            bool: Disable abnormal data filtering
+        '''
+        self.__abnormal_data_filter = False
+        return self.__abnormal_data_filter
+
+    def isFilterAbnormalData(self):
+        '''
+        Returns
+        -------
+            bool: Whether to filter abnormal data, True to enable filtering
+        '''
+        return self.__abnormal_data_filter
+
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
         '''can协议解析函数
 
@@ -736,6 +785,7 @@ class C_PiperInterface_V2():
             self.__UpdateArmCtrlCode151(msg)
             self.__UpdateArmModeCtrl(msg)
             self.__UpdatePiperFirmware(msg)
+            self.__UpdateRespSetInstruction(msg)
             if self.__start_sdk_fk_cal:
                 self.__UpdatePiperFeedbackFK()
                 self.__UpdatePiperCtrlFK()
@@ -754,6 +804,15 @@ class C_PiperInterface_V2():
     def __GetCurrentTime(self):
         return time.time_ns() / 1e9
     
+    def GetCanBus(self):
+        '''
+        Returns
+        -------
+        self.__arm_can : C_STD_CAN
+            can encapsulation class, which contains some socketcan related functions
+        '''
+        return self.__arm_can
+
     def GetCanName(self):
         '''
         Returns
@@ -1465,6 +1524,29 @@ class C_PiperInterface_V2():
             firmware_version = self.__firmware_data[version_start:version_end].decode('utf-8', errors='ignore')
             return firmware_version  # 返回找到的固件版本字符串
     
+    def GetRespInstruction(self):
+        '''
+        Sets the response for the instruction.
+        
+        CAN ID: 0x476
+        
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        
+        instruction_index (int): The response instruction index.
+            This is derived from the last byte of the set instruction ID.
+            For example, when responding to the 0x471 set instruction, this would be 0x71.
+        
+        zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
+            - 0x01: Zero point successfully set.
+            - 0x00: Zero point set failed/not set.
+            - This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
+        '''
+        with self.__feedback_instruction_response_mtx:
+            return self.__feedback_instruction_response
+
     def isOk(self):
         '''
         Feedback on whether the CAN data reading thread is functioning normally
@@ -1548,16 +1630,31 @@ class C_PiperInterface_V2():
         '''
         with self.__arm_end_pose_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_1):
+                if self.isFilterAbnormalData():
+                    # 1m * 1000 * 1000
+                    if abs(msg.arm_end_pose.X_axis) > 1e6 or abs(msg.arm_end_pose.Y_axis) > 1e6:
+                        return
                 self.__fps_counter.increment("ArmEndPose_XY")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.X_axis = msg.arm_end_pose.X_axis
                 self.__arm_end_pose.end_pose.Y_axis = msg.arm_end_pose.Y_axis
             elif(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_2):
+                if self.isFilterAbnormalData():
+                    # 1m * 1000 * 1000
+                    if abs(msg.arm_end_pose.Z_axis) > 1e6:
+                        return
+                    # 361 degree * 1000
+                    if abs(msg.arm_end_pose.RX_axis) > 361000:
+                        return
                 self.__fps_counter.increment("ArmEndPose_ZRX")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.Z_axis = msg.arm_end_pose.Z_axis
                 self.__arm_end_pose.end_pose.RX_axis = msg.arm_end_pose.RX_axis
             elif(msg.type_ == ArmMsgType.PiperMsgEndPoseFeedback_3):
+                if self.isFilterAbnormalData():
+                    # 361 degree * 1000
+                    if abs(msg.arm_end_pose.RY_axis) > 361000 or abs(msg.arm_end_pose.RZ_axis) > 361000:
+                        return
                 self.__fps_counter.increment("ArmEndPose_RYRZ")
                 self.__arm_end_pose.time_stamp = msg.time_stamp
                 self.__arm_end_pose.end_pose.RY_axis = msg.arm_end_pose.RY_axis
@@ -1577,20 +1674,36 @@ class C_PiperInterface_V2():
         '''
         with self.__arm_joint_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
+                _joint1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
+                _joint2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
+                if self.isFilterAbnormalData():
+                # 300 degree * 1000
+                    if abs(_joint1) > 3000000 or abs(_joint2) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_12")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
-                self.__arm_joint_msgs.joint_state.joint_2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
+                self.__arm_joint_msgs.joint_state.joint_1 = _joint1
+                self.__arm_joint_msgs.joint_state.joint_2 = _joint2
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_34):
+                _joint3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
+                _joint4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
+                if self.isFilterAbnormalData():
+                    if abs(_joint3) > 3000000 or abs(_joint4) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_34")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
-                self.__arm_joint_msgs.joint_state.joint_4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
+                self.__arm_joint_msgs.joint_state.joint_3 = _joint3
+                self.__arm_joint_msgs.joint_state.joint_4 = _joint4
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_56):
+                _joint5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
+                _joint6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
+                if self.isFilterAbnormalData():
+                    if abs(_joint5) > 3000000 or abs(_joint6) > 3000000:
+                        return
                 self.__fps_counter.increment("ArmJoint_56")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
-                self.__arm_joint_msgs.joint_state.joint_6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
+                self.__arm_joint_msgs.joint_state.joint_5 = _joint5
+                self.__arm_joint_msgs.joint_state.joint_6 = _joint6
             return self.__arm_joint_msgs
 
     def __UpdateArmGripperState(self, msg:PiperMessage):
@@ -1606,6 +1719,11 @@ class C_PiperInterface_V2():
         '''
         with self.__arm_gripper_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgGripperFeedBack):
+                gripper_val = self.__CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)
+                if self.isFilterAbnormalData():
+                    # 150mm * 1000
+                    if abs(gripper_val) > 150000:
+                        return
                 self.__fps_counter.increment("ArmGripper")
                 self.__arm_gripper_msgs.time_stamp = msg.time_stamp
                 self.__arm_gripper_msgs.gripper_state.grippers_angle = self.__CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)
@@ -2171,6 +2289,18 @@ class C_PiperInterface_V2():
         with self.__piper_ctrl_fk_mtx:
             self.__link_ctrl_fk = self.__piper_fk.CalFK(joint_states)
     
+    def __UpdateRespSetInstruction(self, msg:PiperMessage):
+        '''
+        更新设置应答反馈指令
+        '''
+        with self.__feedback_instruction_response_mtx:
+            if(msg.type_ == ArmMsgType.PiperMsgFeedbackRespSetInstruction):
+                self.__feedback_instruction_response.time_stamp = msg.time_stamp
+                self.__feedback_instruction_response.instruction_response.instruction_index = \
+                    msg.arm_feedback_resp_set_instruction.instruction_index
+                self.__feedback_instruction_response.instruction_response.is_set_zero_successfully = \
+                    msg.arm_feedback_resp_set_instruction.is_set_zero_successfully
+            return self.__feedback_instruction_response
     # 控制发送函数------------------------------------------------------------------------------------------------------
     def MotionCtrl_1(self, 
                     emergency_stop: Literal[0x00, 0x01, 0x02] = 0, 
@@ -3080,44 +3210,11 @@ class C_PiperInterface_V2():
         '''
         self.JointConfig(motor_num, 0, 0xAE, max_joint_acc, 0)
     
-    def SetInstructionResponse(self, instruction_index: int, zero_config_success_flag: Literal[0, 1] = 0):
+    def SetInstructionResponse(self, instruction_index: int=0, zero_config_success_flag: Literal[0, 1] = 0):
         '''
-        设置指令应答
-        
-        CAN ID:
-            0x476
-        
-        Args:
-            instruction_index: 应答指令索引
-                取设置指令 id 最后一个字节
-                例如,应答 0x471 设置指令时此位填充0x71
-            zero_config_success_flag: 零点是否设置成功
-                零点成功设置-0x01
-                设置失败/未设置-0x00
-                仅在关节设置指令--成功设置 N 号电机当前位置为零点时应答-0x01
+        This function has been deprecated (since version 0.5.0)
         '''
-        '''
-        Sets the response for the instruction.
-        
-        CAN ID: 0x476
-        
-        Args:
-            instruction_index (int): The response instruction index.
-                This is derived from the last byte of the set instruction ID.
-                For example, when responding to the 0x471 set instruction, this would be 0x71.
-            
-            zero_config_success_flag (int): Flag indicating whether the zero point was successfully set.
-                0x01: Zero point successfully set.
-                0x00: Zero point set failed/not set.
-                This is only applicable when responding to a joint setting instruction that successfully sets motor N's current position as the zero point.
-        '''
-        tx_can = Message()
-        set_resp = ArmMsgInstructionResponseConfig(instruction_index, zero_config_success_flag)
-        msg = PiperMessage(type_=ArmMsgType.PiperMsgInstructionResponseConfig, arm_set_instruction_response=set_resp)
-        self.__parser.EncodeMessage(msg, tx_can)
-        feedback = self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
-        if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
-            self.logger.error("SetInstructionResponse send failed: SendCanMessage(%s)", feedback)
+        self.logger.warning("The SetInstructionResponse function has been deprecated (since version 0.5.0)")
     
     def ArmParamEnquiryAndConfig(self, 
                                  param_enquiry: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00, 
@@ -3489,6 +3586,24 @@ class C_PiperInterface_V2():
             # 主从臂一起回零
             tx_can.data = [0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]
         self.__arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+    
+    def ClearRespSetInstruction(self):
+        '''
+        清除SDK保存的设置指令应答信息
+
+        将指令应答反馈中的
+        time_stamp = 0;
+        instruction_response.instruction_index = -1;
+        instruction_response.is_set_zero_successfully = -1
+        '''
+        '''
+        Clear saved SDK command responses.
+
+        Set the command response related parameters to -1.
+        '''
+        self.__feedback_instruction_response.time_stamp = 0
+        self.__feedback_instruction_response.instruction_response.instruction_index = -1
+        self.__feedback_instruction_response.instruction_response.is_set_zero_successfully = -1
 #----------------------------------------------------------------------------------
     def GetSDKJointLimitParam(self,
                            joint_name: Literal["j1", "j2", "j3", "j4", "j5", "j6"]):

@@ -45,6 +45,7 @@ class PiperMessage:
                  arm_high_spd_feedback:ArmMsgFeedbackHighSpd=None,
                  arm_low_spd_feedback:ArmMsgFeedbackLowSpd=None,
                  arm_gripper_teaching_param_feedback:ArmMsgFeedbackGripperTeachingPendantParam=None,
+                 arm_feedback_resp_set_instruction:ArmMsgFeedbackRespSetInstruction=None,
                 #  发送
                  arm_motion_ctrl_1: ArmMsgMotionCtrl_1=None,
                  arm_motion_ctrl_2: ArmMsgMotionCtrl_2=None,
@@ -123,6 +124,9 @@ class PiperMessage:
         # 设置指令应答
         self.arm_set_instruction_response = arm_set_instruction_response \
             if arm_set_instruction_response else ArmMsgInstructionResponseConfig()
+        # 设置指令应答反馈
+        self.arm_feedback_resp_set_instruction = arm_feedback_resp_set_instruction \
+            if arm_feedback_resp_set_instruction else ArmMsgFeedbackRespSetInstruction()
         # 机械臂参数查询与设置指令
         self.arm_param_enquiry_and_config = arm_param_enquiry_and_config \
             if arm_param_enquiry_and_config else ArmMsgParamEnquiryAndConfig()
