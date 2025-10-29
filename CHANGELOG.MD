@@ -3,6 +3,24 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.6.0
+=============
+
+Features
+--------
+
+None
+
+Bug Fixes
+---------
+
+None
+
+Miscellaneous
+---------
+
+None
+
 Version 0.5.0
 =============
 

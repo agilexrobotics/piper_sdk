@@ -115,7 +115,7 @@ class C_STD_CAN():
             # return True
             return self.CAN_STATUS.INIT_CAN_BUS_IS_EXIST
         try:
-            self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype)
+            self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate)
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_SUCCESS
         except can.CanError as e:
             self.bus = None
