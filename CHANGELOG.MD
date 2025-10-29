@@ -9,7 +9,16 @@ Version 0.6.0
 Features
 --------
 
-None
+- ✨ feat(interface,can_encapsulation,demo): Added serial port CAN functionality (MAC support); Added some wrapper functions
+  - Added serial port CAN reading functionality:
+    - Gave `can_auto_init` a new meaning; when it is `False`, the CAN bus will not be initialized, and `CreateCanBus` needs to be called manually.
+    - Added a check in `ConnectPort` to see if the CAN bus is None; if it is None, a ValueRrror error will be reported.
+    - Modified the `Init` function in `can_encapsulation_v0_4_0` to add baud rate setting when creating the bus.
+    - Added `piper_set_can.py` to `demo`.
+  - Added some wrapper functions:
+    - `GetMotorStates` is a wrapper function for `GetArmHighSpdInfoMsgs`, and the name has been changed to make its meaning clearer.
+    - `GetDriverStates` is a wrapper function for `GetArmLowSpdInfoMsgs`, and the name has been changed to make its meaning clearer.
+    - `ResetPiper` is a wrapper function for `MotionCtrl_1`, making the function of resetting the robotic arm a separate function.
 
 Bug Fixes
 ---------
@@ -19,7 +28,7 @@ None
 Miscellaneous
 ---------
 
-None
+- 📃 docs(Q&A.MD): Added explanations regarding the MIT protocol, clarifying the relationship between given torque and executed torque; added explanations regarding the value of motor feedback torque.
 
 Version 0.5.0
 =============

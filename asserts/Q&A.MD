@@ -22,3 +22,34 @@ For Jetpack 6.0 and above, you need to use the command line Jetpack and then com
 Reference Links:<https://forums.developer.nvidia.com/t/missing-gs-usb-kernel-module-for-jetpack-6/275287/7>
 
 You need to add `CONFIG_CAN_GS_USB=m`, etc., that is, refer to the `defconfig.jetpack_5_1_2.txt` file, add what is missing in `defconfig.jetpack_6_0.txt`, complete the `gs_usb` module related to CAN, and then recompile the kernel.
+
+## 3. Answers to questions regarding torque parameters in MIT and how to obtain motor torque.
+
+### 3.1 Torque control in MIT
+
+![ ](./mit_mode.png)
+
+The MIT (Mixed-Input, Mixed-Input) mode enables hybrid control of torque, position, and velocity. In the diagram above, the position loop and velocity loop are connected in parallel. The output values ​​of the position and velocity loops are added to the feedforward torque `t_ff` to obtain the reference torque `T_ref`.
+
+![ ](./mit_formula.png)
+
+Where:
+
+- `T_ref` is the reference torque, in `N·m`.
+- `kp` is the position gain.
+- `kd` is the velocity gain.
+- `p_des` is the desired position of the motor output shaft, in `rad`.
+- `θ_m` is the current position of the motor output shaft, in `rad`.
+- `v_des` is the desired velocity of the motor output shaft, in `rad/s`.
+- `dθ_m` is the current velocity of the motor output shaft, in `rad/s`.
+
+**Note: When you send a target torque, the actual torque the motor executes is 4 times the input value. For example, if you send 1N, the motor executes 4N.**
+
+### 3.2 SDK to obtain motor feedback torque
+
+In the SDK, you can use `GetArmHighSpdInfoMsgs().motor_1.effort` to get the torque of `motor_1`, and then you need to scale it down by a factor of 1000 to get the torque in Nm. The 'x' in `motor_x` represents the nth joint.
+
+However, note that for Piper's underlying firmware versions `1.8-2` and earlier, the feedback torque requires the following handling.
+
+- J1-3 = GetArmHighSpdInfoMsgs().motor_x.effort / 4
+- J4-6 = GetArmHighSpdInfoMsgs().motor_x.effort

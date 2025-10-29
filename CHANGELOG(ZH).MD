@@ -8,7 +8,17 @@ Version 0.6.0
 
 特性
 --------
-无
+
+- ✨ feat(interface,can_encapsulation,demo): 增加串口can特性(支持mac); 增加一些封装函数
+  - 增加读取串口can特性:
+    - 为`can_auto_init`赋予新含义，当其为`False`时，不会初始化can bus，需要手动调用`CreateCanBus`
+    - `ConnectPort`中增加对can bus是否为None的判断，如果为None会报出ValueError的错误
+    - 修改`can_encapsulation_v0_4_0`中的`Init`函数，增加创建bus时波特率的设定
+    - 增加了`piper_set_can.py`在`demo`中
+  - 增加一些封装函数:
+    - `GetMotorStates`为`GetArmHighSpdInfoMsgs`的封装函数，令其意义更明确
+    - `GetDriverStates`为`GetArmLowSpdInfoMsgs`的封装函数，令其意义更明确
+    - `ResetPiper`为`MotionCtrl_1`的封装函数，将重置机械臂的功能作为单独函数出现
 
 Bug修复
 ---------
@@ -16,7 +26,8 @@ Bug修复
 
 其它
 ---------
-无
+
+- 📃 docs(Q&A.MD): 增加有关mit协议的说明，说明了给定力矩与执行力矩的关系；增加有关电机反馈力矩数值的说明
 
 Version 0.5.0
 =============
