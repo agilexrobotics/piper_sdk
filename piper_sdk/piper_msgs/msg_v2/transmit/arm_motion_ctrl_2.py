@@ -34,6 +34,7 @@ class ArmMsgMotionCtrl_2():
                 0x02 MOVE L
                 0x03 MOVE C
                 0x04 MOVE M ---基于V1.5-2版本后
+                0x05 MOVE CPV ---基于V1.8-1版本后
         Byte 2: 运动速度百分比 uint8    0~100
         Byte 3: mit模式      uint8   
                 0x00 位置速度模式
@@ -76,6 +77,7 @@ class ArmMsgMotionCtrl_2():
             0x02: MOVE L (Linear).
             0x03: MOVE C (Circular).
             0x04: MOVE M (MIT) ---- Based on version V1.5-2 and later
+            0x05: MOVE CPV ---- Based on version V1.8-1 and later
 
         Byte 2 speed_percentage: uint8, movement speed as a percentage.
             Range: 0~100.
@@ -96,7 +98,7 @@ class ArmMsgMotionCtrl_2():
     '''
     def __init__(self, 
                  ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
-                 move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x01, 
+                 move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05] = 0x01, 
                  move_spd_rate_ctrl: int = 50,
                  mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                  residence_time: int = 0,
@@ -104,8 +106,8 @@ class ArmMsgMotionCtrl_2():
         # 检查是否在有效范围内
         if ctrl_mode not in [0x00, 0x01, 0x03, 0x04, 0x07]:
             raise ValueError(f"'ctrl_mode' Value {ctrl_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
-        if move_mode not in [0x00, 0x01, 0x02, 0x03, 0x04]:
-            raise ValueError(f"'move_mode' Value {move_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04]")
+        if move_mode not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x05]:
+            raise ValueError(f"'move_mode' Value {move_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x05]")
         if not (0 <= move_spd_rate_ctrl <= 100):
             raise ValueError(f"'move_spd_rate_ctrl' Value {move_spd_rate_ctrl} out of range 0-100")
         if mit_mode not in [0x00, 0xAD, 0xFF]:

@@ -184,19 +184,19 @@ class C_STD_CAN():
         else:
             return can_bus_status
 
-    def SendCanMessage(self, arbitration_id, data):
+    def SendCanMessage(self, arbitration_id, data, dlc=8, is_extended_id=False):
         '''can transmit
 
         Args:
             arbitration_id (_type_): _description_
-            data (_type_): _description_
+            data (_type_): _description_ Defaults to 8.
             is_extended_id_ (bool, optional): _description_. Defaults to False.
         '''
         message = can.Message(channel=self.channel_name,
                               arbitration_id=arbitration_id, 
                               data=data, 
-                              dlc=8,
-                              is_extended_id=False)
+                              dlc=dlc,
+                              is_extended_id=is_extended_id)
         if(self.is_can_bus_ok() == self.CAN_STATUS.BUS_STATE_ACTIVE):
             try:
                 self.bus.send(message)

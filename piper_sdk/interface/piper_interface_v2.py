@@ -564,7 +564,7 @@ class C_PiperInterface_V2():
         
         Args:
             can_name: can的端口名称
-            bustype: can总线类型,默认为socket can
+            bustype: can总线类型,默认为'socketcan',如果是串口can模块需要改为'slcan'
             expected_bitrate: 预期can总线的波特率
             judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
         '''
@@ -573,7 +573,7 @@ class C_PiperInterface_V2():
 
         Args:
             can_name: The name of the CAN port.
-            bustype: The type of CAN bus, default is socket CAN.
+            bustype: CAN bus type, the default is 'socketcan', if it is a serial port CAN module, it needs to be changed to 'slcan'.
             expected_bitrate: The expected bitrate for the CAN bus.
             judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
         '''
@@ -2507,7 +2507,7 @@ class C_PiperInterface_V2():
 
     def MotionCtrl_2(self, 
                      ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
-                     move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x01, 
+                     move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05] = 0x01, 
                      move_spd_rate_ctrl: int = 50, 
                      is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                      residence_time: int = 0,
@@ -2531,6 +2531,7 @@ class C_PiperInterface_V2():
                 0x02 MOVE L
                 0x03 MOVE C
                 0x04 MOVE M ---基于V1.5-2版本后
+                0x05 MOVE CPV ---基于V1.8-1版本后
             move_spd_rate_ctrl 运动速度百分比 uint8
                 数值范围0~100 
             is_mit_mode: mit模式 uint8 
@@ -2561,6 +2562,7 @@ class C_PiperInterface_V2():
                 0x02: MOVE L (Linear)
                 0x03: MOVE C (Circular)
                 0x04: MOVE M (MIT) ---- Based on version V1.5-2 and later
+                0x05: MOVE CPV ---- Based on version V1.8-1 and later
             move_spd_rate_ctrl (int): The movement speed percentage (0-100).
             is_mit_mode (int): The MIT mode.
                 0x00: Position-velocity mode
@@ -2584,7 +2586,7 @@ class C_PiperInterface_V2():
     
     def ModeCtrl(self, 
                 ctrl_mode: Literal[0x00, 0x01] = 0x01, 
-                move_mode: Literal[0x00, 0x01, 0x02, 0x03] = 0x01, 
+                move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05] = 0x01, 
                 move_spd_rate_ctrl: int = 50, 
                 is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00):
         '''
@@ -2602,6 +2604,8 @@ class C_PiperInterface_V2():
                 0x01 MOVE J
                 0x02 MOVE L
                 0x03 MOVE C
+                0x04 MOVE M ---基于V1.5-2版本后
+                0x05 MOVE CPV ---基于V1.8-1版本后
             move_spd_rate_ctrl 运动速度百分比 uint8
                 数值范围0~100 
             is_mit_mode: mit模式 uint8 
@@ -2621,6 +2625,8 @@ class C_PiperInterface_V2():
                 0x01: MOVE J (Joint)
                 0x02: MOVE L (Linear)
                 0x03: MOVE C (Circular)
+                0x04: MOVE M (MIT) ---- Based on version V1.5-2 and later
+                0x05: MOVE CPV ---- Based on version V1.8-1 and later
             move_spd_rate_ctrl (int): The movement speed percentage (0-100).
             is_mit_mode (int): The MIT mode.
                 0x00: Position-velocity mode

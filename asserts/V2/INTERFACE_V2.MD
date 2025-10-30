@@ -130,7 +130,7 @@ The robot will immediately lose power and fall down, clearing all errors and int
 
 ```python
 def ModeCtrl(ctrl_mode: Literal[0x00, 0x01] = 0x01,
-            move_mode: Literal[0x00, 0x01, 0x02, 0x03] = 0x01,
+            move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05] = 0x01,
             move_spd_rate_ctrl: int = 50,
             is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00)
 ```
@@ -147,6 +147,8 @@ Parameters:
   - 0x01: MOVE J (Joint)
   - 0x02: MOVE L (Linear)
   - 0x03: MOVE C (Circular)
+  - 0x04: MOVE M (MIT) ---- Based on version V1.5-2 and later
+  - 0x05: MOVE CPV ---- Based on version V1.8-1 and later
 - `move_spd_rate_ctrl`: Movement speed percentage (0-100)
 - `is_mit_mode`:
   - 0x00: Position-velocity mode

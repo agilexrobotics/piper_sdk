@@ -3,6 +3,34 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.6.1
+=============
+
+Features
+--------
+
+- ✨ feat(can_encapsulation): Adds `dlc` and `is_extended_id` parameters to `SendCanMessage`
+- ✨ feat(interface,piper_msgs): Adds CPV mode selection and comments
+  - CPV mode can be switched using `ModeCtrl(0x01, 0x05)`
+
+Bug Fixes
+---------
+
+None
+
+Miscellaneous
+---------
+
+- 🧪 test(demo): Added a demo for setting the joint limit of a single motor, `piper_set_motor_angle_limit.py`
+- 🧪 test(demo): Added a demo for setting the zero point of the robotic arm in CPV mode, `piper_set_joint_zero_cpv.py`
+- 📃 docs(interface): Modified the comment for the bustype parameter in the CreateCanBus function
+  - Modified the comments related to bustype in the `CreateCanBus` function to specify that the expected parameter is `'socketcan'` or `'slcan'`.
+- 🧪 test(demo): Added three demos: moveJ, moveL, and moveP; synchronized the README in the demos.
+  - Added a demo for `piper_ctrl_moveJ.py`, with the same content as `piper_ctrl_joint.py`;
+  - Added a demo for `piper_ctrl_moveL.py`, which shows a robotic arm drawing a square;
+  - Added a demo for `piper_ctrl_moveP.py`, with the same content as `piper_ctrl_end_pose.py`;
+  - Synchronized the README content in the demos.
+
 Version 0.6.0
 =============
 
