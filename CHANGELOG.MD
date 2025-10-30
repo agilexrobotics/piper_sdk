@@ -29,6 +29,9 @@ Miscellaneous
 ---------
 
 - 📃 docs(Q&A.MD): Added explanations regarding the MIT protocol, clarifying the relationship between given torque and executed torque; added explanations regarding the value of motor feedback torque.
+- 📃 docs(Q&A.MD): Added instructions on using serial port CAN in Q&A.MD
+- 📃 docs(INTERFACE_V2.MD): Added descriptions of newly added functions in INTERFACE_V2.MD
+- 📃 docs(asserts): Organized the images into the pictures folder
 
 Version 0.5.0
 =============

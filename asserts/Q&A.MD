@@ -23,7 +23,7 @@ Reference Links:<https://forums.developer.nvidia.com/t/missing-gs-usb-kernel-mod
 
 You need to add `CONFIG_CAN_GS_USB=m`, etc., that is, refer to the `defconfig.jetpack_5_1_2.txt` file, add what is missing in `defconfig.jetpack_6_0.txt`, complete the `gs_usb` module related to CAN, and then recompile the kernel.
 
-## 3. Answers to questions regarding torque parameters in MIT and how to obtain motor torque.
+## 3. Answers to questions regarding torque parameters in MIT and how to obtain motor torque
 
 ### 3.1 Torque control in MIT
 

@@ -28,6 +28,9 @@ Bug修复
 ---------
 
 - 📃 docs(Q&A.MD): 增加有关mit协议的说明，说明了给定力矩与执行力矩的关系；增加有关电机反馈力矩数值的说明
+- 📃 docs(Q&A.MD): 在Q&A.MD中增加有关串口can使用的说明
+- 📃 docs(INTERFACE_V2.MD): 在INTERFACE_V2.MD中增加新增函数说明
+- 📃 docs(asserts): 将图片整理到pictures文件夹中
 
 Version 0.5.0
 =============
