@@ -564,7 +564,7 @@ class C_PiperInterface_V2():
         
         Args:
             can_name: can的端口名称
-            bustype: can总线类型,默认为socket can
+            bustype: can总线类型,默认为'socketcan',如果是串口can模块需要改为'slcan'
             expected_bitrate: 预期can总线的波特率
             judge_flag: 是否在实例化该类时进行can端口判断,有些情况需要False 
         '''
@@ -573,7 +573,7 @@ class C_PiperInterface_V2():
 
         Args:
             can_name: The name of the CAN port.
-            bustype: The type of CAN bus, default is socket CAN.
+            bustype: CAN bus type, the default is 'socketcan', if it is a serial port CAN module, it needs to be changed to 'slcan'.
             expected_bitrate: The expected bitrate for the CAN bus.
             judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
         '''
