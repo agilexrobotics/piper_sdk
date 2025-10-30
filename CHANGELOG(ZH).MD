@@ -21,9 +21,14 @@ Bug修复
 ---------
 
 - 🧪 test(demo): 增加单独设定某个电机的关节限位的demo，`piper_set_motor_angle_limit.py`
-- 🧪 test(demo): 增加cpv模式下控制机械臂设置零点demo，`piper_set_joint_zero _cpv.py`
+- 🧪 test(demo): 增加cpv模式下控制机械臂设置零点demo，`piper_set_joint_zero_cpv.py`
 - 📃 docs(interface): 修改CreateCanBus函数中bustype参数注释说明
   - 修改CreateCanBus函数中bustype有关的注释说明，说明预期参数为'socketcan'或'slcan'
+- 🧪 test(demo): 增加moveJ、moveL、moveP三个demo；同步demo中的README
+  - 增加`piper_ctrl_moveJ.py`的demo，与`piper_ctrl_joint.py`内容相同；
+  - 增加`piper_ctrl_moveL.py`的demo，效果为机械臂绘画正方形；
+  - 增加`piper_ctrl_moveP.py`的demo，与`piper_ctrl_end_pose.py`内容相同；
+  - 同步demo的README内容。
 
 Version 0.6.0
 =============
