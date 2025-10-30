@@ -3,6 +3,28 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.6.1
+=============
+
+特性
+--------
+
+- ✨ feat(can_encapsulation): 为`SendCanMessage`增加`dlc`以及`is_extended_id`参数
+- ✨ feat(interface,piper_msgs): 增加CPV模式选择以及注释说明
+  - 可以通过`ModeCtrl(0x01, 0x05)`来切换到CPV模式
+
+Bug修复
+---------
+无
+
+其它
+---------
+
+- 🧪 test(demo): 增加单独设定某个电机的关节限位的demo，`piper_set_motor_angle_limit.py`
+- 🧪 test(demo): 增加cpv模式下控制机械臂设置零点demo，`piper_set_joint_zero _cpv.py`
+- 📃 docs(interface): 修改CreateCanBus函数中bustype参数注释说明
+  - 修改CreateCanBus函数中bustype有关的注释说明，说明预期参数为'socketcan'或'slcan'
+
 Version 0.6.0
 =============
 
