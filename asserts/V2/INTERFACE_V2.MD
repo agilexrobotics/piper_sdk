@@ -24,7 +24,7 @@ Inner class identifies instances based on `can_port`, preventing the creation of
 
 Note:
 
-- The LogLevel definition is as follows：
+- The LogLevel definition is as follows:
 
   ```python
   class LogLevel(IntEnum):
@@ -37,6 +37,25 @@ Note:
   ```
 
 ### Connection Methods
+
+#### CreateCanBus
+
+```python
+def CreateCanBus(self, 
+                  can_name:str, 
+                  bustype="socketcan", 
+                  expected_bitrate:int=1000000,
+                  judge_flag:bool=False)
+```
+
+Create can related interfaces
+
+Args:
+
+- can_name: The name of the CAN port.
+- bustype: The type of CAN bus, default is socket CAN.
+- expected_bitrate: The expected bitrate for the CAN bus.
+- judge_flag: Whether to check the CAN port during the instantiation of the class. In some cases, it should be set to False.
 
 #### get_connect_status
 
@@ -98,6 +117,14 @@ Parameters:
   - 0x00: Invalid
   - 0x01: Emergency stop
   - 0x02: Resume
+
+#### ResetPiper
+
+```python
+def ResetPiper()
+```
+
+The robot will immediately lose power and fall down, clearing all errors and internal flags.
 
 #### ModeCtrl
 
@@ -562,10 +589,77 @@ Returns high-speed feedback including:
 
 Manual unit conversion of data is required.
 
+#### GetMotorStates
+
+```python
+def GetMotorStates()
+'''
+Retrieves the robot arm motor status message of the robotic arm.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+motor_x : ArmMsgFeedbackHighSpd
+
+  - can_id (int): Current CAN ID, used to represent the joint number.
+  - motor_speed (int): Motor Speed (in 0.001rad/s).
+  - current (int): Motor  (in 0.001A).
+  - pos (int): Motor Position (rad).
+  - effort (int): Torque converted using a fixed coefficient, (in 0.001 N/m).
+'''
+```
+
 #### GetArmLowSpdInfoMsgs
 
 ```python
 def GetArmLowSpdInfoMsgs()
+'''
+Retrieves the low-speed feedback message of the robotic arm.
+
+Returns
+-------
+time_stamp : float
+  time stamp
+Hz : float
+  msg fps
+motor_x : ArmMsgFeedbackLowSpd
+
+  - can_id (int): CAN ID, representing the current motor number.
+  - vol (int): Current driver voltage (in 0.1V).
+  - foc_temp (int): Driver temperature (in 1℃).
+  - motor_temp (int): Motor temperature (in 1℃).
+  - foc_status (int): Driver status.
+  {
+      * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+      * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+      * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+      * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+      * collision_status (bool): Collision protection status (False: Normal, True: Trigger protection)
+      * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+      * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+      * stall_status (bool): Stalling protection status (False: Normal, True: Trigger protection)
+  }
+  - bus_current (int): Current driver current (in 0.001A).
+'''
+```
+
+Returns low-speed feedback including:
+
+- Voltage(in 0.1 V)
+- Driver temperature(in 1℃)
+- Motor temperature(in 1℃)
+- Driver status
+- Bus current(in 0.001 A)
+
+Manual unit conversion of data is required.
+
+#### GetDriverStates
+
+```python
+def GetDriverStates()
 '''
 Retrieves the low-speed feedback message of the robotic arm.
 
