@@ -27,11 +27,11 @@ You need to add `CONFIG_CAN_GS_USB=m`, etc., that is, refer to the `defconfig.je
 
 ### 3.1 Torque control in MIT
 
-![ ](./mit_mode.png)
+![ ](./pictures/mit_mode.png)
 
 The MIT (Mixed-Input, Mixed-Input) mode enables hybrid control of torque, position, and velocity. In the diagram above, the position loop and velocity loop are connected in parallel. The output values ​​of the position and velocity loops are added to the feedforward torque `t_ff` to obtain the reference torque `T_ref`.
 
-![ ](./mit_formula.png)
+![ ](./pictures/mit_formula.png)
 
 Where:
 

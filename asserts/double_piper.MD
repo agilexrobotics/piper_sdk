@@ -4,11 +4,11 @@
 
 - Schematic diagram
 
-![ ](../asserts/wire_connection.PNG)
+![ ](../asserts/pictures/wire_connection.PNG)
 
 1. Set one of the robot arms as the active arm and the other as the slave arm. There are two ways to set it: use the host computer or use the SDK
    1. Use the host computer:
-    ![ ](./host_computer_set_ms.png)
+    ![ ](./pictures/host_computer_set_ms.png)
    2. Use the sdk:
 
     ```python
