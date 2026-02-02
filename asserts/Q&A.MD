@@ -51,7 +51,7 @@ In the SDK, you can use `GetArmHighSpdInfoMsgs().motor_1.effort` to get the torq
 
 However, note that for Piper's underlying firmware versions `1.8-2` and earlier, the feedback torque requires the following handling.
 
-- J1-3 = GetArmHighSpdInfoMsgs().motor_x.effort / 4
+- J1-3 = GetArmHighSpdInfoMsgs().motor_x.effort * 4
 - J4-6 = GetArmHighSpdInfoMsgs().motor_x.effort
 
 ## 4. How to use the Piper SDK on a Mac to control a robotic arm or read messages from it?
