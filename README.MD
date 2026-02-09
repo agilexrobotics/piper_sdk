@@ -1,5 +1,9 @@
 # Piper Robot Arm SDK User Manual
 
+The new robotic arm SDK has been released. We welcome everyone to use it and ask questions.
+
+<https://github.com/agilexrobotics/pyAgxArm>
+
 [ZH](README(ZH).MD)
 
 |![ubuntu18.04](https://img.shields.io/badge/Ubuntu-18.04-orange.svg)|![ubuntu20.04](https://img.shields.io/badge/Ubuntu-20.04-orange.svg)|![ubuntu22.04](https://img.shields.io/badge/Ubuntu-22.04-orange.svg)|
