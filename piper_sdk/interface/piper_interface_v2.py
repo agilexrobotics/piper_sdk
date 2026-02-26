@@ -708,6 +708,10 @@ class C_PiperInterface_V2():
             if self.__start_sdk_fk_cal:
                 self.__UpdatePiperFeedbackFK()
                 self.__UpdatePiperCtrlFK()
+
+            # Prevent lock starvation of other threads that may need any locks related
+            # to the above Update functions.
+            time.sleep(0)
     
     # def JudgeExsitedArm(self, can_id:int):
     #     '''判断当前can socket是否有指定的机械臂设备,通过can id筛选
