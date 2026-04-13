@@ -4,6 +4,7 @@
 # 反馈码为100开头，反馈码总长为000000
 import can
 from can.message import Message
+import platform
 import time
 from threading import Timer
 import subprocess
@@ -93,6 +94,7 @@ class C_STD_CAN():
         self.callback_function = callback_function  #接收回调函数
         self.recv_bus = None
         self.send_bus = None
+        self._share_bus_between_rx_tx = platform.system() in ("Windows", "Darwin")
         if(judge_flag):
             self.JudgeCanInfo()
         if(auto_init):
@@ -100,8 +102,7 @@ class C_STD_CAN():
     
     def __del__(self):
         try:
-            self.recv_bus.shutdown()  # 关闭 CAN 总线
-            self.send_bus.shutdown()
+            self._shutdown_buses()
             return self.CAN_STATUS.DEL_CAN_BUS_CONNECT_SHUT_DOWN
         except AttributeError:
             return self.CAN_STATUS.DEL_CAN_BUS_WAS_NOT_PROPERLY_INIT
@@ -117,12 +118,17 @@ class C_STD_CAN():
             # return True
             return self.CAN_STATUS.INIT_CAN_BUS_IS_EXIST
         try:
-            self.recv_bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate,
-                                              receive_own_messages=False, local_loopback=False)
-            self.send_bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate,
-                                              receive_own_messages=False, local_loopback=False)
+            self.recv_bus = self._create_bus()
+            if self._share_bus_between_rx_tx:
+                self.send_bus = self.recv_bus
+            else:
+                self.send_bus = self._create_bus()
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_SUCCESS
         except can.CanError as e:
+            try:
+                self._shutdown_buses()
+            except Exception:
+                pass
             self.recv_bus = None
             self.send_bus = None
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_FAILED
@@ -134,9 +140,8 @@ class C_STD_CAN():
         '''
         if self.recv_bus is not None and self.send_bus is not None:
             try:
-                self.recv_bus.shutdown()  # 关闭 CAN 总线
+                self._shutdown_buses()
                 self.recv_bus = None
-                self.send_bus.shutdown()  # 关闭 CAN 总线
                 self.send_bus = None
                 # return True
                 return self.CAN_STATUS.CLOSE_CAN_BUS_CONNECT_SHUT_DOWN
@@ -147,6 +152,21 @@ class C_STD_CAN():
             # return 1
         else:
             return self.CAN_STATUS.CLOSED_CAN_BUS_NOT_OPEN
+
+    def _create_bus(self):
+        return can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate,
+                                 receive_own_messages=False, local_loopback=False)
+
+    def _shutdown_buses(self):
+        if self.recv_bus is None and self.send_bus is None:
+            raise AttributeError("CAN bus was not initialized.")
+
+        shutdown_bus_ids = set()
+        for bus in (self.recv_bus, self.send_bus):
+            if bus is None or id(bus) in shutdown_bus_ids:
+                continue
+            bus.shutdown()
+            shutdown_bus_ids.add(id(bus))
     
     def JudgeCanInfo(self):
         '''
