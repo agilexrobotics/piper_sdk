@@ -4,6 +4,7 @@
 # 反馈码为100开头，反馈码总长为000000
 import can
 from can.message import Message
+import platform
 import time
 from threading import Timer
 import subprocess
@@ -91,7 +92,9 @@ class C_STD_CAN():
         self.expected_bitrate = expected_bitrate
         self.rx_message:Optional[Message] = Message()   #创建消息接收类
         self.callback_function = callback_function  #接收回调函数
-        self.bus = None
+        self.recv_bus = None
+        self.send_bus = None
+        self._share_bus_between_rx_tx = platform.system() in ("Windows", "Darwin")
         if(judge_flag):
             self.JudgeCanInfo()
         if(auto_init):
@@ -99,7 +102,7 @@ class C_STD_CAN():
     
     def __del__(self):
         try:
-            self.bus.shutdown()  # 关闭 CAN 总线
+            self._shutdown_buses()
             return self.CAN_STATUS.DEL_CAN_BUS_CONNECT_SHUT_DOWN
         except AttributeError:
             return self.CAN_STATUS.DEL_CAN_BUS_WAS_NOT_PROPERLY_INIT
@@ -111,14 +114,23 @@ class C_STD_CAN():
         '''
         '''Initialize the CAN bus.
         '''
-        if self.bus is not None:
+        if self.recv_bus is not None and self.send_bus is not None:
             # return True
             return self.CAN_STATUS.INIT_CAN_BUS_IS_EXIST
         try:
-            self.bus = can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate)
+            self.recv_bus = self._create_bus()
+            if self._share_bus_between_rx_tx:
+                self.send_bus = self.recv_bus
+            else:
+                self.send_bus = self._create_bus()
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_SUCCESS
         except can.CanError as e:
-            self.bus = None
+            try:
+                self._shutdown_buses()
+            except Exception:
+                pass
+            self.recv_bus = None
+            self.send_bus = None
             return self.CAN_STATUS.INIT_CAN_BUS_OPENED_FAILED
 
     def Close(self):
@@ -126,10 +138,11 @@ class C_STD_CAN():
         '''
         '''Close the CAN bus.
         '''
-        if self.bus is not None:
+        if self.recv_bus is not None and self.send_bus is not None:
             try:
-                self.bus.shutdown()  # 关闭 CAN 总线
-                self.bus = None
+                self._shutdown_buses()
+                self.recv_bus = None
+                self.send_bus = None
                 # return True
                 return self.CAN_STATUS.CLOSE_CAN_BUS_CONNECT_SHUT_DOWN
             except AttributeError:
@@ -139,6 +152,21 @@ class C_STD_CAN():
             # return 1
         else:
             return self.CAN_STATUS.CLOSED_CAN_BUS_NOT_OPEN
+
+    def _create_bus(self):
+        return can.interface.Bus(channel=self.channel_name, bustype=self.bustype, bitrate=self.expected_bitrate,
+                                 receive_own_messages=False, local_loopback=False)
+
+    def _shutdown_buses(self):
+        if self.recv_bus is None and self.send_bus is None:
+            raise AttributeError("CAN bus was not initialized.")
+
+        shutdown_bus_ids = set()
+        for bus in (self.recv_bus, self.send_bus):
+            if bus is None or id(bus) in shutdown_bus_ids:
+                continue
+            bus.shutdown()
+            shutdown_bus_ids.add(id(bus))
     
     def JudgeCanInfo(self):
         '''
@@ -170,10 +198,10 @@ class C_STD_CAN():
         return self.channel_name
 
     def ReadCanMessage(self):
-        can_bus_status = self.is_can_bus_ok()
+        can_bus_status = self.is_can_bus_ok(self.recv_bus)
         if(can_bus_status == self.CAN_STATUS.BUS_STATE_ACTIVE):
             try:
-                self.rx_message = self.bus.recv(1)
+                self.rx_message = self.recv_bus.recv(1)
                 if self.rx_message is None:
                     return self.CAN_STATUS.READ_CAN_MSG_TIMEOUT
                 if self.rx_message and self.callback_function:
@@ -197,9 +225,9 @@ class C_STD_CAN():
                               data=data, 
                               dlc=dlc,
                               is_extended_id=is_extended_id)
-        if(self.is_can_bus_ok() == self.CAN_STATUS.BUS_STATE_ACTIVE):
+        if(self.is_can_bus_ok(self.send_bus) == self.CAN_STATUS.BUS_STATE_ACTIVE):
             try:
-                self.bus.send(message)
+                self.send_bus.send(message)
                 # return True
                 return self.CAN_STATUS.SEND_MESSAGE_SUCCESS
             # except can.CanError:
@@ -209,15 +237,15 @@ class C_STD_CAN():
         else:
             return self.CAN_STATUS.SEND_CAN_BUS_NOT_OK
 
-    def is_can_bus_ok(self) -> bool:
+    def is_can_bus_ok(self, bus=None) -> bool:
         '''
         检查CAN总线状态是否正常。
         '''
         '''
         Check whether the CAN bus status is normal.
         '''
-        if isinstance(self.bus, can.BusABC):
-            bus_state = self.bus.state
+        if isinstance(bus, can.BusABC):
+            bus_state = bus.state
         else: bus_state = None
         if bus_state == can.BusState.ACTIVE:
             # return True

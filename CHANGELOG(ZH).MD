@@ -3,6 +3,28 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.6.2
+=============
+
+特性
+--------
+
+- ✨ feat(can_comm): 将发送和接收的 CAN bus 分离，降低资源抢占导致的延时或发送失败风险
+- ✨ feat(piper_interface_v2): 增加接收和发送消息对象实例
+  - 在接口中复用 `rx_msg` 与 `tx_msg`，避免在收发路径中频繁创建消息对象
+
+Bug修复
+---------
+
+- 🐞 fix(hardware_port): 根据平台创建 CAN bus
+  - Windows 与 macOS 复用收发 bus，Linux 使用独立的接收和发送 bus
+  - 关闭 CAN bus 时避免重复 shutdown 同一 bus 实例
+
+其它
+---------
+
+- 🔧 build(setup.py): 更新版本号为 `0.6.2`
+
 Version 0.6.1
 =============
 
