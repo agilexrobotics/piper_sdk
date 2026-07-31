@@ -39,6 +39,7 @@ Instructions for activating the CAN module [can README](../../asserts/can_config
 |[`piper_ctrl_line.py`](./piper_ctrl_line.py)|Control the robotic arm in line motion mode.|
 |[`piper_ctrl_moveC.py`](./piper_ctrl_moveC.py)|Set the robotic arm to circular motion mode.|
 |[`piper_ctrl_moveJ.py`](./piper_ctrl_moveJ.py)|Control the joint movement of the robotic arm.|
+|[`piper_ctrl_moveJS.py`](./piper_ctrl_moveJS.py)|Control the joint movement of the robotic arm in JS mode (MOVE J + MIT flag, fastest response, no trajectory planning).|
 |[`piper_ctrl_moveL.py`](./piper_ctrl_moveL.py)|Control the robotic arm to draw a square on the XOY plane.|
 |[`piper_ctrl_moveP.py`](./piper_ctrl_moveP.py)|Control the movement of the robotic arm's end effector.|
 |[`piper_ctrl_reset.py`](./piper_ctrl_reset.py)|Reset the robotic arm. This must be executed once after setting it to teaching mode.|

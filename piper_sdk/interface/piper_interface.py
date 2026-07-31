@@ -2857,6 +2857,95 @@ class C_PiperInterface():
         if feedback is not self.__arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("JointCtrl_J56 send failed: SendCanMessage(%s)", feedback)
 
+    def MoveJS(self,
+               joint_1: int,
+               joint_2: int,
+               joint_3: int,
+               joint_4: int,
+               joint_5: int,
+               joint_6: int,
+               move_spd_rate_ctrl: int = 50):
+        '''
+        机械臂JS模式关节控制(快速响应模式)
+
+        JS模式 = MOVE J(0x01) + MIT模式标志(0xAD), 即在关节控制的基础上开启MIT模式,
+        等效于 MotionCtrl_2(0x01, 0x01, move_spd_rate_ctrl, 0xAD) + JointCtrl(...)
+
+        该模式用于"即时"响应场景(如高频流式下发连续目标点的遥操作):
+
+        - 无平滑处理
+        - 无轨迹规划
+        - 控制器会以尽可能快的速度(并非无限快)响应目标位置
+
+        警告:
+            若目标点与当前位置距离较大, 可能造成剧烈的机械冲击、震荡或不稳定!
+            风险等级: 极高, 请保证相邻目标点足够接近
+
+        CAN ID:
+            0x151, 0x155, 0x156, 0x157
+
+        |joint_name|     limit(rad)       |    limit(angle)    |
+        |----------|     ----------       |     ----------     |
+        |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |
+        |joint2    |   [0, 3.14]          |    [0, 180.0]      |
+        |joint3    |   [-2.967, 0]        |    [-170, 0]       |
+        |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |
+        |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |
+        |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |
+
+        Args:
+            joint_1 (int): 关节1角度,单位0.001度
+            joint_2 (int): 关节2角度,单位0.001度
+            joint_3 (int): 关节3角度,单位0.001度
+            joint_4 (int): 关节4角度,单位0.001度
+            joint_5 (int): 关节5角度,单位0.001度
+            joint_6 (int): 关节6角度,单位0.001度
+            move_spd_rate_ctrl (int): 运动速度百分比, 数值范围0~100
+        '''
+        '''
+        JS-mode joint control (fast response mode).
+
+        JS mode = MOVE J (0x01) + MIT mode flag (0xAD), i.e. joint position
+        control with the MIT mode flag enabled. Equivalent to
+        MotionCtrl_2(0x01, 0x01, move_spd_rate_ctrl, 0xAD) + JointCtrl(...)
+
+        This API is intended for "instantaneous" response scenarios
+        (e.g. teleoperation streaming continuous targets at high frequency):
+
+        - No smoothing.
+        - No trajectory planning.
+        - The controller/driver will try to respond as fast as possible
+          (not infinitely fast) to reach the target.
+
+        WARNING:
+            If the target is far from the current position, this may cause
+            severe mechanical shock, oscillation, or instability!
+            Risk level: EXTREMELY HIGH. Keep adjacent targets close enough.
+
+        CAN ID:
+            0x151, 0x155, 0x156, 0x157
+
+        |joint_name|     limit(rad)       |    limit(angle)    |
+        |----------|     ----------       |     ----------     |
+        |joint1    |   [-2.6179, 2.6179]  |    [-150.0, 150.0] |
+        |joint2    |   [0, 3.14]          |    [0, 180.0]      |
+        |joint3    |   [-2.967, 0]        |    [-170, 0]       |
+        |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |
+        |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |
+        |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |
+
+        Args:
+            joint_1 (int): The angle of joint 1.in 0.001°
+            joint_2 (int): The angle of joint 2.in 0.001°
+            joint_3 (int): The angle of joint 3.in 0.001°
+            joint_4 (int): The angle of joint 4.in 0.001°
+            joint_5 (int): The angle of joint 5.in 0.001°
+            joint_6 (int): The angle of joint 6.in 0.001°
+            move_spd_rate_ctrl (int): The movement speed percentage (0-100).
+        '''
+        self.MotionCtrl_2(0x01, 0x01, move_spd_rate_ctrl, 0xAD)
+        self.JointCtrl(joint_1, joint_2, joint_3, joint_4, joint_5, joint_6)
+
     def MoveCAxisUpdateCtrl(self, instruction_num: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
         '''
         MoveC模式坐标点更新指令, 发送前需要切换机械臂模式为MoveC控制模式
