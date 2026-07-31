@@ -3,6 +3,28 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.6.2
+=============
+
+Features
+--------
+
+- ✨ feat(can_comm): Separates the send and receive CAN buses to reduce delays or send failures caused by resource contention
+- ✨ feat(piper_interface_v2): Adds receive and transmit message object instances
+  - Reuses `rx_msg` and `tx_msg` in the interface to avoid repeatedly creating message objects in receive and transmit paths
+
+Bug Fixes
+---------
+
+- 🐞 fix(hardware_port): Creates CAN buses according to the current platform
+  - Windows and macOS share the receive/transmit bus, while Linux uses separate receive and transmit buses
+  - Avoids shutting down the same bus instance more than once when closing the CAN bus
+
+Miscellaneous
+---------
+
+- 🔧 build(setup.py): Updates the version to `0.6.2`
+
 Version 0.6.1
 =============
 
