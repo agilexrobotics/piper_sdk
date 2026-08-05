@@ -24,7 +24,7 @@ Note: piper_sdk >= 0.1.9
 pip3 install piper_sdk
 ```
 
-Instructions for activating the CAN module [can README](../../asserts/can_config.MD)
+Instructions for activating the CAN module [can README](../../../assets/can_config.MD)
 
 ## Demo Overview
 

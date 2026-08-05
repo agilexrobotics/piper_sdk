@@ -28,6 +28,7 @@ class C_PiperParserBase(ABC):
         '''
         ARM_PROROCOL_V1 = auto()
         ARM_PROROCOL_V2 = auto()
+        ARM_PROROCOL_V3 = auto()
         ARM_PROTOCOL_UNKNOWN = auto()
         def __str__(self):
             return f"{self.name} (0x{self.value:X})"

@@ -16,12 +16,15 @@ Test:
 
 |说明 |文档|
 |---|---|
-|接口函数的详细说明|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|机械臂DEMO|[`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
-|双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
+|V2接口函数的详细说明|[Interface_V2 README](./assets/V2/INTERFACE_V2.MD)|
+|V3接口函数的详细说明|[Interface_V3 README](./assets/V3/INTERFACE_V3.MD)|
+|V3协议和消息变更说明|[CHANGELOG-V3](./assets/V3/CHANGELOG-V3.MD)|
+|机械臂DEMO (V2)|[`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
+|机械臂DEMO (V3)|[`piper_sdk/demo/V3`](./piper_sdk/demo/V3/README.MD)|
+|双臂的主从配置和读取数据|[double_piper](./assets/double_piper.MD)|
 |使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
-|Q&A|[Q&A](./asserts/Q&A.MD)|
+|Q&A|[Q&A](./assets/Q&A.MD)|
 
 <details open>
   <summary><h2 style="display:inline">1 软件安装方法</h2></summary>

@@ -165,8 +165,7 @@ class ArmMsgAllJointMitCtrl:
 
     def assign(self):
         for i in range(1,7):
-            if(self.__m[i].joint_motor_num != 0):
-                self.motor[i] = self.__m[i]
+            self.motor[i] = self.__m[i]
     
     def __str__(self):
         return (f"{self.motor[1]}\n"

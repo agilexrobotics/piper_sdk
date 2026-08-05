@@ -1,29 +1,12 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
-from enum import IntEnum, auto, unique
+from enum import unique
 
-class _EnumBase(IntEnum):
-    def __str__(self):
-        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
-        return f"{self.name}(0x{self.value:X})"
-    def __repr__(self):
-        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
-        return f"{self.name}(0x{self.value:X})"
-    @classmethod
-    def match_value(cls, val):
-        if not isinstance(val, int):
-            raise ValueError(f"{cls.__name__}: input value must be an integer, got {type(val).__name__}")
-        try:
-            return cls(val)
-        except ValueError:
-            if hasattr(cls, "UNKNOWN"):
-                return cls.UNKNOWN
-            else:
-                raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}, and no UNKNOWN defined")
+from ...core import IntEnumBase
 
 class ArmMsgFeedbackStatusEnum:
     @unique
-    class CtrlMode(_EnumBase):
+    class CtrlMode(IntEnumBase):
         STANDBY = 0x00
         CAN_CTRL = 0x01
         TEACHING_MODE = 0x02
@@ -34,7 +17,7 @@ class ArmMsgFeedbackStatusEnum:
         OFFLINE_TRAJECTORY_MODE = 0x07
         UNKNOWN = 0xFF
     @unique
-    class ArmStatus(_EnumBase):
+    class ArmStatus(IntEnumBase):
         NORMAL = 0x00
         EMERGENCY_STOP = 0x01
         NO_SOLUTION = 0x02
@@ -53,7 +36,7 @@ class ArmMsgFeedbackStatusEnum:
         RELEASE_RESISTOR_NTC_OVER_TEMPERATURE = 0x0F
         UNKNOWN = 0xFF
     @unique
-    class ModeFeed(_EnumBase):
+    class ModeFeed(IntEnumBase):
         MOVE_P = 0x00
         MOVE_J = 0x01
         MOVE_L = 0x02
@@ -62,7 +45,7 @@ class ArmMsgFeedbackStatusEnum:
         MOVE_CPV = 0x05
         UNKNOWN = 0xFF
     @unique
-    class TeachingState(_EnumBase):
+    class TeachingState(IntEnumBase):
         DISABLED = 0x00               # 关闭
         START_RECORDING = 0x01        # 开始示教记录（进入拖动示教模式）
         STOP_RECORDING = 0x02         # 结束示教记录（退出拖动示教模式）
@@ -73,7 +56,7 @@ class ArmMsgFeedbackStatusEnum:
         MOVE_TO_START = 0x07          # 运动到轨迹起点
         UNKNOWN = 0xFF
     @unique
-    class MotionStatus(_EnumBase):
+    class MotionStatus(IntEnumBase):
         REACH_TARGET_POS_SUCCESSFULLY = 0x00
         REACH_TARGET_POS_FAILED = 0x01
         UNKNOWN = 0xFF

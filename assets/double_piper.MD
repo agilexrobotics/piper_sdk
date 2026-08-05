@@ -4,7 +4,7 @@
 
 - Schematic diagram
 
-![ ](../asserts/pictures/wire_connection.PNG)
+![ ](../assets/pictures/wire_connection.PNG)
 
 1. Set one of the robot arms as the active arm and the other as the slave arm. There are two ways to set it: use the host computer or use the SDK
    1. Use the host computer:
@@ -35,7 +35,7 @@
 
 See the interface description in the SDK for details.
 
-[Interface_V1 README](./V1/INTERFACE_V1.MD) <br> [Interface_V2 README](./V2/INTERFACE_V2.MD)
+[Interface_V2 README](./V2/INTERFACE_V2.MD) <br> [Interface_V3 README](./V3/INTERFACE_V3.MD)
 
 Here is just a brief description
 

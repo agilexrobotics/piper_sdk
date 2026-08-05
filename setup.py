@@ -6,7 +6,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 setup(
     name='piper_sdk',
-    version='0.6.2',
+    version='1.0.0',
     setup_requires=['setuptools>=40.0'],
     long_description=open(os.path.join(here, 'DESCRIPTION.MD'), encoding='utf-8').read(),
     long_description_content_type='text/markdown',
@@ -16,7 +16,6 @@ setup(
     include_package_data=True,
     package_data={
         '': ['LICENSE', '*.sh', '*.MD'],
-        'piper_sdk/asserts': ['*'],
     },
     install_requires=[
         'python-can>=3.3.4',

@@ -20,12 +20,15 @@ This SDK is used to receive CAN data frames and process them into custom data ty
 
 |Description | Documentation|
 |---|---|
-|Detailed description of interface functions|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|Robot Arm DEMO|[piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
-|Master-slave configuration and data reading for dual arms|[double_piper](./asserts/double_piper.MD)|
+|Detailed description of V2 interface functions|[Interface_V2 README](./assets/V2/INTERFACE_V2.MD)|
+|Detailed description of V3 interface functions|[Interface_V3 README](./assets/V3/INTERFACE_V3.MD)|
+|V3 protocol and message changelog|[CHANGELOG-V3](./assets/V3/CHANGELOG-V3.MD)|
+|Robot Arm DEMO (V2)|[piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
+|Robot Arm DEMO (V3)|[piper_sdk/demo/V3](./piper_sdk/demo/V3/README.MD)|
+|Master-slave configuration and data reading for dual arms|[double_piper](./assets/double_piper.MD)|
 |Open-source UI using pyQT5|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
-|Q&A|[Q&A](./asserts/Q&A.MD)|
+|Q&A|[Q&A](./assets/Q&A.MD)|
 
 <details open>
   <summary><h2 style="display:inline">1 Software Installation Method</h2></summary>

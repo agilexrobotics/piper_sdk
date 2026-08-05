@@ -3,6 +3,34 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 1.0.0
+=============
+
+Features
+--------
+
+- ✨ feat(interface): Adds `C_PiperInterface_V3` and the V3 interface version enum
+- ✨ feat(protocol,piper_msgs): Adds V3 protocol parser, V3 message definitions, and MIT control frame encoding updates
+- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, and multi-instance/disconnect tests
+- ✨ feat(interface): Refactors V2 private fields and update helpers to protected members so V3 can reuse and extend the interface behavior
+
+Bug Fixes
+---------
+
+- 🐞 fix(piper_msgs): Reuses the shared integer enum base for feedback status enums and adds V3-specific feedback status mappings
+- 🐞 fix(docs): Updates documentation paths after moving `asserts/` to `assets/` and fixes demo README links to the CAN configuration guide
+- 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
+
+Miscellaneous
+---------
+
+- 🔧 build(setup.py): Updates the package version to `1.0.0`
+- 🔧 build(manifest): Includes the top-level `assets/` documentation directory in source distributions
+- 📃 docs(readme): Adds the V3 interface, V3 changelog, and V3 demo README entries to the main documentation table
+- 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(changelog): Adds release notes for version `1.0.0`
+
+
 Version 0.6.2
 =============
 
@@ -81,7 +109,7 @@ Miscellaneous
 - 📃 docs(Q&A.MD): Added explanations regarding the MIT protocol, clarifying the relationship between given torque and executed torque; added explanations regarding the value of motor feedback torque.
 - 📃 docs(Q&A.MD): Added instructions on using serial port CAN in Q&A.MD
 - 📃 docs(INTERFACE_V2.MD): Added descriptions of newly added functions in INTERFACE_V2.MD
-- 📃 docs(asserts): Organized the images into the pictures folder
+- 📃 docs(assets): Organized the images into the pictures folder
 
 Version 0.5.0
 =============

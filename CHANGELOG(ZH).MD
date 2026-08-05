@@ -3,6 +3,35 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 1.0.0
+=============
+
+特性
+--------
+
+- ✨ feat(interface): 适配piper 1.8-8版本固件
+- ✨ feat(interface): 增加 `C_PiperInterface_V3` 和 V3 接口版本枚举
+- ✨ feat(protocol,piper_msgs): 增加 V3 协议解析器、V3 消息定义以及 MIT 控制帧编码更新
+- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、多实例和断开连接测试示例
+- ✨ feat(interface): 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为
+
+Bug修复
+---------
+
+- 🐞 fix(piper_msgs): 复用通用整数枚举基类，并增加 V3 专用反馈状态映射
+- 🐞 fix(docs): 将文档路径从 `asserts/` 更新为 `assets/`，并修复 demo README 跳转到 CAN 配置说明的链接
+- 🐞 fix(exports): 从公开包入口导出 V3 parser、message 和 interface 类
+
+其它
+---------
+
+- 🔧 build(setup.py): 更新包版本号为 `1.0.0`
+- 🔧 build(manifest): 将顶层 `assets/` 文档目录加入源码分发包
+- 📃 docs(readme): 在主 README 文档表格中增加 V3 接口文档、V3 changelog 和 V3 demo 入口
+- 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(changelog): 补充 `1.0.0` 版本更新说明
+
+
 Version 0.6.2
 =============
 
@@ -79,7 +108,7 @@ Bug修复
 - 📃 docs(Q&A.MD): 增加有关mit协议的说明，说明了给定力矩与执行力矩的关系；增加有关电机反馈力矩数值的说明
 - 📃 docs(Q&A.MD): 在Q&A.MD中增加有关串口can使用的说明
 - 📃 docs(INTERFACE_V2.MD): 在INTERFACE_V2.MD中增加新增函数说明
-- 📃 docs(asserts): 将图片整理到pictures文件夹中
+- 📃 docs(assets): 将图片整理到pictures文件夹中
 
 Version 0.5.0
 =============
