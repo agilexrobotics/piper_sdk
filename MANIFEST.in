@@ -4,5 +4,4 @@ include *.MD
 include piper_sdk/*.MD
 include piper_sdk/*.sh
 include piper_sdk/LICENSE
-
-recursive-include assets *
+graft assets
