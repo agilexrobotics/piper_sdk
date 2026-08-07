@@ -439,6 +439,23 @@ class C_PiperInterface_V2():
         self._parser: Type[PiperParser] = PiperParser()
         # message
         self.rx_msg = self.PiperMessage()
+        # tx_msg 用于所有发送接口组包。PiperMessage 聚合了大量子消息对象，
+        # 不能在每次发送时都重新构造；但如果所有线程共享同一个 tx_msg，
+        # 多个发送接口并发执行时可能互相覆盖 type_ 或 payload 字段，导致
+        # EncodeMessage() 编码出错误的 CAN ID 或数据。
+        #
+        # tx_msg is used by all transmit APIs to assemble outgoing frames.
+        # PiperMessage aggregates many sub-message objects, so rebuilding it for
+        # every send is unnecessarily expensive. However, sharing one tx_msg across
+        # all threads is unsafe: concurrent send APIs may overwrite type_ or payload
+        # fields before EncodeMessage(), producing a wrong CAN ID or data bytes.
+        #
+        # 因此这里使用线程本地缓存：同一线程内复用一个 tx_msg，避免反复实例化；
+        # 不同线程持有各自的 tx_msg，避免并发发送时发生字段交叉。
+        # Use thread-local caching: each thread reuses its own tx_msg to avoid
+        # repeated construction, while different threads get isolated tx_msg objects
+        # to prevent payload/type_ races during concurrent sends.
+        self._tx_local = threading.local()
         self.tx_msg = self.PiperMessage()
         # thread
         self._read_can_stop_event = threading.Event()  # 控制 ReadCan 线程
@@ -544,6 +561,19 @@ class C_PiperInterface_V2():
         self._feedback_instruction_response = self.ArmRespSetInstruction()
 
         self._initialized = True  # 标记已初始化
+
+    @property
+    def tx_msg(self):
+        # 返回当前线程专属的发送消息对象；如果该线程首次发送，则懒加载创建。
+        # Return the current thread's reusable transmit message; create it lazily
+        # when the thread sends for the first time.
+        if not hasattr(self._tx_local, "msg"):
+            self._tx_local.msg = self.PiperMessage()
+        return self._tx_local.msg
+
+    @tx_msg.setter
+    def tx_msg(self, value):
+        self._tx_local.msg = value
     
     @classmethod
     def get_instance(cls, can_name="can0", judge_flag=True, can_auto_init=True):
