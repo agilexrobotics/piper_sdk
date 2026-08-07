@@ -95,6 +95,11 @@ class ArmMsgType_V3(Enum):
     PiperMsgLightCtrl=auto()
     PiperMsgCanUpdateSilentModeConfig=auto()
     PiperMsgFirmwareRead=auto()
+    #----------------------------------基于V1.8-8版本后---------------------------------------------#
+    PiperMsgIKJointFeedBack_12 = auto()  #机械臂臂部ik关节反馈12
+    PiperMsgIKJointFeedBack_34 = auto()  #机械臂臂部ik关节反馈34
+    PiperMsgIKJointFeedBack_56 = auto()  #机械臂臂部ik关节反馈56
+    #---------------------------------------------------------------------------------------------#
     def __str__(self):
         return f"{self.name} (0x{self.value:X})"
     def __repr__(self):

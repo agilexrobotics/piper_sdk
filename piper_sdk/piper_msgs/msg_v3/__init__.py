@@ -35,6 +35,7 @@ __all__ = [
     'ArmMsgFeedbackLowSpd',
     'ArmMsgFeedbackGripperTeachingPendantParam',
     'ArmMsgFeedbackRespSetInstruction',
+    'ArmMsgFeedBackIKJointStates',
     # 发送
     'ArmMsgMotionCtrl_1',
     'ArmMsgMotionCtrl_2',

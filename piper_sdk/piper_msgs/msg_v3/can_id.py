@@ -23,6 +23,11 @@ class CanIDPiper_V3(Enum):
     ARM_JOINT_FEEDBACK_34 = 0x2A6
     ARM_JOINT_FEEDBACK_56 = 0x2A7
     ARM_GRIPPER_FEEDBACK = 0x2A8        #机械臂夹爪反馈
+    #----------------------------------基于V1.8-8版本后---------------------------------------------#
+    ARM_IK_JOINT_FEEDBACK_12 = 0x2AA       #机械臂ik关节反馈
+    ARM_IK_JOINT_FEEDBACK_34 = 0x2AB
+    ARM_IK_JOINT_FEEDBACK_56 = 0x2AC
+    #---------------------------------------------------------------------------------------------#
     # 运动控制指令，可设置整体偏移为 0x160~0x169或 0x170~0x179，详见指令0x470
     ARM_MOTION_CTRL_1 = 0x150
     # ARM_STOP_CTRL = 0x150               #机械臂快速急停

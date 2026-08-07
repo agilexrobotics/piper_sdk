@@ -311,6 +311,22 @@ class C_PiperParserV3(C_PiperParserV2):
             msg.arm_gripper_teaching_param_feedback.max_range_config = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
             # (基于V1.5-8版本后)
             msg.arm_gripper_teaching_param_feedback.teaching_friction = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+        # arm ik feedback
+        elif(can_id == self.CanIDPiper.ARM_IK_JOINT_FEEDBACK_12.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_ik_joint_feedback.ik_joint_1 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_ik_joint_feedback.ik_joint_2 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_IK_JOINT_FEEDBACK_34.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_ik_joint_feedback.ik_joint_3 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_ik_joint_feedback.ik_joint_4 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_IK_JOINT_FEEDBACK_56.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_ik_joint_feedback.ik_joint_5 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_ik_joint_feedback.ik_joint_6 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
         else:
             ret = False
         return ret

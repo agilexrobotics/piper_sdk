@@ -115,6 +115,24 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     f"Hz:{self.Hz}\n"
                     f"{self.gripper_ctrl}\n")
 
+    class ArmIKJointStates():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        这个是主臂发送的消息，用来读取发送给从臂的目标值
+        '''
+        '''
+        Secondary Encapsulation Class for Robotic Arm Joint Angles and Gripper, Combining Gripper and Joint Angle Information, Adding Timestamp
+        This is a message sent by the main arm to read the target values sent to the slave arm.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.ik_joint_states=ArmMsgFeedBackIKJointStates()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.ik_joint_states}\n")
+
     def __init__(self,
                     can_name:str="can0",
                     judge_flag=True,
@@ -147,6 +165,11 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         self._arm_gripper_msgs_v3 = self.ArmGripper_V3()
         self._arm_gripper_ctrl_msgs_v3_mtx = threading.Lock()
         self._arm_gripper_ctrl_msgs_v3 = self.ArmGripperCtrl_V3()
+        self._arm_ik_joint_states_mtx = threading.Lock()
+        self._arm_ik_joint_states = self.ArmIKJointStates()
+        self._fps_counter.add_variable("ArmIKJoint_12")
+        self._fps_counter.add_variable("ArmIKJoint_34")
+        self._fps_counter.add_variable("ArmIKJoint_56")
         self.tx_msg = self.PiperMessage()
         self.rx_msg = self.PiperMessage()
 
@@ -189,6 +212,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             # 1.8-8
             self._UpdateArmGripperState_V3(msg)
             self._UpdateArmGripperCtrl_V3(msg)
+            self._UpdateArmIKJointState(msg)
             if self._start_sdk_fk_cal:
                 self._UpdatePiperFeedbackFK()
                 self._UpdatePiperCtrlFK()
@@ -262,6 +286,29 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         with self._arm_gripper_ctrl_msgs_v3_mtx:
             self._arm_gripper_ctrl_msgs_v3.Hz = self._fps_counter.get_fps("ArmGripperCtrl")
             return self._arm_gripper_ctrl_msgs_v3
+
+    def GetArmIKJointMsgs(self):
+        '''
+        Retrieves the IK joint status message of the robotic arm.(in 0.001 degrees)
+
+        Returns
+        -------
+        time_stamp : float
+        Hz : float
+        ik_joint_states : ArmMsgFeedBackIKJointStates
+
+            - ik_joint_1 (int): Feedback IK angle of joint 1, (in 0.001 degrees).
+            - ik_joint_2 (int): Feedback IK angle of joint 2, (in 0.001 degrees).
+            - ik_joint_3 (int): Feedback IK angle of joint 3, (in 0.001 degrees).
+            - ik_joint_4 (int): Feedback IK angle of joint 4, (in 0.001 degrees).
+            - ik_joint_5 (int): Feedback IK angle of joint 5, (in 0.001 degrees).
+            - ik_joint_6 (int): Feedback IK angle of joint 6, (in 0.001 degrees).
+        '''
+        with self._arm_ik_joint_states_mtx:
+            self._arm_ik_joint_states.Hz = self._fps_counter.cal_average(self._fps_counter.get_fps('ArmIKJoint_12'),
+                                                                        self._fps_counter.get_fps('ArmIKJoint_34'),
+                                                                        self._fps_counter.get_fps('ArmIKJoint_56'))
+            return self._arm_ik_joint_states
 
     def _UpdateArmGripperState(self, msg:PiperMessage):
         '''更新夹爪状态
@@ -393,6 +440,50 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                 self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.status_code = status_code
                 self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.set_zero = msg.arm_gripper_ctrl_v3.set_zero
             return self._arm_gripper_ctrl_msgs_v3
+
+    def _UpdateArmIKJointState(self, msg:PiperMessage):
+        '''更新 IK 关节状态
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        '''
+        '''Updates the IK joint status.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self._arm_ik_joint_states_mtx:
+            if(msg.type_ == self.ArmMsgType.PiperMsgIKJointFeedBack_12):
+                _ik_joint1 = msg.arm_ik_joint_feedback.ik_joint_1
+                _ik_joint2 = msg.arm_ik_joint_feedback.ik_joint_2
+                if self.isFilterAbnormalData():
+                    if abs(_ik_joint1) > 3000000 or abs(_ik_joint2) > 3000000:
+                        return
+                self._fps_counter.increment("ArmIKJoint_12")
+                self._arm_ik_joint_states.time_stamp = msg.time_stamp
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_1 = _ik_joint1
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_2 = _ik_joint2
+            elif(msg.type_ == self.ArmMsgType.PiperMsgIKJointFeedBack_34):
+                _ik_joint3 = msg.arm_ik_joint_feedback.ik_joint_3
+                _ik_joint4 = msg.arm_ik_joint_feedback.ik_joint_4
+                if self.isFilterAbnormalData():
+                    if abs(_ik_joint3) > 3000000 or abs(_ik_joint4) > 3000000:
+                        return
+                self._fps_counter.increment("ArmIKJoint_34")
+                self._arm_ik_joint_states.time_stamp = msg.time_stamp
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_3 = _ik_joint3
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_4 = _ik_joint4
+            elif(msg.type_ == self.ArmMsgType.PiperMsgIKJointFeedBack_56):
+                _ik_joint5 = msg.arm_ik_joint_feedback.ik_joint_5
+                _ik_joint6 = msg.arm_ik_joint_feedback.ik_joint_6
+                if self.isFilterAbnormalData():
+                    if abs(_ik_joint5) > 3000000 or abs(_ik_joint6) > 3000000:
+                        return
+                self._fps_counter.increment("ArmIKJoint_56")
+                self._arm_ik_joint_states.time_stamp = msg.time_stamp
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_5 = _ik_joint5
+                self._arm_ik_joint_states.ik_joint_states.ik_joint_6 = _ik_joint6
+            return self._arm_ik_joint_states
 
     def MotionCtrl_2(self, 
                          ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 

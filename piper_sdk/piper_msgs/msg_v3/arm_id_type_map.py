@@ -50,5 +50,7 @@ class ArmMessageMapping_V3(ArmMessageMapping):
     #       CanIDPiper_V4.NEW_FRAME.value: ArmMsgType.PiperMsgNewFrame,
     #   }
     additional_mapping = {
-        
+        CanIDPiper.ARM_IK_JOINT_FEEDBACK_12.value : ArmMsgType.PiperMsgIKJointFeedBack_12,
+        CanIDPiper.ARM_IK_JOINT_FEEDBACK_34.value : ArmMsgType.PiperMsgIKJointFeedBack_34,
+        CanIDPiper.ARM_IK_JOINT_FEEDBACK_56.value : ArmMsgType.PiperMsgIKJointFeedBack_56,
     }
