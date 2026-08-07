@@ -45,6 +45,22 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
     CanIDPiper = CanIDPiper_V3
     PiperMessage = PiperMessage_V3
 
+    class ArmStatus():
+        '''
+        机械臂状态二次封装类,增加时间戳
+        '''
+        '''
+        Piper Status Secondary Encapsulation Class, Add Timestamp
+        '''
+        def __init__(self):
+            self.time_stamp: float = 0
+            self.Hz: float = 0
+            self.arm_status = ArmMsgFeedbackStatus()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.arm_status}\n")
+
     class ArmGripper():
         '''
         机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
@@ -156,6 +172,9 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     log_to_file,
                     log_file_path)
         self._parser: Type[PiperParser] = PiperParser()
+        self._arm_status_mtx = threading.Lock()
+        self._arm_status = self.ArmStatus()
+
         self._arm_gripper_msgs_mtx = threading.Lock()
         self._arm_gripper_msgs = self.ArmGripper()
         self._arm_gripper_ctrl_msgs_mtx = threading.Lock()
@@ -224,6 +243,75 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             current interface version
         '''
         return InterfaceVersion.INTERFACE_V3
+
+    def GetArmStatus(self):
+            '''
+            Retrieves the current status of the robotic arm.
+    
+            CAN ID:
+                0x2A1
+    
+            Returns
+            -------
+            time_stamp : float
+                time stamp
+            Hz : float
+                msg fps
+            arm_status : ArmMsgFeedbackStatus
+                机械臂状态
+    
+                - ctrl_mode (int): 控制模式
+                    * 0x00 待机模式
+                    * 0x01 CAN指令控制模式
+                    * 0x02 示教模式
+                - arm_status (int): 机械臂状态
+                    * 0x00 正常
+                    * 0x01 急停
+                    * 0x02 无解
+                    * 0x03 奇异点
+                    * 0x04 目标角度超过限
+                    * 0x05 关节通信异常
+                    * 0x06 关节抱闸未打开
+                    * 0x07 机械臂发生碰撞
+                    * 0x08 拖动示教时超速
+                    * 0x09 关节状态异常
+                    * 0x0A 其它异常
+                    * 0x0B 示教记录
+                    * 0x0C 示教执行
+                    * 0x0D 示教暂停
+                    * 0x0E 主控NTC过温
+                    * 0x0F 释放电阻NTC过温
+                - mode_feed (int): 模式反馈
+                    * 0x00 MOVE P
+                    * 0x01 MOVE J
+                    * 0x02 MOVE L
+                    * 0x03 MOVE C
+                    * 0x06 MOVE M ---基于V1.8-8版本后
+                    * 0x05 MOVE_CPV ---基于V1.6.5版本后
+                - teach_status (int): 示教状态
+                - motion_status (int): 运动状态
+                    * 0x00 到达指定点位
+                    * 0x01 未到达指定点位
+                - trajectory_num (int): 当前运行轨迹点序号
+                - err_status (int): 故障状态
+                {
+                    * joint_1_angle_limit (bool): 1号关节角度是否超限位, True为超限
+                    * joint_2_angle_limit (bool): 2号关节角度是否超限位, True为超限
+                    * joint_3_angle_limit (bool): 3号关节角度是否超限位, True为超限
+                    * joint_4_angle_limit (bool): 4号关节角度是否超限位, True为超限
+                    * joint_5_angle_limit (bool): 5号关节角度是否超限位, True为超限
+                    * joint_6_angle_limit (bool): 6号关节角度是否超限位, True为超限
+                    * communication_status_joint_1 (bool): 1号关节通信是否异常, True为通信异常
+                    * communication_status_joint_2 (bool): 2号关节通信是否异常, True为通信异常
+                    * communication_status_joint_3 (bool): 3号关节通信是否异常, True为通信异常
+                    * communication_status_joint_4 (bool): 4号关节通信是否异常, True为通信异常
+                    * communication_status_joint_5 (bool): 5号关节通信是否异常, True为通信异常
+                    * communication_status_joint_6 (bool): 6号关节通信是否异常, True为通信异常
+                }
+            '''
+            with self._arm_status_mtx:
+                self._arm_status.Hz = self._fps_counter.get_fps("ArmStatus")
+                return self._arm_status
 
     def GetArmGripperMsgs_V3(self):
         '''
@@ -521,10 +609,10 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                 residence_time: 离线轨迹点停留时间 
                     uint8 0~254 ,单位: s;255:轨迹终止
                 installation_pos: 安装位置 uint8 注意接线朝后 ---基于V1.5-2版本后
-                        0x00 无效值
-                        0x01 水平正装
-                        0x02 侧装左
-                        0x03 侧装右
+                    0x00 无效值
+                    0x01 水平正装
+                    0x02 侧装左
+                    0x03 侧装右
             '''
             '''
             Sends the robotic arm motion control command (0x151).
@@ -551,10 +639,10 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                 residence_time: Offline trajectory point residence time
                     uint8 0~254, unit: seconds; 255: trajectory termination
                 installation_pos: Installation position uint8 (Pay attention to rear-facing wiring) --- Based on version V1.5-2 and later
-                                0x00 Invalid value
-                                0x01 Horizontal upright
-                                0x02 Side mount left
-                                0x03 Side mount right
+                    0x00 Invalid value
+                    0x01 Horizontal upright
+                    0x02 Side mount left
+                    0x03 Side mount right
             '''
             tx_can = Message()
             motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode, residence_time, installation_pos)

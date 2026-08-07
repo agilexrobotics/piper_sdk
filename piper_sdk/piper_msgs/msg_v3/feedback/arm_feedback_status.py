@@ -19,7 +19,8 @@ class ArmMsgFeedbackStatusEnum_V3(ArmMsgFeedbackStatusEnum):
 
 class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
     '''
-    
+    msg_v3_feedback
+
     机械臂状态
 
     CAN ID:

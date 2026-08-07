@@ -21,7 +21,7 @@ if __name__ == "__main__":
             position = [0,0,0,0,0,0,0]
         elif(count == 300):
             print("2-----------")
-            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
+            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.07]  # gripper: 70 mm for the small gripper
         elif(count == 600):
             print("1-----------")
             position = [0,0,0,0,0,0,0]

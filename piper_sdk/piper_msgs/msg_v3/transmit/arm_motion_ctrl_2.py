@@ -9,6 +9,7 @@ from ...core import IntEnumBase
 
 class ArmMsgMotionCtrl_2_V3():
     '''
+    msg_v3_transmit
     
     机械臂运动控制指令2
 

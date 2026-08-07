@@ -3,6 +3,8 @@
 
 class ArmMsgJointMitCtrl_V3():
     '''
+    msg_v3_transmit
+
     机械臂关节mit控制
     
     CAN ID:
