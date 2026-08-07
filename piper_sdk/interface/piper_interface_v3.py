@@ -9,6 +9,8 @@ from typing import (
     Optional,
     Type
 )
+import can
+import threading
 from ..hardware_port import *
 from ..protocol.protocol_v3 import C_PiperParserV3 as PiperParser
 from ..piper_msgs.msg_v3 import *
@@ -43,6 +45,76 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
     CanIDPiper = CanIDPiper_V3
     PiperMessage = PiperMessage_V3
 
+    class ArmGripper():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        '''
+        '''
+        Secondary Encapsulation Class for Robotic Arm Joint Angles and Gripper, 
+        Combining Gripper and Joint Angle Information Together, with Timestamp
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.gripper_state=ArmMsgFeedBackGripper()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.gripper_state}\n")
+
+    class ArmGripper_V3():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        '''
+        '''
+        Secondary Encapsulation Class for Robotic Arm Joint Angles and Gripper, 
+        Combining Gripper and Joint Angle Information Together, with Timestamp
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.gripper_state=ArmMsgFeedBackGripper_V3()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.gripper_state}\n")
+
+    class ArmGripperCtrl():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        这个是主臂发送的消息，用来读取发送给从臂的目标值
+        '''
+        '''
+        Secondary Encapsulation Class for Robotic Arm Joint Angles and Gripper, Combining Gripper and Joint Angle Information, Adding Timestamp
+        This is a message sent by the main arm to read the target values sent to the slave arm.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.gripper_ctrl=ArmMsgGripperCtrl()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.gripper_ctrl}\n")
+
+    class ArmGripperCtrl_V3():
+        '''
+        机械臂关节角度和夹爪二次封装类,将夹爪和关节角度信息放在一起,增加时间戳
+        这个是主臂发送的消息，用来读取发送给从臂的目标值
+        '''
+        '''
+        Secondary Encapsulation Class for Robotic Arm Joint Angles and Gripper, Combining Gripper and Joint Angle Information, Adding Timestamp
+        This is a message sent by the main arm to read the target values sent to the slave arm.
+        '''
+        def __init__(self):
+            self.time_stamp: float=0
+            self.Hz: float = 0
+            self.gripper_ctrl=ArmMsgGripperCtrl_V3()
+        def __str__(self):
+            return (f"time stamp:{self.time_stamp}\n"
+                    f"Hz:{self.Hz}\n"
+                    f"{self.gripper_ctrl}\n")
+
     def __init__(self,
                     can_name:str="can0",
                     judge_flag=True,
@@ -66,9 +138,61 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     log_to_file,
                     log_file_path)
         self._parser: Type[PiperParser] = PiperParser()
+        self._arm_gripper_msgs_mtx = threading.Lock()
+        self._arm_gripper_msgs = self.ArmGripper()
+        self._arm_gripper_ctrl_msgs_mtx = threading.Lock()
+        self._arm_gripper_ctrl_msgs = self.ArmGripperCtrl()
+
+        self._arm_gripper_msgs_v3_mtx = threading.Lock()
+        self._arm_gripper_msgs_v3 = self.ArmGripper_V3()
+        self._arm_gripper_ctrl_msgs_v3_mtx = threading.Lock()
+        self._arm_gripper_ctrl_msgs_v3 = self.ArmGripperCtrl_V3()
         self.tx_msg = self.PiperMessage()
         self.rx_msg = self.PiperMessage()
-        
+
+    def ParseCANFrame(self, rx_message: Optional[can.Message]):
+        '''can协议解析函数
+
+        Args:
+            rx_message (Optional[can.Message]): can接收的原始数据
+        '''
+        '''CAN protocol parsing function.
+
+        Args:
+            rx_message (Optional[can.Message]): The raw data received via CAN.
+        '''
+        msg = self.rx_msg
+        receive_flag = self._parser.DecodeMessage(rx_message, msg)
+        if(receive_flag):
+            self._fps_counter.increment("CanMonitor")
+            self._UpdateArmStatus(msg)
+            self._UpdateArmEndPoseState(msg)
+            self._UpdateArmJointState(msg)
+            self._UpdateArmGripperState(msg)
+            self._UpdateDriverInfoHighSpdFeedback(msg)
+            self._UpdateDriverInfoLowSpdFeedback(msg)
+
+            self._UpdateCurrentEndVelAndAccParam(msg)
+            self._UpdateCrashProtectionLevelFeedback(msg)
+            self._UpdateGripperTeachingPendantParamFeedback(msg)
+            self._UpdateCurrentMotorAngleLimitMaxVel(msg)
+            self._UpdateCurrentMotorMaxAccLimit(msg)
+            self._UpdateAllCurrentMotorAngleLimitMaxVel(msg)
+            self._UpdateAllCurrentMotorMaxAccLimit(msg)
+            # 更新主臂发送消息
+            self._UpdateArmJointCtrl(msg)
+            self._UpdateArmGripperCtrl(msg)
+            self._UpdateArmCtrlCode151(msg)
+            self._UpdateArmModeCtrl(msg)
+            self._UpdatePiperFirmware(msg)
+            self._UpdateRespSetInstruction(msg)
+            # 1.8-8
+            self._UpdateArmGripperState_V3(msg)
+            self._UpdateArmGripperCtrl_V3(msg)
+            if self._start_sdk_fk_cal:
+                self._UpdatePiperFeedbackFK()
+                self._UpdatePiperCtrlFK()
+    
     def GetCurrentInterfaceVersion(self):
         '''
         Returns
@@ -76,6 +200,199 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             current interface version
         '''
         return InterfaceVersion.INTERFACE_V3
+
+    def GetArmGripperMsgs_V3(self):
+        '''
+        Retrieves the gripper status message of the robotic arm.
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        gripper_state : ArmMsgFeedBackGripper
+
+            - grippers_val (int): The gripper value, in 0.001 mm for width mode or 0.001 degree for angle mode.
+            - grippers_effort (int): The torque of the gripper (in 0.001 N·m).
+            - mode (int): The gripper control mode, 0x00 for width mode and 0x01 for angle mode.
+            - foc_status (int):  The status code of the gripper.
+            {
+                * voltage_too_low (bool): Power voltage low (False: Normal, True: Low)
+                * motor_overheating (bool): Motor over-temperature (False: Normal, True: Over-temperature)
+                * driver_overcurrent (bool): Driver over-current (False: Normal, True: Over-current)
+                * driver_overheating (bool): Driver over-temperature (False: Normal, True: Over-temperature)
+                * sensor_status (bool): Sensor status (False: Normal, True: Abnormal)
+                * driver_error_status (bool): Driver error status (False: Normal, True: Error)
+                * driver_enable_status (bool): Driver enable status (False: Disabled, True: Enabled)
+                * homing_status (bool): Zeroing status (False: Not zeroed, True: Zeroed or previously zeroed)
+            }
+        '''
+        with self._arm_gripper_msgs_v3_mtx:
+            self._arm_gripper_msgs_v3.Hz = self._fps_counter.get_fps('ArmGripper')
+            return self._arm_gripper_msgs_v3
+
+    def GetArmGripperCtrl_V3(self):
+        '''
+        Retrieves the gripper control message using the 0x159 command.
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        Hz : float
+            msg fps
+        gripper_ctrl : ArmMsgGripperCtrl
+
+            - grippers_val (int): The gripper value, in 0.001 mm for width mode or 0.001 degree for angle mode.
+            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponse 0-5N·m)
+            - status_code (int): 
+                0x00: Disabled;
+                0x01: Enabled;
+                0x03: Enable and clear errors in width mode;
+                0x02: Disable and clear errors in width mode;
+                0x04: Disable in angle mode;
+                0x05: Enable in angle mode;
+                0x06: Disable and clear errors in angle mode;
+                0x07: Enable and clear errors in angle mode.
+            - set_zero (int): Set the current position as the zero point.
+                0x00: Invalid;
+                0xAE: Set zero.
+        '''
+        with self._arm_gripper_ctrl_msgs_v3_mtx:
+            self._arm_gripper_ctrl_msgs_v3.Hz = self._fps_counter.get_fps("ArmGripperCtrl")
+            return self._arm_gripper_ctrl_msgs_v3
+
+    def _UpdateArmGripperState(self, msg:PiperMessage):
+        '''更新夹爪状态
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        '''
+        '''Updates the gripper status.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self._arm_gripper_msgs_mtx:
+            if(msg.type_ == self.ArmMsgType.PiperMsgGripperFeedBack):
+                gripper_angle = msg.gripper_feedback.grippers_angle
+                _mode = msg.gripper_feedback_v3.mode
+                if self.isFilterAbnormalData():
+                    # 150 mm * 1000
+                    if _mode == ArmMsgFeedbackGripperEnums_V3.CtrlMode.WIDTH and abs(gripper_angle) > 150000:
+                        return
+                    # 360 degree * 1000
+                    elif _mode == ArmMsgFeedbackGripperEnums_V3.CtrlMode.ANGLE and abs(gripper_angle) > 360000:
+                        return
+                # self._fps_counter.increment("ArmGripper")
+                self._arm_gripper_msgs.time_stamp = msg.time_stamp
+                self._arm_gripper_msgs.gripper_state.grippers_angle = self._CalGripperSDKLimit(gripper_angle, _mode)
+                self._arm_gripper_msgs.gripper_state.grippers_effort = msg.gripper_feedback.grippers_effort
+                self._arm_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
+            return self._arm_gripper_msgs
+
+    def _UpdateArmGripperCtrl(self, msg:PiperMessage):
+        '''更新夹爪状态,为主臂发送的消息
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        '''
+        '''Updates the gripper status, as sent by the main arm.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self._arm_gripper_ctrl_msgs_mtx:
+            if(msg.type_ == self.ArmMsgType.PiperMsgGripperCtrl):
+                gripper_angle = msg.arm_gripper_ctrl.grippers_angle
+                status_code = msg.arm_gripper_ctrl.status_code
+                _mode = 0
+                if status_code in [0x00, 0x01, 0x02, 0x03]:
+                    _mode = 0
+                elif status_code in [0x04, 0x05, 0x06, 0x07]:
+                    _mode = 1
+                else: return
+                if self.isFilterAbnormalData():
+                   # 150 mm * 1000
+                    if _mode == 0 and abs(gripper_angle) > 150000:
+                        return
+                    # 360 degree * 1000
+                    elif _mode == 1 and abs(gripper_angle) > 360000:
+                        return
+                # self._fps_counter.increment("ArmGripperCtrl")
+                self._arm_gripper_ctrl_msgs.time_stamp = msg.time_stamp
+                self._arm_gripper_ctrl_msgs.gripper_ctrl.grippers_angle = self._CalGripperSDKLimit(gripper_angle, _mode)
+                self._arm_gripper_ctrl_msgs.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
+                self._arm_gripper_ctrl_msgs.gripper_ctrl.status_code = status_code
+                self._arm_gripper_ctrl_msgs.gripper_ctrl.set_zero = msg.arm_gripper_ctrl.set_zero
+            return self._arm_gripper_ctrl_msgs
+
+    def _UpdateArmGripperState_V3(self, msg:PiperMessage):
+        '''更新夹爪状态
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        '''
+        '''Updates the gripper status.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self._arm_gripper_msgs_v3_mtx:
+            if(msg.type_ == self.ArmMsgType.PiperMsgGripperFeedBack):
+                gripper_val = msg.gripper_feedback.grippers_angle
+                _mode = msg.gripper_feedback_v3.mode
+                if self.isFilterAbnormalData():
+                    # 150 mm * 1000
+                    if _mode == ArmMsgFeedbackGripperEnums_V3.CtrlMode.WIDTH and abs(gripper_val) > 150000:
+                        return
+                    # 360 degree * 1000
+                    elif _mode == ArmMsgFeedbackGripperEnums_V3.CtrlMode.ANGLE and abs(gripper_val) > 360000:
+                        return
+                self._fps_counter.increment("ArmGripper")
+                self._arm_gripper_msgs_v3.time_stamp = msg.time_stamp
+                self._arm_gripper_msgs_v3.gripper_state.grippers_val = self._CalGripperSDKLimit(gripper_val, _mode)
+                self._arm_gripper_msgs_v3.gripper_state.grippers_effort = msg.gripper_feedback_v3.grippers_effort
+                self._arm_gripper_msgs_v3.gripper_state.status_code = msg.gripper_feedback_v3.status_code
+                self._arm_gripper_msgs_v3.gripper_state.mode = _mode
+            return self._arm_gripper_msgs_v3
+
+    def _UpdateArmGripperCtrl_V3(self, msg:PiperMessage):
+        '''更新夹爪状态,为主臂发送的消息
+
+        Args:
+            msg (PiperMessage): 输入为机械臂消息汇总
+        '''
+        '''Updates the gripper status, as sent by the main arm.
+
+        Args:
+            msg (PiperMessage): The input containing the summary of robotic arm messages.
+        '''
+        with self._arm_gripper_ctrl_msgs_v3_mtx:
+            if(msg.type_ == self.ArmMsgType.PiperMsgGripperCtrl):
+                gripper_val = msg.arm_gripper_ctrl_v3.grippers_val
+                status_code = msg.arm_gripper_ctrl.status_code
+                _mode = 0
+                if status_code in [0x00, 0x01, 0x02, 0x03]:
+                    _mode = 0
+                elif status_code in [0x04, 0x05, 0x06, 0x07]:
+                    _mode = 1
+                else: return
+                if self.isFilterAbnormalData():
+                    # 150 mm * 1000
+                    if _mode == 0 and abs(gripper_val) > 150000:
+                        return
+                    # 360 degree * 1000
+                    elif _mode == 1 and abs(gripper_val) > 360000:
+                        return
+                self._fps_counter.increment("ArmGripperCtrl")
+                self._arm_gripper_ctrl_msgs_v3.time_stamp = msg.time_stamp
+                self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.grippers_val = self._CalGripperSDKLimit(gripper_val, _mode)
+                self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.grippers_effort = msg.arm_gripper_ctrl_v3.grippers_effort
+                self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.status_code = status_code
+                self._arm_gripper_ctrl_msgs_v3.gripper_ctrl.set_zero = msg.arm_gripper_ctrl_v3.set_zero
+            return self._arm_gripper_ctrl_msgs_v3
 
     def MotionCtrl_2(self, 
                          ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
@@ -157,6 +474,97 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             feedback = self._arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
             if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
                 self.logger.error("0x151 send failed: SendCanMessage(%s)", feedback)
+
+    def GripperCtrl(self, 
+                    gripper_angle: int = 0, 
+                    gripper_effort: int = 0, 
+                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03] = 0, 
+                    set_zero: Literal[0x00, 0xAE] = 0):
+        '''
+        夹爪控制
+        
+        CAN ID:
+            0x159
+        
+        Args:
+            gripper_angle (int):  夹爪范围, 以整数表示, 单位0.001mm
+            gripper_effort (int): 夹爪力矩,单位 0.001N·m,范围0-5000,对应0-5N·m
+            gripper_code (int): 
+                - 0x00失能;
+                - 0x01使能;
+                - 0x02失能清除错误;
+                - 0x03使能清除错误.
+            set_zero:(int): 设定当前位置为0点,
+                - 0x00无效值;
+                - 0xAE设置零点
+        '''
+        '''
+        Controls the gripper of the robotic arm.
+        
+        CAN ID:
+            0x159
+        
+        Args:
+            gripper_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
+            gripper_effort (int): The gripper torque, in 0.001 N·m. Range 0-5000, corresponse 0-5 N·m
+            gripper_code (int): The gripper enable/disable/clear error command.
+                - 0x00: Disable
+                - 0x01: Enable
+                - 0x03/0x02: Enable and clear error / Disable and clear error
+            set_zero (int): Set the current position as the zero point.
+                - 0x00: Invalid value
+                - 0xAE: Set zero point
+        '''
+        if gripper_code not in [0x00, 0x01, 0x02, 0x03]:
+            raise ValueError(f"'status_code' Value {gripper_code} out of range [0x00, 0x01, 0x02, 0x03]")
+        self.GripperCtrl_V3(gripper_angle, gripper_effort, gripper_code, set_zero)
+
+    def GripperCtrl_V3(self, 
+                    gripper_val: int = 0, 
+                    gripper_effort: int = 0, 
+                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07] = 0, 
+                    set_zero: Literal[0x00, 0xAE] = 0):
+        '''
+        Controls the gripper of the robotic arm.
+        
+        CAN ID:
+            0x159
+        
+        Args:
+            gripper_val (int): Gripper value, unit: 0.001 mm in width mode or 0.001 degree in angle mode.
+            gripper_effort (int): The gripper torque, in 0.001 N·m. Range 0-5000, corresponse 0-5 N·m
+            gripper_code (int): The gripper enable/disable/clear error command.
+                - 0x00: disable/width
+                - 0x01: enable/width
+                - 0x02: disable/clear_err/width
+                - 0x03: enable/clear_err/width
+                - 0x04: disable/angle
+                - 0x05: enable/angle
+                - 0x06: disable/clear_err/angle
+                - 0x07: enable/clear_err/angle
+            set_zero (int): Set the current position as the zero point.
+                - 0x00: Invalid value
+                - 0xAE: Set zero point
+        '''
+        if gripper_code not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]:
+            raise ValueError(f"'status_code' Value {gripper_code} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]")
+        if not (0 <= gripper_effort <= 5000):
+            raise ValueError(f"'grippers_effort' Value {gripper_effort} out of range 0-5000")
+        if set_zero not in [0x00, 0xAE]:
+            raise ValueError(f"'set_zero' Value {set_zero} out of range [0x00,0xAE]")
+        tx_can = Message()
+        _gripper_val = gripper_val
+        if gripper_code in [0x00, 0x01, 0x02, 0x03]:
+            _gripper_val = self._CalGripperSDKLimit(gripper_val, 0)
+        else: _gripper_val = self._CalGripperSDKLimit(gripper_val, 1)
+        gripper_ctrl = ArmMsgGripperCtrl_V3(_gripper_val, gripper_effort, gripper_code, set_zero)
+        msg = self.tx_msg
+        msg.type_ = self.ArmMsgType.PiperMsgGripperCtrl
+        msg.arm_gripper_ctrl_v3 = gripper_ctrl
+        self._parser.EncodeMessage(msg, tx_can)
+        feedback = self._arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
+        if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
+            self.logger.error("GripperCtrl send failed: SendCanMessage(%s)", feedback)
 
     def _JointMitCtrl(self,motor_num:int,
                             pos_ref:float, vel_ref:float, kp:float, kd:float, t_ref:float,
@@ -254,3 +662,27 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             t_ref: 目标力矩参考值,用于控制电机施加的力矩或扭矩,[-16.0,16.0]
         '''
         self._JointMitCtrl(motor_num, pos_ref, vel_ref, kp, kd, t_ref)
+
+
+    def _CalGripperSDKLimit(self, gripper_val:int, mode:int):
+        if self._start_sdk_gripper_limit:
+            if mode == 0:
+                g_min, g_max = self.GetSDKGripperRangeParam()
+                g_min = round(g_min *1000 * 1000)
+                g_max = round(g_max *1000 * 1000)
+                return max(g_min, min(gripper_val, g_max))
+            elif mode == 1:
+                g_min, g_max = self.GetSDKGripperAngleLimitParam()
+                g_min = round(g_min * 1000)
+                g_max = round(g_max * 1000)
+                return max(g_min, min(gripper_val, g_max))
+            else: return gripper_val
+        else: return gripper_val
+
+    def GetSDKGripperAngleLimitParam(self):
+        return self._piper_param_mag.GetGripperAngleLimitParam()
+
+    def SetSDKGripperAngleLimitParam(self,
+                                min_val: float, 
+                                max_val: float):
+        self._piper_param_mag.SetGripperAngleLimitParam(min_val, max_val)

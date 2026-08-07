@@ -64,7 +64,10 @@ class PiperMessage_V3(PiperMessage):
                  arm_param_enquiry_and_config:ArmMsgParamEnquiryAndConfig=None,
                  arm_end_vel_acc_param_config:ArmMsgEndVelAccParamConfig=None,
                  arm_crash_protection_rating_config:ArmMsgCrashProtectionRatingConfig=None,
-                 arm_gripper_teaching_param_config:ArmMsgGripperTeachingPendantParamConfig=None
+                 arm_gripper_teaching_param_config:ArmMsgGripperTeachingPendantParamConfig=None,
+                #  1.8-8
+                 arm_gripper_ctrl_v3:ArmMsgGripperCtrl_V3=None,
+                 gripper_feedback_v3:ArmMsgFeedBackGripper_V3=None
                  ):
         super().__init__(
                         type_, 
@@ -102,5 +105,9 @@ class PiperMessage_V3(PiperMessage):
         self.arm_motion_ctrl_2 = arm_motion_ctrl_2 if arm_motion_ctrl_2 else ArmMsgMotionCtrl_2()
         # 初始化机械臂状态消息
         self.arm_status_msgs = arm_status_msgs if arm_status_msgs else ArmMsgFeedbackStatus()
+        # 夹爪反馈
+        self.gripper_feedback_v3 = gripper_feedback_v3 if gripper_feedback_v3 else ArmMsgFeedBackGripper_V3()
+        # 夹爪控制
+        self.arm_gripper_ctrl_v3 = arm_gripper_ctrl_v3 if arm_gripper_ctrl_v3 else ArmMsgGripperCtrl_V3()
         # 关节mit控制
         self.arm_joint_mit_ctrl = arm_joint_mit_ctrl if arm_joint_mit_ctrl else ArmMsgJointMitCtrl()

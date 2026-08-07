@@ -16,8 +16,8 @@ Inner class identifies instances based on `can_port`, preventing the creation of
 - `dh_is_offset` (int, default=0): Does the j1-j2 offset by 2° in the DH parameters?
   - 0: No offset
   - 1: Offset applied
-- `start_sdk_joint_limit` (bool, default=True): Enable SDK joint limits
-- `start_sdk_gripper_limit` (bool, default=True): Enable SDK gripper limits
+- `start_sdk_joint_limit` (bool, default=False): Enable SDK joint limits
+- `start_sdk_gripper_limit` (bool, default=False): Enable SDK gripper limits
 - `logger_level` (LogLevel, default=LogLevel.WARNING): Set the log level
 - `log_to_file` (bool, default=False): Whether to enable the log writing function, True to enable, default to disable
 - `log_file_path` (str, default=None): Set the path to write the log file, the default is the log folder under the sdk path
@@ -242,7 +242,7 @@ Gripper control command (CAN ID: 0x159)
 Parameters:
 
 - `gripper_angle`: Gripper range, expressed as an integer, unit 0.001mm
-- `gripper_effort`: Gripper torque (0.001 N/m, range 0-5000 corresponds to 0-5 N/m)
+- `gripper_effort`: Gripper torque (0.001 N·m, range 0-5000 corresponds to 0-5 N·m)
 - `gripper_code`:
   - 0x00: Disable
   - 0x01: Enable
@@ -554,8 +554,8 @@ Retrieve the robotic arm gripper status message.
 Returns:
 
 - `gripper_state`: Gripper status object
-  - `grippers_angle`: int32, Gripper angle in 0.001°
-  - `grippers_effort`: uint16, Gripper torque in 0.001N/m
+  - `grippers_angle`: int32, Gripper stroke in 0.001 mm
+  - `grippers_effort`: uint16, Gripper torque in 0.001 N·m
   - `status_code`: uint8, Gripper status code
 
 Manual unit conversion of data is required.
@@ -955,7 +955,7 @@ Hz : float
 gripper_ctrl : ArmMsgGripperCtrl
 
   - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
-  - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000 (corresponse 0-5N/m)
+  - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponse 0-5N·m)
   - status_code (int): 
       0x00: Disabled;
       0x01: Enabled;

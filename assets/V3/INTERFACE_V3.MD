@@ -179,6 +179,8 @@ V3 imports most unchanged message classes from V2 and provides V3-specific class
 | `ArmMsgMotionCtrl_2` | V3 `0x151` motion control command |
 | `ArmMsgFeedbackStatus` | V3 `0x2A1` arm status feedback |
 | `ArmMsgFeedbackStatusEnum` | V3 feedback enum definitions |
+| `ArmMsgFeedBackGripper_V3` | V3 `0x2A8` gripper feedback with width/angle mode |
+| `ArmMsgGripperCtrl_V3` | V3 `0x159` gripper control with width/angle mode |
 | `ArmMsgJointMitCtrl` | V3 single-joint MIT control message |
 | `ArmMsgAllJointMitCtrl` | V3 all-joint MIT control container |
 
@@ -189,12 +191,22 @@ The following commonly used V2 APIs are available in `C_PiperInterface_V3` unles
 | Category | Methods |
 |---|---|
 | Initialization | `PiperInit`, `EnableFkCal`, `DisableFkCal`, `EnableFilterAbnormalData`, `DisableFilterAbnormalData` |
-| Basic control | `EmergencyStop`, `ResetPiper`, `EnableArm`, `DisableArm`, `EnablePiper`, `DisablePiper`, `EndPoseCtrl`, `JointCtrl`, `GripperCtrl` |
+| Basic control | `EmergencyStop`, `ResetPiper`, `EnableArm`, `DisableArm`, `EnablePiper`, `DisablePiper`, `EndPoseCtrl`, `JointCtrl`, `GripperCtrl`, `GripperCtrl_V3` |
 | MOVE helpers | `MoveCAxisUpdateCtrl`, `SearchMotorMaxAngleSpdAccLimit`, `SearchAllMotorMaxAngleSpd`, `SearchAllMotorMaxAccLimit` |
 | Parameter setting | `MotorAngleLimitMaxSpdSet`, `MotorMaxSpdSet`, `JointConfig`, `JointMaxAccConfig`, `EndSpdAndAccParamSet`, `CrashProtectionConfig`, `GripperTeachingPendantParamConfig` |
 | Master/slave | `MasterSlaveConfig`, `ReqMasterArmMoveToHome` |
 | Query commands | `SearchPiperFirmwareVersion`, `ClearRespSetInstruction` |
-| SDK limits | `GetSDKJointLimitParam`, `SetSDKJointLimitParam`, `GetSDKGripperRangeParam`, `SetSDKGripperRangeParam` |
+| SDK limits | `GetSDKJointLimitParam`, `SetSDKJointLimitParam`, `GetSDKGripperRangeParam`, `SetSDKGripperRangeParam`, `GetSDKGripperAngleLimitParam`, `SetSDKGripperAngleLimitParam` |
+
+### V3 Gripper APIs
+
+`GripperCtrl()` remains the V2-compatible width-mode API. `GripperCtrl_V3()` accepts the V3 gripper value and mode encoded in `gripper_code`.
+
+| Method | Description |
+|---|---|
+| `GripperCtrl_V3(gripper_val, gripper_effort, gripper_code, set_zero)` | Sends V3 gripper control. `gripper_val` is in 0.001 mm for width mode and 0.001 degree for angle mode. `gripper_effort` is in 0.001 N·m. |
+| `GetArmGripperMsgs_V3()` | Returns V3 gripper feedback with `grippers_val`, `grippers_effort`, `status_code`, and `mode`. |
+| `GetArmGripperCtrl_V3()` | Returns the latest V3 gripper control frame observed on CAN ID `0x159`. |
 
 ## Getter Methods
 
@@ -206,7 +218,8 @@ Getter methods are inherited from V2 and return V3 message objects when the unde
 | `GetArmEndPoseMsgs()` | Returns end-effector pose feedback |
 | `GetArmJointMsgs()` | Returns joint feedback |
 | `GetFK(mode="feedback")` | Returns FK result for feedback or control data |
-| `GetArmGripperMsgs()` | Returns gripper feedback |
+| `GetArmGripperMsgs()` | Returns V2-compatible gripper feedback |
+| `GetArmGripperMsgs_V3()` | Returns V3 gripper feedback with width/angle mode |
 | `GetArmHighSpdInfoMsgs()` | Returns high-speed motor feedback |
 | `GetMotorStates()` | Returns motor states from high-speed feedback |
 | `GetArmLowSpdInfoMsgs()` | Returns low-speed motor feedback |
@@ -218,7 +231,8 @@ Getter methods are inherited from V2 and return V3 message objects when the unde
 | `GetGripperTeachingPendantParamFeedback()` | Returns gripper/teaching pendant parameter feedback |
 | `GetCurrentMotorMaxAccLimit()` | Returns current motor max acceleration limit feedback |
 | `GetArmJointCtrl()` | Returns joint control messages |
-| `GetArmGripperCtrl()` | Returns gripper control messages |
+| `GetArmGripperCtrl()` | Returns V2-compatible gripper control messages |
+| `GetArmGripperCtrl_V3()` | Returns V3 gripper control messages with width/angle mode |
 | `GetArmCtrlCode151()` | Returns latest `0x151` control message |
 | `GetArmModeCtrl()` | Returns current mode control message |
 | `GetAllMotorMaxAccLimit()` | Returns all motor max acceleration limits |

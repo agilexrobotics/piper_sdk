@@ -4,6 +4,7 @@ from ...msg_v2.transmit.arm_circular_pattern import ArmMsgCircularPatternCoordNu
 from ...msg_v2.transmit.arm_crash_protection_rating_config import ArmMsgCrashProtectionRatingConfig
 from ...msg_v2.transmit.arm_end_vel_acc_param_config import ArmMsgEndVelAccParamConfig
 from ...msg_v2.transmit.arm_gripper_ctrl import ArmMsgGripperCtrl
+from .arm_gripper_ctrl import ArmMsgGripperCtrl_V3
 #----------------------------------基于V1.5-2版本后---------------------------------------------#
 from ...msg_v2.transmit.arm_gripper_teaching_param_config import ArmMsgGripperTeachingPendantParamConfig
 #---------------------------------------------------------------------------------------------#
@@ -31,6 +32,7 @@ __all__ = [
     'ArmMsgJointCtrl',
     'ArmMsgCircularPatternCoordNumUpdateCtrl',
     'ArmMsgGripperCtrl',
+    'ArmMsgGripperCtrl_V3',
     'ArmMsgMasterSlaveModeConfig',
     'ArmMsgMotorEnableDisableConfig',
     'ArmMsgSearchMotorMaxAngleSpdAccLimit',

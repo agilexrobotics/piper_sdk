@@ -1469,7 +1469,7 @@ class C_PiperInterface_V2():
         gripper_ctrl : ArmMsgGripperCtrl
 
             - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
-            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000 (corresponse 0-5N/m)
+            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponse 0-5N·m)
             - status_code (int): 
                 0x00: Disabled;
                 0x01: Enabled;
@@ -1845,14 +1845,14 @@ class C_PiperInterface_V2():
         '''
         with self._arm_gripper_msgs_mtx:
             if(msg.type_ == self.ArmMsgType.PiperMsgGripperFeedBack):
-                gripper_val = self._CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)
+                gripper_val = msg.gripper_feedback.grippers_angle
                 if self.isFilterAbnormalData():
                     # 150mm * 1000
                     if abs(gripper_val) > 150000:
                         return
                 self._fps_counter.increment("ArmGripper")
                 self._arm_gripper_msgs.time_stamp = msg.time_stamp
-                self._arm_gripper_msgs.gripper_state.grippers_angle = self._CalGripperSDKLimit(msg.gripper_feedback.grippers_angle)
+                self._arm_gripper_msgs.gripper_state.grippers_angle = self._CalGripperSDKLimit(gripper_val)
                 self._arm_gripper_msgs.gripper_state.grippers_effort = msg.gripper_feedback.grippers_effort
                 self._arm_gripper_msgs.gripper_state.status_code = msg.gripper_feedback.status_code
             return self._arm_gripper_msgs
@@ -2961,7 +2961,7 @@ class C_PiperInterface_V2():
         
         Args:
             gripper_angle (int):  夹爪范围, 以整数表示, 单位0.001mm
-            gripper_effort (int): 夹爪力矩,单位 0.001N/m,范围0-5000,对应0-5N/m
+            gripper_effort (int): 夹爪力矩,单位 0.001N·m,范围0-5000,对应0-5N·m
             gripper_code (int): 
                 0x00失能;
                 0x01使能;
@@ -2979,7 +2979,7 @@ class C_PiperInterface_V2():
         
         Args:
             gripper_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
-            gripper_effort (int): The gripper torque, in 0.001 N/m.Range 0-5000,corresponse 0-5N/m
+            gripper_effort (int): The gripper torque, in 0.001 N·m. Range 0-5000, corresponse 0-5 N·m
             gripper_code (int): The gripper enable/disable/clear error command.
                 0x00: Disable
                 0x01: Enable
@@ -2988,6 +2988,12 @@ class C_PiperInterface_V2():
                 0x00: Invalid value
                 0xAE: Set zero point
         '''
+        if gripper_code not in [0x00, 0x01, 0x02, 0x03]:
+            raise ValueError(f"'status_code' Value {gripper_code} out of range [0x00, 0x01, 0x02, 0x03]")
+        if not (0 <= gripper_effort <= 5000):
+            raise ValueError(f"'grippers_effort' Value {gripper_effort} out of range 0-5000")
+        if set_zero not in [0x00, 0xAE]:
+            raise ValueError(f"'set_zero' Value {set_zero} out of range [0x00,0xAE]")
         tx_can = Message()
         gripper_angle = self._CalGripperSDKLimit(gripper_angle)
         gripper_ctrl = ArmMsgGripperCtrl(gripper_angle, gripper_effort, gripper_code, set_zero)

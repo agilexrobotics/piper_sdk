@@ -14,6 +14,7 @@ from ...msg_v2.feedback.arm_feedback_low_spd import ArmMsgFeedbackLowSpd
 from .arm_feedback_status import ArmMsgFeedbackStatus_V3 as ArmMsgFeedbackStatus
 from .arm_feedback_status import ArmMsgFeedbackStatusEnum_V3 as ArmMsgFeedbackStatusEnum
 from ...msg_v2.feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
+from .arm_feedback_gripper import ArmMsgFeedBackGripper_V3, ArmMsgFeedbackGripperEnums_V3
 from ...msg_v2.feedback.arm_feedback_set_instruction_response import ArmMsgFeedbackRespSetInstruction
 
 __all__ = [
@@ -23,6 +24,8 @@ __all__ = [
     'ArmMsgFeedbackStatus',
     'ArmMsgFeedbackStatusEnum',
     'ArmMsgFeedBackGripper',
+    'ArmMsgFeedBackGripper_V3',
+    'ArmMsgFeedbackGripperEnums_V3',
     'ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd',
     'ArmMsgFeedbackCurrentEndVelAccParam',
     'ArmMsgFeedbackCurrentMotorMaxAccLimit',

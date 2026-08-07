@@ -14,7 +14,7 @@ class ArmMsgGripperCtrl:
     
     Args:
         grippers_angle: 夹爪行程
-        grippers_effort: 夹爪扭矩,范围0-5000,对应0-5N/m
+        grippers_effort: 夹爪扭矩,范围0-5000,对应0-5N·m
         status_code: 
                 0x00失能;
                 0x01使能;
@@ -30,7 +30,7 @@ class ArmMsgGripperCtrl:
         Byte 1
         Byte 2
         Byte 3
-        Byte 4 grippers_effort: uint16, 单位 0.001N/m, 夹爪扭矩,以整数表示。
+        Byte 4 grippers_effort: uint16, 单位 0.001N·m, 夹爪扭矩,以整数表示。
         Byte 5
         Byte 6 status_code: uint8, 夹爪状态码, 使能/失能/清除错误;
                 0x00失能;
@@ -51,7 +51,7 @@ class ArmMsgGripperCtrl:
 
     Args:
         grippers_angle: Gripper stroke, represented as an integer, unit: 0.001mm.
-        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000,corresponse 0-5N/m
+        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponse 0-5N·m
         status_code: 
             0x00: Disable;
             0x01: Enable;
@@ -63,7 +63,7 @@ class ArmMsgGripperCtrl:
 
     Bit Description:
 
-        Byte 0-3 grippers_angle: int32, unit: 0.001°, represents the gripper stroke.
+        Byte 0-3 grippers_angle: int32, unit: 0.001mm, represents the gripper stroke.
         Byte 4-5 grippers_effort: uint16, unit: 0.001N·m, represents the gripper torque.
         Byte 6 status_code: uint8, gripper status code for enable/disable/clear error.
             0x00: Disable;
@@ -79,12 +79,12 @@ class ArmMsgGripperCtrl:
                  grippers_effort: int = 0, 
                  status_code: Literal[0x00, 0x01, 0x02, 0x03] = 0,
                  set_zero: Literal[0x00, 0xAE] = 0):
-        if status_code not in [0x00, 0x01, 0x02, 0x03]:
-            raise ValueError(f"'status_code' Value {status_code} out of range [0x00, 0x01, 0x02, 0x03]")
-        if not (0 <= grippers_effort <= 5000):
-            raise ValueError(f"'grippers_effort' Value {grippers_effort} out of range 0-5000")
-        if set_zero not in [0x00, 0xAE]:
-            raise ValueError(f"'set_zero' Value {set_zero} out of range [0x00,0xAE]")
+        # if status_code not in [0x00, 0x01, 0x02, 0x03]:
+        #     raise ValueError(f"'status_code' Value {status_code} out of range [0x00, 0x01, 0x02, 0x03]")
+        # if not (0 <= grippers_effort <= 5000):
+        #     raise ValueError(f"'grippers_effort' Value {grippers_effort} out of range 0-5000")
+        # if set_zero not in [0x00, 0xAE]:
+        #     raise ValueError(f"'set_zero' Value {set_zero} out of range [0x00,0xAE]")
         self.grippers_angle = grippers_angle
         self.grippers_effort = grippers_effort
         self.status_code = status_code

@@ -43,6 +43,278 @@ class C_PiperParserV3(C_PiperParserV2):
         '''
         return self.ProtocolVersion.ARM_PROROCOL_V3
 
+    def DecodeMessage(self, rx_can_frame: Optional[can.Message], msg:PiperMessage):
+        '''解码消息,将can数据帧转为设定的类型
+
+        Args:
+            rx_can_frame (Optional[can.Message]): can 数据帧, 为输入
+            msg (PiperMessage): 自定义中间层数据, 为输出
+
+        Returns:
+            bool:
+                can消息的id如果存在, 反馈True
+
+                can消息的id若不存在, 反馈False
+        '''
+        '''Decode the message, convert the CAN data frame to the specified type.
+
+        Args:
+
+            rx_can_frame (Optional[can.Message]): CAN data frame, input.
+            msg (PiperMessage): Custom intermediate data, output.
+
+        Returns:
+
+            bool:
+                If the CAN message ID exists, return True.
+                If the CAN message ID does not exist, return False.
+        '''
+        ret:bool = True
+        can_id:int = rx_can_frame.arbitration_id
+        can_data:bytearray = rx_can_frame.data
+        can_time_now = rx_can_frame.timestamp
+        # 机械臂状态反馈,piper Status Feedback
+        if(can_id == self.CanIDPiper.ARM_STATUS_FEEDBACK.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_status_msgs.ctrl_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_status_msgs.arm_status = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_status_msgs.mode_feed = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+            msg.arm_status_msgs.teach_status = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
+            msg.arm_status_msgs.motion_status = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+            msg.arm_status_msgs.trajectory_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_status_msgs.err_code = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        # 机械臂末端位姿,piper End-Effector Pose
+        elif(can_id == self.CanIDPiper.ARM_END_POSE_FEEDBACK_1.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_end_pose.X_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_end_pose.Y_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_END_POSE_FEEDBACK_2.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_end_pose.Z_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_end_pose.RX_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_END_POSE_FEEDBACK_3.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_end_pose.RY_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_end_pose.RZ_axis = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        # 关节角度反馈,Joint Angle Feedback
+        elif(can_id == self.CanIDPiper.ARM_JOINT_FEEDBACK_12.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_feedback.joint_1 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_feedback.joint_2 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_JOINT_FEEDBACK_34.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_feedback.joint_3 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_feedback.joint_4 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_JOINT_FEEDBACK_56.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_feedback.joint_5 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_feedback.joint_6 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        # 夹爪反馈,Gripper Feedback
+        elif(can_id == self.CanIDPiper.ARM_GRIPPER_FEEDBACK.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.gripper_feedback.grippers_angle = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.gripper_feedback.grippers_effort = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6))
+            msg.gripper_feedback.status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,6,7),False)
+
+            msg.gripper_feedback_v3.grippers_val = msg.gripper_feedback.grippers_angle
+            msg.gripper_feedback_v3.grippers_effort = msg.gripper_feedback.grippers_effort
+            msg.gripper_feedback_v3.status_code = msg.gripper_feedback.status_code
+            msg.gripper_feedback_v3.mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,7,8),False)
+        # 驱动器信息高速反馈,High-Speed Driver Information Feedback
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_1.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_1.can_id = can_id
+            msg.arm_high_spd_feedback_1.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_1.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_1.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_2.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_2.can_id = can_id
+            msg.arm_high_spd_feedback_2.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_2.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_2.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_3.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_3.can_id = can_id
+            msg.arm_high_spd_feedback_3.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_3.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_3.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_4.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_4.can_id = can_id
+            msg.arm_high_spd_feedback_4.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_4.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_4.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_5.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_5.can_id = can_id
+            msg.arm_high_spd_feedback_5.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_5.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_5.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_INFO_HIGH_SPD_FEEDBACK_6.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_high_spd_feedback_6.can_id = can_id
+            msg.arm_high_spd_feedback_6.motor_speed = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2))
+            msg.arm_high_spd_feedback_6.current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_high_spd_feedback_6.pos = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        # 驱动器信息低速反馈,Low-Speed Driver Information Feedback
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_1.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_1.can_id = can_id
+            msg.arm_low_spd_feedback_1.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_1.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_1.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_1.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_1.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_2.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_2.can_id = can_id
+            msg.arm_low_spd_feedback_2.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_2.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_2.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_2.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_2.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_3.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_3.can_id = can_id
+            msg.arm_low_spd_feedback_3.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_3.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_3.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_3.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_3.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_4.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_4.can_id = can_id
+            msg.arm_low_spd_feedback_4.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_4.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_4.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_4.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_4.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_5.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_5.can_id = can_id
+            msg.arm_low_spd_feedback_5.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_5.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_5.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_5.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_5.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_INFO_LOW_SPD_FEEDBACK_6.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_low_spd_feedback_6.can_id = can_id
+            msg.arm_low_spd_feedback_6.vol = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_low_spd_feedback_6.foc_temp = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4))
+            msg.arm_low_spd_feedback_6.motor_temp = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5))
+            msg.arm_low_spd_feedback_6.foc_status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+            msg.arm_low_spd_feedback_6.bus_current = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        # 设置指令应答，0x476
+        elif(can_id == self.CanIDPiper.ARM_FEEDBACK_RESP_SET_INSTRUCTION.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_resp_set_instruction.instruction_index = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_feedback_resp_set_instruction.is_set_zero_successfully = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+        elif(can_id == self.CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_ANGLE_LIMIT_MAX_SPD.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_current_motor_angle_limit_max_spd.motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_feedback_current_motor_angle_limit_max_spd.max_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,1,3))
+            msg.arm_feedback_current_motor_angle_limit_max_spd.min_angle_limit = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,3,5))
+            msg.arm_feedback_current_motor_angle_limit_max_spd.max_joint_spd = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,5,7),False)
+        elif(can_id == self.CanIDPiper.ARM_FEEDBACK_CURRENT_END_VEL_ACC_PARAM.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_current_end_vel_acc_param.end_max_linear_vel = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,0,2),False)
+            msg.arm_feedback_current_end_vel_acc_param.end_max_angular_vel = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,2,4),False)
+            msg.arm_feedback_current_end_vel_acc_param.end_max_linear_acc = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6),False)
+            msg.arm_feedback_current_end_vel_acc_param.end_max_angular_acc = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,6,8),False)
+        elif(can_id == self.CanIDPiper.ARM_CRASH_PROTECTION_RATING_FEEDBACK.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_crash_protection_rating_feedback.joint_1_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_crash_protection_rating_feedback.joint_2_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_crash_protection_rating_feedback.joint_3_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+            msg.arm_crash_protection_rating_feedback.joint_4_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
+            msg.arm_crash_protection_rating_feedback.joint_5_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+            msg.arm_crash_protection_rating_feedback.joint_6_protection_level = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
+        elif(can_id == self.CanIDPiper.ARM_FEEDBACK_CURRENT_MOTOR_MAX_ACC_LIMIT.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_feedback_current_motor_max_acc_limit.joint_motor_num = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_feedback_current_motor_max_acc_limit.max_joint_acc = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,1,3),False)
+        # 机械臂控制指令2,0x151
+        elif(can_id == self.CanIDPiper.ARM_MOTION_CTRL_2.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_motion_ctrl_2.ctrl_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_motion_ctrl_2.move_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            msg.arm_motion_ctrl_2.move_spd_rate_ctrl = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+            msg.arm_motion_ctrl_2.mit_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
+            msg.arm_motion_ctrl_2.residence_time = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+        # 读取主臂发送的目标joint数值
+        elif(can_id == self.CanIDPiper.ARM_JOINT_CTRL_12.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_ctrl.joint_1 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_ctrl.joint_2 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_JOINT_CTRL_34.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_ctrl.joint_3 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_ctrl.joint_4 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        elif(can_id == self.CanIDPiper.ARM_JOINT_CTRL_56.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_joint_ctrl.joint_5 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_joint_ctrl.joint_6 = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,4,8))
+        # 夹爪
+        elif(can_id == self.CanIDPiper.ARM_GRIPPER_CTRL.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_gripper_ctrl.grippers_angle = self.ConvertToNegative_32bit(self.ConvertBytesToInt(can_data,0,4))
+            msg.arm_gripper_ctrl.grippers_effort = self.ConvertToNegative_16bit(self.ConvertBytesToInt(can_data,4,6))
+            msg.arm_gripper_ctrl.status_code = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,6,7),False)
+            msg.arm_gripper_ctrl.set_zero = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,7,8),False)
+
+            msg.arm_gripper_ctrl_v3.grippers_val = msg.arm_gripper_ctrl.grippers_angle
+            msg.arm_gripper_ctrl_v3.grippers_effort = msg.arm_gripper_ctrl.grippers_effort
+            msg.arm_gripper_ctrl_v3.status_code = msg.arm_gripper_ctrl.status_code
+            msg.arm_gripper_ctrl_v3.set_zero = msg.arm_gripper_ctrl.set_zero
+        # 固件版本
+        elif(can_id == self.CanIDPiper.ARM_FIRMWARE_READ.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.firmware_data = can_data
+        # 夹爪/示教器参数反馈指令(基于V1.5-2版本后)
+        elif(can_id == self.CanIDPiper.ARM_GRIPPER_TEACHING_PENDANT_PARAM_FEEDBACK.value):
+            msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)
+            msg.time_stamp = can_time_now
+            msg.arm_gripper_teaching_param_feedback.teaching_range_per = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,0,1),False)
+            msg.arm_gripper_teaching_param_feedback.max_range_config = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,1,2),False)
+            # (基于V1.5-8版本后)
+            msg.arm_gripper_teaching_param_feedback.teaching_friction = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
+        else:
+            ret = False
+        return ret
+
     def EncodeMessage(self, msg:PiperMessage, tx_can_frame: Optional[can.Message]):
         '''将消息转为can数据帧
 
@@ -105,10 +377,10 @@ class C_PiperParserV3(C_PiperParserV2):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_circular_ctrl.instruction_num,False) + \
                                 [0, 0, 0, 0, 0, 0, 0]
         elif(msg_type_ == self.ArmMsgType.PiperMsgGripperCtrl):
-            tx_can_frame.data = self.ConvertToList_32bit(msg.arm_gripper_ctrl.grippers_angle) + \
-                                self.ConvertToList_16bit(msg.arm_gripper_ctrl.grippers_effort,False) + \
-                                self.ConvertToList_8bit(msg.arm_gripper_ctrl.status_code,False) + \
-                                self.ConvertToList_8bit(msg.arm_gripper_ctrl.set_zero,False)
+            tx_can_frame.data = self.ConvertToList_32bit(msg.arm_gripper_ctrl_v3.grippers_val) + \
+                                self.ConvertToList_16bit(msg.arm_gripper_ctrl_v3.grippers_effort,False) + \
+                                self.ConvertToList_8bit(msg.arm_gripper_ctrl_v3.status_code,False) + \
+                                self.ConvertToList_8bit(msg.arm_gripper_ctrl_v3.set_zero,False)
         elif(msg_type_ == self.ArmMsgType.PiperMsgMasterSlaveModeConfig):
             tx_can_frame.data = self.ConvertToList_8bit(msg.arm_ms_config.linkage_config,False) + \
                                 self.ConvertToList_8bit(msg.arm_ms_config.feedback_offset,False) + \

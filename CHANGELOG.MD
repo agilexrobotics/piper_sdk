@@ -432,7 +432,7 @@ Features
 - Corrected the output unit for the gripper's printed data.
 - Fixed some comments and provided clearer explanations.
 - Unified the code formatting to maintain consistency.
-- Added data limits for the gripper message sending: [0, 5000], corresponding to [0, 5] N/m.
+- Added data limits for the gripper message sending: [0, 5000], corresponding to [0, 5] N·m.
 - Added data limits for setting the maximum joint speed: [0, 3000], corresponding to [0, 3] rad/s.
 - Added data limits for setting the maximum joint acceleration: [0, 500], corresponding to [0, 5] rad/s^2.
 

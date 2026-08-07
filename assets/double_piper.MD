@@ -100,7 +100,7 @@ piper.JointCtrl(joint_1, joint_2, joint_3, joint_4, joint_5, joint_6)
 
 `GripperCtrl` is used to control the gripper.
 
-For example, set the gripper torque to 1N/m and enable the gripper, then control the gripper to a position of 0.05m.
+For example, set the gripper torque to 1N·m and enable the gripper, then control the gripper to a position of 0.05m.
 
 ```python
 range = int(0.05 * 1e6)
