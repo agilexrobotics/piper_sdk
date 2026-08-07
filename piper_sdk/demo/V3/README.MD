@@ -12,13 +12,13 @@ Test:
 
 ### Install Dependencies
 
-Note: python-can >= 4.3.1
+Note: python-can >= 3.3.4
 
 ```shell
 pip3 install python-can
 ```
 
-Note: piper_sdk >= 0.1.9
+Note: piper_sdk >= 1.0.0
 
 ```shell
 pip3 install piper_sdk
@@ -76,7 +76,10 @@ Instructions for activating the CAN module [can README](../../../assets/can_conf
 |[`piper_set_slave.py`](./piper_set_slave.py)|Set the robotic arm as the slave arm.|
 |[`piper_test_interface_disconnect.py`](./piper_test_interface_disconnect.py)|Test the interface disconnect functionality.|
 |[`piper_test_multi_interface_instance.py`](./piper_test_multi_interface_instance.py)|Test multiple interface instances.|
+|[`V3_piper_ctrl_gripper_angle.py`](./V3_piper_ctrl_gripper_angle.py)|Control the V3 gripper in angle mode and read V3 gripper feedback/control messages.|
 |[`V3_piper_ctrl_joint_mit.py`](./V3_piper_ctrl_joint_mit.py)|Control individual joints in MIT mode.|
+|[`V3_piper_read_ik_joint.py`](./V3_piper_read_ik_joint.py)|Read V3 IK joint feedback messages.|
+|[`V3_piper_set_horizontal_inverse.py`](./V3_piper_set_horizontal_inverse.py)|Set the V3 installation position to horizontal inverse (`installation_pos=0x04`).|
 |[`V2_piper_ctrl_motor_max_spd.py`](./V2_piper_ctrl_motor_max_spd.py)|Set maximum speed limits for individual joint motors.|
 |[`V2_piper_read_gripper_param_feedback.py`](./V2_piper_read_gripper_param_feedback.py)|Read gripper parameter feedback.|
 |[`V2_piper_set_gripper_param.py`](./V2_piper_set_gripper_param.py)|Set gripper parameters.|

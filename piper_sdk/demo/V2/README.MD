@@ -12,7 +12,7 @@ Test:
 
 ### Install Dependencies
 
-Note: python-can >= 4.3.1
+Note: python-can >= 3.3.4
 
 ```shell
 pip3 install python-can
