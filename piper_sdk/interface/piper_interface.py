@@ -1762,36 +1762,36 @@ class C_PiperInterface():
         '''
         with self.__arm_joint_msgs_mtx:
             if(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_12):
-                _joint1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
-                _joint2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
+                _joint1 = msg.arm_joint_feedback.joint_1
+                _joint2 = msg.arm_joint_feedback.joint_2
                 if self.isFilterAbnormalData():
                 # 300 degree * 1000
                     if abs(_joint1) > 3000000 or abs(_joint2) > 3000000:
                         return
                 self.__fps_counter.increment("ArmJoint_12")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_1 = _joint1
-                self.__arm_joint_msgs.joint_state.joint_2 = _joint2
+                self.__arm_joint_msgs.joint_state.joint_1 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_1, "j1")
+                self.__arm_joint_msgs.joint_state.joint_2 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_2, "j2")
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_34):
-                _joint3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
-                _joint4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
+                _joint3 = msg.arm_joint_feedback.joint_3
+                _joint4 = msg.arm_joint_feedback.joint_4
                 if self.isFilterAbnormalData():
                     if abs(_joint3) > 3000000 or abs(_joint4) > 3000000:
                         return
                 self.__fps_counter.increment("ArmJoint_34")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_3 = _joint3
-                self.__arm_joint_msgs.joint_state.joint_4 = _joint4
+                self.__arm_joint_msgs.joint_state.joint_3 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_3, "j3")
+                self.__arm_joint_msgs.joint_state.joint_4 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_4, "j4")
             elif(msg.type_ == ArmMsgType.PiperMsgJointFeedBack_56):
-                _joint5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
-                _joint6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
+                _joint5 = msg.arm_joint_feedback.joint_5
+                _joint6 = msg.arm_joint_feedback.joint_6
                 if self.isFilterAbnormalData():
                     if abs(_joint5) > 3000000 or abs(_joint6) > 3000000:
                         return
                 self.__fps_counter.increment("ArmJoint_56")
                 self.__arm_joint_msgs.time_stamp = msg.time_stamp
-                self.__arm_joint_msgs.joint_state.joint_5 = _joint5
-                self.__arm_joint_msgs.joint_state.joint_6 = _joint6
+                self.__arm_joint_msgs.joint_state.joint_5 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_5, "j5")
+                self.__arm_joint_msgs.joint_state.joint_6 = self.__CalJointSDKLimit(msg.arm_joint_feedback.joint_6, "j6")
             return self.__arm_joint_msgs
 
     def __UpdateArmGripperState(self, msg:PiperMessage):
