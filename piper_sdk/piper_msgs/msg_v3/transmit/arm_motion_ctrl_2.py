@@ -50,6 +50,7 @@ class ArmMsgMotionCtrl_2_V3():
                 0x01 水平正装
                 0x02 侧装左
                 0x03 侧装右
+                0x04 水平倒装
     '''
     '''
     
@@ -98,6 +99,7 @@ class ArmMsgMotionCtrl_2_V3():
                 0x01: Horizontal upright
                 0x02: Left-side mount
                 0x03: Right-side mount
+                0x04: Horizontal Inversion
     '''
 
     class Enums:
@@ -132,12 +134,13 @@ class ArmMsgMotionCtrl_2_V3():
             HORIZONTAL = 0x01
             LEFT = 0x02
             RIGHT = 0x03
+            HORIZONTAL_INVERSE = 0x04
             UNKNOWN = 0xFF
     
-    _VALID_CTRL_MODE = Enums.CtrlMode.value_list()
-    _VALID_MOVE_MODE = Enums.MotionMode.value_list()
-    _VALID_MIT_MODE = Enums.MitMode.value_list()
-    _VALID_INSTALLATION_POS = Enums.InstallationPos.value_list()
+    _VALID_CTRL_MODE = [0x00, 0x01, 0x03, 0x04, 0x07]
+    _VALID_MOVE_MODE = [0x00, 0x01, 0x02, 0x03, 0x06, 0x05]
+    _VALID_MIT_MODE = [0x00, 0xAD, 0xFF]
+    _VALID_INSTALLATION_POS = [0x00, 0x01, 0x02, 0x03, 0x04]
 
     def __init__(self, 
                  ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
@@ -145,7 +148,7 @@ class ArmMsgMotionCtrl_2_V3():
                  move_spd_rate_ctrl: int = 50,
                  mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                  residence_time: int = 0,
-                 installation_pos: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
+                 installation_pos: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00):
         # 检查是否在有效范围内
         if ctrl_mode not in self._VALID_CTRL_MODE:
             raise ValueError(f"'ctrl_mode' Value {ctrl_mode} out of range [0x00, 0x01, 0x02, 0x03, 0x04, 0x07]")
@@ -158,7 +161,7 @@ class ArmMsgMotionCtrl_2_V3():
         if not (0 <= residence_time <= 255):
             raise ValueError(f"'residence_time' Value {residence_time} out of range 0-255")
         if installation_pos not in self._VALID_INSTALLATION_POS:
-            raise ValueError(f"'installation_pos' Value {installation_pos} out of range [0x00, 0x01, 0x02, 0x03]")
+            raise ValueError(f"'installation_pos' Value {installation_pos} out of range [0x00, 0x01, 0x02, 0x03, 0x04]")
         self.ctrl_mode = ctrl_mode
         self.move_mode = move_mode
         self.move_spd_rate_ctrl = move_spd_rate_ctrl

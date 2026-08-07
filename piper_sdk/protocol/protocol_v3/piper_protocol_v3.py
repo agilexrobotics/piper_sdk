@@ -269,6 +269,7 @@ class C_PiperParserV3(C_PiperParserV2):
             msg.arm_motion_ctrl_2.move_spd_rate_ctrl = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,2,3),False)
             msg.arm_motion_ctrl_2.mit_mode = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,3,4),False)
             msg.arm_motion_ctrl_2.residence_time = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,4,5),False)
+            msg.arm_motion_ctrl_2.installation_pos = self.ConvertToNegative_8bit(self.ConvertBytesToInt(can_data,5,6),False)
         # 读取主臂发送的目标joint数值
         elif(can_id == self.CanIDPiper.ARM_JOINT_CTRL_12.value):
             msg.type_ = self.ArmMessageMapping.get_mapping(can_id=can_id)

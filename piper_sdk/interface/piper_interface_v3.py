@@ -579,7 +579,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                          move_spd_rate_ctrl: int = 50, 
                          is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                          residence_time: int = 0,
-                         installation_pos: Literal[0x00, 0x01, 0x02, 0x03] = 0x00):
+                         installation_pos: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00):
             '''
             机械臂运动控制指令2
             
@@ -613,6 +613,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     0x01 水平正装
                     0x02 侧装左
                     0x03 侧装右
+                    0x04 水平倒装
             '''
             '''
             Sends the robotic arm motion control command (0x151).
@@ -643,6 +644,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     0x01 Horizontal upright
                     0x02 Side mount left
                     0x03 Side mount right
+                    0x04 Horizontal Inversion
             '''
             tx_can = Message()
             motion_ctrl_2 = ArmMsgMotionCtrl_2(ctrl_mode, move_mode, move_spd_rate_ctrl, is_mit_mode, residence_time, installation_pos)
