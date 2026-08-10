@@ -20,7 +20,11 @@ setup(
     install_requires=[
         'python-can>=3.3.4',
     ],
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            'piper-can-activate=piper_sdk.cli.can_activate:main',
+        ],
+    },
     author='Agilex Robotics Co., Ltd.',
     author_email='',
     description='A sdk to control Agilex piper arm',

@@ -179,16 +179,24 @@ Interface can0 is connected to USB port 3-1.1:1.0
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 激活单个can模块, **此处使用`can_activate.sh`脚本**
+### 2.2 激活单个can模块, **此处使用 `piper-can-activate` CLI**
 
 激活单个can模块的情况分两种，一种是电脑只链接了一个can模块，一种是多个can模块插入电脑但是只激活其中一个。
+
+安装 `piper_sdk` 后，终端中会提供 `piper-can-activate` 命令。该命令支持 `-h`/`--help`，如果 shell 已启用可执行命令补全，输入 `piper-` 后可用 Tab 补全命令名。
+
+```bash
+piper-can-activate -h
+```
+
+如果需要参数级补全，可以在 shell 中安装并启用 `argcomplete`；当环境中存在 `argcomplete` 时，该 CLI 会自动启用补全支持。
 
 #### 2.2.1 pc只插入一个usb转can模块
 
 直接执行
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can-activate can0 1000000
 ```
 
 此处`can0`可以改为任意名字，`1000000`为波特率，不可更改
@@ -208,7 +216,7 @@ bash find_all_can_port.sh
 (2) 激活can设备。假设上面的`USB port`数值为`3-1.4:1.0`，执行：
 
 ```bash
-bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
+piper-can-activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 解释：**3-1.4:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_piper，设定波特率为1000000，并激活**

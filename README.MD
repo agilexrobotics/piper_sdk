@@ -183,16 +183,24 @@ If no CAN module is detected, only the following will be output:
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 Activate a Single CAN Module (use can_activate.sh script)
+### 2.2 Activate a Single CAN Module (use `piper-can-activate` CLI)
 
 There are two situations for activating a single CAN module: one is when only one CAN module is connected to the PC, and the other is when multiple CAN modules are inserted, but only one is activated.
+
+After installing `piper_sdk`, the `piper-can-activate` command is available in the terminal. It supports `-h`/`--help`, and the command name can be completed with Tab after typing `piper-` if your shell completion for executable commands is enabled.
+
+```bash
+piper-can-activate -h
+```
+
+If you need option/argument completion, install and enable `argcomplete` in your shell. The CLI enables `argcomplete` automatically when it is available.
 
 #### 2.2.1 PC has only one USB-to-CAN module connected
 
 Simply execute:
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can-activate can0 1000000
 ```
 
 Here, `can0` can be replaced with any name, and `1000000` is the baud rate, which cannot be changed.
@@ -212,7 +220,7 @@ Record the USB port value, for example, 3-1.4:1.0.
 (2) Activate the CAN device. Assuming the USB port value is 3-1.4:1.0, run:
 
 ```bash
-bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
+piper-can-activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 Explanation: **3-1.4:1.0 is the hardware-encoded USB port, and the CAN device inserted there is renamed as can_piper, with a baud rate of 1000000 and activated.**

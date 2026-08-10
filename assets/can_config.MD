@@ -25,17 +25,17 @@ First, set up the shell script parameters properly.
 
 ##### PC with only one USB-to-CAN module inserted
 
-- **Use the `can_activate.sh` script in this case.**
+- **Use the `piper-can-activate` CLI in this case.** It is installed with `piper_sdk` and supports `-h`/`--help`.
 
 Simply execute:
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can-activate can0 1000000
 ```
 
 ##### PC with multiple USB-to-CAN modules inserted
 
-- **Use the `can_activate.sh` script in this case.**
+- **Use the `piper-can-activate` CLI with `--usb-port` in this case.**
 
 Unplug all CAN modules.
 
@@ -52,7 +52,7 @@ Record the `bus-info` value, e.g., `1-2:1.0`.
 Assuming the recorded `bus-info` value is `1-2:1.0`, execute the following command to check if the CAN device is successfully activated:
 
 ```bash
-bash can_activate.sh can_piper 1000000 "1-2:1.0"
+piper-can-activate can_piper 1000000 --usb-port "1-2:1.0"
 ```
 
 **Note:** This means that the CAN device inserted into the USB port with hardware encoding `1-2:1.0` is renamed to `can_piper`, set to a baud rate of `1000000`, and activated.
