@@ -140,6 +140,8 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     logger_level:LogLevel = LogLevel.WARNING,
                     log_to_file:bool = False,
                     log_file_path = None) -> None:
+        if getattr(self, "_v3_initialized", False):
+            return
         super().__init__(
                     can_name,
                     judge_flag,
@@ -171,6 +173,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         self._fps_counter.add_variable("ArmIKJoint_56")
         self.tx_msg = self.PiperMessage()
         self.rx_msg = self.PiperMessage()
+        self._v3_initialized = True
 
     def ParseCANFrame(self, rx_message: Optional[can.Message]):
         """Parse one received CAN frame and update cached feedback.
