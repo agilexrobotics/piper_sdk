@@ -9,26 +9,43 @@ Version 1.0.0
 Features
 --------
 
-- ✨ feat(interface): Adds `C_PiperInterface_V3` and the V3 interface version enum
-- ✨ feat(protocol,piper_msgs): Adds V3 protocol parser, V3 message definitions, and MIT control frame encoding updates
-- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, and multi-instance/disconnect tests
-- ✨ feat(interface): Refactors V2 private fields and update helpers to protected members so V3 can reuse and extend the interface behavior
+- ✨ feat(interface,protocol,piper_msgs): Adds the V3 interface stack for firmware/protocol V1.8-8 and later
+  - Adds `C_PiperInterface_V3`, `C_PiperParserV3`, `InterfaceVersion.INTERFACE_V3`, V3 CAN ID/type mappings, and public package exports
+  - Refactors V2 private fields and update helpers to protected members so V3 can reuse and extend the interface behavior
+- ✨ feat(motion_ctrl): Adds V3 motion-control behavior
+  - Changes V3 MOVE M to `move_mode=0x06` and V3 status MOVE M feedback to `mode_feed=0x06`
+  - Adds V3 horizontal inverted installation position support with `installation_pos=0x04`
+- ✨ feat(gripper): Adds V3 gripper width/angle mode support
+  - Adds V3 gripper feedback/control messages, parser encode/decode support, V3 getters, and V3 gripper demos
+  - Adds SDK-side gripper angle limit parameters for V3 angle mode
+- ✨ feat(ik_joint): Adds V3 IK joint feedback frames and cached getter support
+- ✨ feat(param): Adds robot parameter presets for Piper variants and Nero
+  - Adds joint limits, MDH presets, and high-speed feedback torque coefficients
+- ✨ feat(cli): Adds `piper-can-activate` for single CAN module activation from the installed package
+- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, and multi-instance/disconnect tests
 
 Bug Fixes
 ---------
 
-- 🐞 fix(piper_msgs): Reuses the shared integer enum base for feedback status enums and adds V3-specific feedback status mappings
-- 🐞 fix(docs): Updates documentation paths after moving `asserts/` to `assets/` and fixes demo README links to the CAN configuration guide
+- 🐞 fix(interface): Isolates transmit message objects per sending thread to avoid cross-thread send-state conflicts
+- 🐞 fix(param): Makes SDK parameter managers independent per interface instance and validates finite/range inputs
+- 🐞 fix(interface): Filters abnormal raw feedback data before SDK-side clamping is applied
+- 🐞 fix(gripper): Keeps gripper FOC status bit fields synchronized when feedback status codes are initialized or updated
+- 🐞 fix(piper_msgs): Reuses shared enum base helpers and V3-specific status mappings for robust enum parsing
 - 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
 
 Miscellaneous
 ---------
 
 - 🔧 build(setup.py): Updates the package version to `1.0.0`
-- 🔧 build(manifest): Includes the top-level `assets/` documentation directory in source distributions
-- 📃 docs(readme): Adds the V3 interface, V3 changelog, and V3 demo README entries to the main documentation table
+- 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
+- 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
+- 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can-activate` CAN activation CLI
 - 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
-- 📃 docs(changelog): Adds release notes for version `1.0.0`
+- 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
+  - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent
+- 📃 docs(protocol): Updates V2/V3 MIT frame bit descriptions, gripper effort wording, installation-position notes, and SDK-side legacy flange limit notes
+- 📃 docs(demo): Renames the crash-protection demo spelling from `piper_read_crash_protectation.py` to `piper_read_crash_protection.py`
 
 
 Version 0.6.2

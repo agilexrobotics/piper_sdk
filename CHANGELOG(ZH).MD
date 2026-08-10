@@ -9,27 +9,43 @@ Version 1.0.0
 特性
 --------
 
-- ✨ feat(interface): 适配piper 1.8-8版本固件
-- ✨ feat(interface): 增加 `C_PiperInterface_V3` 和 V3 接口版本枚举
-- ✨ feat(protocol,piper_msgs): 增加 V3 协议解析器、V3 消息定义以及 MIT 控制帧编码更新
-- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、多实例和断开连接测试示例
-- ✨ feat(interface): 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为
+- ✨ feat(interface,protocol,piper_msgs): 增加适配固件/协议 V1.8-8 及以上版本的 V3 接口栈
+  - 增加 `C_PiperInterface_V3`、`C_PiperParserV3`、`InterfaceVersion.INTERFACE_V3`、V3 CAN ID/type 映射以及公开包入口导出
+  - 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为
+- ✨ feat(motion_ctrl): 增加 V3 运动控制行为
+  - V3 MOVE M 改为 `move_mode=0x06`，V3 状态反馈中的 MOVE M 改为 `mode_feed=0x06`
+  - 增加 V3 水平倒装安装位置 `installation_pos=0x04`
+- ✨ feat(gripper): 增加 V3 夹爪行程/角度模式支持
+  - 增加 V3 夹爪反馈/控制消息、parser 编解码支持、V3 获取接口以及 V3 夹爪示例
+  - 增加 V3 角度模式使用的 SDK 侧夹爪角度限位参数
+- ✨ feat(ik_joint): 增加 V3 IK 关节反馈帧和缓存读取接口
+- ✨ feat(param): 增加 Piper 多型号和 Nero 的机器人参数预设
+  - 增加关节限位、MDH 参数以及高速反馈力矩系数
+- ✨ feat(cli): 增加安装包内可直接使用的单 CAN 模块激活命令 `piper-can-activate`
+- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、多实例和断开连接测试示例
 
 Bug修复
 ---------
 
-- 🐞 fix(piper_msgs): 复用通用整数枚举基类，并增加 V3 专用反馈状态映射
-- 🐞 fix(docs): 将文档路径从 `asserts/` 更新为 `assets/`，并修复 demo README 跳转到 CAN 配置说明的链接
+- 🐞 fix(interface): 将发送消息对象按发送线程隔离，避免多线程发送状态相互覆盖
+- 🐞 fix(param): SDK 参数管理器改为每个 interface 实例独立持有，并增加有限数值和范围校验
+- 🐞 fix(interface): 在 SDK 侧限位裁剪前先过滤原始异常反馈数据
+- 🐞 fix(gripper): 初始化或更新夹爪反馈状态码时同步更新 FOC 状态位字段
+- 🐞 fix(piper_msgs): 复用通用枚举基类辅助函数，并增加 V3 专用状态映射，提高枚举解析鲁棒性
 - 🐞 fix(exports): 从公开包入口导出 V3 parser、message 和 interface 类
 
 其它
 ---------
 
 - 🔧 build(setup.py): 更新包版本号为 `1.0.0`
-- 🔧 build(manifest): 将顶层 `assets/` 文档目录加入源码分发包
-- 📃 docs(readme): 在主 README 文档表格中增加 V3 接口文档、V3 changelog 和 V3 demo 入口
+- 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
+- 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
+- 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can-activate` CAN 激活 CLI 说明
 - 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
-- 📃 docs(changelog): 补充 `1.0.0` 版本更新说明
+- 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
+  - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈
+- 📃 docs(protocol): 更新 V2/V3 MIT 帧位段说明、夹爪力矩说明、安装位置说明以及 SDK 侧旧版本法兰限位说明
+- 📃 docs(demo): 将碰撞防护 demo 文件名从 `piper_read_crash_protectation.py` 更正为 `piper_read_crash_protection.py`
 
 
 Version 0.6.2
