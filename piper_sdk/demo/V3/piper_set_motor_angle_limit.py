@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
-# V2版本sdk
+# V3版本sdk
 # 单独设定某个电机的关节限位
 # 注意这个指令是通过协议直接写入到驱动flash中，不可实时更新
 import time

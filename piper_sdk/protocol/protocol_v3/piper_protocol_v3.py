@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
-#机械臂协议V1版本，为方便后续修改协议升级，继承自base
 import can
 from typing import (
     Optional,

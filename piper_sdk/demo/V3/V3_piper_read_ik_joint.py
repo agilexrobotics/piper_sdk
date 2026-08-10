@@ -7,7 +7,6 @@
 import time
 from piper_sdk import *
 
-
 if __name__ == "__main__":
     piper = C_PiperInterface_V3()
     piper.ConnectPort()

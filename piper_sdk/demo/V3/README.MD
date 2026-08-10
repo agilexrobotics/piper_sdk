@@ -79,7 +79,7 @@ Instructions for activating the CAN module [can README](../../../assets/can_conf
 |[`V3_piper_ctrl_gripper_angle.py`](./V3_piper_ctrl_gripper_angle.py)|Control the V3 gripper in angle mode and read V3 gripper feedback/control messages.|
 |[`V3_piper_ctrl_joint_mit.py`](./V3_piper_ctrl_joint_mit.py)|Control individual joints in MIT mode.|
 |[`V3_piper_read_ik_joint.py`](./V3_piper_read_ik_joint.py)|Read V3 IK joint feedback messages.|
-|[`V3_piper_set_horizontal_inverse.py`](./V3_piper_set_horizontal_inverse.py)|Set the V3 installation position to horizontal inverse (`installation_pos=0x04`).|
+|[`V3_piper_set_installation_pos.py`](./V3_piper_set_installation_pos.py)|Set the V3 installation position to horizontal inverse (`installation_pos=0x04`).|
 |[`V3_piper_set_sdk_param.py`](./V3_piper_set_sdk_param.py)|Set V3 SDK parameters for joint limits and gripper angle limits.|
 |[`V2_piper_ctrl_motor_max_spd.py`](./V2_piper_ctrl_motor_max_spd.py)|Set maximum speed limits for individual joint motors.|
 |[`V2_piper_read_gripper_param_feedback.py`](./V2_piper_read_gripper_param_feedback.py)|Read gripper parameter feedback.|

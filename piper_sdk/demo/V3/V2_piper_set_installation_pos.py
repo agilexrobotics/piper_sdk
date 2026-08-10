@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
-# V2版本sdk
+# V3版本sdk
+# 意为V2中增加的接口，可以在V3中使用
 # 设定安装位置为水平正装
 # 如需设定为侧装左/右
 # MotionCtrl_2(0x01,0x01,0,0,0,0x02)

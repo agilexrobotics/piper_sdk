@@ -21,7 +21,7 @@ setup(
         'python-can>=3.3.4',
     ],
     entry_points={},
-    author='Agilex Robotice Co., Ltd.',
+    author='Agilex Robotics Co., Ltd.',
     author_email='',
     description='A sdk to control Agilex piper arm',
     platforms=['Linux'],

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
 # 注意demo无法直接运行，需要pip安装sdk后才能运行
-# V2版本sdk
+# V3版本sdk
+# 意为V2中增加的接口，可以在V3中使用
 # 夹爪/示教器参数设置指令
 # 第一次使用夹爪或者示教器时，需要设定一下这两个末端执行器参数，否则会出现数据没有反馈并且执行器无法控制的情况
 # 一般情况下 GripperTeachingPendantParamConfig 函数第二个参数 max_range_config 是70
