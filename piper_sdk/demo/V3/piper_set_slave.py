@@ -10,4 +10,3 @@ if __name__ == "__main__":
     piper = C_PiperInterface_V3()
     piper.ConnectPort()
     piper.MasterSlaveConfig(0xFC, 0, 0, 0)
-    

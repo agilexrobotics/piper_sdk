@@ -15,4 +15,3 @@ if __name__ == "__main__":
     piper.SetSDKJointLimitParam('j6',-2.09, 2.09)
     print(piper.GetSDKJointLimitParam('j6'))
     print(piper.GetSDKGripperRangeParam())
-    

@@ -56,7 +56,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         Whether to enable SDK-side joint limits.
 
     `start_sdk_gripper_limit`: bool
-    
+
         Whether to enable SDK-side gripper limits.
     """
     ArmMsgType = ArmMsgType_V3
@@ -135,7 +135,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     can_auto_init=True,
                     # reconnect_after_disconnection:bool = False,
                     dh_is_offset: int = 0x01,
-                    start_sdk_joint_limit: bool = False, 
+                    start_sdk_joint_limit: bool = False,
                     start_sdk_gripper_limit: bool = False,
                     logger_level:LogLevel = LogLevel.WARNING,
                     log_to_file:bool = False,
@@ -146,7 +146,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                     can_auto_init,
                     # reconnect_after_disconnection:bool = False,
                     dh_is_offset,
-                    start_sdk_joint_limit, 
+                    start_sdk_joint_limit,
                     start_sdk_gripper_limit,
                     logger_level,
                     log_to_file,
@@ -178,7 +178,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         Parameters
         -------
         `rx_message`: can.Message | None
-        
+
             Raw CAN frame received from the bus.
         """
         msg = self.rx_msg
@@ -213,7 +213,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             if self._start_sdk_fk_cal:
                 self._UpdatePiperFeedbackFK()
                 self._UpdatePiperCtrlFK()
-    
+
     def GetCurrentInterfaceVersion(self):
         """
         Returns
@@ -236,13 +236,13 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         `time_stamp`: float
 
             time stamp
-        
+
         `Hz`: float
 
             msg fps
 
         `arm_status`: ArmMsgFeedbackStatus
-        
+
             Arm status feedback.
 
         - ctrl_mode(int): Control mode
@@ -308,7 +308,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         `time_stamp`: float
 
             time stamp
-        
+
         `Hz`: float
 
             msg fps
@@ -346,16 +346,16 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         `time_stamp`: float
 
             time stamp
-        
+
         `Hz`: float
 
             msg fps
-        
+
         `gripper_ctrl`: ArmMsgGripperCtrl
 
         - grippers_val(int): The gripper value, in 0.001 mm for width mode or 0.001 degree for angle mode.
         - grippers_effort(int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponds to 0-5 N·m)
-        - status_code(int): 
+        - status_code(int):
           - 0x00: Disabled;
           - 0x01: Enabled;
           - 0x03: Enable and clear errors in width mode;
@@ -409,7 +409,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         Parameters
         -------
         `msg`: PiperMessage
-        
+
             Aggregated robotic arm message.
         """
         with self._arm_gripper_msgs_mtx:
@@ -568,10 +568,10 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
                 self._arm_ik_joint_states.ik_joint_states.ik_joint_6 = _ik_joint6
             return self._arm_ik_joint_states
 
-    def MotionCtrl_2(self, 
-                         ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
-                         move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x06, 0x05] = 0x01, 
-                         move_spd_rate_ctrl: int = 50, 
+    def MotionCtrl_2(self,
+                         ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01,
+                         move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x06, 0x05] = 0x01,
+                         move_spd_rate_ctrl: int = 50,
                          is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                          residence_time: int = 0,
                          installation_pos: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00):
@@ -580,7 +580,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         CAN ID
         -------
         0x151
-        
+
         Parameters
         -------
         `ctrl_mode`: int
@@ -628,17 +628,17 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("0x151 send failed: SendCanMessage(%s)", feedback)
 
-    def GripperCtrl(self, 
-                    gripper_angle: int = 0, 
-                    gripper_effort: int = 0, 
-                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03] = 0, 
+    def GripperCtrl(self,
+                    gripper_angle: int = 0,
+                    gripper_effort: int = 0,
+                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03] = 0,
                     set_zero: Literal[0x00, 0xAE] = 0):
         """Control the gripper in legacy width mode.
-        
+
         CAN ID
         -------
         0x159
-        
+
         Parameters
         -------
         `gripper_angle`: int
@@ -661,17 +661,17 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             raise ValueError(f"'status_code' Value {gripper_code} out of range [0x00, 0x01, 0x02, 0x03]")
         self.GripperCtrl_V3(gripper_angle, gripper_effort, gripper_code, set_zero)
 
-    def GripperCtrl_V3(self, 
-                    gripper_val: int = 0, 
-                    gripper_effort: int = 0, 
-                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07] = 0, 
+    def GripperCtrl_V3(self,
+                    gripper_val: int = 0,
+                    gripper_effort: int = 0,
+                    gripper_code: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07] = 0,
                     set_zero: Literal[0x00, 0xAE] = 0):
         """Control the gripper in width mode or angle mode.
-        
+
         CAN ID
         -------
         0x159
-        
+
         Parameters
         -------
         `gripper_val`: int
@@ -716,23 +716,23 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
 
     def _JointMitCtrl(self,motor_num:int,
                             pos_ref:float, vel_ref:float, kp:float, kd:float, t_ref:float,
-                            p_min:float=-12.5,    p_max:float=12.5, 
-                            v_min:float=-45.0,    v_max:float=45.0, 
-                            kp_min:float=0.0,   kp_max:float=500.0, 
+                            p_min:float=-12.5,    p_max:float=12.5,
+                            v_min:float=-45.0,    v_max:float=45.0,
+                            kp_min:float=0.0,   kp_max:float=500.0,
                             kd_min:float=-5.0,   kd_max:float=5.0,
                             t_min:float=-16.0,    t_max:float=16.0):
         """Send a joint 1~6 MIT control command with protocol limits.
-        
+
         CAN IDs
         -------
         0x15A, 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
-        
+
         Notes
         -------
         `p_min`, `p_max`, `v_min`, `v_max`, `kp_min`, `kp_max`, `kd_min`,
         `kd_max`, `t_min`, and `t_max` are protocol constants and should not be
         changed by callers.
-        
+
         Parameters
         -------
         `motor_num`: int
@@ -765,9 +765,9 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         kd_tmp = self._parser.FloatToUint(kd, kd_min, kd_max, 12)
         t_tmp = self._parser.FloatToUint(t_ref, t_min, t_max, 12)
         tx_can = Message()
-        mit_ctrl = ArmMsgJointMitCtrl(  pos_ref=pos_tmp, 
+        mit_ctrl = ArmMsgJointMitCtrl(  pos_ref=pos_tmp,
                                         vel_ref=vel_tmp,
-                                        kp=kp_tmp, 
+                                        kp=kp_tmp,
                                         kd=kd_tmp,
                                         t_ref=t_tmp)
         msg = self.tx_msg
@@ -790,15 +790,15 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         feedback = self._arm_can.SendCanMessage(tx_can.arbitration_id, tx_can.data)
         if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("JointMitCtrl send failed: SendCanMessage(%s)", feedback)
-    
+
     def JointMitCtrl(self,motor_num:int,
                     pos_ref:float, vel_ref:float, kp:float, kd:float, t_ref:float):
         """Send a joint 1~6 MIT control command.
-        
+
         CAN IDs
         -------
         0x15A, 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
-        
+
         Parameters
         -------
         `motor_num`: int
@@ -847,6 +847,6 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         return self._piper_param_mag.GetGripperAngleLimitParam()
 
     def SetSDKGripperAngleLimitParam(self,
-                                min_val: float, 
+                                min_val: float,
                                 max_val: float):
         self._piper_param_mag.SetGripperAngleLimitParam(min_val, max_val)

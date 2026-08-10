@@ -21,7 +21,7 @@ class IntEnumBase(IntEnum):
     @classmethod
     def value_list(cls):
         return [e.value for e in cls]
-    
+
 
 class EnumBase(Enum):
     def __str__(self):
@@ -63,7 +63,7 @@ class StrStruct:
                     continue
                 result[k] = v
         return result
-    
+
     # @classmethod
     # def _member_map(cls):
     #     """获取所有成员"""
@@ -75,7 +75,7 @@ class StrStruct:
     #             continue
     #         result[k] = v
     #     return result
-    
+
 
     @classmethod
     def value_list(cls):

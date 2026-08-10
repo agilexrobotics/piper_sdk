@@ -11,8 +11,8 @@ from ..piper_protocol_base import C_PiperParserBase
 # from ...protocol.piper_protocol_base import C_PiperParserBase
 from ..protocol_v2 import C_PiperParserV2
 from ...piper_msgs.msg_v3 import (
-    ArmMsgType as ArmMsgType_V3, 
-    PiperMessage as PiperMessage_V3, 
+    ArmMsgType as ArmMsgType_V3,
+    PiperMessage as PiperMessage_V3,
     CanIDPiper as CanIDPiper_V3,
     ArmMessageMapping as ArmMessageMapping_V3
 )
@@ -28,7 +28,7 @@ class C_PiperParserV3(C_PiperParserV2):
     PiperMessage = PiperMessage_V3
     CanIDPiper = CanIDPiper_V3
     ArmMessageMapping = ArmMessageMapping_V3
-    
+
     def __init__(self) -> None:
         super().__init__()
         pass
@@ -462,17 +462,15 @@ class C_PiperParserV3(C_PiperParserV2):
              msg_type_ == self.ArmMsgType.PiperMsgJointMitCtrl_6 ):
             tx_can_frame.data = self.ConvertToList_16bit(msg.arm_joint_mit_ctrl.pos_ref,False) + \
                                 self.ConvertToList_8bit(((msg.arm_joint_mit_ctrl.vel_ref >> 4)&0xFF),False) + \
-                                self.ConvertToList_8bit(((((msg.arm_joint_mit_ctrl.vel_ref&0xF)<<4)&0xF0) | 
+                                self.ConvertToList_8bit(((((msg.arm_joint_mit_ctrl.vel_ref&0xF)<<4)&0xF0) |
                                                          ((msg.arm_joint_mit_ctrl.kp>>8)&0x0F)),False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_mit_ctrl.kp&0xFF,False) + \
                                 self.ConvertToList_8bit((msg.arm_joint_mit_ctrl.kd>>4)&0xFF,False) + \
                                 self.ConvertToList_8bit(((((msg.arm_joint_mit_ctrl.kd&0xF)<<4)&0xF0)|
                                                          ((msg.arm_joint_mit_ctrl.t_ref>>8)&0x0F)),False) + \
                                 self.ConvertToList_8bit(((msg.arm_joint_mit_ctrl.t_ref & 0xFF)),False)
-            
+
             tx_can_frame.data = tx_can_frame.data
         else:
             ret = False
         return ret
-            
-

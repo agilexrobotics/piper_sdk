@@ -15,24 +15,24 @@ class ArmMsgFeedbackGripperEnums_V3():
 class ArmMsgFeedBackGripper_V3():
     '''
     msg_v3_feedback
-    
+
     夹爪反馈消息
-    
+
     CAN ID:
         0x2A8
-    
+
     Args:
         grippers_val: 夹爪反馈数值, 以整数表示, 单位0.001 mm 或者 0.001 degree
         grippers_effort: 夹爪扭矩, 以整数表示, 单位 0.001N·m
         status_code: 夹爪状态码, 以整数表示
         mode: 夹爪控制模式, 0为行程, 1为角度
-    
+
     位描述:
 
         Byte 0: 夹爪行程最高位, int32, 单位0.001 mm 或者 0.001 degree
-        Byte 1: 
-        Byte 2: 
-        Byte 3: 
+        Byte 1:
+        Byte 2:
+        Byte 3:
         Byte 4: 夹爪扭矩 H, int16, 单位 0.001N·m
         Byte 5: 夹爪扭矩 L
         Byte 6: 状态码, uint8
@@ -50,18 +50,18 @@ class ArmMsgFeedBackGripper_V3():
     '''
     '''
     msg_v3_feedback
-    
+
     Gripper Feedback Message
 
     CAN ID:
         0x2A8
-    
+
     Args:
         grippers_val: The gripper feedback value, represented as an integer. Unit is 0.001 mm in width mode or 0.001 degree in angle mode.
         grippers_effort: The torque of the gripper, represented as an integer.
         status_code: The status code of the gripper, represented as an integer.
         mode: The gripper control mode. 0x00 means width mode, 0x01 means angle mode.
-    
+
     Bit Definitions:
 
         Byte Definitions:
@@ -84,10 +84,10 @@ class ArmMsgFeedBackGripper_V3():
             0x00: Width control mode (default)
             0x01: Angle control mode
     '''
-    def __init__(self, 
-                 grippers_val: int = 0, 
-                 grippers_effort: int = 0, 
-                 status_code: int = 0, 
+    def __init__(self,
+                 grippers_val: int = 0,
+                 grippers_effort: int = 0,
+                 status_code: int = 0,
                  mode: int = 0x00):
         self.grippers_val = grippers_val
         self.grippers_effort = grippers_effort
@@ -105,7 +105,7 @@ class ArmMsgFeedBackGripper_V3():
             self._mode = value
         else:
             self._mode = ArmMsgFeedbackGripperEnums_V3.CtrlMode.match_value(value)
-    
+
     class FOC_Status:
         def __init__(self):
             self.voltage_too_low  = False
@@ -116,7 +116,7 @@ class ArmMsgFeedBackGripper_V3():
             self.driver_error_status = False
             self.driver_enable_status = False
             self.homing_status  = False
-        def __str__(self): 
+        def __str__(self):
             return (f"    voltage_too_low : {self.voltage_too_low}\n"
                     f"    motor_overheating: {self.motor_overheating}\n"
                     f"    driver_overcurrent: {self.driver_overcurrent}\n"
@@ -144,7 +144,7 @@ class ArmMsgFeedBackGripper_V3():
         self.foc_status.driver_error_status = bool(value & (1 << 5))
         self.foc_status.driver_enable_status = bool(value & (1 << 6))
         self.foc_status.homing_status = bool(value & (1 << 7))
-    
+
     def __str__(self):
         return (f"ArmMsgFeedBackGripper(\n"
                 f"  grippers_val: {self.grippers_val}, {self.grippers_val * 0.001:.3f},\n"

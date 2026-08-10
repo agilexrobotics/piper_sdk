@@ -10,8 +10,8 @@ from typing import (
 from ..piper_protocol_base import C_PiperParserBase
 # from ...protocol.piper_protocol_base import C_PiperParserBase
 from ...piper_msgs.msg_v2 import (
-    ArmMsgType as ArmMsgType_V2, 
-    PiperMessage as PiperMessage_V2, 
+    ArmMsgType as ArmMsgType_V2,
+    PiperMessage as PiperMessage_V2,
     CanIDPiper as CanIDPiper_V2,
     ArmMessageMapping as ArmMessageMapping_V2
 )
@@ -434,7 +434,7 @@ class C_PiperParserV2(C_PiperParserBase):
              msg_type_ == self.ArmMsgType.PiperMsgJointMitCtrl_6 ):
             tx_can_frame.data = self.ConvertToList_16bit(msg.arm_joint_mit_ctrl.pos_ref,False) + \
                                 self.ConvertToList_8bit(((msg.arm_joint_mit_ctrl.vel_ref >> 4)&0xFF),False) + \
-                                self.ConvertToList_8bit(((((msg.arm_joint_mit_ctrl.vel_ref&0xF)<<4)&0xF0) | 
+                                self.ConvertToList_8bit(((((msg.arm_joint_mit_ctrl.vel_ref&0xF)<<4)&0xF0) |
                                                          ((msg.arm_joint_mit_ctrl.kp>>8)&0x0F)),False) + \
                                 self.ConvertToList_8bit(msg.arm_joint_mit_ctrl.kp&0xFF,False) + \
                                 self.ConvertToList_8bit((msg.arm_joint_mit_ctrl.kd>>4)&0xFF,False) + \
@@ -447,5 +447,3 @@ class C_PiperParserV2(C_PiperParserBase):
         else:
             ret = False
         return ret
-            
-

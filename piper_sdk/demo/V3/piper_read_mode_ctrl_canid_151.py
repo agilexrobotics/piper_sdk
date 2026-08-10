@@ -12,4 +12,3 @@ if __name__ == "__main__":
     while True:
         print(piper.GetArmCtrlCode151())
         time.sleep(0.01)
-    

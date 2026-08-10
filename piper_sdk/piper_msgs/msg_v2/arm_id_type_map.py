@@ -13,12 +13,12 @@ _CAN_ID = CanIDPiper_V2
 class ArmMessageMapping:
     '''
     msg_v2
-    
+
     机械臂消息类型和CAN ID的映射
     '''
     '''
     msg_v2
-    
+
     Mapping of Robotic Arm Message Types and CAN IDs
     '''
     ArmMsgType = _ARM_MSG_TYPE
@@ -162,7 +162,7 @@ class ArmMessageMapping:
             normalized_mapping[can_id] = cls.ArmMsgType[msg_type_name]
 
         return normalized_mapping
-    
+
     # 初始化映射字典
     id_to_type_mapping = {
         # 反馈,feedback
@@ -253,7 +253,7 @@ class ArmMessageMapping:
     def get_mapping(cls, can_id: Optional[int] = None, msg_type: Optional[ArmMsgType] = None):
         '''
         根据输入的参数返回对应的映射值，输入 id 返回类型，输入类型返回 id
-        
+
         :param can_id: CAN ID
         :param msg_type: 机械臂消息类型
         :return: 对应的类型或 id

@@ -12,4 +12,3 @@ if __name__ == "__main__":
     print(piper.GetSDKGripperAngleLimitParam())
     piper.SetSDKGripperAngleLimitParam(-180.0, 180.0)
     print(piper.GetSDKGripperAngleLimitParam())
-    

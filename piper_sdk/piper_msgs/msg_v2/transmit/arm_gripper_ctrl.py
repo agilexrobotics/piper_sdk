@@ -6,16 +6,16 @@ from typing_extensions import (
 class ArmMsgGripperCtrl:
     '''
     msg_v2_transmit
-    
+
     夹爪控制指令
-    
+
     CAN ID:
         0x159
-    
+
     Args:
         grippers_angle: 夹爪行程
         grippers_effort: 夹爪扭矩,范围0-5000,对应0-5N·m
-        status_code: 
+        status_code:
                 0x00失能;
                 0x01使能;
                 0x02失能清除错误;
@@ -23,9 +23,9 @@ class ArmMsgGripperCtrl:
         set_zero: 夹爪零点设置
                 0x00无效值
                 0xAE设置零点
-    
+
     位描述:
-    
+
         Byte 0 grippers_angle: int32, 单位 0.001mm, 夹爪行程,以整数表示。
         Byte 1
         Byte 2
@@ -43,7 +43,7 @@ class ArmMsgGripperCtrl:
     '''
     '''
     msg_v2_transmit
-    
+
     Gripper Control Command
 
     CAN ID:
@@ -52,7 +52,7 @@ class ArmMsgGripperCtrl:
     Args:
         grippers_angle: Gripper stroke, represented as an integer, unit: 0.001mm.
         grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponds to 0-5 N·m
-        status_code: 
+        status_code:
             0x00: Disable;
             0x01: Enable;
             0x03: Enable with clear error;
@@ -74,9 +74,9 @@ class ArmMsgGripperCtrl:
             0x00: Invalid;
             0xAE: Set zero.
     '''
-    def __init__(self, 
-                 grippers_angle: int = 0, 
-                 grippers_effort: int = 0, 
+    def __init__(self,
+                 grippers_angle: int = 0,
+                 grippers_effort: int = 0,
                  status_code: Literal[0x00, 0x01, 0x02, 0x03] = 0,
                  set_zero: Literal[0x00, 0xAE] = 0):
         # if status_code not in [0x00, 0x01, 0x02, 0x03]:

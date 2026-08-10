@@ -34,10 +34,10 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
         motion_status: 运动状态
         trajectory_num: 当前运行轨迹点序号
         err_code: 故障码
-    
+
     位描述:
 
-        Byte 0:控制模式,uint8 
+        Byte 0:控制模式,uint8
             0x00 待机模式
             0x01 CAN指令控制模式
             0x02 示教模式
@@ -46,7 +46,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             0x05 遥控器控制模式
             0x06 联动示教输入模式
             0x07 离线轨迹模式
-        Byte 1:机械臂状态,uint8 
+        Byte 1:机械臂状态,uint8
             0x00 正常
             0x01 急停
             0x02 无解
@@ -63,14 +63,14 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             0x0D 示教暂停
             0x0E 主控NTC过温
             0x0F 释放电阻NTC过温
-        Byte 2:模式反馈,uint8 
+        Byte 2:模式反馈,uint8
             0x00 MOVE P
             0x01 MOVE J
             0x02 MOVE L
             0x03 MOVE C
             0x06 MOVE M ---基于V1.8-8版本后
             0x05 MOVE_CPV ---基于V1.6.5版本后
-        Byte 3:示教状态,uint8 
+        Byte 3:示教状态,uint8
             0x00 关闭
             0x01 开始示教记录（进入拖动示教模式）
             0x02 结束示教记录（退出拖动示教模式）
@@ -79,7 +79,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             0x05 继续执行（轨迹复现继续）
             0x06 终止执行
             0x07 运动到轨迹起点
-        Byte 4:运动状态,uint8 
+        Byte 4:运动状态,uint8
             0x00 到达指定点位
             0x01 未到达指定点位
         Byte 5:当前运行轨迹点序号,uint8_t
@@ -104,10 +104,10 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             bit[7]      保留
     '''
     '''
-    
+
     Robot Arm Status
 
-    CAN ID: 
+    CAN ID:
         0x2A1
 
     Arguments:
@@ -118,7 +118,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
         motion_status: Motion status
         trajectory_num: Current trajectory point number
         err_code: Error code
-    
+
     Bit Description:
 
         Byte 0: Control mode, uint8
@@ -187,7 +187,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             bit[6]: Reserved
             bit[7]: Reserved
     '''
-    
+
     def __init__(self,
                  ctrl_mode: int = 0,
                  arm_status: int = 0,
@@ -219,7 +219,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             self._ctrl_mode = value
         else:
             self._ctrl_mode = ArmMsgFeedbackStatusEnum_V3.CtrlMode.match_value(value)
-    
+
     @property
     def arm_status(self) -> ArmMsgFeedbackStatusEnum_V3.ArmStatus:
         return self._arm_status
@@ -229,7 +229,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             self._arm_status = value
         else:
             self._arm_status = ArmMsgFeedbackStatusEnum_V3.ArmStatus.match_value(value)
-    
+
     @property
     def mode_feed(self) -> ArmMsgFeedbackStatusEnum_V3.ModeFeed:
         return self._mode_feed
@@ -239,7 +239,7 @@ class ArmMsgFeedbackStatus_V3(ArmMsgFeedbackStatus):
             self._mode_feed = value
         else:
             self._mode_feed = ArmMsgFeedbackStatusEnum_V3.ModeFeed.match_value(value)
-    
+
     @property
     def teach_status(self) -> ArmMsgFeedbackStatusEnum_V3.TeachingState:
         return self._teach_status

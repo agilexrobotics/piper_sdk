@@ -21,4 +21,3 @@ if __name__ == "__main__":
     while(True):
         print(f"all_fps: {piper.GetCanFps()}")
         time.sleep(0.01)
-    

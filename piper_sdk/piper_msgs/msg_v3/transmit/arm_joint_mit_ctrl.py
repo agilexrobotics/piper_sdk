@@ -6,21 +6,21 @@ class ArmMsgJointMitCtrl_V3():
     msg_v3_transmit
 
     机械臂关节mit控制
-    
+
     CAN ID:
         0x15A,0x15B,0x15C,0x15D,0x15E,0x15F
-    
+
     每个ID对应单个关节,因此有六个ID
-    
+
     Args:
         pos_ref: 设定期望的目标位置
         vel_ref: 设定电机运动的速度
         kp: 比例增益，控制位置误差对输出力矩的影响
         kd: 微分增益，控制速度误差对输出力矩的影响
         t_ref: 目标力矩参考值，用于控制电机施加的力矩或扭矩
-    
+
     位描述:
-    
+
         Byte 0: Pos_ref [bit15~bit8] 高8位, 大端存储
         Byte 1: Pos_ref [bit7~bit0]  低8位
         Byte 2: Vel_ref [bit11~bit4] 高8位
@@ -31,23 +31,23 @@ class ArmMsgJointMitCtrl_V3():
         Byte 7: T_ref [bit7~bit0]
     '''
     '''
-    
+
     Mechanical Arm Joint MIT Control
 
     CAN IDs:
         0x15A, 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
 
     Each ID corresponds to a single joint, thus there are six IDs.
-    
+
     Args:
         pos_ref: Desired target position
         vel_ref: Desired motor motion speed
         kp: Proportional gain, controls the influence of position error on output torque
         kd: Derivative gain, controls the influence of velocity error on output torque
         t_ref: Target torque reference value, used to control the motor's applied force or torque
-    
+
     Bit Description:
-    
+
         Byte 0	Pos_ref	bit15~bit8	High 8 bits of pos_ref
         Byte 1	Pos_ref	bit7~bit0	Low 8 bits of pos_ref
         Byte 2	Vel_ref	bit11~bit4	High 8 bits of vel_ref
@@ -57,10 +57,10 @@ class ArmMsgJointMitCtrl_V3():
         Byte 6	Kd, T_ref	bit3~bit0, bit11~bit8	Remaining 4 bits of kd, high 4 bits of t_ref
         Byte 7	T_ref	bit7~bit0	Low 8 bits of t_ref
     '''
-    def __init__(self, 
-                 pos_ref = 0, 
-                 vel_ref = 0, 
-                 kp = 10, 
+    def __init__(self,
+                 pos_ref = 0,
+                 vel_ref = 0,
+                 kp = 10,
                  kd = 0.8,
                  t_ref = 0,
                 ):
@@ -69,7 +69,7 @@ class ArmMsgJointMitCtrl_V3():
         self.kp = kp
         self.kd = kd
         self.t_ref = t_ref
-    
+
     def __str__(self):
         # 将角度乘以0.001，并保留三位小数
         mit_args = [
@@ -82,31 +82,31 @@ class ArmMsgJointMitCtrl_V3():
 
         # 生成格式化字符串，保留三位小数
         formatted_str = "\n".join([f"{name}: {param}" for name, param in mit_args])
-        
+
         return f"ArmMsgJointMitCtrl:\n{formatted_str}"
-    
+
     def __repr__(self):
         return self.__str__()
 
 class ArmMsgAllJointMitCtrl_V3():
     '''
-    
+
     机械臂关节mit控制,全部关节
-    
+
     CAN ID:
         0x15A,0x15B,0x15C,0x15D,0x15E,0x15F
-    
+
     每个ID对应单个关节,因此有六个ID
-    
+
     Args:
         pos_ref: 设定期望的目标位置
         vel_ref: 设定电机运动的速度
         kp: 比例增益，控制位置误差对输出力矩的影响
         kd: 微分增益，控制速度误差对输出力矩的影响
         t_ref: 目标力矩参考值，用于控制电机施加的力矩或扭矩
-    
+
     位描述:
-    
+
         Byte 0: Pos_ref [bit15~bit8] 高8位
         Byte 1: Pos_ref [bit7~bit0]  低8位
         Byte 2: Vel_ref [bit11~bit4] 高8位
@@ -117,23 +117,23 @@ class ArmMsgAllJointMitCtrl_V3():
         Byte 7: T_ref [bit7~bit0]
     '''
     '''
-    
+
     Mechanical Arm Joint MIT Control
 
     CAN IDs:
         0x15A, 0x15B, 0x15C, 0x15D, 0x15E, 0x15F
 
     Each ID corresponds to a single joint, thus there are six IDs.
-    
+
     Args:
         pos_ref: Desired target position
         vel_ref: Desired motor motion speed
         kp: Proportional gain, controls the influence of position error on output torque
         kd: Derivative gain, controls the influence of velocity error on output torque
         t_ref: Target torque reference value, used to control the motor's applied force or torque
-    
+
     Bit Description:
-    
+
         Byte 0	Pos_ref	bit15~bit8	High 8 bits of pos_ref
         Byte 1	Pos_ref	bit7~bit0	Low 8 bits of pos_ref
         Byte 2	Vel_ref	bit11~bit4	High 8 bits of vel_ref
@@ -143,12 +143,12 @@ class ArmMsgAllJointMitCtrl_V3():
         Byte 6	Kd, T_ref	bit3~bit0, bit11~bit8	Remaining 4 bits of kd, high 4 bits of t_ref
         Byte 7	T_ref	bit7~bit0	Low 8 bits of t_ref
     '''
-    def __init__(self, 
-                 m1:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0), 
+    def __init__(self,
+                 m1:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0),
                  m2:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0),
-                 m3:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0), 
-                 m4:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0), 
-                 m5:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0), 
+                 m3:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0),
+                 m4:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0),
+                 m5:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0),
                  m6:ArmMsgJointMitCtrl_V3=ArmMsgJointMitCtrl_V3(0,0,10,0.8,0)
                  ):
         self.__m = [ArmMsgJointMitCtrl_V3(0,0,10,0.8,0), m1, m2, m3, m4, m5, m6]
@@ -157,7 +157,7 @@ class ArmMsgAllJointMitCtrl_V3():
     def assign(self):
         for i in range(1,7):
             self.motor[i] = self.__m[i]
-    
+
     def __str__(self):
         return (f"{self.motor[1]}\n"
                 f"{self.motor[2]}\n"

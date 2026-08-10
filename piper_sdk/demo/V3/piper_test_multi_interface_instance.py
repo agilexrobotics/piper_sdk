@@ -15,4 +15,3 @@ if __name__ == "__main__":
         print(piper.GetCanFps())
         time.sleep(1)
         pass
-    

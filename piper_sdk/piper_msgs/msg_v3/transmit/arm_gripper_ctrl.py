@@ -10,7 +10,7 @@ from ...core import IntEnumBase
 class ArmMsgGripperCtrl_V3:
     '''
     msg_v3_transmit
-    
+
     Gripper Control Command
 
     CAN ID:
@@ -19,7 +19,7 @@ class ArmMsgGripperCtrl_V3:
     Args:
         grippers_val: Gripper val, unit: 0.001 mm or 0.001 degree.
         grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponds to 0-5 N·m
-        status_code: 
+        status_code:
             - 0x00: disable/width
             - 0x01: enable/width
             - 0x02: disable/clear_err/width
@@ -84,9 +84,9 @@ class ArmMsgGripperCtrl_V3:
             SET_ZERO = 0xAE
             UNKNOWN = 0xFF
 
-    def __init__(self, 
-                 grippers_val: int = 0, 
-                 grippers_effort: int = 0, 
+    def __init__(self,
+                 grippers_val: int = 0,
+                 grippers_effort: int = 0,
                  status_code: Literal[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07] = 0,
                  set_zero: Literal[0x00, 0xAE] = 0):
         # if status_code not in [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]:

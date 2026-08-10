@@ -10,4 +10,3 @@ if __name__ == "__main__":
     piper.ConnectPort()
     load = 2    # 0，1，2
     piper.ArmParamEnquiryAndConfig(0, 0, 0, 0xAE, load) # 0xFC
-    

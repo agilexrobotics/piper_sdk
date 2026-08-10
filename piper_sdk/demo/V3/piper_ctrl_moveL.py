@@ -11,7 +11,7 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    
+
     # 在XOY平面上画正方形
     # 切换至MOVEP模式，移动到初始位置
     piper.MotionCtrl_2(0x01, 0x00, 100, 0x00)
@@ -33,6 +33,3 @@ if __name__ == "__main__":
 
     piper.MotionCtrl_2(0x01, 0x02, 100, 0x00)
     piper.EndPoseCtrl(150000, -50000, 150000, -179900, 0, -179900)
-
-
-    

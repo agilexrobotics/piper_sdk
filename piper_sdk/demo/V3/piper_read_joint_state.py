@@ -13,4 +13,3 @@ if __name__ == "__main__":
         print(piper.GetArmJointMsgs())
         print(piper.GetArmGripperMsgs())
         time.sleep(0.005)
-    

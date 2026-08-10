@@ -20,15 +20,15 @@ from .transmit import *
 class PiperMessage_V3(PiperMessage):
     '''
     msg_v3
-    
+
     Piper机械臂全部消息,为所有消息的汇总
     '''
     '''
     msg_v3
-    
+
     Piper Robotic Arm Complete Message Summary
     '''
-    def __init__(self, 
+    def __init__(self,
                 #  反馈
                  type_: ArmMsgType = None,
                  time_stamp: float = 0.0,
@@ -71,36 +71,36 @@ class PiperMessage_V3(PiperMessage):
                  gripper_feedback_v3:ArmMsgFeedBackGripper_V3=None
                  ):
         super().__init__(
-                        type_, 
-                        time_stamp, 
-                        arm_status_msgs, 
-                        arm_joint_feedback, 
-                        gripper_feedback, 
-                        arm_end_pose, 
-                        arm_feedback_current_motor_angle_limit_max_spd, 
-                        arm_feedback_current_end_vel_acc_param, 
-                        arm_feedback_current_motor_max_acc_limit, 
-                        arm_crash_protection_rating_feedback, 
-                        arm_high_spd_feedback, 
-                        arm_low_spd_feedback, 
-                        arm_gripper_teaching_param_feedback, 
-                        arm_feedback_resp_set_instruction, 
-                        arm_motion_ctrl_1, 
-                        arm_motion_ctrl_2, 
-                        arm_motion_ctrl_cartesian, 
-                        arm_joint_ctrl, 
-                        arm_circular_ctrl, 
-                        arm_gripper_ctrl, 
-                        arm_joint_mit_ctrl, 
-                        arm_ms_config, 
-                        arm_motor_enable, 
-                        arm_search_motor_max_angle_spd_acc_limit, 
-                        arm_motor_angle_limit_max_spd_set, 
-                        arm_joint_config, 
-                        arm_set_instruction_response, 
-                        arm_param_enquiry_and_config, 
-                        arm_end_vel_acc_param_config, 
-                        arm_crash_protection_rating_config, 
+                        type_,
+                        time_stamp,
+                        arm_status_msgs,
+                        arm_joint_feedback,
+                        gripper_feedback,
+                        arm_end_pose,
+                        arm_feedback_current_motor_angle_limit_max_spd,
+                        arm_feedback_current_end_vel_acc_param,
+                        arm_feedback_current_motor_max_acc_limit,
+                        arm_crash_protection_rating_feedback,
+                        arm_high_spd_feedback,
+                        arm_low_spd_feedback,
+                        arm_gripper_teaching_param_feedback,
+                        arm_feedback_resp_set_instruction,
+                        arm_motion_ctrl_1,
+                        arm_motion_ctrl_2,
+                        arm_motion_ctrl_cartesian,
+                        arm_joint_ctrl,
+                        arm_circular_ctrl,
+                        arm_gripper_ctrl,
+                        arm_joint_mit_ctrl,
+                        arm_ms_config,
+                        arm_motor_enable,
+                        arm_search_motor_max_angle_spd_acc_limit,
+                        arm_motor_angle_limit_max_spd_set,
+                        arm_joint_config,
+                        arm_set_instruction_response,
+                        arm_param_enquiry_and_config,
+                        arm_end_vel_acc_param_config,
+                        arm_crash_protection_rating_config,
                         arm_gripper_teaching_param_config
                         )
         self.arm_motion_ctrl_2 = arm_motion_ctrl_2 if arm_motion_ctrl_2 else ArmMsgMotionCtrl_2()

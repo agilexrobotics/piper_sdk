@@ -12,4 +12,3 @@ if __name__ == "__main__":
     while True:
         piper.MotionCtrl_2(1, 1, 0, 0xAD)# 0xFC
         time.sleep(1)
-    

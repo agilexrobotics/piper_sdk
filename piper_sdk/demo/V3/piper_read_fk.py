@@ -15,4 +15,3 @@ if __name__ == "__main__":
         print(f"feedback:{piper.GetFK('feedback')[-1]}")
         print(f"control:{piper.GetFK('control')}")
         time.sleep(0.01)
-    

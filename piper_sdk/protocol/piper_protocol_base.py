@@ -34,11 +34,11 @@ class C_PiperParserBase(ABC):
             return f"{self.name} (0x{self.value:X})"
         def __repr__(self):
             return f"{self.name}: 0x{self.value:X}"
-    
+
     def __init__(self) -> None:
         super().__init__()
         self.logger = LogManager.get_logger(global_area, f"ParserBase<{id(self)}>")
-    
+
     @abstractmethod
     def DecodeMessage(self):
         '''
@@ -48,12 +48,12 @@ class C_PiperParserBase(ABC):
         Decode the message, converting the CAN data frame into the specified type.
         '''
         pass
-    
+
     @abstractmethod
     def EncodeMessage(self):
         '''
         将消息转为can数据帧
-        
+
         只将输入数据转换为can数据的id和data, 没有为can message赋值channel、dlc、is_extended_id
         '''
         '''
@@ -72,7 +72,7 @@ class C_PiperParserBase(ABC):
         Get the current protocol version.
         '''
         pass
-    
+
     def ConvertToNegative_8bit(self, value: int, signed:bool=True) -> int:
         '''
         将输入的整数转换为8位整数。
@@ -156,7 +156,7 @@ class C_PiperParserBase(ABC):
             if value & 0x8000:  # 检查符号位
                 value -= 0x10000  # 如果符号位为 1，表示负数，需要减去 2^16
         return value
-    
+
     def ConvertToNegative_int16_t(self, value: int) -> int:
         '''
         将输入的整数转换为16位有符号整数。
@@ -217,7 +217,7 @@ class C_PiperParserBase(ABC):
             if value & 0x80000000:  # 检查符号位
                 value -= 0x100000000  # 如果符号位为 1，表示负数，需要减去 2^32
         return value
-    
+
     def ConvertToNegative_int32_t(self, value: int) -> int:
         '''
         将输入的整数转换为32位有符号整数。
@@ -276,7 +276,7 @@ class C_PiperParserBase(ABC):
             if not 0 <= value <= 255:
                 raise OverflowError(f"The input value {value} exceeds the range of an 8-bit unsigned integer [0, 255].")
             return list(struct.unpack("B", struct.pack(">B", value)))
-    
+
     def ConvertToList_int8_t(self, value: int):
         if not -128 <= value <= 127:
             raise OverflowError(f"输入的值 {value} 超出了8位有符号整数的范围 [-128, 127].")
@@ -285,7 +285,7 @@ class C_PiperParserBase(ABC):
         else:
             value &= 0xFF
         return [value]
-    
+
     def ConvertToList_uint8_t(self, value: int):
         if not 0 <= value <= 255:
             raise OverflowError(f"输入的值 {value} 超出了8位无符号整数的范围 [0, 255].")
@@ -324,7 +324,7 @@ class C_PiperParserBase(ABC):
         high_byte = (value >> 8) & 0xFF
         low_byte = value & 0xFF
         return [high_byte, low_byte]
-    
+
     def ConvertToList_uint16_t(self, value: int):
         if not 0 <= value <= 65535:
             raise OverflowError(f"输入的值 {value} 超出了16位无符号整数的范围 [0, 65535].")
@@ -368,7 +368,7 @@ class C_PiperParserBase(ABC):
         byte_1 = (value >> 8) & 0xFF
         byte_0 = value & 0xFF
         return [byte_3, byte_2, byte_1, byte_0]
-    
+
     def ConvertToList_uint32_t(self, value: int):
         if not 0 <= value <= 4294967295:
             raise OverflowError(f"输入的值 {value} 超出了32位无符号整数的范围 [0, 4294967295].")
@@ -392,7 +392,7 @@ class C_PiperParserBase(ABC):
         span:float = x_max - x_min
         offset:float = x_min
         return int((x_float - offset) * (float((1<<bits)-1))/span)
-    
+
     def ConvertBytesToInt(self, bytes:bytearray, first_index:int, second_index:int, byteorder:Literal["little", "big"]='big'):
         '''
         将字节串转换为int类型,默认为大端对齐

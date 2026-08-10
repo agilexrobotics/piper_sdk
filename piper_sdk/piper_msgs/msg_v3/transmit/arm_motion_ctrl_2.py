@@ -10,12 +10,12 @@ from ...core import IntEnumBase
 class ArmMsgMotionCtrl_2_V3():
     '''
     msg_v3_transmit
-    
+
     机械臂运动控制指令2
 
     CAN ID:
         0x151
-    
+
     Args:
         ctrl_mode: 控制模式
         move_mode: MOVE模式
@@ -23,16 +23,16 @@ class ArmMsgMotionCtrl_2_V3():
         mit_mode: mit模式
         residence_time: 离线轨迹点停留时间
         installation_pos: 安装位置
-    
+
     位描述:
-    
+
         Byte 0: 控制模式     uint8
                 0x00 待机模式
                 0x01 CAN 指令控制模式
                 0x03 以太网控制模式
                 0x04 wifi 控制模式
                 0x07 离线轨迹模式
-        Byte 1: MOVE模式     uint8    
+        Byte 1: MOVE模式     uint8
                 0x00 MOVE P
                 0x01 MOVE J
                 0x02 MOVE L
@@ -40,7 +40,7 @@ class ArmMsgMotionCtrl_2_V3():
                 0x06 MOVE M ---基于V1.8-8版本后
                 0x05 MOVE CPV ---基于V1.8-1版本后
         Byte 2: 运动速度百分比 uint8    0~100
-        Byte 3: mit模式      uint8   
+        Byte 3: mit模式      uint8
                 0x00 位置速度模式
                 0xAD MIT模式
                 0xFF 无效
@@ -53,12 +53,12 @@ class ArmMsgMotionCtrl_2_V3():
                 0x04 水平倒装
     '''
     '''
-    
+
     Robotic Arm Motion Control Command 2
 
     CAN ID:
         0x151
-    
+
     Args:
         ctrl_mode: Control mode.
         move_mode: MOVE mode.
@@ -93,7 +93,7 @@ class ArmMsgMotionCtrl_2_V3():
 
         Byte 4 offline_trajectory_hold_time: uint8, duration to hold at offline trajectory points.
             Range: 0~255, unit: seconds.
-        
+
         Byte 5: Installation Position (uint8) - Note: Wiring should face backward ---- Based on version V1.5-2 and later
                 0x00: Invalid value
                 0x01: Horizontal upright
@@ -136,15 +136,15 @@ class ArmMsgMotionCtrl_2_V3():
             RIGHT = 0x03
             HORIZONTAL_INVERSE = 0x04
             UNKNOWN = 0xFF
-    
+
     _VALID_CTRL_MODE = [0x00, 0x01, 0x03, 0x04, 0x07]
     _VALID_MOVE_MODE = [0x00, 0x01, 0x02, 0x03, 0x06, 0x05]
     _VALID_MIT_MODE = [0x00, 0xAD, 0xFF]
     _VALID_INSTALLATION_POS = [0x00, 0x01, 0x02, 0x03, 0x04]
 
-    def __init__(self, 
-                 ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01, 
-                 move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x06, 0x05] = 0x01, 
+    def __init__(self,
+                 ctrl_mode: Literal[0x00, 0x01, 0x03, 0x04, 0x07] = 0x01,
+                 move_mode: Literal[0x00, 0x01, 0x02, 0x03, 0x06, 0x05] = 0x01,
                  move_spd_rate_ctrl: int = 50,
                  mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                  residence_time: int = 0,
@@ -181,8 +181,8 @@ class ArmMsgMotionCtrl_2_V3():
 
         # 生成格式化字符串，保留三位小数
         formatted_ = "\n".join([f"{name}: {value}" for name, value in dict_])
-        
+
         return f"ArmMsgMotionCtrl_2:\n{formatted_}"
-    
+
     def __repr__(self):
         return self.__str__()

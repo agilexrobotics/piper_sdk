@@ -7,4 +7,3 @@ __all__ = [
     'C_PiperInterface_V2',
     'C_PiperInterface_V3'
 ]
-

@@ -17,4 +17,3 @@ if __name__ == "__main__":
     while True:
         print(piper.GetGripperTeachingPendantParamFeedback())
         time.sleep(0.05)
-    

@@ -6,12 +6,12 @@ from enum import Enum
 class CanIDPiper_V3(Enum):
     '''
     msg_v3
-    
+
     机械臂can id
     '''
     '''
     msg_v3
-    
+
     piper's can_ids
     '''
     # 主动反馈指令，可设置整体偏移为 0x2B1~0x2B8或 0x2C1~0x2C8，详见指令0x470

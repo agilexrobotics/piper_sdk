@@ -16,4 +16,3 @@ if __name__ == "__main__":
         piper.ArmParamEnquiryAndConfig(4)
         print(piper.GetGripperTeachingPendantParamFeedback())
         time.sleep(0.05)
-    

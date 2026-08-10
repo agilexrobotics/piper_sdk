@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 0, \
                 0]
             count = 0
-        
+
         X = round(position[0]*factor)
         Y = round(position[1]*factor)
         Z = round(position[2]*factor)
@@ -68,4 +68,3 @@ if __name__ == "__main__":
         piper.EndPoseCtrl(X,Y,Z,RX,RY,RZ)
         piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
         time.sleep(2)
-    

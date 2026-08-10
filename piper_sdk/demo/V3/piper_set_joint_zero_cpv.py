@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 break
             else:
                 mode = -1
-        
+
         # 单电机设置
         elif mode == 0:
             print("\nStep 2: 输入需要设置零点的电机序号(1~7), 7代表所有电机: ")
@@ -66,7 +66,7 @@ if __name__ == "__main__":
             piper.DisableArm(motor_num)
             print(f"\nInfo: 第{motor_num}号电机失能成功，请手动纠正电机的零点位置")
             print(f"Info: Motor {motor_num} disabled successfully. Please manually adjust to zero position")
-            
+
             print(f"\nStep 3: 回车设置第{motor_num}号电机零点: ")
             print(f"Step 3: Press Enter to set zero for motor {motor_num}: ")
             if input("(按回车继续/Press Enter) ") == 'q':
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             piper.JointCtrl(0, 0, 0, 0, 0, 0)
             print(f"\nInfo: 第{motor_num}号电机零点设置成功")
             print(f"Info: Motor {motor_num} zero position set successfully")
-        
+
         # 顺序设置
         elif mode == 1:
             print("\nStep 2: 输入从第几号电机开始设置(1~6): ")
@@ -103,7 +103,7 @@ if __name__ == "__main__":
                 piper.DisableArm(i)
                 print(f"\nInfo: 第{i}号电机失能成功，请手动纠正电机的零点位置")
                 print(f"Info: Motor {i} disabled successfully. Please manually adjust to zero position")
-                
+
                 print(f"\nStep 3: 回车设置第{i}号电机零点: ")
                 print(f"Step 3: Press Enter to set zero for motor {i}: ")
                 if input("(按回车继续/Press Enter) ") == 'q':
@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 piper.JointCtrl(0, 0, 0, 0, 0, 0)
                 print(f"\nInfo: 第{i}号电机零点设置成功")
                 print(f"Info: Motor {i} zero position set successfully")
-        
+
         elif mode == 2:
             print("\nStep 2: cpv模式(1: 校准j456电机; 2: 校准夹爪电机): ")
             cpv = input("> ")
@@ -144,7 +144,7 @@ if __name__ == "__main__":
                     id = 0x180 + i
                     data = [0x77, 0x65, 0x65, 0x65, 0x00, 0x00, 0x00]
                     piper.GetCanBus().SendCanMessage(id, data, 7)
-                
+
                 print("\n等待电机停止运动...")
 
             elif cpv == '2':

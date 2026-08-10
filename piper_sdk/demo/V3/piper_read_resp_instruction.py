@@ -19,7 +19,7 @@ if __name__ == "__main__":
         print("------------")
         if piper.GetRespInstruction().instruction_response.instruction_index == 0x71:
             # 捕获到设置指令0x471的应答时(使能机械臂发送的指令id为471)，等待3s后清除SDK保存的应答信息
-            # When the response to the setting command 0x471 is captured (the command ID sent to enable the robot arm is 471), 
+            # When the response to the setting command 0x471 is captured (the command ID sent to enable the robot arm is 471),
             # wait for 3 seconds and then clear the response information saved by the SDK
             time.sleep(3)
             print("3-----------")
@@ -27,4 +27,3 @@ if __name__ == "__main__":
             print(piper.GetRespInstruction())
             exit(0)
         time.sleep(0.005)
-    

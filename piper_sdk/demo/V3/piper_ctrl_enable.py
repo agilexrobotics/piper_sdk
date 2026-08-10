@@ -13,4 +13,3 @@ if __name__ == "__main__":
     while( not piper.EnablePiper()):
         time.sleep(0.01)
     print("Enable successfully!!!!")
-    

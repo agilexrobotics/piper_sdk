@@ -10,4 +10,3 @@ if __name__ == "__main__":
     piper = C_PiperInterface_V3()
     piper.ConnectPort()
     piper.MotionCtrl_1(0x01,0,0)
-    

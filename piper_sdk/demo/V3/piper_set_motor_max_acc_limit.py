@@ -22,4 +22,3 @@ if __name__ == "__main__":
         piper.SearchAllMotorMaxAccLimit()
         print(piper.GetAllMotorMaxAccLimit())
         time.sleep(0.1)
-    

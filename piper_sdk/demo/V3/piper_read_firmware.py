@@ -15,4 +15,3 @@ if __name__ == "__main__":
     #     piper.SearchPiperFirmwareVersion()
     #     time.sleep(0.025)
     #     print(piper.GetPiperFirmwareVersion())
-    

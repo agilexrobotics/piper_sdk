@@ -11,4 +11,3 @@ if __name__ == "__main__":
     piper.GripperCtrl(0,1000,0x00, 0)
     time.sleep(1.5)
     piper.GripperCtrl(0,1000,0x00, 0xAE)
-    

@@ -26,7 +26,7 @@ if __name__ == "__main__":
             print("1-----------")
             position = [0,0,0,0,0,0,0]
             count = 0
-        
+
         joint_0 = round(position[0]*factor)
         joint_1 = round(position[1]*factor)
         joint_2 = round(position[2]*factor)
@@ -40,4 +40,3 @@ if __name__ == "__main__":
         print(piper.GetArmStatus())
         print(position)
         time.sleep(0.005)
-    

@@ -17,4 +17,3 @@ if __name__ == "__main__":
     print(f'=====>> Piper Current SDK Version is {piper.GetCurrentSDKVersion().value} <<=====')
     # 只有当 ConnectPort(piper_init=True, start_thread=True) 时，才能读取到固件版本
     print(f'=====>> Piper Current Firmware Version is {piper.GetPiperFirmwareVersion()} <<=====')
-    

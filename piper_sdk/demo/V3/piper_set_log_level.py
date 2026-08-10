@@ -9,4 +9,3 @@ if __name__ == "__main__":
     piper.ConnectPort()
     # 打印日志文件路径
     print("log file path:", LogManager.get_log_file_path(global_area))
-    

@@ -14,12 +14,12 @@ _CAN_ID = CanIDPiper_V3
 class ArmMessageMapping_V3(ArmMessageMapping):
     '''
     msg_v3
-    
+
     机械臂消息类型和CAN ID的映射
     '''
     '''
     msg_v3
-    
+
     Mapping of Robotic Arm Message Types and CAN IDs
     '''
     ArmMsgType = _ARM_MSG_TYPE

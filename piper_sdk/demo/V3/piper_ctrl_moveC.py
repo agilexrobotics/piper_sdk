@@ -25,4 +25,3 @@ if __name__ == "__main__":
     piper.MoveCAxisUpdateCtrl(0x03)
     time.sleep(0.001)
     piper.MotionCtrl_2(0x01, 0x03, 30, 0x00)
-    

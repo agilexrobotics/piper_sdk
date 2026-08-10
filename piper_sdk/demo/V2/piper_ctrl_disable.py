@@ -12,4 +12,3 @@ if __name__ == "__main__":
     while(piper.DisablePiper()):
         time.sleep(0.01)
     print("失能成功!!!!")
-    

@@ -13,7 +13,7 @@ if __name__ == "__main__":
     piper.EnableArm(7)
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    
+
     piper.MotorAngleLimitMaxSpdSet(1, 1500, -1500)
     piper.MotorAngleLimitMaxSpdSet(2, 1800, 0)
     piper.MotorAngleLimitMaxSpdSet(3, 0, -1700)
@@ -24,4 +24,3 @@ if __name__ == "__main__":
     while True:
         print(piper.GetAllMotorAngleLimitMaxSpd())
         time.sleep(0.1)
-    
