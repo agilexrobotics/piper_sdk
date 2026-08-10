@@ -51,7 +51,7 @@ class ArmMsgGripperCtrl:
 
     Args:
         grippers_angle: Gripper stroke, represented as an integer, unit: 0.001mm.
-        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponse 0-5N·m
+        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponds to 0-5 N·m
         status_code: 
             0x00: Disable;
             0x01: Enable;

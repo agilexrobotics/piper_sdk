@@ -16,6 +16,14 @@ class C_PiperParamManager():
         |joint4    |   [-1.745, 1.745]    |    [-100.0, 100.0] |
         |joint5    |   [-1.22, 1.22]      |    [-70.0, 70.0]   |
         |joint6    |   [-2.09439, 2.09439]|    [-120.0, 120.0] |
+
+        Note:
+            These are SDK-side software limit defaults used by
+            C_PiperParamManager. SDK joint limits are disabled by default
+            unless start_sdk_joint_limit=True. joint6 keeps the conservative
+            legacy flange limit of +/-120 degrees for compatibility with older
+            hardware/firmware. Newer robot presets may allow +/-180 degrees;
+            see ROBOT_JOINT_LIMIT_PRESET_DEG in constants.py.
         '''
         self.__PIPER_PARAM_ORIGIN = {
             "joint_limit":{

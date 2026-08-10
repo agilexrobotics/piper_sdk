@@ -13,6 +13,8 @@ V3 adds dedicated message classes only for fields that changed:
 |---|---|---|
 | Motion control 2 `0x151` | `ArmMsgMotionCtrl_2` | `ArmMsgMotionCtrl_2_V3` |
 | Arm status feedback `0x2A1` | `ArmMsgFeedbackStatus` | `ArmMsgFeedbackStatus_V3` |
+| Gripper feedback `0x2A8` | `ArmMsgFeedBackGripper` | `ArmMsgFeedBackGripper_V3` |
+| Gripper control `0x159` | `ArmMsgGripperCtrl` | `ArmMsgGripperCtrl_V3` |
 | Joint MIT control `0x15A~0x15F` | `ArmMsgJointMitCtrl` | `ArmMsgJointMitCtrl_V3` |
 | Parser | `C_PiperParserV2` | `C_PiperParserV3` |
 | Interface | `C_PiperInterface_V2` | `C_PiperInterface_V3` |
@@ -35,6 +37,16 @@ Byte 1 `move_mode` changes the MOVE M value.
 
 V3 validates `move_mode` through enum values from `ArmMsgMotionCtrl_2_V3.Enums.MotionMode`.
 
+Byte 5 `installation_pos` add the Horizontal Inversion value.
+
+| Value | V2 Meaning | V3 Meaning |
+|---|---|---|
+| `0x00` | Invalid value | Invalid value |
+| `0x01` | Horizontal upright | Horizontal upright |
+| `0x02` | Left-side mount | Left-side mount |
+| `0x03` | Right-side mount | Right-side mount |
+| `0x04` | Invalid value | Horizontal Inversion |
+
 | Byte | Field | Type | V3 Values |
 |---|---|---|---|
 | 0 | `ctrl_mode` | `uint8` | `0x00`, `0x01`, `0x02`, `0x03`, `0x04`, `0x05`, `0x06`, `0x07`, `0xFF` through enum definitions |
@@ -42,7 +54,7 @@ V3 validates `move_mode` through enum values from `ArmMsgMotionCtrl_2_V3.Enums.M
 | 2 | `move_spd_rate_ctrl` | `uint8` | `0~100` |
 | 3 | `mit_mode` | `uint8` | `0x00`, `0xAD`, `0xFF` |
 | 4 | `residence_time` | `uint8` | `0~255`, unit: s; `255` means trajectory termination |
-| 5 | `installation_pos` | `uint8` | `0x00`, `0x01`, `0x02`, `0x03`, `0xFF` through enum definitions |
+| 5 | `installation_pos` | `uint8` | `0x00`, `0x01`, `0x02`, `0x03`, `0x04`, `0xFF` through enum definitions |
 | 6 | Reserved | `uint8` | `0x00` |
 | 7 | Reserved | `uint8` | `0x00` |
 

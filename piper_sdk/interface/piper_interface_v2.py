@@ -1469,7 +1469,7 @@ class C_PiperInterface_V2():
         gripper_ctrl : ArmMsgGripperCtrl
 
             - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
-            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponse 0-5N·m)
+            - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponds to 0-5 N·m)
             - status_code (int): 
                 0x00: Disabled;
                 0x01: Enabled;
@@ -2979,7 +2979,7 @@ class C_PiperInterface_V2():
         
         Args:
             gripper_angle (int): Gripper range, expressed as an integer, unit 0.001mm.
-            gripper_effort (int): The gripper torque, in 0.001 N·m. Range 0-5000, corresponse 0-5 N·m
+            gripper_effort (int): The gripper torque, in 0.001 N·m. Range 0-5000, corresponds to 0-5 N·m
             gripper_code (int): The gripper enable/disable/clear error command.
                 0x00: Disable
                 0x01: Enable

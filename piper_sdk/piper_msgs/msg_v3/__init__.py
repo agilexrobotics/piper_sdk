@@ -1,6 +1,3 @@
-# piper_msgs/msg_v2/__init__.py
-
-# msg_v2/__init__.py
 
 from .arm_messages import PiperMessage_V3 as PiperMessage
 from .can_id import CanIDPiper_V3 as CanIDPiper

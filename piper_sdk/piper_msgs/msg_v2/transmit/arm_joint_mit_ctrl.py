@@ -24,10 +24,10 @@ class ArmMsgJointMitCtrl():
     
         Byte 0: Pos_ref [bit15~bit8] 高8位
         Byte 1: Pos_ref [bit7~bit0]  低8位
-        Byte 2: Vel_ref [bit11~bit4] 低12位
+        Byte 2: Vel_ref [bit11~bit4] 高8位
         Byte 3: Vel_ref [bit3~bit0], Kp [bit11~bit8]
         Byte 4: Kp [bit7~bit0],      Kp给定参考值: 10
-        Byte 5: Kd [bit11~bit4]      低12位,Kd给定参考值: 0.8
+        Byte 5: Kd [bit11~bit4]      高8位,Kd给定参考值: 0.8
         Byte 6: Kd [bit3~bit0] T_ref [bit7~bit4]
         Byte 7: T_ref [bit3~bit0] CRC [bit3~bit0]
     '''
@@ -53,10 +53,10 @@ class ArmMsgJointMitCtrl():
     
         Byte 0	Pos_ref	bit15~bit8	High 8 bits of pos_ref
         Byte 1	Pos_ref	bit7~bit0	Low 8 bits of pos_ref
-        Byte 2	Vel_ref	bit11~bit4	Low 12 bits of vel_ref
+        Byte 2	Vel_ref	bit11~bit4	High 8 bits of vel_ref
         Byte 3	Vel_ref, Kp	bit3~bit0, bit11~bit8	Remaining 4 bits of vel_ref, high 4 bits of kp
         Byte 4	Kp	bit7~bit0	Low 8 bits of kp (default: 10)
-        Byte 5	Kd	bit11~bit4	Low 12 bits of kd (default: 0.8)
+        Byte 5	Kd	bit11~bit4	High 8 bits of kd (default: 0.8)
         Byte 6	Kd, T_ref	bit3~bit0, bit7~bit4	Remaining 4 bits of kd, high 4 bits of t_ref
         Byte 7	T_ref, CRC	bit3~bit0, bit3~bit0	Low 4 bits of t_ref, low 4 bits of crc
     '''
@@ -116,10 +116,10 @@ class ArmMsgAllJointMitCtrl:
     
         Byte 0: Pos_ref [bit15~bit8] 高8位
         Byte 1: Pos_ref [bit7~bit0]  低8位
-        Byte 2: Vel_ref [bit11~bit4] 低12位
+        Byte 2: Vel_ref [bit11~bit4] 高8位
         Byte 3: Vel_ref [bit3~bit0], Kp [bit11~bit8]
         Byte 4: Kp [bit7~bit0],      Kp给定参考值: 10
-        Byte 5: Kd [bit11~bit4]      低12位,Kd给定参考值: 0.8
+        Byte 5: Kd [bit11~bit4]      高8位,Kd给定参考值: 0.8
         Byte 6: Kd [bit3~bit0] T_ref [bit7~bit4]
         Byte 7: T_ref [bit3~bit0] CRC [bit3~bit0]
     '''
@@ -145,10 +145,10 @@ class ArmMsgAllJointMitCtrl:
     
         Byte 0	Pos_ref	bit15~bit8	High 8 bits of pos_ref
         Byte 1	Pos_ref	bit7~bit0	Low 8 bits of pos_ref
-        Byte 2	Vel_ref	bit11~bit4	Low 12 bits of vel_ref
+        Byte 2	Vel_ref	bit11~bit4	High 8 bits of vel_ref
         Byte 3	Vel_ref, Kp	bit3~bit0, bit11~bit8	Remaining 4 bits of vel_ref, high 4 bits of kp
         Byte 4	Kp	bit7~bit0	Low 8 bits of kp (default: 10)
-        Byte 5	Kd	bit11~bit4	Low 12 bits of kd (default: 0.8)
+        Byte 5	Kd	bit11~bit4	High 8 bits of kd (default: 0.8)
         Byte 6	Kd, T_ref	bit3~bit0, bit7~bit4	Remaining 4 bits of kd, high 4 bits of t_ref
         Byte 7	T_ref, CRC	bit3~bit0, bit3~bit0	Low 4 bits of t_ref, low 4 bits of crc
     '''

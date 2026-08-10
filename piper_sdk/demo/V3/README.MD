@@ -46,7 +46,7 @@ Instructions for activating the CAN module [can README](../../../assets/can_conf
 |[`piper_read_all_fps.py`](./piper_read_all_fps.py)|Read the frequency of specified robotic arm data.|
 |[`piper_read_arm_motor_max_acc_limit.py`](./piper_read_arm_motor_max_acc_limit.py)|Read the maximum acceleration limits of all motors.|
 |[`piper_read_arm_motor_max_angle_spd.py`](./piper_read_arm_motor_max_angle_spd.py)|Read the maximum angle and speed limits of all robotic arm motors.|
-|[`piper_read_crash_protectation.py`](./piper_read_crash_protectation.py)|Read the robotic arm's collision protection level.|
+|[`piper_read_crash_protection.py`](./piper_read_crash_protection.py)|Read the robotic arm's collision protection level.|
 |[`piper_read_end_pose.py`](./piper_read_end_pose.py)|Read the end-effector pose.|
 |[`piper_read_firmware.py`](./piper_read_firmware.py)|Read the main controller firmware version of the robotic arm.|
 |[`piper_read_fk.py`](./piper_read_fk.py)|Read the forward kinematics solution for each joint.|

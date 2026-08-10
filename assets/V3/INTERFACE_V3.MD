@@ -81,7 +81,7 @@ def MotionCtrl_2(self,
                  move_spd_rate_ctrl: int = 50,
                  is_mit_mode: Literal[0x00, 0xAD, 0xFF] = 0x00,
                  residence_time: int = 0,
-                 installation_pos: Literal[0x00, 0x01, 0x02, 0x03] = 0x00)
+                 installation_pos: Literal[0x00, 0x01, 0x02, 0x03, 0x04] = 0x00)
 ```
 
 Sends robotic arm motion control command 2.
@@ -95,12 +95,12 @@ CAN ID: `0x151`.
 | `move_spd_rate_ctrl` | Movement speed percentage | `0~100` |
 | `is_mit_mode` | MIT switch | `0x00` position-speed mode, `0xAD` MIT mode, `0xFF` invalid |
 | `residence_time` | Offline trajectory point residence time | `0~255`, unit: s; `255` means trajectory termination |
-| `installation_pos` | Installation position | `0x00` invalid, `0x01` horizontal upright, `0x02` left-side mount, `0x03` right-side mount |
+| `installation_pos` | Installation position | `0x00` invalid, `0x01` horizontal upright, `0x02` left-side mount, `0x03` right-side mount , `0x04` horizontal inverted |
 
 V3 difference:
 
 | Mode | V2 Value | V3 Value |
-|---|---|---|
+| --- | --- | --- |
 | MOVE M | `0x04` | `0x06` |
 
 Example:

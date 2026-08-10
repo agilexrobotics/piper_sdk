@@ -18,7 +18,7 @@ class ArmMsgGripperCtrl_V3:
 
     Args:
         grippers_val: Gripper val, unit: 0.001 mm or 0.001 degree.
-        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponse 0-5N·m
+        grippers_effort: Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000, corresponds to 0-5 N·m
         status_code: 
             - 0x00: disable/width
             - 0x01: enable/width

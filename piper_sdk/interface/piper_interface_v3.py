@@ -354,7 +354,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
         `gripper_ctrl`: ArmMsgGripperCtrl
 
         - grippers_val(int): The gripper value, in 0.001 mm for width mode or 0.001 degree for angle mode.
-        - grippers_effort(int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponse 0-5N·m)
+        - grippers_effort(int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponds to 0-5 N·m)
         - status_code(int): 
           - 0x00: Disabled;
           - 0x01: Enabled;
@@ -749,7 +749,7 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             Derivative gain.
 
         `t_ref`: float
-        
+
             Target torque reference.
         """
         pos_tmp = self._parser.FloatToUint(pos_ref, p_min, p_max, 16)
