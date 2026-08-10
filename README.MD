@@ -147,7 +147,7 @@ If executing the bash script shows `ip: command not found`, install the `ip` com
 Run the following command:
 
 ```bash
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Enter the password, and if the CAN module is inserted into the computer and detected, it will output something like:
@@ -183,24 +183,26 @@ If no CAN module is detected, only the following will be output:
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 Activate a Single CAN Module (use `piper-can-activate` CLI)
+### 2.2 Activate a Single CAN Module (use `piper-can` CLI)
 
 There are two situations for activating a single CAN module: one is when only one CAN module is connected to the PC, and the other is when multiple CAN modules are inserted, but only one is activated.
 
-After installing `piper_sdk`, the `piper-can-activate` command is available in the terminal. It supports `-h`/`--help`, and the command name can be completed with Tab after typing `piper-` if your shell completion for executable commands is enabled.
+After installing `piper_sdk`, the `piper-can` command is available in the terminal. It provides the `find` and `activate` subcommands, supports `-h`/`--help`, and the command name can be completed with Tab after typing `piper-` if your shell completion for executable commands is enabled.
 
 ```bash
-piper-can-activate -h
+piper-can -h
+piper-can find -h
+piper-can activate -h
 ```
 
-If you need option/argument completion, install and enable `argcomplete` in your shell. The CLI enables `argcomplete` automatically when it is available.
+The package also installs bash completion for `piper-can`. In a new terminal, typing `piper-can ` and pressing Tab completes the `find` and `activate` subcommands. If your current shell session was opened before installation, reload bash completion or start a new terminal.
 
 #### 2.2.1 PC has only one USB-to-CAN module connected
 
 Simply execute:
 
 ```bash
-piper-can-activate can0 1000000
+piper-can activate can0 1000000
 ```
 
 Here, `can0` can be replaced with any name, and `1000000` is the baud rate, which cannot be changed.
@@ -212,7 +214,7 @@ Note: This case applies when using both the robot arm and the chassis.
 (1) Find the USB hardware address of the CAN module. Unplug all CAN modules and plug in only the one connected to the robot arm, then execute:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the USB port value, for example, 3-1.4:1.0.
@@ -220,7 +222,7 @@ Record the USB port value, for example, 3-1.4:1.0.
 (2) Activate the CAN device. Assuming the USB port value is 3-1.4:1.0, run:
 
 ```bash
-piper-can-activate can_piper 1000000 --usb-port "3-1.4:1.0"
+piper-can activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 Explanation: **3-1.4:1.0 is the hardware-encoded USB port, and the CAN device inserted there is renamed as can_piper, with a baud rate of 1000000 and activated.**
@@ -242,7 +244,7 @@ In the `can_muti_activate.sh` file, the `EXPECTED_CAN_COUNT` parameter should be
 (1) Plug in one CAN module and run:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the `USB port` value, for example, `3-1.4:1.0`
@@ -250,7 +252,7 @@ Record the `USB port` value, for example, `3-1.4:1.0`
 (2) Plug in the next CAN module. Ensure **it is not inserted into the same USB port as the previous one** and run:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the value of the second CAN module's `USB port`, for example `3-1.1:1.0`

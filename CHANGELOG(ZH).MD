@@ -21,7 +21,7 @@ Version 1.0.0
 - ✨ feat(ik_joint): 增加 V3 IK 关节反馈帧和缓存读取接口
 - ✨ feat(param): 增加 Piper 多型号和 Nero 的机器人参数预设
   - 增加关节限位、MDH 参数以及高速反馈力矩系数
-- ✨ feat(cli): 增加安装包内可直接使用的单 CAN 模块激活命令 `piper-can-activate`
+- ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
 - ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、多实例和断开连接测试示例
 
 Bug修复
@@ -40,7 +40,7 @@ Bug修复
 - 🔧 build(setup.py): 更新包版本号为 `1.0.0`
 - 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
 - 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
-- 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can-activate` CAN 激活 CLI 说明
+- 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
 - 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
   - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈

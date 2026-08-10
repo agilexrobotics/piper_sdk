@@ -21,7 +21,7 @@ Features
 - ✨ feat(ik_joint): Adds V3 IK joint feedback frames and cached getter support
 - ✨ feat(param): Adds robot parameter presets for Piper variants and Nero
   - Adds joint limits, MDH presets, and high-speed feedback torque coefficients
-- ✨ feat(cli): Adds `piper-can-activate` for single CAN module activation from the installed package
+- ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
 - ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, and multi-instance/disconnect tests
 
 Bug Fixes
@@ -40,7 +40,7 @@ Miscellaneous
 - 🔧 build(setup.py): Updates the package version to `1.0.0`
 - 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
 - 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
-- 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can-activate` CAN activation CLI
+- 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
 - 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
   - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent

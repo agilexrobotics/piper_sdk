@@ -25,17 +25,17 @@ First, set up the shell script parameters properly.
 
 ##### PC with only one USB-to-CAN module inserted
 
-- **Use the `piper-can-activate` CLI in this case.** It is installed with `piper_sdk` and supports `-h`/`--help`.
+- **Use the `piper-can activate` CLI in this case.** It is installed with `piper_sdk` and supports `-h`/`--help`.
 
 Simply execute:
 
 ```bash
-piper-can-activate can0 1000000
+piper-can activate can0 1000000
 ```
 
 ##### PC with multiple USB-to-CAN modules inserted
 
-- **Use the `piper-can-activate` CLI with `--usb-port` in this case.**
+- **Use the `piper-can activate` CLI with `--usb-port` in this case.**
 
 Unplug all CAN modules.
 
@@ -47,12 +47,12 @@ sudo ethtool -i can0 | grep bus
 
 Record the `bus-info` value, e.g., `1-2:1.0`.
 
-**Note:** Usually, the first inserted CAN module defaults to `can0`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
+**Note:** Usually, the first inserted CAN module defaults to `can0`. If no CAN device is found, use `piper-can find` to check the corresponding CAN name for the USB address.
 
 Assuming the recorded `bus-info` value is `1-2:1.0`, execute the following command to check if the CAN device is successfully activated:
 
 ```bash
-piper-can-activate can_piper 1000000 --usb-port "1-2:1.0"
+piper-can activate can_piper 1000000 --usb-port "1-2:1.0"
 ```
 
 **Note:** This means that the CAN device inserted into the USB port with hardware encoding `1-2:1.0` is renamed to `can_piper`, set to a baud rate of `1000000`, and activated.
@@ -79,7 +79,7 @@ Next, insert another CAN module (ensure it is plugged into a different USB port 
 sudo ethtool -i can1 | grep bus
 ```
 
-**Note:** Typically, the first inserted CAN module will be `can0`, and the second will be `can1`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
+**Note:** Typically, the first inserted CAN module will be `can0`, and the second will be `can1`. If no CAN device is found, use `piper-can find` to check the corresponding CAN name for the USB address.
 
 Assume the recorded `bus-info` values are `1-2:1.0` and `1-4:1.0`.
 

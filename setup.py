@@ -17,11 +17,15 @@ setup(
     package_data={
         '': ['LICENSE', '*.sh', '*.MD'],
     },
+    data_files=[
+        ('share/bash-completion/completions', ['completion/piper-can']),
+    ],
     install_requires=[
         'python-can>=3.3.4',
     ],
     entry_points={
         'console_scripts': [
+            'piper-can=piper_sdk.cli.can:main',
             'piper-can-activate=piper_sdk.cli.can_activate:main',
         ],
     },

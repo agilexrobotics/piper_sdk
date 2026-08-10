@@ -143,7 +143,7 @@ sudo apt update && sudo apt install can-utils ethtool
 执行
 
 ```bash
-bash find_all_can_port.sh
+piper-can find
 ```
 
 输入密码后，如果can模块插入了电脑，并被电脑检测到，输出类似如下：
@@ -179,24 +179,26 @@ Interface can0 is connected to USB port 3-1.1:1.0
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 激活单个can模块, **此处使用 `piper-can-activate` CLI**
+### 2.2 激活单个can模块, **此处使用 `piper-can` CLI**
 
 激活单个can模块的情况分两种，一种是电脑只链接了一个can模块，一种是多个can模块插入电脑但是只激活其中一个。
 
-安装 `piper_sdk` 后，终端中会提供 `piper-can-activate` 命令。该命令支持 `-h`/`--help`，如果 shell 已启用可执行命令补全，输入 `piper-` 后可用 Tab 补全命令名。
+安装 `piper_sdk` 后，终端中会提供 `piper-can` 命令。该命令提供 `find` 和 `activate` 两个子命令，支持 `-h`/`--help`，如果 shell 已启用可执行命令补全，输入 `piper-` 后可用 Tab 补全命令名。
 
 ```bash
-piper-can-activate -h
+piper-can -h
+piper-can find -h
+piper-can activate -h
 ```
 
-如果需要参数级补全，可以在 shell 中安装并启用 `argcomplete`；当环境中存在 `argcomplete` 时，该 CLI 会自动启用补全支持。
+安装包同时会安装 `piper-can` 的 bash 补全。打开新终端后，输入 `piper-can ` 再按 Tab 可以补全 `find` 和 `activate` 子命令。如果当前 shell 会话早于安装时间打开，请重新加载 bash completion 或打开新终端。
 
 #### 2.2.1 pc只插入一个usb转can模块
 
 直接执行
 
 ```bash
-piper-can-activate can0 1000000
+piper-can activate can0 1000000
 ```
 
 此处`can0`可以改为任意名字，`1000000`为波特率，不可更改
@@ -208,7 +210,7 @@ piper-can-activate can0 1000000
 (1) 查看can模块插在usb端口的硬件地址。拔掉所有can模块，只将连接到机械臂的can模块插入PC，执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 并记录下`USB port`的数值，例如`3-1.4:1.0`
@@ -216,7 +218,7 @@ bash find_all_can_port.sh
 (2) 激活can设备。假设上面的`USB port`数值为`3-1.4:1.0`，执行：
 
 ```bash
-piper-can-activate can_piper 1000000 --usb-port "3-1.4:1.0"
+piper-can activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 解释：**3-1.4:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_piper，设定波特率为1000000，并激活**
@@ -240,7 +242,7 @@ piper-can-activate can_piper 1000000 --usb-port "3-1.4:1.0"
 (1) 然后can模块中的其中一个单独插入PC，执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 并记录下`USB port`的数值，例如`3-1.4:1.0`
@@ -248,7 +250,7 @@ bash find_all_can_port.sh
 (2) 接着插入下一个can模块，注意**不可以**与上次can模块插入的usb口相同，然后执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 记录下第二个can模块的`USB port`的数值，例如`3-1.1:1.0`
