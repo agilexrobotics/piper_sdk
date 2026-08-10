@@ -21,6 +21,33 @@ def _frame(arbitration_id, data):
     return msg
 
 
+class MessageExportTests(unittest.TestCase):
+    def test_top_level_messages_keep_v2_default_and_expose_versioned_aliases(self):
+        import piper_sdk
+        from piper_sdk.piper_msgs.msg_v2 import ArmMessageMapping as ArmMessageMapping_V2
+        from piper_sdk.piper_msgs.msg_v2 import ArmMsgType as ArmMsgType_V2
+        from piper_sdk.piper_msgs.msg_v2 import CanIDPiper as CanIDPiper_V2
+        from piper_sdk.piper_msgs.msg_v2 import PiperMessage as PiperMessage_V2
+        from piper_sdk.piper_msgs.msg_v3 import ArmMessageMapping as ArmMessageMapping_V3
+        from piper_sdk.piper_msgs.msg_v3 import ArmMsgType as ArmMsgType_V3
+        from piper_sdk.piper_msgs.msg_v3 import CanIDPiper as CanIDPiper_V3
+        from piper_sdk.piper_msgs.msg_v3 import PiperMessage as PiperMessage_V3
+
+        self.assertIs(piper_sdk.PiperMessage, PiperMessage_V2)
+        self.assertIsNot(piper_sdk.PiperMessage, PiperMessage_V3)
+        self.assertIs(piper_sdk.PiperMessage_V2, PiperMessage_V2)
+        self.assertIs(piper_sdk.PiperMessage_V3, PiperMessage_V3)
+        self.assertIs(piper_sdk.CanIDPiper, CanIDPiper_V2)
+        self.assertIs(piper_sdk.CanIDPiper_V2, CanIDPiper_V2)
+        self.assertIs(piper_sdk.CanIDPiper_V3, CanIDPiper_V3)
+        self.assertIs(piper_sdk.ArmMsgType, ArmMsgType_V2)
+        self.assertIs(piper_sdk.ArmMsgType_V2, ArmMsgType_V2)
+        self.assertIs(piper_sdk.ArmMsgType_V3, ArmMsgType_V3)
+        self.assertFalse(hasattr(piper_sdk, "ArmMessageMapping"))
+        self.assertIs(piper_sdk.ArmMessageMapping_V2, ArmMessageMapping_V2)
+        self.assertIs(piper_sdk.ArmMessageMapping_V3, ArmMessageMapping_V3)
+
+
 class GripperFeedbackStatusTests(unittest.TestCase):
     def test_v2_feedback_constructor_updates_foc_status(self):
         feedback = ArmMsgFeedBackGripper(status_code=0x40)
