@@ -11,5 +11,5 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while(piper.DisablePiper()):
         time.sleep(0.01)
-    print("失能成功!!!!")
+    print("Disable successfully!!!!")
     

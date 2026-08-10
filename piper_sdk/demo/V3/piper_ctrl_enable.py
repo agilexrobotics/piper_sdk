@@ -12,5 +12,5 @@ if __name__ == "__main__":
     time.sleep(0.1)
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    print("使能成功!!!!")
+    print("Enable successfully!!!!")
     
