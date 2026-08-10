@@ -375,6 +375,13 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
     def GetArmIKJointMsgs(self):
         """Get the IK joint status feedback.
 
+        Notes
+        -------
+        IK joint feedback is not published immediately after the arm is powered
+        on. Set the arm to MOVE P mode and send a corresponding end-pose control
+        command first; after that trigger, the arm will keep publishing IK joint
+        feedback frames.
+
         Returns
         -------
         `time_stamp`: float

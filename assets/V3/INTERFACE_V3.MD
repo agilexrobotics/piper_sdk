@@ -240,6 +240,20 @@ Getter methods are inherited from V2 and return V3 message objects when the unde
 | `GetPiperFirmwareVersion()` | Returns firmware version data |
 | `GetRespInstruction()` | Returns response instruction feedback |
 
+### `GetArmIKJointMsgs`
+
+Returns V3 IK joint feedback messages.
+
+Note: IK joint feedback is not published immediately after the arm is powered on. Set the arm to MOVE P mode and send a corresponding end-pose control command first; after that trigger, the arm will keep publishing IK joint feedback frames.
+
+Example trigger:
+
+```python
+piper.MotionCtrl_2(0x01, 0x00, 100, 0x00)
+piper.EndPoseCtrl(X, Y, Z, RX, RY, RZ)
+print(piper.GetArmIKJointMsgs())
+```
+
 ## Migration From V2
 
 Use these replacements when moving V2 code to V3:
