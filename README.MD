@@ -332,6 +332,8 @@ Run `ifconfig` to check if `can_left` and `can_right` are present.
 
 Start with the simplest way to read the joint angle of the robot arm
 
+Firmware/interface note: examples that use `C_PiperInterface` are for the legacy/default interface. For firmware version `1.8-8` and later, use `C_PiperInterface_V3` instead, for example `piper = C_PiperInterface_V3("can0")`. See [Interface_V3 README](./assets/V3/INTERFACE_V3.MD) for V3-specific behavior.
+
 ```python
 import time
 # Import piper_sdk module
@@ -409,6 +411,7 @@ if __name__ == "__main__":
 
 - Ensure that CAN devices are activated and set to the correct baud rate before reading robot arm messages or controlling the robot arm.
 - The `C_PiperInterface` class can accept the activated CAN interface name during instantiation, which can be obtained from `ifconfig`.
+- Use `C_PiperInterface_V3` for firmware version `1.8-8` and later. If an example uses `C_PiperInterface`, replace it with `C_PiperInterface_V3` when running on V3 firmware/protocol.
 - If a message is not sent with the feedback `SendCanMessage(SEND_MESSAGE_FAILED (100017))` the CAN module might not be successfully connected. Check the connection and power cycle the robot arm before retrying.
 - The SDK's interface will check if the built-in CAN module is activated after creating the instance. For other CAN devices, set the second parameter to False, for example: `piper = C_PiperInterface_V2("can0", False)`.
 - **The MIT protocol for controlling individual joints is an advanced feature; misuse of this protocol can damage the robot arm!**

@@ -319,6 +319,8 @@ USB_PORTS["3-1.1:1.0"]="can_right:1000000"
   <summary><h2 style="display:inline">3 简单开始</h2></summary>
   <div>
 
+固件/interface 选择说明：示例中使用 `C_PiperInterface` 的代码为旧版/默认 interface 写法。固件版本 `1.8-8` 及以后需要使用 `C_PiperInterface_V3`，例如 `piper = C_PiperInterface_V3("can0")`。V3 专用行为请参考 [Interface_V3 README](./assets/V3/INTERFACE_V3.MD)。
+
 从一个最简单的读取机械臂关节角开始
 
 ```python
@@ -394,6 +396,7 @@ if __name__ == "__main__":
 
 - 需要先激活can设备，并且设置正确的波特率，才可以读取机械臂消息或者控制机械臂
 - C_PiperInterface 接口类在实例化时可传入激活的can路由名称，这个名称可以通过`ifconfig`得到
+- 固件版本 `1.8-8` 及以后请使用 `C_PiperInterface_V3`。如果示例中使用的是 `C_PiperInterface`，在 V3 固件/协议下运行时请替换为 `C_PiperInterface_V3`
 - 执行can发送，终端反馈`SendCanMessage(SEND_MESSAGE_FAILED (100017))`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
 - sdk的interface在创建实例后会检测是否激活自带的can模块，如果是其它can设备，可以将第二个形参设定为False，如：`piper = C_PiperInterface_V2("can0",False)`
 - **机械臂的mit协议控制单关节电机为高级功能,使用时需注意,此协议的使用不当会导致机械臂损坏！！！**

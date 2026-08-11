@@ -7,6 +7,7 @@
 ![ ](../assets/pictures/wire_connection.PNG)
 
 1. Set one of the robot arms as the active arm and the other as the slave arm. There are two ways to set it: use the host computer or use the SDK
+   - Firmware/interface note: examples that use `C_PiperInterface` are for the legacy/default interface. For firmware version `1.8-8` and later, use `C_PiperInterface_V3` instead.
    1. Use the host computer:
     ![ ](./pictures/host_computer_set_ms.png)
    2. Use the sdk:
@@ -38,6 +39,8 @@ See the interface description in the SDK for details.
 [Interface_V2 README](./V2/INTERFACE_V2.MD) <br> [Interface_V3 README](./V3/INTERFACE_V3.MD)
 
 Here is just a brief description
+
+For firmware version `1.8-8` and later, replace `C_PiperInterface()` in the following examples with `C_PiperInterface_V3()`.
 
 ### 2.1 Reading Master Arm Messages
 
