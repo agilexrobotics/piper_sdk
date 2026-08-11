@@ -22,30 +22,41 @@ Version 1.0.0
 - ✨ feat(param): 增加 Piper 多型号和 Nero 的机器人参数预设
   - 增加关节限位、MDH 参数以及高速反馈力矩系数
 - ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
-- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、多实例和断开连接测试示例
+- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
 
 Bug修复
 ---------
 
 - 🐞 fix(interface): 将发送消息对象按发送线程隔离，避免多线程发送状态相互覆盖
+- 🐞 fix(interface): 增加 `C_PiperInterface_V3` 单例重复初始化保护，避免同一 `can_name` 重复构造时重置 V3 parser、锁、反馈缓存以及 rx/tx 消息对象
 - 🐞 fix(param): SDK 参数管理器改为每个 interface 实例独立持有，并增加有限数值和范围校验
 - 🐞 fix(interface): 在 SDK 侧限位裁剪前先过滤原始异常反馈数据
 - 🐞 fix(gripper): 初始化或更新夹爪反馈状态码时同步更新 FOC 状态位字段
 - 🐞 fix(piper_msgs): 复用通用枚举基类辅助函数，并增加 V3 专用状态映射，提高枚举解析鲁棒性
 - 🐞 fix(exports): 从公开包入口导出 V3 parser、message 和 interface 类
+- 🐞 fix(exports): 保持顶层消息导出默认兼容 V2，并增加 `PiperMessage`、`CanIDPiper`、`ArmMsgType`、`ArmMessageMapping` 的 V2/V3 显式别名
 
 其它
 ---------
 
 - 🔧 build(setup.py): 更新包版本号为 `1.0.0`
 - 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
+- 🔧 build(cli): 简化 CAN CLI 打包方式
+  - 打包后的 CAN 辅助脚本通过 `/bin/sh` 运行，并移除 bitrate 解析中对 `grep -P` 的依赖，提高 shell 兼容性
+  - 忽略通用 `*.egg-info/` 构建元数据目录
 - 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
+- 🧪 test(exports): 增加顶层消息导出兼容性测试，确保默认保持 V2 兼容，同时可通过版本化别名访问 V3
 - 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
+  - 增加用户级 pip 安装后 `piper-can` 不在 `PATH` 时的排查和修复说明
 - 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(assets): 增加 `assets/next_update_todo.MD`，记录后续版本接受并继续处理的事项
+- 📃 docs(internal): 增加 V3 单例重复初始化保护的内部修复记录，说明触发场景、风险和验证方法
 - 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
   - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈
 - 📃 docs(protocol): 更新 V2/V3 MIT 帧位段说明、夹爪力矩说明、安装位置说明以及 SDK 侧旧版本法兰限位说明
 - 📃 docs(demo): 将碰撞防护 demo 文件名从 `piper_read_crash_protectation.py` 更正为 `piper_read_crash_protection.py`
+- 📃 docs(license): 修正 `LICENSE` 中 Agilex Robotics 公司名称拼写
+- 🎨 style(sdk): 清理 SDK 源码和 demo 中的空白格式，不改变行为
 
 
 Version 0.6.2

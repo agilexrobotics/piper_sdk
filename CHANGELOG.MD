@@ -22,30 +22,41 @@ Features
 - ✨ feat(param): Adds robot parameter presets for Piper variants and Nero
   - Adds joint limits, MDH presets, and high-speed feedback torque coefficients
 - ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
-- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, and multi-instance/disconnect tests
+- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
 
 Bug Fixes
 ---------
 
 - 🐞 fix(interface): Isolates transmit message objects per sending thread to avoid cross-thread send-state conflicts
+- 🐞 fix(interface): Guards `C_PiperInterface_V3` singleton reinitialization so repeated construction with the same `can_name` does not reset V3 parser, locks, cached feedback, or rx/tx messages
 - 🐞 fix(param): Makes SDK parameter managers independent per interface instance and validates finite/range inputs
 - 🐞 fix(interface): Filters abnormal raw feedback data before SDK-side clamping is applied
 - 🐞 fix(gripper): Keeps gripper FOC status bit fields synchronized when feedback status codes are initialized or updated
 - 🐞 fix(piper_msgs): Reuses shared enum base helpers and V3-specific status mappings for robust enum parsing
 - 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
+- 🐞 fix(exports): Keeps top-level message exports V2-compatible and adds explicit V2/V3 aliases for `PiperMessage`, `CanIDPiper`, `ArmMsgType`, and `ArmMessageMapping`
 
 Miscellaneous
 ---------
 
 - 🔧 build(setup.py): Updates the package version to `1.0.0`
 - 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
+- 🔧 build(cli): Simplifies CAN CLI packaging
+  - Runs packaged CAN helper scripts through `/bin/sh` and removes `grep -P` usage from bitrate parsing for better shell compatibility
+  - Ignores generic `*.egg-info/` build metadata directories
 - 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
+- 🧪 test(exports): Adds coverage to keep top-level message exports V2-compatible while exposing V3 through versioned aliases
 - 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
+  - Adds troubleshooting instructions for user-level pip installs where `piper-can` is installed outside `PATH`
 - 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(assets): Adds `assets/next_update_todo.MD` for accepted follow-up items in later releases
+- 📃 docs(internal): Adds internal notes for the V3 singleton reinitialization guard, including trigger scenarios, risks, and validation steps
 - 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
   - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent
 - 📃 docs(protocol): Updates V2/V3 MIT frame bit descriptions, gripper effort wording, installation-position notes, and SDK-side legacy flange limit notes
 - 📃 docs(demo): Renames the crash-protection demo spelling from `piper_read_crash_protectation.py` to `piper_read_crash_protection.py`
+- 📃 docs(license): Fixes the Agilex Robotics company name spelling in `LICENSE`
+- 🎨 style(sdk): Cleans whitespace across SDK sources and demos without changing behavior
 
 
 Version 0.6.2
