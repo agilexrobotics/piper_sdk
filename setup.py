@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 setup(
     name='piper_sdk',
     version='1.0.0',
-    setup_requires=['setuptools>=40.0'],
+    setup_requires=['setuptools>=39.0'],
     long_description=open(os.path.join(here, 'DESCRIPTION.MD'), encoding='utf-8').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/agilexrobotics/piper_sdk',
@@ -22,6 +22,8 @@ setup(
     ],
     install_requires=[
         'python-can>=3.3.4',
+        'typing_extensions>=3.7.4,<4.2.0; python_version < "3.7"',
+        'typing_extensions>=3.7.4; python_version >= "3.7"',
     ],
     entry_points={
         'console_scripts': [
