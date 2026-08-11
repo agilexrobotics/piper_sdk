@@ -95,11 +95,11 @@ You can temporarily fix the current terminal session with:
 export PATH="$(python3 -m site --user-base)/bin:$PATH"
 ```
 
-To make it permanent for sh-compatible login shells, add it to `~/.profile`:
+To make it permanent for bash, add it to `~/.bashrc`:
 
 ```bash
-echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.profile
-. ~/.profile
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 If you use another shell, add the same user script directory to that shell's

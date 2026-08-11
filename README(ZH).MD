@@ -87,11 +87,11 @@ Consider adding this directory to PATH or, if you prefer to suppress this warnin
 export PATH="$(python3 -m site --user-base)/bin:$PATH"
 ```
 
-如果使用 sh 兼容的登录 shell，并希望永久生效，可以写入 `~/.profile`：
+如果使用 bash，并希望永久生效，可以写入 `~/.bashrc`：
 
 ```bash
-echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.profile
-. ~/.profile
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 如果使用其它 shell，请用对应 shell 的语法把同一个用户脚本目录加入该 shell 的启动文件。
