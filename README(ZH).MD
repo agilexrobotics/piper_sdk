@@ -67,7 +67,41 @@ pip3 install .
 注意下面的X为你要的realease版本
 
 ```shell
-pip3 install piper_sdk-X.X.X-py3-none-any.whl 
+pip3 install piper_sdk-X.X.X-py3-none-any.whl
+```
+
+#### 1.2.4 如果 pip 提示 `piper-can` 不在 `PATH` 中
+
+使用用户级 pip 环境安装时，尤其是在 Ubuntu 20.04 上，pip 可能会出现类似下面的提示：
+
+```text
+WARNING: The script piper-can is installed in '/home/xxx/.local/bin' which is not on PATH.
+Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+
+这表示 `piper_sdk` 已经安装成功，但是命令行脚本被安装到了 Python 用户脚本目录中，而当前 shell 的 `PATH` 没有包含这个目录。此时在终端中直接执行 `piper-can` 可能会提示找不到命令。
+
+可以先临时修复当前终端：
+
+```bash
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+```
+
+如果使用 sh 兼容的登录 shell，并希望永久生效，可以写入 `~/.profile`：
+
+```bash
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.profile
+. ~/.profile
+```
+
+如果使用其它 shell，请用对应 shell 的语法把同一个用户脚本目录加入该 shell 的启动文件。
+
+然后验证：
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
 ```
 
 ### 1.3 查看 piper_sdk 细节

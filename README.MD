@@ -74,6 +74,45 @@ Note: Replace X with the release version you need
 pip3 install piper_sdk-X.X.X-py3-none-any.whl
 ```
 
+#### 1.2.4 If pip reports that `piper-can` is not on `PATH`
+
+When installing with a user-level pip environment, especially on Ubuntu 20.04,
+pip may show a warning similar to:
+
+```text
+WARNING: The script piper-can is installed in '/home/xxx/.local/bin' which is not on PATH.
+Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+
+This means `piper_sdk` was installed successfully, but the command-line scripts
+were installed into the Python user script directory, and this directory is not
+included in the current shell's `PATH`. In this case, commands such as
+`piper-can` may not be found directly in the terminal.
+
+You can temporarily fix the current terminal session with:
+
+```bash
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+```
+
+To make it permanent for sh-compatible login shells, add it to `~/.profile`:
+
+```bash
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.profile
+. ~/.profile
+```
+
+If you use another shell, add the same user script directory to that shell's
+startup file using the equivalent syntax.
+
+Then verify:
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
+```
+
 ### 1.3 Check piper_sdk Details
 
 ```shell

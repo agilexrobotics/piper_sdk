@@ -10,3 +10,4 @@ dist
 build
 .kilo
 .pytest_cache
+*.egg-info

@@ -14,7 +14,7 @@ def _run_script(parser, script_name, args):
     script = _script_path(script_name)
     if not script.exists():
         parser.error(f"{script_name} not found in the installed piper_sdk package.")
-    raise SystemExit(subprocess.call(["bash", str(script)] + args))
+    raise SystemExit(subprocess.call(["/bin/sh", str(script)] + args))
 
 
 def _build_parser():

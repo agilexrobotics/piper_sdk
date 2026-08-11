@@ -26,7 +26,6 @@ setup(
     entry_points={
         'console_scripts': [
             'piper-can=piper_sdk.cli.can:main',
-            'piper-can-activate=piper_sdk.cli.can_activate:main',
         ],
     },
     author='Agilex Robotics Co., Ltd.',
