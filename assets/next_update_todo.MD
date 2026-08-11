@@ -49,3 +49,19 @@ This document records known follow-up items for future releases. Keep the list u
    - Provide explicit versioned imports for V2/V3 message types.
    - Document the recommended import style, for example importing from `piper_sdk.piper_msgs.msg_v2` or `piper_sdk.piper_msgs.msg_v3` directly.
    - Add compatibility tests for `import piper_sdk`, `from piper_sdk import *`, and explicit msg imports.
+
+3. `[~]` Drop Python 3.6 support in a future release / 后续版本移除 Python 3.6 支持
+
+   Scope / 范围:
+   `setup.py`
+
+   Problem / 问题:
+   The current release still keeps `python_requires='>=3.6'` for compatibility. This requires dependency constraints such as the Python-version-specific `typing_extensions` requirement and keeps the package tied to an end-of-life Python version.
+
+   当前版本仍保留 `python_requires='>=3.6'` 以兼容旧环境。这需要维护类似 `typing_extensions` 按 Python 版本区分的依赖约束，也让包继续兼容已经停止维护的 Python 版本。
+
+   Expected follow-up / 后续建议:
+   - Decide the new minimum supported Python version.
+   - Update `python_requires` in `setup.py` to reject Python 3.6.
+   - Update classifiers and dependency constraints to match the new minimum Python version.
+   - Document the Python 3.6 support removal in the release notes.
