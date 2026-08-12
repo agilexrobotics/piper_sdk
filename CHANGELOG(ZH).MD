@@ -11,16 +11,17 @@ Version 1.0.0
 
 - ✨ feat(interface,protocol,piper_msgs): 增加适配固件/协议 V1.8-8 及以上版本的 V3 接口栈
   - 增加 `C_PiperInterface_V3`、`C_PiperParserV3`、`InterfaceVersion.INTERFACE_V3`、V3 CAN ID/type 映射以及公开包入口导出
-  - 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为
+  - 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为，方便继承
 - ✨ feat(motion_ctrl): 增加 V3 运动控制行为
   - V3 MOVE M 改为 `move_mode=0x06`，V3 状态反馈中的 MOVE M 改为 `mode_feed=0x06`
   - 增加 V3 水平倒装安装位置 `installation_pos=0x04`
-- ✨ feat(gripper): 增加 V3 夹爪行程/角度模式支持
+- ✨ feat(gripper): 增加 V3 夹爪行程/角度模式支持，同时V2版本的夹爪有关函数保留
+  - 增加`GetArmGripperCtrl_V3`、`GetArmGripperMsgs_V3`、`GripperCtrl_V3`函数，保留`GetArmGripperCtrl`、`GetArmGripperMsgs`、`GripperCtrl`函数
   - 增加 V3 夹爪反馈/控制消息、parser 编解码支持、V3 获取接口以及 V3 夹爪示例
   - 增加 V3 角度模式使用的 SDK 侧夹爪角度限位参数
 - ✨ feat(ik_joint): 增加 V3 IK 关节反馈帧和缓存读取接口
-- ✨ feat(param): 增加 Piper 多型号和 Nero 的机器人参数预设
-  - 增加关节限位、MDH 参数以及高速反馈力矩系数
+  - 增加`GetArmIKJointMsgs`函数
+  - 注意：IK关节反馈不会在机械臂通电后立即发布。请先将机械臂设置为MOVE P模式并发送相应的姿态控制命令；触发后，机械臂将持续发布IK关节反馈帧。
 - ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
 - ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
 

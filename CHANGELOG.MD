@@ -15,12 +15,12 @@ Features
 - ✨ feat(motion_ctrl): Adds V3 motion-control behavior
   - Changes V3 MOVE M to `move_mode=0x06` and V3 status MOVE M feedback to `mode_feed=0x06`
   - Adds V3 horizontal inverted installation position support with `installation_pos=0x04`
-- ✨ feat(gripper): Adds V3 gripper width/angle mode support
+- ✨ feat(gripper): Adds V3 gripper width/angle mode support while keeping V2 gripper-related APIs available
   - Adds V3 gripper feedback/control messages, parser encode/decode support, V3 getters, and V3 gripper demos
   - Adds SDK-side gripper angle limit parameters for V3 angle mode
 - ✨ feat(ik_joint): Adds V3 IK joint feedback frames and cached getter support
-- ✨ feat(param): Adds robot parameter presets for Piper variants and Nero
-  - Adds joint limits, MDH presets, and high-speed feedback torque coefficients
+  - Adds the `GetArmIKJointMsgs` API
+  - Note: IK joint feedback is not published immediately after the robotic arm is powered on. Set the arm to MOVE P mode and send the corresponding end-pose control command first; after it is triggered, the arm continuously publishes IK joint feedback frames.
 - ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
 - ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
 
