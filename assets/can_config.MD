@@ -8,6 +8,8 @@ sudo apt update && sudo apt install can-utils ethtool
 
 These two utilities are used to configure the CAN module.
 
+Note: This guide uses `piper-can` and shell scripts that are only supported on Linux. `piper-can find` and `piper-can activate` rely on Linux shell scripts and CAN tools such as `can-utils`, `ethtool`, and `iproute2`.
+
 If running a bash script results in `ip: command not found`,
 please install the `ip` command, usually with:
 
@@ -62,6 +64,8 @@ Then, run `ifconfig` to check if `can_piper` is listed. If it appears, the CAN m
 #### Enabling Multiple CAN Modules Simultaneously
 
 - **Use the `can_config.sh` script in this case.**
+
+Note: `can_config.sh` is a Linux shell script.
 
 In `can_config.sh`, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules to be activated. Assume this is set to `2`.
 

@@ -23,6 +23,7 @@ Version 1.0.0
   - 增加`GetArmIKJointMsgs`函数
   - 注意：IK关节反馈不会在机械臂通电后立即发布。请先将机械臂设置为MOVE P模式并发送相应的姿态控制命令；触发后，机械臂将持续发布IK关节反馈帧。
 - ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
+  - 说明并限制 `piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们依赖 Linux shell 脚本和 CAN 工具
 - ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
 
 Bug修复
@@ -52,6 +53,7 @@ Bug修复
 - 🧪 test(exports): 增加顶层消息导出兼容性测试，确保默认保持 V2 兼容，同时可通过版本化别名访问 V3
 - 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
   - 增加用户级 pip 安装后 `piper-can` 不在 `PATH` 时的排查和修复说明
+  - 在 README 和 CAN 配置文档中明确 `piper-can` 及相关 CAN shell 脚本流程仅支持 Linux
 - 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(assets): 增加 `assets/next_update_todo.MD`，记录后续版本接受并继续处理的事项
 - 📃 docs(internal): 增加 V3 单例重复初始化保护的内部修复记录，说明触发场景、风险和验证方法

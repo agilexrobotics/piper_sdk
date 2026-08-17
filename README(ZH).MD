@@ -104,6 +104,8 @@ piper-can find -h
 piper-can activate -h
 ```
 
+注意：`piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们依赖 Linux shell 脚本和 CAN 工具。
+
 ### 1.3 查看 piper_sdk 细节
 
 ```shell
@@ -172,6 +174,8 @@ sudo apt update && sudo apt install can-utils ethtool
 
 如果执行bash脚本出现`ip: command not found`，请安装ip指令，一般是`sudo apt-get install iproute2`
 
+注意：本节中的 `piper-can` CAN 查找/激活命令以及 CAN 配置 shell 脚本仅支持 Linux。
+
 ### 2.1 寻找can模块
 
 执行
@@ -218,6 +222,8 @@ Both ethtool and can-utils are installed.
 激活单个can模块的情况分两种，一种是电脑只链接了一个can模块，一种是多个can模块插入电脑但是只激活其中一个。
 
 安装 `piper_sdk` 后，终端中会提供 `piper-can` 命令。该命令提供 `find` 和 `activate` 两个子命令，支持 `-h`/`--help`，如果 shell 已启用可执行命令补全，输入 `piper-` 后可用 Tab 补全命令名。
+
+注意：`piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们会调用安装包内的 `.sh` 脚本，并依赖 `can-utils`、`ethtool`、`iproute2` 等 Linux CAN 工具。
 
 ```bash
 piper-can -h

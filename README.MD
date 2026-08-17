@@ -113,6 +113,8 @@ piper-can find -h
 piper-can activate -h
 ```
 
+Note: `piper-can find` and `piper-can activate` are only supported on Linux because they rely on Linux shell scripts and CAN tools.
+
 ### 1.3 Check piper_sdk Details
 
 ```shell
@@ -181,6 +183,8 @@ These two tools are used to configure the CAN module.
 
 If executing the bash script shows `ip: command not found`, install the `ip` command by running `sudo apt-get install iproute2`
 
+Note: The `piper-can` CAN discovery/activation commands and the CAN configuration shell scripts in this section are only supported on Linux.
+
 ### 2.1 Find CAN Modules
 
 Run the following command:
@@ -227,6 +231,8 @@ Both ethtool and can-utils are installed.
 There are two situations for activating a single CAN module: one is when only one CAN module is connected to the PC, and the other is when multiple CAN modules are inserted, but only one is activated.
 
 After installing `piper_sdk`, the `piper-can` command is available in the terminal. It provides the `find` and `activate` subcommands, supports `-h`/`--help`, and the command name can be completed with Tab after typing `piper-` if your shell completion for executable commands is enabled.
+
+Note: `piper-can find` and `piper-can activate` are only supported on Linux because they call packaged `.sh` scripts and depend on Linux CAN tools such as `can-utils`, `ethtool`, and `iproute2`.
 
 ```bash
 piper-can -h

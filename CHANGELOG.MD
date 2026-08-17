@@ -22,6 +22,7 @@ Features
   - Adds the `GetArmIKJointMsgs` API
   - Note: IK joint feedback is not published immediately after the robotic arm is powered on. Set the arm to MOVE P mode and send the corresponding end-pose control command first; after it is triggered, the arm continuously publishes IK joint feedback frames.
 - ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
+  - Documents and enforces that `piper-can find` and `piper-can activate` are Linux-only because they rely on Linux shell scripts and CAN tools
 - ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
 
 Bug Fixes
@@ -51,6 +52,7 @@ Miscellaneous
 - 🧪 test(exports): Adds coverage to keep top-level message exports V2-compatible while exposing V3 through versioned aliases
 - 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
   - Adds troubleshooting instructions for user-level pip installs where `piper-can` is installed outside `PATH`
+  - Clarifies in README and CAN configuration docs that `piper-can` and related CAN shell-script workflows are Linux-only
 - 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(assets): Adds `assets/next_update_todo.MD` for accepted follow-up items in later releases
 - 📃 docs(internal): Adds internal notes for the V3 singleton reinitialization guard, including trigger scenarios, risks, and validation steps
