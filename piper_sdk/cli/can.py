@@ -2,6 +2,7 @@
 # -*-coding:utf8-*-
 
 import argparse
+import platform
 import subprocess
 from pathlib import Path
 
@@ -11,6 +12,9 @@ def _script_path(script_name):
 
 
 def _run_script(parser, script_name, args):
+    if platform.system() != "Linux":
+        parser.error("piper-can is only supported on Linux because it relies on Linux shell scripts and CAN tools.")
+
     script = _script_path(script_name)
     if not script.exists():
         parser.error(f"{script_name} not found in the installed piper_sdk package.")
