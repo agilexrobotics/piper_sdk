@@ -59,6 +59,11 @@ Miscellaneous
 - 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
   - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent
 - 📃 docs(protocol): Updates V2/V3 MIT frame bit descriptions, gripper effort wording, installation-position notes, and SDK-side legacy flange limit notes
+- 📃 docs(protocol): Clarifies the firmware-dependent `max_joint_spd` unit and raw range
+  - Documents that `max_joint_spd` uses `0.001 rad/s` before V1.5-8, excluding V1.5-8, and `0.01 rad/s` from V1.5-8 onward, including V1.5-8
+  - Clarifies that setting `0-3.0 rad/s` corresponds to raw `[0, 3000]` before V1.5-8 and raw `[0, 300]` from V1.5-8 onward
+  - Updates the `MotorMaxSpdSet` default `max_joint_spd` parameter from `3000` to `0x7FFF` so the wrapper defaults to the protocol invalid/no-change value
+  - Synchronizes the related interface comments, message class comments, V2 interface docs, and protocol changelog tables
 - 📃 docs(demo): Renames the crash-protection demo spelling from `piper_read_crash_protectation.py` to `piper_read_crash_protection.py`
 - 📃 docs(license): Fixes the Agilex Robotics company name spelling in `LICENSE`
 - 🎨 style(sdk): Cleans whitespace across SDK sources and demos without changing behavior
@@ -466,7 +471,7 @@ Features
 - Fixed some comments and provided clearer explanations.
 - Unified the code formatting to maintain consistency.
 - Added data limits for the gripper message sending: [0, 5000], corresponding to [0, 5] N·m.
-- Added data limits for setting the maximum joint speed: [0, 3000], corresponding to [0, 3] rad/s.
+- Added data limits for setting the maximum joint speed. For 0-3 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward.
 - Added data limits for setting the maximum joint acceleration: [0, 500], corresponding to [0, 5] rad/s^2.
 
 Bug Fixes
@@ -647,7 +652,7 @@ Additional invalid value command
 |       Byte 2                                      |  Maximum Angle Limit Low    |            |                           |
 |       Byte 3                                      |  Minimum Angle Limit High   |    uint16  | Unit: 0.1° **Invalid value: 0x7FFF** |
 |       Byte 4                                      |  Minimum Angle Limit Low    |            |                           |
-|       Byte 5                                      |  Maximum Joint Speed High   |    uint16  | Unit: 0.001 rad/s **Invalid value: 0x7FFF** |
+|       Byte 5                                      |  Maximum Joint Speed High   |    uint16  | Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). **Invalid value: 0x7FFF** |
 |       Byte 6                                      |  Maximum Joint Speed Low    |            |                           |
 |       Byte 7                                      |  Reserved                   |            |                           |
 

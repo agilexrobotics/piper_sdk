@@ -745,7 +745,7 @@ current_motor_angle_limit_max_vel : ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
   - motor_num (int): Joint motor serial number
   - max_angle_limit (int): Maximum angle limit, unit 0.1 degree
   - min_angle_limit (int): Minimum angle limit, unit 0.1 degree
-  - max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+  - max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
 '''
 ```
 
@@ -1062,7 +1062,7 @@ all_motor_angle_limit_max_spd : ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
       * motor_num (int): Joint motor serial number
       * max_angle_limit (int): Maximum angle limit, unit 0.1 degree
       * min_angle_limit (int): Minimum angle limit, unit 0.1 degree
-      * max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+      * max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
   }
 '''
 ```
@@ -1221,24 +1221,24 @@ Parameters:
 - `motor_num`: Joint motor number (1-6)
 - `max_angle_limit`: Maximum angle limit (0.1°, 0x7FFF for invalid)
 - `min_angle_limit`: Minimum angle limit (0.1°, 0x7FFF for invalid)
-- `max_joint_spd`: Maximum joint speed (0.001 rad/s, range [0, 3000], 0x7FFF for invalid)
+- `max_joint_spd`: Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward. 0x7FFF for invalid.
 
-Speed limits for each joint:
+Raw `max_joint_spd` limits for each joint when setting 0-3.0 rad/s:
 
-| Joint | Speed Limit (rad/s) |
-|-------|-------------------|
-| 1 | [0, 3.0] |
-| 2 | [0, 3.0] |
-| 3 | [0, 3.0] |
-| 4 | [0, 3.0] |
-| 5 | [0, 3.0] |
-| 6 | [0, 3.0] |
+| Joint | Before V1.5-8 | From V1.5-8 onward |
+|-------|----------------|---------------------|
+| 1 | [0, 3000] | [0, 300] |
+| 2 | [0, 3000] | [0, 300] |
+| 3 | [0, 3000] | [0, 300] |
+| 4 | [0, 3000] | [0, 300] |
+| 5 | [0, 3000] | [0, 300] |
+| 6 | [0, 3000] | [0, 300] |
 
 #### MotorMaxSpdSet
 
 ```python
 def MotorMaxSpdSet(motor_num: Literal[1, 2, 3, 4, 5, 6] = 6,
-                  max_joint_spd: int = 3000)
+                  max_joint_spd: int = 0x7FFF)
 ```
 
 Sets motor maximum speed (Based on V1.5-2 and later) (CAN ID: 0x474)
@@ -1246,7 +1246,7 @@ Sets motor maximum speed (Based on V1.5-2 and later) (CAN ID: 0x474)
 Parameters:
 
 - `motor_num`: Motor number (1-6)
-- `max_joint_spd`: Maximum joint speed (0.001 rad/s, range 0-3000, corresponding to 0-3 rad/s)
+- `max_joint_spd`: Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward. 0x7FFF for invalid.
 
 #### JointConfig
 

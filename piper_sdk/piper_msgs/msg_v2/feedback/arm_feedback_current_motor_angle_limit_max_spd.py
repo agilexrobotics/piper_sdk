@@ -25,7 +25,7 @@ class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
         Byte 2: 最大角度限制L
         Byte 3: 最小角度限制H, uint16, 单位 0.1度
         Byte 4: 最小角度限制L
-        Byte 5: 最大关节速度H, uint16, 单位 0.001rad/s
+        Byte 5: 最大关节速度H, uint16, 单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s
         Byte 6: 最大关节速度L
         Byte 7: 保留
     '''
@@ -50,7 +50,7 @@ class ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd:
         Byte 2: Maximum Angle Limit (Low Byte)
         Byte 3: Minimum Angle Limit (High Byte), uint16, unit: 0.1°
         Byte 4: Minimum Angle Limit (Low Byte)
-        Byte 5: Maximum Joint Speed (High Byte), uint16, unit: 0.001 rad/s
+        Byte 5: Maximum Joint Speed (High Byte), uint16. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
         Byte 6: Maximum Joint Speed (Low Byte)
         Byte 7: Reserved
     '''

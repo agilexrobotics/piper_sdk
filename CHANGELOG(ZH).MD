@@ -60,6 +60,11 @@ Bug修复
 - 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
   - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈
 - 📃 docs(protocol): 更新 V2/V3 MIT 帧位段说明、夹爪力矩说明、安装位置说明以及 SDK 侧旧版本法兰限位说明
+- 📃 docs(protocol): 明确 `max_joint_spd` 随固件版本变化的单位和 raw 范围
+  - 说明 `max_joint_spd` 在 V1.5-8 之前，不包括 V1.5-8，单位为 `0.001 rad/s`；V1.5-8 及之后，包括 V1.5-8，单位为 `0.01 rad/s`
+  - 说明设置 `0-3.0 rad/s` 时，V1.5-8 之前 raw 范围为 `[0, 3000]`，V1.5-8 及之后 raw 范围为 `[0, 300]`
+  - 将 `MotorMaxSpdSet` 的默认 `max_joint_spd` 参数从 `3000` 调整为 `0x7FFF`，使封装函数默认使用协议无效值/不修改值
+  - 同步相关 interface 注释、消息类注释、V2 接口文档以及协议 changelog 表格
 - 📃 docs(demo): 将碰撞防护 demo 文件名从 `piper_read_crash_protectation.py` 更正为 `piper_read_crash_protection.py`
 - 📃 docs(license): 修正 `LICENSE` 中 Agilex Robotics 公司名称拼写
 - 🎨 style(sdk): 清理 SDK 源码和 demo 中的空白格式，不改变行为
@@ -462,7 +467,7 @@ Version 0.1.16
 - 更正了夹爪打印数据的输出单位
 - 统一了代码格式
 - 增加了夹爪消息发送的数据限制：[0, 5000]，对应 [0, 5] N·m
-- 增加了设置最大关节速度的数据限制：[0, 3000]，对应 [0, 3] rad/s
+- 增加了设置最大关节速度的数据限制。对应 0-3 rad/s 时，V1.5-8 之前范围为 [0, 3000]，V1.5-8 及之后范围为 [0, 300]
 - 增加了设置最大关节加速度的数据限制：[0, 500]，对应 [0, 5] rad/s^2
 
 Bug修复
@@ -639,7 +644,7 @@ Byte 5 安装位置设定
 |       Byte 2           |  最大角度限制 L                         |                 |                           |
 |       Byte 3           |  最小角度限制 H                         |       uint16    |单位 0.1°**无效值：0x7FFF**  |
 |       Byte 4           |  最小角度限制 L                         |                 |                           |
-|       Byte 5           |  最大关节速度 H                         |       uint16    |单位 0.001rad/s**无效值：0x7FFF**|
+|       Byte 5           |  最大关节速度 H                         |       uint16    |单位随固件版本变化：V1.5-8之前(不含V1.5-8)为0.001rad/s，V1.5-8及之后为0.01rad/s **无效值：0x7FFF**|
 |       Byte 6           |  最大关节速度 L                         |                 |                           |
 |       Byte 7           |  保留                                  |                 |                           |
 

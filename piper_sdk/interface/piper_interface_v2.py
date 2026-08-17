@@ -1261,7 +1261,7 @@ class C_PiperInterface_V2():
             - motor_num (int): 关节电机序号
             - max_angle_limit (int): 最大角度限制, 单位 0.1度
             - min_angle_limit (int): 最小角度限制, 单位 0.1度
-            - max_joint_spd (int): 最大关节速度, 单位 0.001rad/s
+            - max_joint_spd (int): 最大关节速度，单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s
         '''
         '''Retrieves the motor angle limit/maximum speed command.
 
@@ -1277,6 +1277,17 @@ class C_PiperInterface_V2():
 
         CAN ID:
             0x473
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+        current_motor_angle_limit_max_vel : ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
+
+            - motor_num (int): Joint motor index.
+            - max_angle_limit (int): Maximum angle limit, unit 0.1 degree.
+            - min_angle_limit (int): Minimum angle limit, unit 0.1 degree.
+            - max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
         '''
         with self._feedback_current_motor_angle_limit_max_vel_mtx:
             return self._feedback_current_motor_angle_limit_max_vel
@@ -1600,6 +1611,7 @@ class C_PiperInterface_V2():
         '''获取所有电机的最大限制角度/最小限制角度/最大速度,(m1-m6)
 
         此为应答式消息,意为需要发送请求指令该数据才会有数值
+        请求指令 `self.SearchAllMotorMaxAngleSpd()` 已在 `ConnectPort` 中调用
 
         Returns
         -------
@@ -1613,13 +1625,28 @@ class C_PiperInterface_V2():
                 * motor_num (int): 关节电机序号
                 * max_angle_limit (int): 最大角度限制, 单位 0.1度
                 * min_angle_limit (int): 最小角度限制, 单位 0.1度
-                * max_joint_spd (int): 最大关节速度, 单位 0.001rad/s
+                * max_joint_spd (int): 最大关节速度，单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s
             }
         '''
         '''Retrieves the maximum limit angle, minimum limit angle, and maximum speed for all motors (m1-m6).
 
         This is a response message, meaning the data will only be available after sending a request command.
         The request command `self.SearchAllMotorMaxAngleSpd()` has already been called in the `ConnectPort`.
+
+        Returns
+        -------
+        time_stamp : float
+            time stamp
+
+        all_motor_angle_limit_max_spd : ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
+
+            - motor (ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd): Current motor angle limit/maximum speed
+            {
+                * motor_num (int): Joint motor index.
+                * max_angle_limit (int): Maximum angle limit, unit 0.1 degree.
+                * min_angle_limit (int): Minimum angle limit, unit 0.1 degree.
+                * max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
+            }
         '''
         with self._arm_all_motor_angle_limit_max_spd_mtx:
             return self._arm_all_motor_angle_limit_max_spd
@@ -3248,7 +3275,7 @@ class C_PiperInterface_V2():
             motor_num: 关节电机序号
             max_angle_limit: 最大角度限制,单位 0.1°,0x7FFF为设定无效数值
             min_angle_limit: 最小角度限制,单位 0.1°,0x7FFF为设定无效数值
-            max_joint_spd: 最大关节速度,单位 0.001rad/s,范围[0,3000],0x7FFF为设定无效数值
+            max_joint_spd: 最大关节速度,单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s。对应0-3.0rad/s时,V1.5-8之前范围为[0,3000],V1.5-8及之后范围为[0,300],V1.5-2版本增加0x7FFF设定无效数值
 
         |joint_name|     limit(rad/s)   |
         |----------|     ----------     |
@@ -3269,7 +3296,7 @@ class C_PiperInterface_V2():
             motor_num: Joint motor index.
             max_angle_limit: Maximum angle limit, unit 0.1°.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
             min_angle_limit: Minimum angle limit, unit 0.1°.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
-            max_joint_spd: Maximum joint speed, unit 0.001 rad/s.Range [0,3000],(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
+            max_joint_spd: Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0,3000] before V1.5-8 and [0,300] from V1.5-8 onward. (Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
 
         |joint_name|     limit(rad/s)   |
         |----------|     ----------     |
@@ -3290,20 +3317,20 @@ class C_PiperInterface_V2():
         if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("MotorAngleLimitMaxSpdSet send failed: SendCanMessage(%s)", feedback)
 
-    def MotorMaxSpdSet(self, motor_num:Literal[1, 2, 3, 4, 5, 6] = 6, max_joint_spd:int = 3000):
+    def MotorMaxSpdSet(self, motor_num:Literal[1, 2, 3, 4, 5, 6] = 6, max_joint_spd:int = 0x7FFF):
         '''
         电机最大速度设置指令(基于V1.5-2版本后)
 
         CAN ID:
             0x474
 
-        范围: 0-3000
+        速度范围: 0-3.0 (注意需要转换精度发送)
 
-        对应: 0-3 rad/s
+        实际速度对应关系随固件版本单位变化: V1.5-8之前(不含V1.5-8)按0.001rad/s换算, V1.5-8及之后按0.01rad/s换算
 
         Args:
             motor_num: 电机序号
-            max_joint_spd: 关节电机最大速度设定,单位 0.001rad/s,0x7FFF为设定无效数值
+            max_joint_spd: 关节电机最大速度设定,单位精度随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s。对应0-3.0rad/s时,V1.5-8之前范围为[0,3000],V1.5-8及之后范围为[0,300],V1.5-2版本增加0x7FFF设定无效数值
         '''
         '''
         Motor Maximum Speed Setting Command (Based on version V1.5-2 and later)
@@ -3311,12 +3338,13 @@ class C_PiperInterface_V2():
         CAN ID:
             0x474
 
-        Range: 0-3000
+        Range: 0-3.0 (Note that precision conversion is required before sending)
 
-        Correspond: 0-3 rad/s
+        The physical speed conversion depends on firmware version: use 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
 
         Args:
-            max_joint_spd: Maximum speed setting for joint motor, unit: 0.001 rad/s. 0x7FFF indicates an invalid value.
+            motor_num: Joint motor index.
+            max_joint_spd: Maximum speed setting for joint motor. Unit precision depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0,3000] before V1.5-8 and [0,300] from V1.5-8 onward. The invalid value 0x7FFF is added in V1.5-2.
         '''
         self.MotorAngleLimitMaxSpdSet(motor_num, 0x7FFF, 0x7FFF, max_joint_spd)
 
