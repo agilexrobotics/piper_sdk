@@ -9,6 +9,7 @@ from .piper_msgs.msg_v2 import (
     ArmMsgType as ArmMsgType_V2,
     CanIDPiper as CanIDPiper_V2,
     PiperMessage as PiperMessage_V2,
+    ArmMsgFeedbackStatusEnum,
     ArmMsgFeedbackStatusEnum as ArmMsgFeedbackStatusEnum_V2,
 )
 from .piper_msgs.msg_v3 import (
@@ -16,7 +17,7 @@ from .piper_msgs.msg_v3 import (
     ArmMsgType as ArmMsgType_V3,
     CanIDPiper as CanIDPiper_V3,
     PiperMessage as PiperMessage_V3,
-    ArmMsgFeedbackStatusEnum
+    ArmMsgFeedbackStatusEnum as ArmMsgFeedbackStatusEnum_V3,
 )
 from .protocol.protocol_v2 import *
 from .interface import *
@@ -36,5 +37,7 @@ __all__ = [
     'PiperSDKVersion',
     'quat_convert_euler',
     'euler_convert_quat',
-    'ArmMsgFeedbackStatusEnum'
+    'ArmMsgFeedbackStatusEnum',
+    'ArmMsgFeedbackStatusEnum_V2',
+    'ArmMsgFeedbackStatusEnum_V3',
 ]
