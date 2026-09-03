@@ -3,7 +3,7 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
-Version 1.0.0
+Version 0.7.0
 =============
 
 Features
@@ -41,7 +41,7 @@ Miscellaneous
 ---------
 
 - 🔧 build(setup.py): Updates package metadata and dependencies
-  - Updates the package version to `1.0.0`
+  - Updates the package version to `0.7.0`
   - Lowers the build-time `setuptools` requirement to `>=39.0`
   - Adds `typing_extensions` as an install dependency with a Python-version-specific constraint for Python versions below `3.7`
 - 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions

@@ -3,7 +3,7 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
-Version 1.0.0
+Version 0.7.0
 =============
 
 特性
@@ -42,7 +42,7 @@ Bug修复
 ---------
 
 - 🔧 build(setup.py): 更新包元数据和依赖
-  - 更新包版本号为 `1.0.0`
+  - 更新包版本号为 `0.7.0`
   - 将构建期 `setuptools` 要求调整为 `>=39.0`
   - 增加 `typing_extensions` 安装依赖，并对低于 Python `3.7` 的版本使用专用版本约束
 - 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包

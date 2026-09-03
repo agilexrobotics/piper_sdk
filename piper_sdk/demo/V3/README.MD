@@ -18,7 +18,7 @@ Note: python-can >= 3.3.4
 pip3 install python-can
 ```
 
-Note: piper_sdk >= 1.0.0
+Note: piper_sdk >= 0.7.0
 
 ```shell
 pip3 install piper_sdk
