@@ -3317,7 +3317,7 @@ class C_PiperInterface_V2():
         if feedback is not self._arm_can.CAN_STATUS.SEND_MESSAGE_SUCCESS:
             self.logger.error("MotorAngleLimitMaxSpdSet send failed: SendCanMessage(%s)", feedback)
 
-    def MotorMaxSpdSet(self, motor_num:Literal[1, 2, 3, 4, 5, 6] = 6, max_joint_spd:int = 0x7FFF):
+    def MotorMaxSpdSet(self, motor_num:Literal[1, 2, 3, 4, 5, 6], max_joint_spd:int):
         '''
         电机最大速度设置指令(基于V1.5-2版本后)
 
@@ -3330,7 +3330,7 @@ class C_PiperInterface_V2():
 
         Args:
             motor_num: 电机序号
-            max_joint_spd: 关节电机最大速度设定,单位精度随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s。对应0-3.0rad/s时,V1.5-8之前范围为[0,3000],V1.5-8及之后范围为[0,300],V1.5-2版本增加0x7FFF设定无效数值
+            max_joint_spd: 必填。关节电机最大速度设定,单位精度随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s。对应0-3.0rad/s时,V1.5-8之前范围为[0,3000],V1.5-8及之后范围为[0,300],V1.5-2版本增加0x7FFF设定无效数值
         '''
         '''
         Motor Maximum Speed Setting Command (Based on version V1.5-2 and later)
@@ -3344,7 +3344,7 @@ class C_PiperInterface_V2():
 
         Args:
             motor_num: Joint motor index.
-            max_joint_spd: Maximum speed setting for joint motor. Unit precision depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0,3000] before V1.5-8 and [0,300] from V1.5-8 onward. The invalid value 0x7FFF is added in V1.5-2.
+            max_joint_spd: Required. Maximum speed setting for joint motor. Unit precision depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0,3000] before V1.5-8 and [0,300] from V1.5-8 onward. The invalid value 0x7FFF is added in V1.5-2.
         '''
         self.MotorAngleLimitMaxSpdSet(motor_num, 0x7FFF, 0x7FFF, max_joint_spd)
 

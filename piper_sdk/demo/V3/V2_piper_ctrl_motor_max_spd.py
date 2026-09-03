@@ -13,9 +13,9 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    # 3rad/s
+    # V3 firmware uses 0.01 rad/s per raw unit, so raw 300 means 3 rad/s.
     for i in range(1,7):
-        piper.MotorMaxSpdSet(i, 3000)
+        piper.MotorMaxSpdSet(i, 300)
         time.sleep(0.1)
     while True:
         piper.SearchAllMotorMaxAngleSpd()

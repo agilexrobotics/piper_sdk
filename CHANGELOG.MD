@@ -62,7 +62,7 @@ Miscellaneous
 - 📃 docs(protocol): Clarifies the firmware-dependent `max_joint_spd` unit and raw range
   - Documents that `max_joint_spd` uses `0.001 rad/s` before V1.5-8, excluding V1.5-8, and `0.01 rad/s` from V1.5-8 onward, including V1.5-8
   - Clarifies that setting `0-3.0 rad/s` corresponds to raw `[0, 3000]` before V1.5-8 and raw `[0, 300]` from V1.5-8 onward
-  - Updates the `MotorMaxSpdSet` default `max_joint_spd` parameter from `3000` to `0x7FFF` so the wrapper defaults to the protocol invalid/no-change value
+  - Removes the `MotorMaxSpdSet` argument defaults so callers must explicitly provide the motor and firmware-dependent raw speed, avoiding an incorrect setting caused by the unit change
   - Synchronizes the related interface comments, message class comments, V2 interface docs, and protocol changelog tables
 - 📃 docs(demo): Renames the crash-protection demo spelling from `piper_read_crash_protectation.py` to `piper_read_crash_protection.py`
 - 📃 docs(license): Fixes the Agilex Robotics company name spelling in `LICENSE`

@@ -12,12 +12,13 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
-    # 3rad/s
+    # Set 3 rad/s according to the firmware version:
+    # before V1.5-8 (exclusive): raw 3000; V1.5-8 and later: raw 300.
+    max_joint_spd = 3000
     for i in range(1,7):
-        piper.MotorMaxSpdSet(i, 3000)
+        piper.MotorMaxSpdSet(i, max_joint_spd)
         time.sleep(0.1)
     while True:
         piper.SearchAllMotorMaxAngleSpd()
         print(piper.GetAllMotorAngleLimitMaxSpd())
         time.sleep(0.01)
-    

@@ -63,7 +63,7 @@ Bug修复
 - 📃 docs(protocol): 明确 `max_joint_spd` 随固件版本变化的单位和 raw 范围
   - 说明 `max_joint_spd` 在 V1.5-8 之前，不包括 V1.5-8，单位为 `0.001 rad/s`；V1.5-8 及之后，包括 V1.5-8，单位为 `0.01 rad/s`
   - 说明设置 `0-3.0 rad/s` 时，V1.5-8 之前 raw 范围为 `[0, 3000]`，V1.5-8 及之后 raw 范围为 `[0, 300]`
-  - 将 `MotorMaxSpdSet` 的默认 `max_joint_spd` 参数从 `3000` 调整为 `0x7FFF`，使封装函数默认使用协议无效值/不修改值
+  - 删除 `MotorMaxSpdSet` 的参数默认值，要求调用方显式传入电机序号和随固件变化的速度 raw 值，避免单位变化导致错误设置
   - 同步相关 interface 注释、消息类注释、V2 接口文档以及协议 changelog 表格
 - 📃 docs(demo): 将碰撞防护 demo 文件名从 `piper_read_crash_protectation.py` 更正为 `piper_read_crash_protection.py`
 - 📃 docs(license): 修正 `LICENSE` 中 Agilex Robotics 公司名称拼写
