@@ -6,6 +6,19 @@
 import time
 from piper_sdk import *
 
+# piper(piper_h) 1 end pose[mm, mm, mm, deg, deg, deg]: [135.481, 9.349, 161.129, 178.756, 6.035, -178.440]
+# piper(piper_h) 2 end pose[mm, mm, mm, deg, deg, deg]: [222.158, 128.758, 142.126, 175.152, -1.259, -157.235]
+# piper(piper_h) 3 end pose[mm, mm, mm, deg, deg, deg]: [359.079, 3.221, 153.470, 179.038, 1.105, 179.035]
+
+# piper_l 1 end pose[mm, mm, mm, deg, deg, deg]: [135.481, 9.349, 161.129, 178.756, 6.035, -178.440]
+# piper_l 2 end pose[mm, mm, mm, deg, deg, deg]: [222.158, 128.758, 142.126, 175.152, -1.259, -157.235]
+# piper_l 3 end pose[mm, mm, mm, deg, deg, deg]: [359.079, 3.221, 153.470, 179.038, 1.105, 179.035]
+
+# piper_x 1 end pose[mm, mm, mm, deg, deg, deg]: [135.481, 9.349, 161.129, 178.756, 6.035, -178.440]
+# piper_x 2 end pose[mm, mm, mm, deg, deg, deg]: [222.158, 128.758, 142.126, 175.152, -1.259, -157.235]
+# piper_x 3 end pose[mm, mm, mm, deg, deg, deg]: [359.079, 3.221, 153.470, 179.038, 1.105, 179.035]
+
+# default piper
 if __name__ == "__main__":
     piper = C_PiperInterface_V3("can0")
     piper.ConnectPort()

@@ -6,6 +6,7 @@
 import time
 from piper_sdk import *
 
+# only j6
 if __name__ == "__main__":
     piper = C_PiperInterface_V2("can0")
     piper.ConnectPort()
@@ -25,4 +26,3 @@ if __name__ == "__main__":
         piper.JointMitCtrl(6,0.5,0,10,0.8,0)
         print(3)
         time.sleep(1)
-    
