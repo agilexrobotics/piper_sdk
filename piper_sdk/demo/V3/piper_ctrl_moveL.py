@@ -11,9 +11,11 @@ from piper_sdk import *
 # piper(piper_h) test end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 258.0, 0.0, 85.0, 0.0]
 
 # piper_l zero end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
+# piper_l initial end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 237.594, 0.0, 85.0, 0.0]
 # piper_l test end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 272.594, 0.0, 85.0, 0.0]
 
 # piper_x zero end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
+# piper_x initial end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 226.827, -85.0, 0.0, -90.0]
 # piper_x test end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 261.827, -85.0, 0.0, -90.0]
 
 # default piper
