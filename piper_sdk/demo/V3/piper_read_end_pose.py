@@ -4,14 +4,14 @@
 import time
 from piper_sdk import *
 
-# piper(piper_h) initial end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 213.266, 0.0, 85.0, 0.0]
+# piper(piper_h) zero end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 213.266, 0.0, 85.0, 0.0]
 
-# piper_l initial end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
+# piper_l zero end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
 
-# piper_x initial end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
+# piper_x zero end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
 
 if __name__ == "__main__":
-    piper = C_PiperInterface_V3()
+    piper = C_PiperInterface_V3(can_name="can0")
     piper.ConnectPort()
     while True:
         print(piper.GetArmEndPoseMsgs())

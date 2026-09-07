@@ -4,31 +4,34 @@
 import time
 from piper_sdk import *
 
-# piper(piper_h) initial end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 213.266, 0.0, 85.0, 0.0]
-# piper(piper_h) test end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 258, 0.0, 85.0, 0.0]
+# piper(piper_h) zero end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 213.266, 0.0, 85.0, 0.0]
+# piper(piper_h) initial end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 215.0, 0.0, 85.0, 0.0]
+# piper(piper_h) test end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 258.0, 0.0, 85.0, 0.0]
 
-# piper_l initial end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
+# piper_l zero end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
 # piper_l test end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 272.594, 0.0, 85.0, 0.0]
 
-# piper_x initial end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
+# piper_x zero end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
 # piper_x test end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 261.827, -85.0, 0.0, -90.0]
 
 # default piper
 if __name__ == "__main__":
-    piper = C_PiperInterface_V3("can0")
+    piper = C_PiperInterface_V3(can_name="can0")
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
     piper.GripperCtrl(0,1000,0x01, 0)
     factor = 1000
-    position = [
-                57.0, \
+    # initial pose(not zero pose)
+    initial_position = [
+                56.127, \
                 0.0, \
                 215.0, \
                 0, \
                 85.0, \
                 0, \
                 0]
+    position = initial_position
 
     count = 0
     while True:
@@ -36,34 +39,20 @@ if __name__ == "__main__":
         count  = count + 1
         if(count == 0):
             print("1-----------")
-            position = [
-                67.0, \
-                0.0, \
-                215.0, \
-                0, \
-                85.0, \
-                0, \
-                0]
+            position = initial_position
         elif(count == 2):
             print("2-----------")
             position = [
-                67.0, \
+                56.127, \
                 0.0, \
-                260.0, \
+                258.0, \
                 0, \
                 85.0, \
                 0, \
                 0]
         elif(count == 3):
             print("1-----------")
-            position = [
-                67.0, \
-                0.0, \
-                215.0, \
-                0, \
-                85.0, \
-                0, \
-                0]
+            position = initial_position
             count = 0
 
         X = round(position[0]*factor)
