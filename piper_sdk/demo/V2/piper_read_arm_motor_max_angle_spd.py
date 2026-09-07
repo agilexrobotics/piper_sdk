@@ -7,10 +7,9 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2()
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort()
     while True:
         piper.SearchAllMotorMaxAngleSpd()
         print(piper.GetAllMotorAngleLimitMaxSpd())
         time.sleep(0.01)
-    

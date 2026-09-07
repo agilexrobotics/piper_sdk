@@ -6,6 +6,6 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V3()
+    piper = C_PiperInterface_V3(can_name="can0")
     piper.ConnectPort()
     piper.MotionCtrl_1(0x02,0,0)#恢复

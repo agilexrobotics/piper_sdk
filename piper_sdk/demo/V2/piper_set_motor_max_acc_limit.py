@@ -8,7 +8,7 @@ import time
 from piper_sdk import *
 
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2("can0")
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort()
     piper.EnableArm(7)
     while( not piper.EnablePiper()):
@@ -22,4 +22,3 @@ if __name__ == "__main__":
         piper.SearchAllMotorMaxAccLimit()
         print(piper.GetAllMotorMaxAccLimit())
         time.sleep(0.1)
-    

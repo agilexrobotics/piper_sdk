@@ -87,7 +87,7 @@ def apply_tool_offset(pose, tool_offset):
 
 if __name__ == "__main__":
     # 初始化机械臂连接
-    piper = C_PiperInterface_V3()
+    piper = C_PiperInterface_V3(can_name="can0")
     piper.ConnectPort()
 
     # # 等待机械臂启用

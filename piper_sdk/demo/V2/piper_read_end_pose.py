@@ -11,7 +11,7 @@ from piper_sdk import *
 # piper_x zero end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
 
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2()
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort()
     while True:
         print(piper.GetArmEndPoseMsgs())

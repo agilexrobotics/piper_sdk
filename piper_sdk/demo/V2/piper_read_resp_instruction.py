@@ -7,7 +7,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2()
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort()
     print("1-----------")
     print(piper.GetRespInstruction())
@@ -27,4 +27,3 @@ if __name__ == "__main__":
             print(piper.GetRespInstruction())
             exit(0)
         time.sleep(0.005)
-    

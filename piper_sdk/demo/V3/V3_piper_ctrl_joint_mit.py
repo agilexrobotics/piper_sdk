@@ -8,7 +8,7 @@ from piper_sdk import *
 
 # only j6
 if __name__ == "__main__":
-    piper = C_PiperInterface_V3("can0")
+    piper = C_PiperInterface_V3(can_name="can0")
     piper.ConnectPort()
     print(piper.GetCurrentProtocolVersion())
     print(piper.GetCurrentInterfaceVersion())

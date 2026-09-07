@@ -5,7 +5,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V3(dh_is_offset=1)
+    piper = C_PiperInterface_V3(can_name="can0", dh_is_offset=1)
     piper.ConnectPort()
     # 使用前需要使能
     piper.EnableFkCal()
