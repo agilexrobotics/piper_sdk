@@ -25,6 +25,7 @@ Version 0.7.0
 - ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
   - 说明并限制 `piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们依赖 Linux shell 脚本和 CAN 工具
 - ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
+- ✨ feat(init):保持 `ArmMsgFeedbackStatusEnum` 默认映射到 V2，并增加 `ArmMsgFeedbackStatusEnum_V2` 和 `ArmMsgFeedbackStatusEnum_V3` 显式导出，避免 V2/V3 的 `MOVE_M` 值相互覆盖
 
 Bug修复
 ---------
@@ -46,9 +47,6 @@ Bug修复
   - 将构建期 `setuptools` 要求调整为 `>=39.0`
   - 增加 `typing_extensions` 安装依赖，并对低于 Python `3.7` 的版本使用专用版本约束
 - 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
-- 🔧 build(cli): 简化 CAN CLI 打包方式
-  - 打包后的 CAN 辅助脚本通过 `/bin/sh` 运行，并移除 bitrate 解析中对 `grep -P` 的依赖，提高 shell 兼容性
-  - 忽略通用 `*.egg-info/` 构建元数据目录
 - 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
 - 🧪 test(exports): 增加顶层消息导出兼容性测试，确保默认保持 V2 兼容，同时可通过版本化别名访问 V3
 - 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
@@ -56,9 +54,13 @@ Bug修复
   - 在 README 和 CAN 配置文档中明确 `piper-can` 及相关 CAN shell 脚本流程仅支持 Linux
 - 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(assets): 增加 `assets/next_update_todo.MD`，记录后续版本接受并继续处理的事项
+- 📃 docs(versioning): 增加 `assets/versioning_policy.MD`，说明语义化版本规则、兼容边界、项目示例和发布检查清单
 - 📃 docs(internal): 增加 V3 单例重复初始化保护的内部修复记录，说明触发场景、风险和验证方法
 - 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
   - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈
+- 📃 docs(demo): 增加 V3 MOVE P 后读取 IK 反馈示例，区分触发并读取与仅读取 IK 反馈的使用场景
+- 📃 docs(demo): 统一 V2/V3 中 Piper、Piper L、Piper X 的末端零位、初始位和测试位姿参考，并在运动示例中复用初始位姿定义
+- 📃 docs(demo): 统一 demo 使用显式 `can_name="can0"` 初始化接口，并补充手动创建串口/PCIe CAN bus 时 `can_auto_init` 和 `judge_flag` 的说明
 - 📃 docs(protocol): 更新 V2/V3 MIT 帧位段说明、夹爪力矩说明、安装位置说明以及 SDK 侧旧版本法兰限位说明
 - 📃 docs(protocol): 明确 `max_joint_spd` 随固件版本变化的单位和 raw 范围
   - 说明 `max_joint_spd` 在 V1.5-8 之前，不包括 V1.5-8，单位为 `0.001 rad/s`；V1.5-8 及之后，包括 V1.5-8，单位为 `0.01 rad/s`

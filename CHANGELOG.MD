@@ -24,6 +24,7 @@ Features
 - ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
   - Documents and enforces that `piper-can find` and `piper-can activate` are Linux-only because they rely on Linux shell scripts and CAN tools
 - ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
+- ✨ feat(init): Keeps `ArmMsgFeedbackStatusEnum` mapped to V2 by default, and adds explicit exports of `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` to avoid `MOVE_M` values ​​from V2/V3 overwriting each other.
 
 Bug Fixes
 ---------
@@ -36,6 +37,7 @@ Bug Fixes
 - 🐞 fix(piper_msgs): Reuses shared enum base helpers and V3-specific status mappings for robust enum parsing
 - 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
 - 🐞 fix(exports): Keeps top-level message exports V2-compatible and adds explicit V2/V3 aliases for `PiperMessage`, `CanIDPiper`, `ArmMsgType`, and `ArmMessageMapping`
+- 🐞 fix(exports): Fixes a V3 development-version regression, introduced after the `0.6.2` release, by keeping `ArmMsgFeedbackStatusEnum` mapped to V2 and adding explicit `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` exports so V2/V3 `MOVE_M` values cannot override each other
 
 Miscellaneous
 ---------
@@ -45,9 +47,6 @@ Miscellaneous
   - Lowers the build-time `setuptools` requirement to `>=39.0`
   - Adds `typing_extensions` as an install dependency with a Python-version-specific constraint for Python versions below `3.7`
 - 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
-- 🔧 build(cli): Simplifies CAN CLI packaging
-  - Runs packaged CAN helper scripts through `/bin/sh` and removes `grep -P` usage from bitrate parsing for better shell compatibility
-  - Ignores generic `*.egg-info/` build metadata directories
 - 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
 - 🧪 test(exports): Adds coverage to keep top-level message exports V2-compatible while exposing V3 through versioned aliases
 - 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
@@ -55,9 +54,13 @@ Miscellaneous
   - Clarifies in README and CAN configuration docs that `piper-can` and related CAN shell-script workflows are Linux-only
 - 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
 - 📃 docs(assets): Adds `assets/next_update_todo.MD` for accepted follow-up items in later releases
+- 📃 docs(versioning): Adds `assets/versioning_policy.MD` with semantic-versioning rules, compatibility boundaries, project examples, and a release checklist
 - 📃 docs(internal): Adds internal notes for the V3 singleton reinitialization guard, including trigger scenarios, risks, and validation steps
 - 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
   - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent
+- 📃 docs(demo): Adds the V3 MOVE P plus IK-feedback example and separates trigger-and-read guidance from the read-only IK-feedback example
+- 📃 docs(demo): Aligns V2/V3 end-pose zero, initial, and test references for Piper, Piper L, and Piper X; reuses initial-pose definitions in motion demos
+- 📃 docs(demo): Standardizes demo interface construction with explicit `can_name="can0"` and documents manual serial/PCIe CAN-bus creation, including `can_auto_init` and `judge_flag` behavior
 - 📃 docs(protocol): Updates V2/V3 MIT frame bit descriptions, gripper effort wording, installation-position notes, and SDK-side legacy flange limit notes
 - 📃 docs(protocol): Clarifies the firmware-dependent `max_joint_spd` unit and raw range
   - Documents that `max_joint_spd` uses `0.001 rad/s` before V1.5-8, excluding V1.5-8, and `0.01 rad/s` from V1.5-8 onward, including V1.5-8
