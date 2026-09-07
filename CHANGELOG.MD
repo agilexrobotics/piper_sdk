@@ -26,6 +26,11 @@ Features
 - ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
 - ✨ feat(init): Keeps `ArmMsgFeedbackStatusEnum` mapped to V2 by default, and adds explicit exports of `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` to avoid `MOVE_M` values ​​from V2/V3 overwriting each other.
 
+Breaking Changes
+----------------
+
+- ⚠️ `MotorMaxSpdSet` no longer provides default arguments. Callers must explicitly pass both the motor number and firmware-dependent raw maximum joint speed; calls that relied on the previous defaults now fail.
+
 Bug Fixes
 ---------
 
@@ -38,6 +43,8 @@ Bug Fixes
 - 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
 - 🐞 fix(exports): Keeps top-level message exports V2-compatible and adds explicit V2/V3 aliases for `PiperMessage`, `CanIDPiper`, `ArmMsgType`, and `ArmMessageMapping`
 - 🐞 fix(exports): Fixes a V3 development-version regression, introduced after the `0.6.2` release, by keeping `ArmMsgFeedbackStatusEnum` mapped to V2 and adding explicit `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` exports so V2/V3 `MOVE_M` values cannot override each other
+- 🐞 fix(status): Initializes V2/V3 error-status bits through the `err_code` setter so constructor-supplied errors are reflected immediately
+- 🐞 fix(protocol): Raises a clear `TypeError` when `C_PiperParserV3` receives a V2 `PiperMessage`, requiring `PiperMessage_V3` instead of failing later with `AttributeError`
 
 Miscellaneous
 ---------
@@ -47,8 +54,10 @@ Miscellaneous
   - Lowers the build-time `setuptools` requirement to `>=39.0`
   - Adds `typing_extensions` as an install dependency with a Python-version-specific constraint for Python versions below `3.7`
 - 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
+- 🔧 build(pyproject): Moves the PEP 517 build configuration to the repository root and keeps `setup.py` as the single package-metadata source
 - 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
 - 🧪 test(exports): Adds coverage to keep top-level message exports V2-compatible while exposing V3 through versioned aliases
+- 🧪 test: Adds a `tox` matrix for Python 3.6 through 3.12 and regression coverage for status initialization and V3 parser message validation
 - 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
   - Adds troubleshooting instructions for user-level pip installs where `piper-can` is installed outside `PATH`
   - Clarifies in README and CAN configuration docs that `piper-can` and related CAN shell-script workflows are Linux-only

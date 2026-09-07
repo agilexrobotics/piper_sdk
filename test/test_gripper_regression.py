@@ -5,8 +5,11 @@ import can
 
 from piper_sdk.interface.piper_interface_v2 import C_PiperInterface_V2
 from piper_sdk.interface.piper_interface_v3 import C_PiperInterface_V3
+from piper_sdk.piper_msgs.msg_v2 import PiperMessage as PiperMessage_V2
+from piper_sdk.piper_msgs.msg_v2.feedback.arm_feedback_status import ArmMsgFeedbackStatus
 from piper_sdk.piper_msgs.msg_v2.feedback.arm_feedback_gripper import ArmMsgFeedBackGripper
 from piper_sdk.piper_msgs.msg_v3 import PiperMessage
+from piper_sdk.piper_msgs.msg_v3.feedback.arm_feedback_status import ArmMsgFeedbackStatus_V3
 from piper_sdk.piper_msgs.msg_v3.feedback.arm_feedback_gripper import (
     ArmMsgFeedBackGripper_V3,
     ArmMsgFeedbackGripperEnums_V3,
@@ -56,6 +59,14 @@ class MessageExportTests(unittest.TestCase):
 
 
 class GripperFeedbackStatusTests(unittest.TestCase):
+    def test_status_constructors_apply_error_code_bits(self):
+        v2_feedback = ArmMsgFeedbackStatus(err_code=0x0101)
+        v3_feedback = ArmMsgFeedbackStatus_V3(err_code=0x0101)
+
+        for feedback in (v2_feedback, v3_feedback):
+            self.assertTrue(feedback.err_status.communication_status_joint_1)
+            self.assertTrue(feedback.err_status.joint_1_angle_limit)
+
     def test_v2_feedback_constructor_updates_foc_status(self):
         feedback = ArmMsgFeedBackGripper(status_code=0x40)
 
@@ -72,6 +83,15 @@ class GripperFeedbackStatusTests(unittest.TestCase):
 
 
 class GripperV3ProtocolTests(unittest.TestCase):
+    def test_v3_parser_rejects_v2_aggregate_message(self):
+        parser = C_PiperParserV3()
+
+        with self.assertRaisesRegex(TypeError, "requires PiperMessage_V3"):
+            parser.DecodeMessage(
+                _frame(0x2A8, [0x00] * 8),
+                PiperMessage_V2(),
+            )
+
     def test_decode_feedback_width_and_angle_modes(self):
         parser = C_PiperParserV3()
 

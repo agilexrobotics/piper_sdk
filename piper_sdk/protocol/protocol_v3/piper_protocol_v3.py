@@ -42,6 +42,14 @@ class C_PiperParserV3(C_PiperParserV2):
         '''
         return self.ProtocolVersion.ARM_PROROCOL_V3
 
+    @staticmethod
+    def _RequireV3Message(msg):
+        if not isinstance(msg, PiperMessage_V3):
+            raise TypeError(
+                "C_PiperParserV3 requires PiperMessage_V3; "
+                "import PiperMessage_V3 from piper_sdk."
+            )
+
     def DecodeMessage(self, rx_can_frame: Optional[can.Message], msg:PiperMessage):
         '''解码消息,将can数据帧转为设定的类型
 
@@ -68,6 +76,7 @@ class C_PiperParserV3(C_PiperParserV2):
                 If the CAN message ID exists, return True.
                 If the CAN message ID does not exist, return False.
         '''
+        self._RequireV3Message(msg)
         ret:bool = True
         can_id:int = rx_can_frame.arbitration_id
         can_data:bytearray = rx_can_frame.data
@@ -355,6 +364,7 @@ class C_PiperParserV3(C_PiperParserV2):
                 Returns True if the msg message type exists
                 Returns False if the msg message type does not exist
         '''
+        self._RequireV3Message(msg)
         ret:bool = True
         msg_type_ = msg.type_
         tx_can_frame.arbitration_id = self.ArmMessageMapping.get_mapping(msg_type=msg_type_)

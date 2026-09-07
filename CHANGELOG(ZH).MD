@@ -27,6 +27,11 @@ Version 0.7.0
 - ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
 - ✨ feat(init):保持 `ArmMsgFeedbackStatusEnum` 默认映射到 V2，并增加 `ArmMsgFeedbackStatusEnum_V2` 和 `ArmMsgFeedbackStatusEnum_V3` 显式导出，避免 V2/V3 的 `MOVE_M` 值相互覆盖
 
+破坏性变更
+----------
+
+- ⚠️ `MotorMaxSpdSet` 不再提供默认参数。调用方必须显式传入电机序号和随固件变化的最大关节速度 raw 值；依赖旧默认参数的调用将失败。
+
 Bug修复
 ---------
 
@@ -38,6 +43,8 @@ Bug修复
 - 🐞 fix(piper_msgs): 复用通用枚举基类辅助函数，并增加 V3 专用状态映射，提高枚举解析鲁棒性
 - 🐞 fix(exports): 从公开包入口导出 V3 parser、message 和 interface 类
 - 🐞 fix(exports): 保持顶层消息导出默认兼容 V2，并增加 `PiperMessage`、`CanIDPiper`、`ArmMsgType`、`ArmMessageMapping` 的 V2/V3 显式别名
+- 🐞 fix(status): 通过 `err_code` setter 初始化 V2/V3 错误状态位，确保构造时传入的错误码立即反映到状态位
+- 🐞 fix(protocol): 当 `C_PiperParserV3` 接收到 V2 `PiperMessage` 时抛出明确的 `TypeError`，要求使用 `PiperMessage_V3`，避免后续触发 `AttributeError`
 
 其它
 ---------
@@ -47,8 +54,10 @@ Bug修复
   - 将构建期 `setuptools` 要求调整为 `>=39.0`
   - 增加 `typing_extensions` 安装依赖，并对低于 Python `3.7` 的版本使用专用版本约束
 - 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
+- 🔧 build(pyproject): 将 PEP 517 构建配置移动至仓库根目录，并以 `setup.py` 作为唯一的包元数据来源
 - 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
 - 🧪 test(exports): 增加顶层消息导出兼容性测试，确保默认保持 V2 兼容，同时可通过版本化别名访问 V3
+- 🧪 test: 增加 Python 3.6 至 3.12 的 `tox` 矩阵，并补充状态初始化和 V3 parser 消息类型校验的回归测试
 - 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
   - 增加用户级 pip 安装后 `piper-can` 不在 `PATH` 时的排查和修复说明
   - 在 README 和 CAN 配置文档中明确 `piper-can` 及相关 CAN shell 脚本流程仅支持 Linux

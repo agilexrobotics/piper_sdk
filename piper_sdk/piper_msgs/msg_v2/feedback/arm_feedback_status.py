@@ -252,8 +252,8 @@ class ArmMsgFeedbackStatus:
         self._motion_status:ArmMsgFeedbackStatusEnum.MotionStatus = ArmMsgFeedbackStatusEnum.MotionStatus.match_value(motion_status)
         self.motion_status: int = self._motion_status   #运动状态
         self.trajectory_num: int = trajectory_num  #当前运行轨迹点序号
-        self._err_code = err_code         #故障码
-        self.err_status = self.ErrStatus()#故障码
+        self.err_status = self.ErrStatus()  # 故障码
+        self.err_code = err_code
 
     @property
     def ctrl_mode(self) -> ArmMsgFeedbackStatusEnum.CtrlMode:
