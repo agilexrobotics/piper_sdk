@@ -762,6 +762,37 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
 
             Target torque reference.
         """
+        if motor_num not in self._JOINT_INDEX_LIST[:-1]:
+            raise ValueError(
+                f"Joint index should be {self._JOINT_INDEX_LIST[:-1]}")
+
+        if not Validator.is_within_limit(vel_ref, v_min, v_max):
+            self.logger.warning(
+                "Desired velocity %s rad/s is outside joint %s limits "
+                "[%s, %s] rad/s.", vel_ref, motor_num, v_min, v_max
+            )
+            vel_ref = Validator.clamp(vel_ref, v_min, v_max)
+
+        if not Validator.is_within_limit(kp, kp_min, kp_max):
+            self.logger.warning(
+                "Proportional gain %s is outside joint %s limits [%s, %s].",
+                kp, motor_num, kp_min, kp_max
+            )
+            kp = Validator.clamp(kp, kp_min, kp_max)
+
+        if not Validator.is_within_limit(kd, kd_min, kd_max):
+            self.logger.warning(
+                "Derivative gain %s is outside joint %s limits [%s, %s].",
+                kd, motor_num, kd_min, kd_max
+            )
+            kd = Validator.clamp(kd, kd_min, kd_max)
+
+        if not Validator.is_within_limit(t_ref, t_min, t_max):
+            self.logger.warning(
+                "Target torque %s is outside joint %s limits [%s, %s].",
+                t_ref, motor_num, t_min, t_max
+            )
+            t_ref = Validator.clamp(t_ref, t_min, t_max)
         pos_tmp = self._parser.FloatToUint(pos_ref, p_min, p_max, 16)
         vel_tmp = self._parser.FloatToUint(vel_ref, v_min, v_max, 12)
         kp_tmp = self._parser.FloatToUint(kp, kp_min, kp_max, 12)

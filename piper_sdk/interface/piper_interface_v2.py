@@ -44,6 +44,9 @@ class C_PiperInterface_V2():
     ArmMsgType = ArmMsgType_V2
     PiperMessage = PiperMessage_V2
 
+    _JOINT_NUMS = 6
+    _JOINT_INDEX_LIST = [i for i in range(1, _JOINT_NUMS + 1)] + [255]
+
     class ArmStatus():
         '''
         机械臂状态二次封装类,增加时间戳
@@ -374,6 +377,10 @@ class C_PiperInterface_V2():
                 instance._initialized = False  # 确保 init 只执行一次
                 cls._instances[key] = instance  # 存入缓存
         return cls._instances[key]
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls._JOINT_INDEX_LIST = [i for i in range(1, cls._JOINT_NUMS + 1)] + [255]
 
     def __init__(self,
                 can_name:str="can0",

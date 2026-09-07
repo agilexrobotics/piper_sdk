@@ -15,6 +15,8 @@ LogManager.init_logger(global_area=global_area,
                     file_mode='w')
 logger = LogManager.get_logger(global_area=global_area)
 
+from .validator import Validator
+
 __all__ = [
     'C_FPSCounter',
     'quat_convert_euler',
@@ -24,5 +26,6 @@ __all__ = [
     'LogLevel',
     'global_area',
     'logger',
+    'Validator',
 ]
 
