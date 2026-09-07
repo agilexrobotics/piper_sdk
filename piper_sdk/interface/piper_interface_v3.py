@@ -766,6 +766,21 @@ class C_PiperInterface_V3(C_PiperInterface_V2):
             raise ValueError(
                 f"Joint index should be {self._JOINT_INDEX_LIST[:-1]}")
 
+        # NaN/Inf must be rejected before the limit checks: every comparison
+        # against NaN is False, so it would pass through clamp() unchanged.
+        Validator.validate_numeric(pos_ref, "pos_ref")
+        Validator.validate_numeric(vel_ref, "vel_ref")
+        Validator.validate_numeric(kp, "kp")
+        Validator.validate_numeric(kd, "kd")
+        Validator.validate_numeric(t_ref, "t_ref")
+
+        if not Validator.is_within_limit(pos_ref, p_min, p_max):
+            self.logger.warning(
+                "Desired position %s rad is outside joint %s limits "
+                "[%s, %s] rad.", pos_ref, motor_num, p_min, p_max
+            )
+            pos_ref = Validator.clamp(pos_ref, p_min, p_max)
+
         if not Validator.is_within_limit(vel_ref, v_min, v_max):
             self.logger.warning(
                 "Desired velocity %s rad/s is outside joint %s limits "

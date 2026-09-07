@@ -1,5 +1,5 @@
 import unittest
-
+# python3 -m unittest discover -s test -p 'test_*.py'
 import can
 
 from piper_sdk.interface.piper_interface_v3 import C_PiperInterface_V3
@@ -63,6 +63,34 @@ class V3ProtocolRegressionTests(unittest.TestCase):
 
         self.assertEqual(fake_can.sent[0], 0x15A)
         self.assertEqual(list(fake_can.sent[1])[2:], [0xFF] * 6)
+
+    def test_mit_interface_clamps_position_instead_of_overflowing(self):
+        interface = C_PiperInterface_V3("test-v3-mit-position", can_auto_init=False)
+        fake_can = _FakeCan()
+        interface._arm_can = fake_can
+
+        interface.JointMitCtrl(1, 13.0, 0.0, 0.0, 0.0, 0.0)
+        self.assertEqual(list(fake_can.sent[1])[:2], [0xFF, 0xFF])
+
+        interface.JointMitCtrl(1, -13.0, 0.0, 0.0, 0.0, 0.0)
+        self.assertEqual(list(fake_can.sent[1])[:2], [0x00, 0x00])
+
+    def test_mit_interface_rejects_non_finite_and_non_numeric_inputs(self):
+        interface = C_PiperInterface_V3("test-v3-mit-numeric", can_auto_init=False)
+        fake_can = _FakeCan()
+        interface._arm_can = fake_can
+
+        for index in range(5):
+            for bad in (float("nan"), float("inf"), float("-inf")):
+                args = [1, 0.0, 0.0, 0.0, 0.0, 0.0]
+                args[index + 1] = bad
+                with self.assertRaises(ValueError):
+                    interface.JointMitCtrl(*args)
+
+        with self.assertRaises(TypeError):
+            interface.JointMitCtrl(1, 0.0, 0.0, "10", 0.0, 0.0)
+
+        self.assertIsNone(fake_can.sent)
 
     def test_motion_control_v3_move_m_and_installation_position_encoding(self):
         msg = PiperMessage(

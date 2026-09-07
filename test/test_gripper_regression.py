@@ -1,6 +1,6 @@
 import threading
 import unittest
-
+# python3 -m unittest discover -s test -p 'test_*.py'
 import can
 
 from piper_sdk.interface.piper_interface_v2 import C_PiperInterface_V2
