@@ -18,10 +18,10 @@ Note: python-can >= 3.3.4
 pip3 install python-can
 ```
 
-Note: piper_sdk >= 0.7.0
+Note: piper_sdk >= 0.7.0a1 (pre-release, `pip3 install piper_sdk` alone resolves to the latest stable release, which has no V3 support)
 
 ```shell
-pip3 install piper_sdk
+pip3 install "piper_sdk>=0.7.0a1"
 ```
 
 Instructions for activating the CAN module [can README](../../../assets/can_config.MD)
