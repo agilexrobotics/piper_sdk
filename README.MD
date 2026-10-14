@@ -58,6 +58,28 @@ Three methods are provided, choose one.
 pip3 install piper_sdk
 ```
 
+##### Query and install a pre-release
+
+When a compatible stable release is available, pip excludes pre-releases by default. To list available versions, including pre-releases:
+
+```shell
+pip3 index versions piper_sdk --pre
+```
+
+Choose a version from the output, then install it with `==`. For example, to install the alpha pre-release `0.7.0a1`:
+
+```shell
+pip3 install --upgrade "piper_sdk==0.7.0a1"
+```
+
+Replace `0.7.0a1` with your selected version. An exact pre-release requirement does not need `--pre`; `--upgrade` allows updating an existing installation. The selected version must have been published to your configured package index. If a mirror has not synchronized it, query and install using the official PyPI index by adding `--index-url https://pypi.org/simple` to both commands. If your pip does not support `pip3 index versions`, check the release history at https://pypi.org/project/piper-sdk/#history instead.
+
+Confirm the installed version:
+
+```shell
+pip3 show piper_sdk
+```
+
 #### 1.2.2 Clone the github repository and install
 
 ```shell

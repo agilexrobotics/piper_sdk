@@ -54,6 +54,28 @@ which pip3
 pip3 install piper_sdk
 ```
 
+##### 查询并安装预发布版
+
+存在兼容的正式版本时，pip 默认不选择预发布版。先查询可用版本，使用 `--pre` 将预发布版也列入结果：
+
+```shell
+pip3 index versions piper_sdk --pre
+```
+
+从查询结果中选定版本，再使用 `==` 指定安装。例如，安装 alpha 预发布版 `0.7.0a1`：
+
+```shell
+pip3 install --upgrade "piper_sdk==0.7.0a1"
+```
+
+将 `0.7.0a1` 替换为你选定的版本。明确指定预发布版本时，安装命令无需再加 `--pre`；`--upgrade` 用于更新已有安装。选定版本必须已发布到当前配置的软件源。如果镜像尚未同步，可在查询和安装命令中均添加 `--index-url https://pypi.org/simple`，使用官方 PyPI 源。如果当前 pip 不支持 `pip3 index versions`，可直接查看 https://pypi.org/project/piper-sdk/#history 中的发布记录。
+
+安装后确认版本：
+
+```shell
+pip3 show piper_sdk
+```
+
 #### 1.2.2 拉取github仓库后安装
 
 ```shell
