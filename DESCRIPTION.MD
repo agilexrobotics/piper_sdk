@@ -48,6 +48,7 @@ pip3 uninstall piper_sdk
 
 - The CAN device must be activated and the correct baud rate set before reading messages from or controlling the robotic arm.
 - The `C_PiperInterface` interface class can accept the activated CAN route name as a parameter when instantiated.
+- Use `C_PiperInterface_V3` for firmware version `1.8-8` and later. If an older example uses `C_PiperInterface`, replace it with `C_PiperInterface_V3` when running on V3 firmware/protocol.
 
 ## Contact Us
 

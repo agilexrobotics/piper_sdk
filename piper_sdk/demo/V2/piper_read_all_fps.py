@@ -7,7 +7,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2("can0")
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort(True)
     count = 0
     while True:
@@ -24,4 +24,3 @@ if __name__ == "__main__":
         print(f"gripper_ctrl: {piper.GetArmGripperCtrl().Hz}")
         print(f"mode_ctrl: {piper.GetArmModeCtrl().Hz}")
         time.sleep(0.01)
-    

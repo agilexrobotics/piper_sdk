@@ -42,10 +42,10 @@ Byte 5 安装位置设定
 |        数据          |                  功能                  |        类型      |                 |
 |       Byte 0        |  Pos_ref [bit15~bit8] 高8位            |       uint8     |                 |
 |       Byte 1        |  Pos_ref [bit7~bit0]  低8位            |       uint8     |                 |
-|       Byte 2        |  Vel_ref [bit11~bit4] 低12位           |       uint8     |                 |
+|       Byte 2        |  Vel_ref [bit11~bit4] 高8位           |       uint8     |                 |
 |       Byte 3        |  Vel_ref [bit3~bit0] Kp [bit11~bit8]  |       uint8     |                 |
 |       Byte 4        |  Kp [bit7~bit0]                       |       uint8     | Kp给定参考值：10  |
-|       Byte 5        |  Kd [bit11~bit4]      低12位           |       uint8     | Kd给定参考值：0.8 |
+|       Byte 5        |  Kd [bit11~bit4]      高8位           |       uint8     | Kd给定参考值：0.8 |
 |       Byte 6        |  Kd [bit3~bit0] T_ref [bit7~bit4]      |       uint8     |                 |
 |       Byte 7        |  T_ref [bit3~bit0] CRC [bit3~bit0]     |       uint8     |                 |
 
@@ -61,7 +61,7 @@ Byte 5 安装位置设定
 |       Byte 2           |  最大角度限制 L                         |                 |                           |
 |       Byte 3           |  最小角度限制 H                         |       uint16    |单位 0.1°**无效值：0x7FFF**  |
 |       Byte 4           |  最小角度限制 L                         |                 |                           |
-|       Byte 5           |  最大关节速度 H                         |       uint16    |单位 0.001rad/s**无效值：0x7FFF**|
+|       Byte 5           |  最大关节速度 H                         |       uint16    |单位随固件版本变化：V1.5-8之前(不含V1.5-8)为0.001rad/s，V1.5-8及之后为0.01rad/s **无效值：0x7FFF**|
 |       Byte 6           |  最大关节速度 L                         |                 |                           |
 |       Byte 7           |  保留                                  |                 |                           |
 

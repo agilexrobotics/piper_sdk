@@ -10,10 +10,10 @@ In the new version, the gripper needs to have its stroke range set at the factor
 
 The V2 version interface and above should be used to set this.
 
-1. Execute [piper_disable.py](../demo/V2/piper_disable.py) to disable the robotic arm. Note that disabling the arm will cut power to all motors immediately.
-2. Execute [V2_gripper_param_config.py](../demo/V2/V2_gripper_param_config.py) to set the stroke range for the end effector.
-3. Then, execute [read_gripper_status.py](../demo/V2/read_gripper_status.py) to check if the end effector provides any feedback.
-4. If you find that the stroke data for the end effector is too large when closed, you can use [piper_gripper_zero_set.py](../demo/V2/piper_gripper_zero_set.py) to set the end effector’s zero position
+1. Execute [piper_ctrl_disable.py](../piper_sdk/demo/V2/piper_ctrl_disable.py) to disable the robotic arm. Note that disabling the arm will cut power to all motors immediately.
+2. Execute [V2_piper_set_gripper_param.py](../piper_sdk/demo/V2/V2_piper_set_gripper_param.py) to set the stroke range for the end effector.
+3. Then, execute [piper_read_gripper_status.py](../piper_sdk/demo/V2/piper_read_gripper_status.py) to check if the end effector provides any feedback.
+4. If you find that the stroke data for the end effector is too large when closed, you can use [piper_set_gripper_zero.py](../piper_sdk/demo/V2/piper_set_gripper_zero.py) to set the end effector's zero position
 
 ## 2. Jetson Orin Nano cannot detect official CAN module
 

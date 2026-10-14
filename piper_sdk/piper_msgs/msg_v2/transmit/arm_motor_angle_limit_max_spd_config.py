@@ -16,7 +16,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         motor_num: 关节电机序号
         max_angle_limit: 最大角度限制,单位 0.1°,0x7FFF为设定无效数值
         min_angle_limit: 最小角度限制,单位 0.1°,0x7FFF为设定无效数值
-        max_joint_spd: 最大关节速度,单位 0.001rad/s,范围[0,3000],0x7FFF为设定无效数值
+        max_joint_spd: 最大关节速度,单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s。对应0-3.0rad/s时,V1.5-8之前范围为[0,3000],V1.5-8及之后范围为[0,300],0x7FFF为设定无效数值
     
     |joint_name|     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
     |----------|     ----------       |     ----------     |     ----------     |
@@ -34,7 +34,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         Byte 2: 最大角度限制 L
         Byte 3: 最小角度限制 H: int16, 单位 0.1°(基于V1.5-2版本后增加无效数值0x7FFF)
         Byte 4: 最小角度限制 L
-        Byte 5: 最大关节速度 H: uint16, 单位 0.001rad/s(基于V1.5-2版本后增加无效数值0x7FFF)
+        Byte 5: 最大关节速度 H: uint16, 单位随固件版本变化: V1.5-8之前(不含V1.5-8)为0.001rad/s, V1.5-8及之后为0.01rad/s(基于V1.5-2版本后增加无效数值0x7FFF)
         Byte 6: 最大关节速度 L
     '''
     '''
@@ -49,7 +49,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         motor_num: Joint motor index.
         max_angle_limit: Maximum angle limit, unit 0.1°,0x7FFF is defined as the invalid value.
         min_angle_limit: Minimum angle limit, unit 0.1°,0x7FFF is defined as the invalid value.
-        max_joint_spd: Maximum joint speed, unit 0.001 rad/s,Range [0, 3000],0x7FFF is defined as the invalid value.
+        max_joint_spd: Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward. 0x7FFF is defined as the invalid value.
 
     |joint_name|     limit(rad)       |    limit(angle)    |     limit(rad/s)   |
     |----------|     ----------       |     ----------     |     ----------     |
@@ -67,7 +67,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         Byte 2: Maximum angle limit (low byte).
         Byte 3: Minimum angle limit (high byte), int16, unit 0.1°.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
         Byte 4: Minimum angle limit (low byte).
-        Byte 5: Maximum joint speed (high byte), uint16, unit 0.001 rad/s.(Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
+        Byte 5: Maximum joint speed (high byte), uint16. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). (Based on version V1.5-2 and later, the invalid value 0x7FFF is added.)
         Byte 6: Maximum joint speed (low byte).
     '''
     def __init__(self, 
@@ -78,7 +78,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
         if motor_num not in [1, 2, 3, 4, 5, 6]:
             raise ValueError(f"'motor_num' Value {motor_num} out of range [1, 2, 3, 4, 5, 6]")
         if not (0 <= max_joint_spd <= 3000 or max_joint_spd == 0x7FFF):
-            raise ValueError(f"'max_joint_spd' Value {max_joint_spd} out of range 0-3000 or not equal to 0x7FFF")
+            raise ValueError(f"'max_joint_spd' Value {max_joint_spd} out of allowed raw range 0-3000 or not equal to 0x7FFF")
         self.motor_num = motor_num
         self.max_angle_limit = max_angle_limit
         self.min_angle_limit = min_angle_limit
@@ -89,7 +89,7 @@ class ArmMsgMotorAngleLimitMaxSpdSet:
                 f"  motor_num: {self.motor_num},\n"
                 f"  max_angle_limit: {self.max_angle_limit}, {self.max_angle_limit * 0.1:.1f},\n"
                 f"  min_angle_limit: {self.min_angle_limit}, {self.min_angle_limit * 0.1:.1f},\n"
-                f"  max_joint_spd: {self.max_joint_spd}, {self.max_joint_spd * 0.3:.3f}\n"
+                f"  max_joint_spd: {self.max_joint_spd} (raw, 0.001 rad/s before V1.5-8; 0.01 rad/s from V1.5-8 onward)\n"
                 f")")
 
     def __repr__(self):

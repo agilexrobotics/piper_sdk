@@ -1,0 +1,37 @@
+# bash completion for piper-can
+
+_piper_can_completion()
+{
+    local cur command can_names
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    command="${COMP_WORDS[1]}"
+
+    if [[ ${COMP_CWORD} -eq 1 ]]; then
+        COMPREPLY=( $(compgen -W "find activate -h --help" -- "${cur}") )
+        return 0
+    fi
+
+    case "${command}" in
+        find)
+            COMPREPLY=( $(compgen -W "-h --help" -- "${cur}") )
+            ;;
+        activate)
+            case ${COMP_CWORD} in
+                2)
+                    can_names="$(ip -o link show type can 2>/dev/null | awk -F': ' '{print $2}')"
+                    COMPREPLY=( $(compgen -W "${can_names} -h --help --usb-port" -- "${cur}") )
+                    ;;
+                3)
+                    COMPREPLY=( $(compgen -W "1000000" -- "${cur}") )
+                    ;;
+                *)
+                    COMPREPLY=( $(compgen -W "--usb-port -h --help" -- "${cur}") )
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+complete -F _piper_can_completion piper-can

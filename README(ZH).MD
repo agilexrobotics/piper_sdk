@@ -16,12 +16,15 @@ Test:
 
 |说明 |文档|
 |---|---|
-|接口函数的详细说明|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|机械臂DEMO|[`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
-|双臂的主从配置和读取数据|[double_piper](./asserts/double_piper.MD)|
+|V2接口函数的详细说明|[Interface_V2 README](./assets/V2/INTERFACE_V2.MD)|
+|V3接口函数的详细说明|[Interface_V3 README](./assets/V3/INTERFACE_V3.MD)|
+|V3协议和消息变更说明|[CHANGELOG-V3](./assets/V3/CHANGELOG-V3.MD)|
+|机械臂DEMO (V2)|[`piper_sdk/demo/V2`](./piper_sdk/demo/V2/README.MD)|
+|机械臂DEMO (V3)|[`piper_sdk/demo/V3`](./piper_sdk/demo/V3/README.MD)|
+|双臂的主从配置和读取数据|[double_piper](./assets/double_piper.MD)|
 |使用pyQT5的开源UI|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
-|Q&A|[Q&A](./asserts/Q&A.MD)|
+|Q&A|[Q&A](./assets/Q&A.MD)|
 
 <details open>
   <summary><h2 style="display:inline">1 软件安装方法</h2></summary>
@@ -51,6 +54,28 @@ which pip3
 pip3 install piper_sdk
 ```
 
+##### 查询并安装预发布版
+
+存在兼容的正式版本时，pip 默认不选择预发布版。先查询可用版本，使用 `--pre` 将预发布版也列入结果：
+
+```shell
+pip3 index versions piper_sdk --pre
+```
+
+从查询结果中选定版本，再使用 `==` 指定安装。例如，安装 alpha 预发布版 `0.7.0a1`：
+
+```shell
+pip3 install --upgrade "piper_sdk==0.7.0a1"
+```
+
+将 `0.7.0a1` 替换为你选定的版本。明确指定预发布版本时，安装命令无需再加 `--pre`；`--upgrade` 用于更新已有安装。选定版本必须已发布到当前配置的软件源。如果镜像尚未同步，可在查询和安装命令中均添加 `--index-url https://pypi.org/simple`，使用官方 PyPI 源。如果当前 pip 不支持 `pip3 index versions`，可直接查看 https://pypi.org/project/piper-sdk/#history 中的发布记录。
+
+安装后确认版本：
+
+```shell
+pip3 show piper_sdk
+```
+
 #### 1.2.2 拉取github仓库后安装
 
 ```shell
@@ -64,8 +89,44 @@ pip3 install .
 注意下面的X为你要的realease版本
 
 ```shell
-pip3 install piper_sdk-X.X.X-py3-none-any.whl 
+pip3 install piper_sdk-X.X.X-py3-none-any.whl
 ```
+
+#### 1.2.4 如果 pip 提示 `piper-can` 不在 `PATH` 中
+
+使用用户级 pip 环境安装时，尤其是在 Ubuntu 20.04 上，pip 可能会出现类似下面的提示：
+
+```text
+WARNING: The script piper-can is installed in '/home/xxx/.local/bin' which is not on PATH.
+Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+
+这表示 `piper_sdk` 已经安装成功，但是命令行脚本被安装到了 Python 用户脚本目录中，而当前 shell 的 `PATH` 没有包含这个目录。此时在终端中直接执行 `piper-can` 可能会提示找不到命令。
+
+可以先临时修复当前终端：
+
+```bash
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+```
+
+如果使用 bash，并希望永久生效，可以写入 `~/.bashrc`：
+
+```bash
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+如果使用其它 shell，请用对应 shell 的语法把同一个用户脚本目录加入该 shell 的启动文件。
+
+然后验证：
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
+```
+
+注意：`piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们依赖 Linux shell 脚本和 CAN 工具。
 
 ### 1.3 查看 piper_sdk 细节
 
@@ -135,12 +196,14 @@ sudo apt update && sudo apt install can-utils ethtool
 
 如果执行bash脚本出现`ip: command not found`，请安装ip指令，一般是`sudo apt-get install iproute2`
 
+注意：本节中的 `piper-can` CAN 查找/激活命令以及 CAN 配置 shell 脚本仅支持 Linux。
+
 ### 2.1 寻找can模块
 
 执行
 
 ```bash
-bash find_all_can_port.sh
+piper-can find
 ```
 
 输入密码后，如果can模块插入了电脑，并被电脑检测到，输出类似如下：
@@ -176,16 +239,28 @@ Interface can0 is connected to USB port 3-1.1:1.0
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 激活单个can模块, **此处使用`can_activate.sh`脚本**
+### 2.2 激活单个can模块, **此处使用 `piper-can` CLI**
 
 激活单个can模块的情况分两种，一种是电脑只链接了一个can模块，一种是多个can模块插入电脑但是只激活其中一个。
+
+安装 `piper_sdk` 后，终端中会提供 `piper-can` 命令。该命令提供 `find` 和 `activate` 两个子命令，支持 `-h`/`--help`，如果 shell 已启用可执行命令补全，输入 `piper-` 后可用 Tab 补全命令名。
+
+注意：`piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们会调用安装包内的 `.sh` 脚本，并依赖 `can-utils`、`ethtool`、`iproute2` 等 Linux CAN 工具。
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
+```
+
+安装包同时会安装 `piper-can` 的 bash 补全。打开新终端后，输入 `piper-can ` 再按 Tab 可以补全 `find` 和 `activate` 子命令。如果当前 shell 会话早于安装时间打开，请重新加载 bash completion 或打开新终端。
 
 #### 2.2.1 pc只插入一个usb转can模块
 
 直接执行
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can activate can0 1000000
 ```
 
 此处`can0`可以改为任意名字，`1000000`为波特率，不可更改
@@ -197,7 +272,7 @@ bash can_activate.sh can0 1000000
 (1) 查看can模块插在usb端口的硬件地址。拔掉所有can模块，只将连接到机械臂的can模块插入PC，执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 并记录下`USB port`的数值，例如`3-1.4:1.0`
@@ -205,7 +280,7 @@ bash find_all_can_port.sh
 (2) 激活can设备。假设上面的`USB port`数值为`3-1.4:1.0`，执行：
 
 ```bash
-bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
+piper-can activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 解释：**3-1.4:1.0硬件编码的usb端口插入的can设备，名字被重命名为can_piper，设定波特率为1000000，并激活**
@@ -229,7 +304,7 @@ bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
 (1) 然后can模块中的其中一个单独插入PC，执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 并记录下`USB port`的数值，例如`3-1.4:1.0`
@@ -237,7 +312,7 @@ bash find_all_can_port.sh
 (2) 接着插入下一个can模块，注意**不可以**与上次can模块插入的usb口相同，然后执行
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 记录下第二个can模块的`USB port`的数值，例如`3-1.1:1.0`
@@ -271,6 +346,8 @@ USB_PORTS["3-1.1:1.0"]="can_right:1000000"
 <details open>
   <summary><h2 style="display:inline">3 简单开始</h2></summary>
   <div>
+
+固件/interface 选择说明：示例中使用 `C_PiperInterface` 的代码为旧版/默认 interface 写法。固件版本 `1.8-8` 及以后需要使用 `C_PiperInterface_V3`，例如 `piper = C_PiperInterface_V3("can0")`。V3 专用行为请参考 [Interface_V3 README](./assets/V3/INTERFACE_V3.MD)。
 
 从一个最简单的读取机械臂关节角开始
 
@@ -347,6 +424,7 @@ if __name__ == "__main__":
 
 - 需要先激活can设备，并且设置正确的波特率，才可以读取机械臂消息或者控制机械臂
 - C_PiperInterface 接口类在实例化时可传入激活的can路由名称，这个名称可以通过`ifconfig`得到
+- 固件版本 `1.8-8` 及以后请使用 `C_PiperInterface_V3`。如果示例中使用的是 `C_PiperInterface`，在 V3 固件/协议下运行时请替换为 `C_PiperInterface_V3`
 - 执行can发送，终端反馈`SendCanMessage(SEND_MESSAGE_FAILED (100017))`，是can模块没有成功连接设备，先检查模块与机械臂的连接状态，然后将机械臂断电后上电，再尝试发送
 - sdk的interface在创建实例后会检测是否激活自带的can模块，如果是其它can设备，可以将第二个形参设定为False，如：`piper = C_PiperInterface_V2("can0",False)`
 - **机械臂的mit协议控制单关节电机为高级功能,使用时需注意,此协议的使用不当会导致机械臂损坏！！！**

@@ -20,12 +20,15 @@ This SDK is used to receive CAN data frames and process them into custom data ty
 
 |Description | Documentation|
 |---|---|
-|Detailed description of interface functions|[Interface_V2 README](./asserts/V2/INTERFACE_V2.MD)|
-|Robot Arm DEMO|[piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
-|Master-slave configuration and data reading for dual arms|[double_piper](./asserts/double_piper.MD)|
+|Detailed description of V2 interface functions|[Interface_V2 README](./assets/V2/INTERFACE_V2.MD)|
+|Detailed description of V3 interface functions|[Interface_V3 README](./assets/V3/INTERFACE_V3.MD)|
+|V3 protocol and message changelog|[CHANGELOG-V3](./assets/V3/CHANGELOG-V3.MD)|
+|Robot Arm DEMO (V2)|[piper_sdk/demo/V2](./piper_sdk/demo/V2/README.MD)|
+|Robot Arm DEMO (V3)|[piper_sdk/demo/V3](./piper_sdk/demo/V3/README.MD)|
+|Master-slave configuration and data reading for dual arms|[double_piper](./assets/double_piper.MD)|
 |Open-source UI using pyQT5|[Piper_sdk_ui](<https://github.com/agilexrobotics/Piper_sdk_ui.git>)|
 |CHANGELOG|[CHANGELOG](./CHANGELOG.MD)|
-|Q&A|[Q&A](./asserts/Q&A.MD)|
+|Q&A|[Q&A](./assets/Q&A.MD)|
 
 <details open>
   <summary><h2 style="display:inline">1 Software Installation Method</h2></summary>
@@ -55,6 +58,28 @@ Three methods are provided, choose one.
 pip3 install piper_sdk
 ```
 
+##### Query and install a pre-release
+
+When a compatible stable release is available, pip excludes pre-releases by default. To list available versions, including pre-releases:
+
+```shell
+pip3 index versions piper_sdk --pre
+```
+
+Choose a version from the output, then install it with `==`. For example, to install the alpha pre-release `0.7.0a1`:
+
+```shell
+pip3 install --upgrade "piper_sdk==0.7.0a1"
+```
+
+Replace `0.7.0a1` with your selected version. An exact pre-release requirement does not need `--pre`; `--upgrade` allows updating an existing installation. The selected version must have been published to your configured package index. If a mirror has not synchronized it, query and install using the official PyPI index by adding `--index-url https://pypi.org/simple` to both commands. If your pip does not support `pip3 index versions`, check the release history at https://pypi.org/project/piper-sdk/#history instead.
+
+Confirm the installed version:
+
+```shell
+pip3 show piper_sdk
+```
+
 #### 1.2.2 Clone the github repository and install
 
 ```shell
@@ -70,6 +95,47 @@ Note: Replace X with the release version you need
 ```shell
 pip3 install piper_sdk-X.X.X-py3-none-any.whl
 ```
+
+#### 1.2.4 If pip reports that `piper-can` is not on `PATH`
+
+When installing with a user-level pip environment, especially on Ubuntu 20.04,
+pip may show a warning similar to:
+
+```text
+WARNING: The script piper-can is installed in '/home/xxx/.local/bin' which is not on PATH.
+Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+```
+
+This means `piper_sdk` was installed successfully, but the command-line scripts
+were installed into the Python user script directory, and this directory is not
+included in the current shell's `PATH`. In this case, commands such as
+`piper-can` may not be found directly in the terminal.
+
+You can temporarily fix the current terminal session with:
+
+```bash
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
+```
+
+To make it permanent for bash, add it to `~/.bashrc`:
+
+```bash
+echo 'export PATH="$(python3 -m site --user-base)/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+If you use another shell, add the same user script directory to that shell's
+startup file using the equivalent syntax.
+
+Then verify:
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
+```
+
+Note: `piper-can find` and `piper-can activate` are only supported on Linux because they rely on Linux shell scripts and CAN tools.
 
 ### 1.3 Check piper_sdk Details
 
@@ -139,12 +205,14 @@ These two tools are used to configure the CAN module.
 
 If executing the bash script shows `ip: command not found`, install the `ip` command by running `sudo apt-get install iproute2`
 
+Note: The `piper-can` CAN discovery/activation commands and the CAN configuration shell scripts in this section are only supported on Linux.
+
 ### 2.1 Find CAN Modules
 
 Run the following command:
 
 ```bash
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Enter the password, and if the CAN module is inserted into the computer and detected, it will output something like:
@@ -180,16 +248,28 @@ If no CAN module is detected, only the following will be output:
 Both ethtool and can-utils are installed.
 ```
 
-### 2.2 Activate a Single CAN Module (use can_activate.sh script)
+### 2.2 Activate a Single CAN Module (use `piper-can` CLI)
 
 There are two situations for activating a single CAN module: one is when only one CAN module is connected to the PC, and the other is when multiple CAN modules are inserted, but only one is activated.
+
+After installing `piper_sdk`, the `piper-can` command is available in the terminal. It provides the `find` and `activate` subcommands, supports `-h`/`--help`, and the command name can be completed with Tab after typing `piper-` if your shell completion for executable commands is enabled.
+
+Note: `piper-can find` and `piper-can activate` are only supported on Linux because they call packaged `.sh` scripts and depend on Linux CAN tools such as `can-utils`, `ethtool`, and `iproute2`.
+
+```bash
+piper-can -h
+piper-can find -h
+piper-can activate -h
+```
+
+The package also installs bash completion for `piper-can`. In a new terminal, typing `piper-can ` and pressing Tab completes the `find` and `activate` subcommands. If your current shell session was opened before installation, reload bash completion or start a new terminal.
 
 #### 2.2.1 PC has only one USB-to-CAN module connected
 
 Simply execute:
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can activate can0 1000000
 ```
 
 Here, `can0` can be replaced with any name, and `1000000` is the baud rate, which cannot be changed.
@@ -201,7 +281,7 @@ Note: This case applies when using both the robot arm and the chassis.
 (1) Find the USB hardware address of the CAN module. Unplug all CAN modules and plug in only the one connected to the robot arm, then execute:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the USB port value, for example, 3-1.4:1.0.
@@ -209,7 +289,7 @@ Record the USB port value, for example, 3-1.4:1.0.
 (2) Activate the CAN device. Assuming the USB port value is 3-1.4:1.0, run:
 
 ```bash
-bash can_activate.sh can_piper 1000000 "3-1.4:1.0"
+piper-can activate can_piper 1000000 --usb-port "3-1.4:1.0"
 ```
 
 Explanation: **3-1.4:1.0 is the hardware-encoded USB port, and the CAN device inserted there is renamed as can_piper, with a baud rate of 1000000 and activated.**
@@ -231,7 +311,7 @@ In the `can_muti_activate.sh` file, the `EXPECTED_CAN_COUNT` parameter should be
 (1) Plug in one CAN module and run:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the `USB port` value, for example, `3-1.4:1.0`
@@ -239,7 +319,7 @@ Record the `USB port` value, for example, `3-1.4:1.0`
 (2) Plug in the next CAN module. Ensure **it is not inserted into the same USB port as the previous one** and run:
 
 ```shell
-bash find_all_can_port.sh
+piper-can find
 ```
 
 Record the value of the second CAN module's `USB port`, for example `3-1.1:1.0`
@@ -279,6 +359,8 @@ Run `ifconfig` to check if `can_left` and `can_right` are present.
   <div>
 
 Start with the simplest way to read the joint angle of the robot arm
+
+Firmware/interface note: examples that use `C_PiperInterface` are for the legacy/default interface. For firmware version `1.8-8` and later, use `C_PiperInterface_V3` instead, for example `piper = C_PiperInterface_V3("can0")`. See [Interface_V3 README](./assets/V3/INTERFACE_V3.MD) for V3-specific behavior.
 
 ```python
 import time
@@ -357,6 +439,7 @@ if __name__ == "__main__":
 
 - Ensure that CAN devices are activated and set to the correct baud rate before reading robot arm messages or controlling the robot arm.
 - The `C_PiperInterface` class can accept the activated CAN interface name during instantiation, which can be obtained from `ifconfig`.
+- Use `C_PiperInterface_V3` for firmware version `1.8-8` and later. If an example uses `C_PiperInterface`, replace it with `C_PiperInterface_V3` when running on V3 firmware/protocol.
 - If a message is not sent with the feedback `SendCanMessage(SEND_MESSAGE_FAILED (100017))` the CAN module might not be successfully connected. Check the connection and power cycle the robot arm before retrying.
 - The SDK's interface will check if the built-in CAN module is activated after creating the instance. For other CAN devices, set the second parameter to False, for example: `piper = C_PiperInterface_V2("can0", False)`.
 - **The MIT protocol for controlling individual joints is an advanced feature; misuse of this protocol can damage the robot arm!**

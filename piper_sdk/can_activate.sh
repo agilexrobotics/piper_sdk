@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # The default CAN name can be set by the user via command-line parameters.
 DEFAULT_CAN_NAME="${1:-can0}"
@@ -45,9 +45,9 @@ if [ "$CURRENT_CAN_COUNT" -ne "1" ]; then
             
             echo "Interface $iface is inserted into USB port $BUS_INFO"
         done
-        echo -e " Error: The number of CAN modules detected by the system ($CURRENT_CAN_COUNT) does not match the expected number (1). "
-        echo -e " Please add the USB hardware address parameter, such as: "
-        echo -e " bash can_activate.sh can0 1000000 1-2:1.0"
+        printf '%s\n' " Error: The number of CAN modules detected by the system ($CURRENT_CAN_COUNT) does not match the expected number (1). "
+        printf '%s\n' " Please add the USB hardware address parameter, such as: "
+        printf '%s\n' " piper-can activate can0 1000000 --usb-port 1-2:1.0"
         echo "-------------------ERROR-----------------------"
         exit 1
     fi
@@ -96,9 +96,9 @@ fi
 IS_LINK_UP=$(ip link show "$INTERFACE_NAME" | grep -q "UP" && echo "yes" || echo "no")
 
 # Retrieve the bitrate of the current interface.
-CURRENT_BITRATE=$(ip -details link show "$INTERFACE_NAME" | grep -oP 'bitrate \K\d+')
+CURRENT_BITRATE=$(ip -details link show "$INTERFACE_NAME" | awk '{for (i = 1; i < NF; i++) if ($i == "bitrate") {print $(i + 1); exit}}')
 
-if [ "$IS_LINK_UP" = "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
+if [ "$IS_LINK_UP" = "yes" ] && [ -n "$CURRENT_BITRATE" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
     echo "Interface $INTERFACE_NAME is already activated with a bitrate of $DEFAULT_BITRATE."
     
     # Check if the interface name matches the default name.

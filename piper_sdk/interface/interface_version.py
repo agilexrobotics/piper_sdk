@@ -12,6 +12,7 @@ class InterfaceVersion(Enum):
     '''
     INTERFACE_V1 = auto()
     INTERFACE_V2 = auto()
+    INTERFACE_V3 = auto()
     INTERFACE_UNKNOWN = auto()
     def __str__(self):
         return f"{self.name} (0x{self.value:X})"

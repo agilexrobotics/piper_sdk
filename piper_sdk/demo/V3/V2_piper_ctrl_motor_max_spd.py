@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+# -*-coding:utf8-*-
+# 注意demo无法直接运行，需要pip安装sdk后才能运行
+# V3版本sdk
+# 意为V2中增加的接口，可以在V3中使用
+# 单独设定某个电机的最大速度
+# 注意这个指令是通过协议直接写入到驱动flash中，不可实时更新，如果需要动态调整速度，请使用位置速度模式中的速度百分比
+import time
+from piper_sdk import *
+
+if __name__ == "__main__":
+    piper = C_PiperInterface_V3(can_name="can0")
+    piper.ConnectPort()
+    while( not piper.EnablePiper()):
+        time.sleep(0.01)
+    # V3 firmware uses 0.01 rad/s per raw unit, so raw 300 means 3 rad/s.
+    for i in range(1,7):
+        piper.MotorMaxSpdSet(i, 300)
+        time.sleep(0.1)
+    while True:
+        piper.SearchAllMotorMaxAngleSpd()
+        print(piper.GetAllMotorAngleLimitMaxSpd())
+        time.sleep(0.01)

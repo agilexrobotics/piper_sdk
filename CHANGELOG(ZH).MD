@@ -3,6 +3,84 @@
 [Click to switch EN](CHANGELOG.MD)
 =============
 
+Version 0.7.0a1
+===============
+
+特性
+--------
+
+- ✨ feat(interface,protocol,piper_msgs): 增加适配固件/协议 V1.8-8 及以上版本的 V3 接口栈
+  - 增加 `C_PiperInterface_V3`、`C_PiperParserV3`、`InterfaceVersion.INTERFACE_V3`、V3 CAN ID/type 映射以及公开包入口导出
+  - 将 V2 私有字段和更新辅助函数调整为受保护成员，便于 V3 复用并扩展接口行为，方便继承
+- ✨ feat(motion_ctrl): 增加 V3 运动控制行为
+  - V3 MOVE M 改为 `move_mode=0x06`，V3 状态反馈中的 MOVE M 改为 `mode_feed=0x06`
+  - 增加 V3 水平倒装安装位置 `installation_pos=0x04`
+- ✨ feat(gripper): 增加 V3 夹爪行程/角度模式支持，同时V2版本的夹爪有关函数保留
+  - 增加`GetArmGripperCtrl_V3`、`GetArmGripperMsgs_V3`、`GripperCtrl_V3`函数，保留`GetArmGripperCtrl`、`GetArmGripperMsgs`、`GripperCtrl`函数
+  - 增加 V3 夹爪反馈/控制消息、parser 编解码支持、V3 获取接口以及 V3 夹爪示例
+  - 增加 V3 角度模式使用的 SDK 侧夹爪角度限位参数
+- ✨ feat(ik_joint): 增加 V3 IK 关节反馈帧和缓存读取接口
+  - 增加`GetArmIKJointMsgs`函数
+  - 注意：IK关节反馈不会在机械臂通电后立即发布。请先将机械臂设置为MOVE P模式并发送相应的姿态控制命令；触发后，机械臂将持续发布IK关节反馈帧。
+- ✨ feat(cli): 增加安装包内可直接使用的 CAN 模块查找命令 `piper-can find` 和单 CAN 模块激活命令 `piper-can activate`
+  - 说明并限制 `piper-can find` 和 `piper-can activate` 仅支持 Linux，因为它们依赖 Linux shell 脚本和 CAN 工具
+- ✨ feat(demo): 增加 V3 版本的使能/失能、运动控制、状态读取、参数设置、MIT 控制、夹爪角度模式、IK 反馈、水平倒装安装位置、多实例和断开连接测试示例
+- ✨ feat(init):保持 `ArmMsgFeedbackStatusEnum` 默认映射到 V2，并增加 `ArmMsgFeedbackStatusEnum_V2` 和 `ArmMsgFeedbackStatusEnum_V3` 显式导出，避免 V2/V3 的 `MOVE_M` 值相互覆盖
+
+破坏性变更
+----------
+
+- ⚠️ `MotorMaxSpdSet` 不再提供默认参数。调用方必须显式传入电机序号和随固件变化的最大关节速度 raw 值；依赖旧默认参数的调用将失败。
+
+Bug修复
+---------
+
+- 🐞 fix(interface): 将发送消息对象按发送线程隔离，避免多线程发送状态相互覆盖
+- 🐞 fix(interface): 增加 `C_PiperInterface_V3` 单例重复初始化保护，避免同一 `can_name` 重复构造时重置 V3 parser、锁、反馈缓存以及 rx/tx 消息对象
+- 🐞 fix(param): SDK 参数管理器改为每个 interface 实例独立持有，并增加有限数值和范围校验
+- 🐞 fix(interface): 在 SDK 侧限位裁剪前先过滤原始异常反馈数据
+- 🐞 fix(gripper): 初始化或更新夹爪反馈状态码时同步更新 FOC 状态位字段
+- 🐞 fix(piper_msgs): 复用通用枚举基类辅助函数，并增加 V3 专用状态映射，提高枚举解析鲁棒性
+- 🐞 fix(exports): 从公开包入口导出 V3 parser、message 和 interface 类
+- 🐞 fix(exports): 保持顶层消息导出默认兼容 V2，并增加 `PiperMessage`、`CanIDPiper`、`ArmMsgType`、`ArmMessageMapping` 的 V2/V3 显式别名
+- 🐞 fix(status): 通过 `err_code` setter 初始化 V2/V3 错误状态位，确保构造时传入的错误码立即反映到状态位
+- 🐞 fix(protocol): 当 `C_PiperParserV3` 接收到 V2 `PiperMessage` 时抛出明确的 `TypeError`，要求使用 `PiperMessage_V3`，避免后续触发 `AttributeError`
+
+其它
+---------
+
+- 🔧 build(setup.py): 更新包元数据和依赖
+  - 更新包版本号为 `0.7.0a1`，作为测试版（pre-release）发布
+  - 将构建期 `setuptools` 要求调整为 `>=39.0`
+  - 增加 `typing_extensions` 安装依赖，并对低于 Python `3.7` 的版本使用专用版本约束
+- 🔧 build(manifest): 将 `asserts/` 重命名为 `assets/`，并将顶层 `assets/` 文档目录加入源码分发包
+- 🔧 build(pyproject): 将 PEP 517 构建配置移动至仓库根目录，并以 `setup.py` 作为唯一的包元数据来源
+- 🧪 test(gripper,param): 增加 V3 夹爪协议、夹爪限位、参数隔离/校验、发送消息线程隔离的回归测试
+- 🧪 test(exports): 增加顶层消息导出兼容性测试，确保默认保持 V2 兼容，同时可通过版本化别名访问 V3
+- 🧪 test: 增加 Python 3.6 至 3.12 的 `tox` 矩阵，并补充状态初始化和 V3 parser 消息类型校验的回归测试
+- 📃 docs(readme): 增加 V3 接口/changelog/demo 入口，并补充 `piper-can` CAN 查找和激活 CLI 说明
+  - 增加用户级 pip 安装后 `piper-can` 不在 `PATH` 时的排查和修复说明
+  - 在 README 和 CAN 配置文档中明确 `piper-can` 及相关 CAN shell 脚本流程仅支持 Linux
+- 📃 docs(assets): 增加 `assets/V3/CHANGELOG-V3.MD` 和 `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(assets): 增加 `assets/next_update_todo.MD`，记录后续版本接受并继续处理的事项
+- 📃 docs(versioning): 增加 `assets/versioning_policy.MD`，说明语义化版本规则、兼容边界、项目示例和发布检查清单
+- 📃 docs(internal): 增加 V3 单例重复初始化保护的内部修复记录，说明触发场景、风险和验证方法
+- 📃 docs(demo): 增加 V3 demo README，并更新 V2/V3 demo 链接、命名和说明
+  - 说明 V3 IK 关节反馈需要先切到 MOVE P 并发送末端位姿控制指令后才会开始反馈
+- 📃 docs(demo): 增加 V3 MOVE P 后读取 IK 反馈示例，区分触发并读取与仅读取 IK 反馈的使用场景
+- 📃 docs(demo): 统一 V2/V3 中 Piper、Piper L、Piper X 的末端零位、初始位和测试位姿参考，并在运动示例中复用初始位姿定义
+- 📃 docs(demo): 统一 demo 使用显式 `can_name="can0"` 初始化接口，并补充手动创建串口/PCIe CAN bus 时 `can_auto_init` 和 `judge_flag` 的说明
+- 📃 docs(protocol): 更新 V2/V3 MIT 帧位段说明、夹爪力矩说明、安装位置说明以及 SDK 侧旧版本法兰限位说明
+- 📃 docs(protocol): 明确 `max_joint_spd` 随固件版本变化的单位和 raw 范围
+  - 说明 `max_joint_spd` 在 V1.5-8 之前，不包括 V1.5-8，单位为 `0.001 rad/s`；V1.5-8 及之后，包括 V1.5-8，单位为 `0.01 rad/s`
+  - 说明设置 `0-3.0 rad/s` 时，V1.5-8 之前 raw 范围为 `[0, 3000]`，V1.5-8 及之后 raw 范围为 `[0, 300]`
+  - 删除 `MotorMaxSpdSet` 的参数默认值，要求调用方显式传入电机序号和随固件变化的速度 raw 值，避免单位变化导致错误设置
+  - 同步相关 interface 注释、消息类注释、V2 接口文档以及协议 changelog 表格
+- 📃 docs(demo): 将碰撞防护 demo 文件名从 `piper_read_crash_protectation.py` 更正为 `piper_read_crash_protection.py`
+- 📃 docs(license): 修正 `LICENSE` 中 Agilex Robotics 公司名称拼写
+- 🎨 style(sdk): 清理 SDK 源码和 demo 中的空白格式，不改变行为
+
+
 Version 0.6.2
 =============
 
@@ -79,7 +157,7 @@ Bug修复
 - 📃 docs(Q&A.MD): 增加有关mit协议的说明，说明了给定力矩与执行力矩的关系；增加有关电机反馈力矩数值的说明
 - 📃 docs(Q&A.MD): 在Q&A.MD中增加有关串口can使用的说明
 - 📃 docs(INTERFACE_V2.MD): 在INTERFACE_V2.MD中增加新增函数说明
-- 📃 docs(asserts): 将图片整理到pictures文件夹中
+- 📃 docs(assets): 将图片整理到pictures文件夹中
 
 Version 0.5.0
 =============
@@ -399,8 +477,8 @@ Version 0.1.16
 
 - 更正了夹爪打印数据的输出单位
 - 统一了代码格式
-- 增加了夹爪消息发送的数据限制：[0, 5000]，对应 [0, 5] N/m
-- 增加了设置最大关节速度的数据限制：[0, 3000]，对应 [0, 3] rad/s
+- 增加了夹爪消息发送的数据限制：[0, 5000]，对应 [0, 5] N·m
+- 增加了设置最大关节速度的数据限制。对应 0-3 rad/s 时，V1.5-8 之前范围为 [0, 3000]，V1.5-8 及之后范围为 [0, 300]
 - 增加了设置最大关节加速度的数据限制：[0, 500]，对应 [0, 5] rad/s^2
 
 Bug修复
@@ -577,7 +655,7 @@ Byte 5 安装位置设定
 |       Byte 2           |  最大角度限制 L                         |                 |                           |
 |       Byte 3           |  最小角度限制 H                         |       uint16    |单位 0.1°**无效值：0x7FFF**  |
 |       Byte 4           |  最小角度限制 L                         |                 |                           |
-|       Byte 5           |  最大关节速度 H                         |       uint16    |单位 0.001rad/s**无效值：0x7FFF**|
+|       Byte 5           |  最大关节速度 H                         |       uint16    |单位随固件版本变化：V1.5-8之前(不含V1.5-8)为0.001rad/s，V1.5-8及之后为0.01rad/s **无效值：0x7FFF**|
 |       Byte 6           |  最大关节速度 L                         |                 |                           |
 |       Byte 7           |  保留                                  |                 |                           |
 

@@ -1,29 +1,12 @@
 #!/usr/bin/env python3
 # -*-coding:utf8-*-
-from enum import IntEnum, auto, unique
+from enum import unique
 
-class _EnumBase(IntEnum):
-    def __str__(self):
-        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
-        return f"{self.name}(0x{self.value:X})"
-    def __repr__(self):
-        # return f"{self.__class__.__name__}.{self.name}(0x{self.value:X})"
-        return f"{self.name}(0x{self.value:X})"
-    @classmethod
-    def match_value(cls, val):
-        if not isinstance(val, int):
-            raise ValueError(f"{cls.__name__}: input value must be an integer, got {type(val).__name__}")
-        try:
-            return cls(val)
-        except ValueError:
-            if hasattr(cls, "UNKNOWN"):
-                return cls.UNKNOWN
-            else:
-                raise ValueError(f"{cls.__name__}: invalid enum value 0x{val:X}, and no UNKNOWN defined")
+from ...core import IntEnumBase
 
 class ArmMsgFeedbackStatusEnum:
     @unique
-    class CtrlMode(_EnumBase):
+    class CtrlMode(IntEnumBase):
         STANDBY = 0x00
         CAN_CTRL = 0x01
         TEACHING_MODE = 0x02
@@ -34,7 +17,7 @@ class ArmMsgFeedbackStatusEnum:
         OFFLINE_TRAJECTORY_MODE = 0x07
         UNKNOWN = 0xFF
     @unique
-    class ArmStatus(_EnumBase):
+    class ArmStatus(IntEnumBase):
         NORMAL = 0x00
         EMERGENCY_STOP = 0x01
         NO_SOLUTION = 0x02
@@ -53,7 +36,7 @@ class ArmMsgFeedbackStatusEnum:
         RELEASE_RESISTOR_NTC_OVER_TEMPERATURE = 0x0F
         UNKNOWN = 0xFF
     @unique
-    class ModeFeed(_EnumBase):
+    class ModeFeed(IntEnumBase):
         MOVE_P = 0x00
         MOVE_J = 0x01
         MOVE_L = 0x02
@@ -62,7 +45,7 @@ class ArmMsgFeedbackStatusEnum:
         MOVE_CPV = 0x05
         UNKNOWN = 0xFF
     @unique
-    class TeachingState(_EnumBase):
+    class TeachingState(IntEnumBase):
         DISABLED = 0x00               # 关闭
         START_RECORDING = 0x01        # 开始示教记录（进入拖动示教模式）
         STOP_RECORDING = 0x02         # 结束示教记录（退出拖动示教模式）
@@ -73,7 +56,7 @@ class ArmMsgFeedbackStatusEnum:
         MOVE_TO_START = 0x07          # 运动到轨迹起点
         UNKNOWN = 0xFF
     @unique
-    class MotionStatus(_EnumBase):
+    class MotionStatus(IntEnumBase):
         REACH_TARGET_POS_SUCCESSFULLY = 0x00
         REACH_TARGET_POS_FAILED = 0x01
         UNKNOWN = 0xFF
@@ -81,7 +64,7 @@ class ArmMsgFeedbackStatusEnum:
 class ArmMsgFeedbackStatus:
     '''
     msg_v2_feedback
-    
+
     机械臂状态
 
     CAN ID:
@@ -95,10 +78,10 @@ class ArmMsgFeedbackStatus:
         motion_status: 运动状态
         trajectory_num: 当前运行轨迹点序号
         err_code: 故障码
-    
+
     位描述:
 
-        Byte 0:控制模式,uint8 
+        Byte 0:控制模式,uint8
             0x00 待机模式
             0x01 CAN指令控制模式
             0x02 示教模式
@@ -107,7 +90,7 @@ class ArmMsgFeedbackStatus:
             0x05 遥控器控制模式
             0x06 联动示教输入模式
             0x07 离线轨迹模式
-        Byte 1:机械臂状态,uint8 
+        Byte 1:机械臂状态,uint8
             0x00 正常
             0x01 急停
             0x02 无解
@@ -124,14 +107,14 @@ class ArmMsgFeedbackStatus:
             0x0D 示教暂停
             0x0E 主控NTC过温
             0x0F 释放电阻NTC过温
-        Byte 2:模式反馈,uint8 
+        Byte 2:模式反馈,uint8
             0x00 MOVE P
             0x01 MOVE J
             0x02 MOVE L
             0x03 MOVE C
             0x04 MOVE M ---基于V1.5-2版本后
             0x05 MOVE_CPV ---基于V1.6.5版本后
-        Byte 3:示教状态,uint8 
+        Byte 3:示教状态,uint8
             0x00 关闭
             0x01 开始示教记录（进入拖动示教模式）
             0x02 结束示教记录（退出拖动示教模式）
@@ -140,7 +123,7 @@ class ArmMsgFeedbackStatus:
             0x05 继续执行（轨迹复现继续）
             0x06 终止执行
             0x07 运动到轨迹起点
-        Byte 4:运动状态,uint8 
+        Byte 4:运动状态,uint8
             0x00 到达指定点位
             0x01 未到达指定点位
         Byte 5:当前运行轨迹点序号,uint8_t
@@ -166,10 +149,10 @@ class ArmMsgFeedbackStatus:
     '''
     '''
     msg_v2_feedback
-    
+
     Robot Arm Status
 
-    CAN ID: 
+    CAN ID:
         0x2A1
 
     Arguments:
@@ -180,7 +163,7 @@ class ArmMsgFeedbackStatus:
         motion_status: Motion status
         trajectory_num: Current trajectory point number
         err_code: Error code
-    
+
     Bit Description:
 
         Byte 0: Control mode, uint8
@@ -249,7 +232,7 @@ class ArmMsgFeedbackStatus:
             bit[6]: Reserved
             bit[7]: Reserved
     '''
-    
+
     def __init__(self,
                  ctrl_mode: int = 0,
                  arm_status: int = 0,
@@ -269,8 +252,8 @@ class ArmMsgFeedbackStatus:
         self._motion_status:ArmMsgFeedbackStatusEnum.MotionStatus = ArmMsgFeedbackStatusEnum.MotionStatus.match_value(motion_status)
         self.motion_status: int = self._motion_status   #运动状态
         self.trajectory_num: int = trajectory_num  #当前运行轨迹点序号
-        self._err_code = err_code         #故障码
-        self.err_status = self.ErrStatus()#故障码
+        self.err_status = self.ErrStatus()  # 故障码
+        self.err_code = err_code
 
     @property
     def ctrl_mode(self) -> ArmMsgFeedbackStatusEnum.CtrlMode:
@@ -281,7 +264,7 @@ class ArmMsgFeedbackStatus:
             self._ctrl_mode = value
         else:
             self._ctrl_mode = ArmMsgFeedbackStatusEnum.CtrlMode.match_value(value)
-    
+
     @property
     def arm_status(self) -> ArmMsgFeedbackStatusEnum.ArmStatus:
         return self._arm_status
@@ -291,7 +274,7 @@ class ArmMsgFeedbackStatus:
             self._arm_status = value
         else:
             self._arm_status = ArmMsgFeedbackStatusEnum.ArmStatus.match_value(value)
-    
+
     @property
     def mode_feed(self) -> ArmMsgFeedbackStatusEnum.ModeFeed:
         return self._mode_feed
@@ -301,7 +284,7 @@ class ArmMsgFeedbackStatus:
             self._mode_feed = value
         else:
             self._mode_feed = ArmMsgFeedbackStatusEnum.ModeFeed.match_value(value)
-    
+
     @property
     def teach_status(self) -> ArmMsgFeedbackStatusEnum.TeachingState:
         return self._teach_status
@@ -336,7 +319,7 @@ class ArmMsgFeedbackStatus:
             self.communication_status_joint_4 = False
             self.communication_status_joint_5 = False
             self.communication_status_joint_6 = False
-            
+
         def __str__(self):
             return (f" Joint 1 Angle Limit Status: {self.joint_1_angle_limit}\n"
                     f" Joint 2 Angle Limit Status: {self.joint_2_angle_limit}\n"

@@ -8,3 +8,7 @@ __pycache__
 piper_sdk.egg-info
 dist
 build
+.kilo
+.pytest_cache
+*.egg-info
+.tox

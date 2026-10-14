@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Check if ethtool is installed
 if ! dpkg -l | grep -q "ethtool"; then
     echo "Error: ethtool not detected in the system."

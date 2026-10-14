@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+# -*-coding:utf8-*-
+import time
+from piper_sdk import *
+
+# piper(piper_h) zero end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 213.266, 0.0, 85.0, 0.0]
+# piper(piper_h) initial end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 215.0, 0.0, 85.0, 0.0]
+# piper(piper_h) test end pose[mm, mm, mm, deg, deg, deg]: [56.127, 0.0, 258.0, 0.0, 85.0, 0.0]
+
+# piper_l zero end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 227.594, 0.0, 85.0, 0.0]
+# piper_l initial end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 237.594, 0.0, 85.0, 0.0]
+# piper_l test end pose[mm, mm, mm, deg, deg, deg]: [73.061, 0.0, 272.594, 0.0, 85.0, 0.0]
+
+# piper_x zero end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 216.827, -85.0, 0.0, -90.0]
+# piper_x initial end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 226.827, -85.0, 0.0, -90.0]
+# piper_x test end pose[mm, mm, mm, deg, deg, deg]: [96.897, 0.0, 261.827, -85.0, 0.0, -90.0]
+
+# default piper
+if __name__ == "__main__":
+    piper = C_PiperInterface_V3(can_name="can0")
+    piper.ConnectPort()
+    while( not piper.EnablePiper()):
+        time.sleep(0.01)
+    piper.GripperCtrl(0,1000,0x01, 0)
+    factor = 1000
+    # initial pose(not zero pose)
+    initial_position = [
+                56.127, \
+                0.0, \
+                215.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
+    position = initial_position
+
+    count = 0
+    while True:
+        print(piper.GetArmEndPoseMsgs())
+        count  = count + 1
+        if(count == 0):
+            print("1-----------")
+            position = initial_position
+        # test pose
+        elif(count == 200):
+            print("2-----------")
+            position = [
+                56.127, \
+                0.0, \
+                258.0, \
+                0, \
+                85.0, \
+                0, \
+                0]
+        elif(count == 400):
+            print("1-----------")
+            position = initial_position
+            count = 0
+
+        X = round(position[0]*factor)
+        Y = round(position[1]*factor)
+        Z = round(position[2]*factor)
+        RX = round(position[3]*factor)
+        RY = round(position[4]*factor)
+        RZ = round(position[5]*factor)
+        joint_6 = round(position[6]*factor)
+        print(X,Y,Z,RX,RY,RZ)
+        piper.MotionCtrl_2(0x01, 0x00, 100, 0x00)
+        piper.EndPoseCtrl(X,Y,Z,RX,RY,RZ)
+        piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
+        time.sleep(0.01)

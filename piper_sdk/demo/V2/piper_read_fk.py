@@ -5,7 +5,7 @@ from piper_sdk import *
 
 # 测试代码
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2(dh_is_offset=1)
+    piper = C_PiperInterface_V2(can_name="can0", dh_is_offset=1)
     piper.ConnectPort()
     # 使用前需要使能
     piper.EnableFkCal()
@@ -15,4 +15,3 @@ if __name__ == "__main__":
         print(f"feedback:{piper.GetFK('feedback')[-1]}")
         print(f"control:{piper.GetFK('control')}")
         time.sleep(0.01)
-    

@@ -16,8 +16,8 @@ Inner class identifies instances based on `can_port`, preventing the creation of
 - `dh_is_offset` (int, default=0): Does the j1-j2 offset by 2° in the DH parameters?
   - 0: No offset
   - 1: Offset applied
-- `start_sdk_joint_limit` (bool, default=True): Enable SDK joint limits
-- `start_sdk_gripper_limit` (bool, default=True): Enable SDK gripper limits
+- `start_sdk_joint_limit` (bool, default=False): Enable SDK joint limits
+- `start_sdk_gripper_limit` (bool, default=False): Enable SDK gripper limits
 - `logger_level` (LogLevel, default=LogLevel.WARNING): Set the log level
 - `log_to_file` (bool, default=False): Whether to enable the log writing function, True to enable, default to disable
 - `log_file_path` (str, default=None): Set the path to write the log file, the default is the log folder under the sdk path
@@ -242,7 +242,7 @@ Gripper control command (CAN ID: 0x159)
 Parameters:
 
 - `gripper_angle`: Gripper range, expressed as an integer, unit 0.001mm
-- `gripper_effort`: Gripper torque (0.001 N/m, range 0-5000 corresponds to 0-5 N/m)
+- `gripper_effort`: Gripper torque (0.001 N·m, range 0-5000 corresponds to 0-5 N·m)
 - `gripper_code`:
   - 0x00: Disable
   - 0x01: Enable
@@ -554,8 +554,8 @@ Retrieve the robotic arm gripper status message.
 Returns:
 
 - `gripper_state`: Gripper status object
-  - `grippers_angle`: int32, Gripper angle in 0.001°
-  - `grippers_effort`: uint16, Gripper torque in 0.001N/m
+  - `grippers_angle`: int32, Gripper stroke in 0.001 mm
+  - `grippers_effort`: uint16, Gripper torque in 0.001 N·m
   - `status_code`: uint8, Gripper status code
 
 Manual unit conversion of data is required.
@@ -745,7 +745,7 @@ current_motor_angle_limit_max_vel : ArmMsgFeedbackCurrentMotorAngleLimitMaxSpd
   - motor_num (int): Joint motor serial number
   - max_angle_limit (int): Maximum angle limit, unit 0.1 degree
   - min_angle_limit (int): Minimum angle limit, unit 0.1 degree
-  - max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+  - max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
 '''
 ```
 
@@ -955,7 +955,7 @@ Hz : float
 gripper_ctrl : ArmMsgGripperCtrl
 
   - grippers_angle (int): The stroke of the gripper (in 0.001 mm).
-  - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m.Range 0-5000 (corresponse 0-5N/m)
+  - grippers_effort (int): Gripper torque, represented as an integer, unit: 0.001N·m. Range 0-5000 (corresponds to 0-5 N·m)
   - status_code (int): 
       0x00: Disabled;
       0x01: Enabled;
@@ -1062,7 +1062,7 @@ all_motor_angle_limit_max_spd : ArmMsgFeedbackAllCurrentMotorAngleLimitMaxSpd
       * motor_num (int): Joint motor serial number
       * max_angle_limit (int): Maximum angle limit, unit 0.1 degree
       * min_angle_limit (int): Minimum angle limit, unit 0.1 degree
-      * max_joint_spd (int): Maximum joint speed, unit 0.001rad/s
+      * max_joint_spd (int): Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive).
   }
 '''
 ```
@@ -1221,32 +1221,32 @@ Parameters:
 - `motor_num`: Joint motor number (1-6)
 - `max_angle_limit`: Maximum angle limit (0.1°, 0x7FFF for invalid)
 - `min_angle_limit`: Minimum angle limit (0.1°, 0x7FFF for invalid)
-- `max_joint_spd`: Maximum joint speed (0.001 rad/s, range [0, 3000], 0x7FFF for invalid)
+- `max_joint_spd`: Maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward. 0x7FFF for invalid.
 
-Speed limits for each joint:
+Raw `max_joint_spd` limits for each joint when setting 0-3.0 rad/s:
 
-| Joint | Speed Limit (rad/s) |
-|-------|-------------------|
-| 1 | [0, 3.0] |
-| 2 | [0, 3.0] |
-| 3 | [0, 3.0] |
-| 4 | [0, 3.0] |
-| 5 | [0, 3.0] |
-| 6 | [0, 3.0] |
+| Joint | Before V1.5-8 | From V1.5-8 onward |
+|-------|----------------|---------------------|
+| 1 | [0, 3000] | [0, 300] |
+| 2 | [0, 3000] | [0, 300] |
+| 3 | [0, 3000] | [0, 300] |
+| 4 | [0, 3000] | [0, 300] |
+| 5 | [0, 3000] | [0, 300] |
+| 6 | [0, 3000] | [0, 300] |
 
 #### MotorMaxSpdSet
 
 ```python
-def MotorMaxSpdSet(motor_num: Literal[1, 2, 3, 4, 5, 6] = 6,
-                  max_joint_spd: int = 3000)
+def MotorMaxSpdSet(motor_num: Literal[1, 2, 3, 4, 5, 6],
+                   max_joint_spd: int)
 ```
 
 Sets motor maximum speed (Based on V1.5-2 and later) (CAN ID: 0x474)
 
 Parameters:
 
-- `motor_num`: Motor number (1-6)
-- `max_joint_spd`: Maximum joint speed (0.001 rad/s, range 0-3000, corresponding to 0-3 rad/s)
+- `motor_num`: Required motor number (1-6)
+- `max_joint_spd`: Required maximum joint speed. Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). For 0-3.0 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward. 0x7FFF for invalid.
 
 #### JointConfig
 

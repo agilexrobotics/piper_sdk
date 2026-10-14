@@ -8,6 +8,8 @@ sudo apt update && sudo apt install can-utils ethtool
 
 These two utilities are used to configure the CAN module.
 
+Note: This guide uses `piper-can` and shell scripts that are only supported on Linux. `piper-can find` and `piper-can activate` rely on Linux shell scripts and CAN tools such as `can-utils`, `ethtool`, and `iproute2`.
+
 If running a bash script results in `ip: command not found`,
 please install the `ip` command, usually with:
 
@@ -25,17 +27,17 @@ First, set up the shell script parameters properly.
 
 ##### PC with only one USB-to-CAN module inserted
 
-- **Use the `can_activate.sh` script in this case.**
+- **Use the `piper-can activate` CLI in this case.** It is installed with `piper_sdk` and supports `-h`/`--help`.
 
 Simply execute:
 
 ```bash
-bash can_activate.sh can0 1000000
+piper-can activate can0 1000000
 ```
 
 ##### PC with multiple USB-to-CAN modules inserted
 
-- **Use the `can_activate.sh` script in this case.**
+- **Use the `piper-can activate` CLI with `--usb-port` in this case.**
 
 Unplug all CAN modules.
 
@@ -47,12 +49,12 @@ sudo ethtool -i can0 | grep bus
 
 Record the `bus-info` value, e.g., `1-2:1.0`.
 
-**Note:** Usually, the first inserted CAN module defaults to `can0`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
+**Note:** Usually, the first inserted CAN module defaults to `can0`. If no CAN device is found, use `piper-can find` to check the corresponding CAN name for the USB address.
 
 Assuming the recorded `bus-info` value is `1-2:1.0`, execute the following command to check if the CAN device is successfully activated:
 
 ```bash
-bash can_activate.sh can_piper 1000000 "1-2:1.0"
+piper-can activate can_piper 1000000 --usb-port "1-2:1.0"
 ```
 
 **Note:** This means that the CAN device inserted into the USB port with hardware encoding `1-2:1.0` is renamed to `can_piper`, set to a baud rate of `1000000`, and activated.
@@ -62,6 +64,8 @@ Then, run `ifconfig` to check if `can_piper` is listed. If it appears, the CAN m
 #### Enabling Multiple CAN Modules Simultaneously
 
 - **Use the `can_config.sh` script in this case.**
+
+Note: `can_config.sh` is a Linux shell script.
 
 In `can_config.sh`, the `EXPECTED_CAN_COUNT` parameter represents the number of CAN modules to be activated. Assume this is set to `2`.
 
@@ -79,7 +83,7 @@ Next, insert another CAN module (ensure it is plugged into a different USB port 
 sudo ethtool -i can1 | grep bus
 ```
 
-**Note:** Typically, the first inserted CAN module will be `can0`, and the second will be `can1`. If no CAN device is found, use `bash find_all_can_port.sh` to check the corresponding CAN name for the USB address.
+**Note:** Typically, the first inserted CAN module will be `can0`, and the second will be `can1`. If no CAN device is found, use `piper-can find` to check the corresponding CAN name for the USB address.
 
 Assume the recorded `bus-info` values are `1-2:1.0` and `1-4:1.0`.
 

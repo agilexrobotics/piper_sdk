@@ -3,6 +3,84 @@
 [Click to switch ZH](CHANGELOG(ZH).MD)
 =============
 
+Version 0.7.0a1
+===============
+
+Features
+--------
+
+- ✨ feat(interface,protocol,piper_msgs): Adds the V3 interface stack for firmware/protocol V1.8-8 and later
+  - Adds `C_PiperInterface_V3`, `C_PiperParserV3`, `InterfaceVersion.INTERFACE_V3`, V3 CAN ID/type mappings, and public package exports
+  - Refactors V2 private fields and update helpers to protected members so V3 can reuse and extend the interface behavior
+- ✨ feat(motion_ctrl): Adds V3 motion-control behavior
+  - Changes V3 MOVE M to `move_mode=0x06` and V3 status MOVE M feedback to `mode_feed=0x06`
+  - Adds V3 horizontal inverted installation position support with `installation_pos=0x04`
+- ✨ feat(gripper): Adds V3 gripper width/angle mode support while keeping V2 gripper-related APIs available
+  - Adds V3 gripper feedback/control messages, parser encode/decode support, V3 getters, and V3 gripper demos
+  - Adds SDK-side gripper angle limit parameters for V3 angle mode
+- ✨ feat(ik_joint): Adds V3 IK joint feedback frames and cached getter support
+  - Adds the `GetArmIKJointMsgs` API
+  - Note: IK joint feedback is not published immediately after the robotic arm is powered on. Set the arm to MOVE P mode and send the corresponding end-pose control command first; after it is triggered, the arm continuously publishes IK joint feedback frames.
+- ✨ feat(cli): Adds `piper-can find` and `piper-can activate` for CAN module discovery and single-module activation from the installed package
+  - Documents and enforces that `piper-can find` and `piper-can activate` are Linux-only because they rely on Linux shell scripts and CAN tools
+- ✨ feat(demo): Adds V3 demo examples for enable/disable, motion control, status reading, parameter setting, MIT control, gripper angle mode, IK feedback, horizontal inverted installation, and multi-instance/disconnect tests
+- ✨ feat(init): Keeps `ArmMsgFeedbackStatusEnum` mapped to V2 by default, and adds explicit exports of `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` to avoid `MOVE_M` values ​​from V2/V3 overwriting each other.
+
+Breaking Changes
+----------------
+
+- ⚠️ `MotorMaxSpdSet` no longer provides default arguments. Callers must explicitly pass both the motor number and firmware-dependent raw maximum joint speed; calls that relied on the previous defaults now fail.
+
+Bug Fixes
+---------
+
+- 🐞 fix(interface): Isolates transmit message objects per sending thread to avoid cross-thread send-state conflicts
+- 🐞 fix(interface): Guards `C_PiperInterface_V3` singleton reinitialization so repeated construction with the same `can_name` does not reset V3 parser, locks, cached feedback, or rx/tx messages
+- 🐞 fix(param): Makes SDK parameter managers independent per interface instance and validates finite/range inputs
+- 🐞 fix(interface): Filters abnormal raw feedback data before SDK-side clamping is applied
+- 🐞 fix(gripper): Keeps gripper FOC status bit fields synchronized when feedback status codes are initialized or updated
+- 🐞 fix(piper_msgs): Reuses shared enum base helpers and V3-specific status mappings for robust enum parsing
+- 🐞 fix(exports): Exports V3 parser, messages, and interface classes from public package entry points
+- 🐞 fix(exports): Keeps top-level message exports V2-compatible and adds explicit V2/V3 aliases for `PiperMessage`, `CanIDPiper`, `ArmMsgType`, and `ArmMessageMapping`
+- 🐞 fix(exports): Fixes a V3 development-version regression, introduced after the `0.6.2` release, by keeping `ArmMsgFeedbackStatusEnum` mapped to V2 and adding explicit `ArmMsgFeedbackStatusEnum_V2` and `ArmMsgFeedbackStatusEnum_V3` exports so V2/V3 `MOVE_M` values cannot override each other
+- 🐞 fix(status): Initializes V2/V3 error-status bits through the `err_code` setter so constructor-supplied errors are reflected immediately
+- 🐞 fix(protocol): Raises a clear `TypeError` when `C_PiperParserV3` receives a V2 `PiperMessage`, requiring `PiperMessage_V3` instead of failing later with `AttributeError`
+
+Miscellaneous
+---------
+
+- 🔧 build(setup.py): Updates package metadata and dependencies
+  - Updates the package version to `0.7.0a1`, released as a pre-release for testing
+  - Lowers the build-time `setuptools` requirement to `>=39.0`
+  - Adds `typing_extensions` as an install dependency with a Python-version-specific constraint for Python versions below `3.7`
+- 🔧 build(manifest): Renames `asserts/` to `assets/` and includes the top-level `assets/` documentation directory in source distributions
+- 🔧 build(pyproject): Moves the PEP 517 build configuration to the repository root and keeps `setup.py` as the single package-metadata source
+- 🧪 test(gripper,param): Adds regression tests for V3 gripper protocol handling, gripper limits, parameter isolation/validation, and transmit-message thread isolation
+- 🧪 test(exports): Adds coverage to keep top-level message exports V2-compatible while exposing V3 through versioned aliases
+- 🧪 test: Adds a `tox` matrix for Python 3.6 through 3.12 and regression coverage for status initialization and V3 parser message validation
+- 📃 docs(readme): Adds V3 interface/changelog/demo entries and documents the `piper-can` CAN discovery and activation CLI
+  - Adds troubleshooting instructions for user-level pip installs where `piper-can` is installed outside `PATH`
+  - Clarifies in README and CAN configuration docs that `piper-can` and related CAN shell-script workflows are Linux-only
+- 📃 docs(assets): Adds `assets/V3/CHANGELOG-V3.MD` and `assets/V3/INTERFACE_V3.MD`
+- 📃 docs(assets): Adds `assets/next_update_todo.MD` for accepted follow-up items in later releases
+- 📃 docs(versioning): Adds `assets/versioning_policy.MD` with semantic-versioning rules, compatibility boundaries, project examples, and a release checklist
+- 📃 docs(internal): Adds internal notes for the V3 singleton reinitialization guard, including trigger scenarios, risks, and validation steps
+- 📃 docs(demo): Adds V3 demo README and updates V2/V3 demo links, names, and descriptions
+  - Documents that V3 IK joint feedback starts after MOVE P mode and an end-pose control command are sent
+- 📃 docs(demo): Adds the V3 MOVE P plus IK-feedback example and separates trigger-and-read guidance from the read-only IK-feedback example
+- 📃 docs(demo): Aligns V2/V3 end-pose zero, initial, and test references for Piper, Piper L, and Piper X; reuses initial-pose definitions in motion demos
+- 📃 docs(demo): Standardizes demo interface construction with explicit `can_name="can0"` and documents manual serial/PCIe CAN-bus creation, including `can_auto_init` and `judge_flag` behavior
+- 📃 docs(protocol): Updates V2/V3 MIT frame bit descriptions, gripper effort wording, installation-position notes, and SDK-side legacy flange limit notes
+- 📃 docs(protocol): Clarifies the firmware-dependent `max_joint_spd` unit and raw range
+  - Documents that `max_joint_spd` uses `0.001 rad/s` before V1.5-8, excluding V1.5-8, and `0.01 rad/s` from V1.5-8 onward, including V1.5-8
+  - Clarifies that setting `0-3.0 rad/s` corresponds to raw `[0, 3000]` before V1.5-8 and raw `[0, 300]` from V1.5-8 onward
+  - Removes the `MotorMaxSpdSet` argument defaults so callers must explicitly provide the motor and firmware-dependent raw speed, avoiding an incorrect setting caused by the unit change
+  - Synchronizes the related interface comments, message class comments, V2 interface docs, and protocol changelog tables
+- 📃 docs(demo): Renames the crash-protection demo spelling from `piper_read_crash_protectation.py` to `piper_read_crash_protection.py`
+- 📃 docs(license): Fixes the Agilex Robotics company name spelling in `LICENSE`
+- 🎨 style(sdk): Cleans whitespace across SDK sources and demos without changing behavior
+
+
 Version 0.6.2
 =============
 
@@ -81,7 +159,7 @@ Miscellaneous
 - 📃 docs(Q&A.MD): Added explanations regarding the MIT protocol, clarifying the relationship between given torque and executed torque; added explanations regarding the value of motor feedback torque.
 - 📃 docs(Q&A.MD): Added instructions on using serial port CAN in Q&A.MD
 - 📃 docs(INTERFACE_V2.MD): Added descriptions of newly added functions in INTERFACE_V2.MD
-- 📃 docs(asserts): Organized the images into the pictures folder
+- 📃 docs(assets): Organized the images into the pictures folder
 
 Version 0.5.0
 =============
@@ -404,8 +482,8 @@ Features
 - Corrected the output unit for the gripper's printed data.
 - Fixed some comments and provided clearer explanations.
 - Unified the code formatting to maintain consistency.
-- Added data limits for the gripper message sending: [0, 5000], corresponding to [0, 5] N/m.
-- Added data limits for setting the maximum joint speed: [0, 3000], corresponding to [0, 3] rad/s.
+- Added data limits for the gripper message sending: [0, 5000], corresponding to [0, 5] N·m.
+- Added data limits for setting the maximum joint speed. For 0-3 rad/s, the raw range is [0, 3000] before V1.5-8 and [0, 300] from V1.5-8 onward.
 - Added data limits for setting the maximum joint acceleration: [0, 500], corresponding to [0, 5] rad/s^2.
 
 Bug Fixes
@@ -586,7 +664,7 @@ Additional invalid value command
 |       Byte 2                                      |  Maximum Angle Limit Low    |            |                           |
 |       Byte 3                                      |  Minimum Angle Limit High   |    uint16  | Unit: 0.1° **Invalid value: 0x7FFF** |
 |       Byte 4                                      |  Minimum Angle Limit Low    |            |                           |
-|       Byte 5                                      |  Maximum Joint Speed High   |    uint16  | Unit: 0.001 rad/s **Invalid value: 0x7FFF** |
+|       Byte 5                                      |  Maximum Joint Speed High   |    uint16  | Unit depends on firmware version: 0.001 rad/s before V1.5-8 (exclusive), and 0.01 rad/s from V1.5-8 onward (inclusive). **Invalid value: 0x7FFF** |
 |       Byte 6                                      |  Maximum Joint Speed Low    |            |                           |
 |       Byte 7                                      |  Reserved                   |            |                           |
 

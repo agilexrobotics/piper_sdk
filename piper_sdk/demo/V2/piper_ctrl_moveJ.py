@@ -5,7 +5,7 @@ import time
 from piper_sdk import *
 
 if __name__ == "__main__":
-    piper = C_PiperInterface_V2("can0")
+    piper = C_PiperInterface_V2(can_name="can0")
     piper.ConnectPort()
     while( not piper.EnablePiper()):
         time.sleep(0.01)
@@ -21,12 +21,12 @@ if __name__ == "__main__":
             position = [0,0,0,0,0,0,0]
         elif(count == 300):
             print("2-----------")
-            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.08]
+            position = [0.2,0.2,-0.2,0.3,-0.2,0.5,0.07]  # gripper: 70/100 mm for the small gripper
         elif(count == 600):
             print("1-----------")
             position = [0,0,0,0,0,0,0]
             count = 0
-        
+
         joint_0 = round(position[0]*factor)
         joint_1 = round(position[1]*factor)
         joint_2 = round(position[2]*factor)
@@ -40,4 +40,3 @@ if __name__ == "__main__":
         print(piper.GetArmStatus())
         print(position)
         time.sleep(0.005)
-    
